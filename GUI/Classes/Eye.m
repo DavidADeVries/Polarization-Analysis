@@ -122,7 +122,7 @@ classdef Eye
         function eye = enterMetadata(eye, suggestedEyeNumber)
             
             %Call to EyeDataInput GUI
-            responses = EyeDataInput(eye,suggestedEyeNumber);
+            responses = EyeMetadataEntry(eye,suggestedEyeNumber);
             
             %Assigning values to Eye Properties
             eye.eyeId = responses{1};

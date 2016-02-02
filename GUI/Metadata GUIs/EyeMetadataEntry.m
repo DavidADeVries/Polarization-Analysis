@@ -1,35 +1,35 @@
-function varargout = EyeDataInput(varargin)
-% EYEDATAINPUT MATLAB code for EyeDataInput.fig
-%      EYEDATAINPUT, by itself, creates a new EYEDATAINPUT or raises the existing
+function varargout = EyeMetadataEntry(varargin)
+% EYEMETADATAENTRY MATLAB code for EyeMetadataEntry.fig
+%      EYEMETADATAENTRY, by itself, creates a new EYEMETADATAENTRY or raises the existing
 %      singleton*.
 %
-%      H = EYEDATAINPUT returns the handle to a new EYEDATAINPUT or the handle to
+%      H = EYEMETADATAENTRY returns the handle to a new EYEMETADATAENTRY or the handle to
 %      the existing singleton*.
 %
-%      EYEDATAINPUT('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in EYEDATAINPUT.M with the given input arguments.
+%      EYEMETADATAENTRY('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in EYEMETADATAENTRY.M with the given input arguments.
 %
-%      EYEDATAINPUT('Property','Value',...) creates a new EYEDATAINPUT or raises the
+%      EYEMETADATAENTRY('Property','Value',...) creates a new EYEMETADATAENTRY or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before EyeDataInput_OpeningFcn gets called.  An
+%      applied to the GUI before EyeMetadataEntry_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to EyeDataInput_OpeningFcn via varargin.
+%      stop.  All inputs are passed to EyeMetadataEntry_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help EyeDataInput
+% Edit the above text to modify the response to help EyeMetadataEntry
 
-% Last Modified by GUIDE v2.5 01-Feb-2016 17:37:15
+% Last Modified by GUIDE v2.5 02-Feb-2016 10:24:22
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @EyeDataInput_OpeningFcn, ...
-                   'gui_OutputFcn',  @EyeDataInput_OutputFcn, ...
+                   'gui_OpeningFcn', @EyeMetadataEntry_OpeningFcn, ...
+                   'gui_OutputFcn',  @EyeMetadataEntry_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,15 +44,15 @@ end
 % End initialization code - DO NOT EDIT
 end
 
-% --- Executes just before EyeDataInput is made visible.
-function EyeDataInput_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before EyeMetadataEntry is made visible.
+function EyeMetadataEntry_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to EyeDataInput (see VARARGIN)
+% varargin   command line arguments to EyeMetadataEntry (see VARARGIN)
 
-% Choose default command line output for EyeDataInput
+% Choose default command line output for EyeMetadataEntry
 handles.output = hObject;
 
 %Input arguments from function call in Eye class function
@@ -85,12 +85,12 @@ handles.EyeNotes = '';
         
 guidata(hObject, handles);
 
-% UIWAIT makes EyeDataInput wait for user response (see UIRESUME)
-uiwait(handles.EyeDataInput);
+% UIWAIT makes EyeMetadataEntry wait for user response (see UIRESUME)
+uiwait(handles.EyeMetadataEntry);
 end
 
 % --- Outputs from this function are returned to the command line.
-function varargout = EyeDataInput_OutputFcn(hObject, eventdata, handles) 
+function varargout = EyeMetadataEntry_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -99,8 +99,7 @@ function varargout = EyeDataInput_OutputFcn(hObject, eventdata, handles)
 % Get default command line output from handles structure
 handles.output = {handles.EyeID, handles.EyeTypeChoice, handles.EyeNumber, handles.DissectionDate, handles.DissectionDoneBy, handles.EyeNotes};
 varargout{1} = handles.output;
-disp(handles.output{6});
-close(handles.EyeDataInput);
+close(handles.EyeMetadataEntry);
 end
 
 
@@ -284,9 +283,9 @@ end
 end
 
 
-% --- Executes when user attempts to close EyeDataInput.
-function EyeDataInput_CloseRequestFcn(hObject, eventdata, handles)
-% hObject    handle to EyeDataInput (see GCBO)
+% --- Executes when user attempts to close EyeMetadataEntry.
+function EyeMetadataEntry_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to EyeMetadataEntry (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % Hint: delete(hObject) closes the figure
@@ -308,7 +307,7 @@ function OK_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 guidata(hObject, handles);
-uiresume(handles.EyeDataInput);
+uiresume(handles.EyeMetadataEntry);
 end
 
 % --- Executes on button press in Cancel.
@@ -329,7 +328,7 @@ switch exit
         handles.DissectionDoneBy = '';
         handles.EyeNotes = '';
         guidata(hObject, handles);
-        uiresume(handles.EyeDataInput);
+        uiresume(handles.EyeMetadataEntry);
     case 'No'
 end
 end
