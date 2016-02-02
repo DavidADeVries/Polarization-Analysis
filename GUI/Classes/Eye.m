@@ -120,50 +120,18 @@ classdef Eye
         end
                 
         function eye = enterMetadata(eye, suggestedEyeNumber)
-            %eyeId
-            prompt = 'Enter Eye ID:';
-            title = 'Eye ID';
             
-            response = inputdlg(prompt, title);
-            eye.eyeId = response{1};            
+            %Call to EyeDataInput GUI
+            responses = EyeDataInput(eye,suggestedEyeNumber);
             
-            %eyeType
-            prompt = 'Choose Eye Type:';
-            selectionMode = 'single';
-            title = 'Eye Type';
-            
-            [choices, choiceStrings] = choicesFromEnum('EyeTypes');
-            
-            [selection, ok] = listdlg('ListString', choiceStrings, 'SelectionMode', selectionMode, 'Name', title, 'PromptString', prompt);
-            
-            eye.eyeType = choices(selection);
-            
-            %eyeNumber
-            prompt = {'Enter Eye Number:'};
-            title = 'Eye Number';
-            numLines = 1;
-            defaultAns = {num2str(suggestedEyeNumber)};
-            
-            eye.eyeNumber = str2double(inputdlg(prompt, title, numLines, defaultAns));
-            
-            %dissectionDate & dissectionDoneBy
-            
-            prompt = {'Enter Eye dissection date (e.g. Jan 1, 2016):', 'Enter Eye dissection done by:'};
-            title = 'Eye Dissection Information';
-            numLines = 2;
-            
-            responses = inputdlg(prompt, title, numLines);
-            
-            eye.dissectionDate = responses{1};
-            eye.dissectionDoneBy = responses{2};
-            
-            %notes
-            
-            prompt = 'Enter Eye notes:';
-            title = 'Eye Notes';
-            
-            response = inputdlg(prompt, title);
-            eye.notes = response{1}; 
+            %Assigning values to Eye Properties
+            eye.eyeId = responses{1};
+            eye.eyeType = responses{2};
+            eye.eyeNumber = responses{3};
+            eye.dissectionDate = responses{4};
+            eye.dissectionDoneBy = responses{5};
+            eye.notes = responses{6};
+   
         end
         
         function eye = createDirectories(eye, toSubjectPath, projectPath, localPath)
