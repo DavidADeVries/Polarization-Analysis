@@ -130,7 +130,7 @@ classdef Quarter
             nextLocationNumber = lastLocationNumber + 1;
         end
         
-        function quarter = enterMetadata(quarter, suggestedQuarterNumber, eyeType, )
+        function quarter = enterMetadata(quarter, suggestedQuarterNumber)
                        
             %stain
             prompt = 'Enter Quarter stain:';
@@ -257,6 +257,22 @@ classdef Quarter
             location = quarter.getSelectedLocation();
             
             location = location.updateSessionIndex(index);
+            
+            quarter = quarter.updateLocation(location);
+        end
+        
+        function quarter = updateSubfolderIndex(quarter, index)
+            location = quarter.getSelectedLocation();
+            
+            location = location.updateSubfolderIndex(index);
+            
+            quarter = quarter.updateLocation(location);
+        end
+        
+        function quarter = updateFileIndex(quarter, index)
+            location = quarter.getSelectedLocation();
+            
+            location = location.updateFileIndex(index);
             
             quarter = quarter.updateLocation(location);
         end

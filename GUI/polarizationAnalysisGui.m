@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 01-Feb-2016 13:30:09
+% Last Modified by GUIDE v2.5 03-Feb-2016 16:06:42
 
 % Begin initialization code - DO NOT EDIT
 
@@ -432,21 +432,21 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in imageSelect.
-function imageSelect_Callback(hObject, eventdata, handles)
-% hObject    handle to imageSelect (see GCBO)
+% --- Executes on selection change in fileSelect.
+function fileSelect_Callback(hObject, eventdata, handles)
+% hObject    handle to fileSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns imageSelect contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from imageSelect
+% Hints: contents = cellstr(get(hObject,'String')) returns fileSelect contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from fileSelect
 
-imageSelect(hObject, eventdata, handles);
+fileSelect(hObject, eventdata, handles);
 
 
 % --- Executes during object creation, after setting all properties.
-function imageSelect_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to imageSelect (see GCBO)
+function fileSelect_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to fileSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

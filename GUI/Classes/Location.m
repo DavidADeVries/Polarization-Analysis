@@ -46,12 +46,6 @@ classdef Location
                 
                 if ~isempty(session.fileSelectionEntries)
                     session.subfolderIndex = 1;
-                    
-                    selection = session.getSubfolderSelection();
-                    
-                    if ~isempty(selection)
-                        session.imageIndex = 1;
-                    end
                 end
                 
                 sessions{i} = session;
@@ -86,7 +80,29 @@ classdef Location
                     location.sessionIndex = 1;
                 end
             end
-        end        
+        end
+        
+        function location = updateSession(location, session)
+            sessions = location.sessions;
+            numSessions = length(sessions);
+            updated = false;
+            
+            for i=1:numSessions
+                if sessions{i}.sessionNumber == session.sessionNumber
+                    location.sessions{i} = session;
+                    updated = true;
+                    break;
+                end
+            end
+            
+            if ~updated
+                location.sessions{numSessions + 1} = session;
+                
+                if location.sessionIndex == 0
+                    location.sessionIndex = 1;
+                end
+            end   
+        end
         
         function location = enterMetadata(location, suggestedLocationNumber)
             %locationNumber
@@ -211,6 +227,22 @@ classdef Location
         
         function location = updateSessionIndex(location, index)
             location.sessionIndex(index);
+        end
+        
+        function location = updateSubfolderIndex(location, index)
+            session = location.getSelectedSession();
+            
+            session = session.updateSubfolderIndex(index);
+            
+            location = location.updateSession(session);
+        end
+        
+        function location = updateFileIndex(location, index)
+            session = location.getSelectedSession();
+            
+            session = session.updateFileIndex(index);
+            
+            location = location.updateSession(session);
         end
     end
     

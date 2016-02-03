@@ -224,6 +224,22 @@ classdef NaturalSubject < Subject
             
             subject = subject.updateEye(eye);
         end
+        
+        function subject = updateSubfolderIndex(subject, index)
+            eye = subject.getSelectedEye();
+            
+            eye = eye.updateSubfolderIndex(index);
+            
+            subject = subject.updateEye(eye);
+        end
+        
+        function subject = updateFileIndex(subject, index)
+            eye = subject.getSelectedEye();
+            
+            eye = eye.updateFileIndex(index);
+            
+            subject = subject.updateEye(eye);
+        end
     end
     
 end

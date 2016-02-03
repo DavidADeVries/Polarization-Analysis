@@ -239,6 +239,22 @@ classdef Eye
             
             eye = eye.updateQuarter(quarter);
         end
+        
+        function eye = updateSubfolderIndex(eye, index)
+            quarter = eye.getSelectedQuarter();
+            
+            quarter = quarter.updateSubfolderIndex(index);
+            
+            eye = eye.updateQuarter(quarter);
+        end
+        
+        function eye = updateFileIndex(eye, index)
+            quarter = eye.getSelectedQuarter();
+            
+            quarter = quarter.updateFileIndex(index);
+            
+            eye = eye.updateQuarter(quarter);
+        end
     end
     
 end

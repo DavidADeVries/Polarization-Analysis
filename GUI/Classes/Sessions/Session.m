@@ -16,7 +16,6 @@ classdef Session
         isDataCollectionSession
         
         subfolderIndex = 0
-        imageIndex = 0
         
         fileSelectionEntries
         
@@ -31,25 +30,18 @@ classdef Session
         
         function handles = updateNavigationListboxes(session, handles)
             subfolderSelections = session.getSubfolderSelections();
-            imageSelections = session.getImageSelections();
             
             if isempty(subfolderSelections)
                 disableNavigationListboxes(handles, handles.subfolderSelect);
             else
                 set(handles.subfolderSelect, 'String', subfolderSelections, 'Value', session.subfolderIndex, 'Enable', 'on');
                 
-                if isempty(imageSelections)
-                    set(handles.imageSelect, 'String', imageSelections, 'Value', session.imageIndex, 'Enable', 'on');
-                else
-                    disableNavigationListboxes(handles, handles.imageSelect);
-                end
-            end
+                session.getSubfolderSelection().updateNavigationListboxes(handles);
+            end            
         end
         
         function session = createFileSelectionEntries(session, toSessionPath)
-            path = makePath(toSessionPath, session.dirName);
-            
-            session.fileSelectionEntries = generateFileSelectionEntries({}, path, session.dirName, 0);
+            session.fileSelectionEntries = generateFileSelectionEntries({}, toSessionPath, session.dirName, 0);
         end
         
         function subfolderSelections = getSubfolderSelections(session)
@@ -60,19 +52,7 @@ classdef Session
             for i=1:numEntries
                 subfolderSelections{i} = session.fileSelectionEntries{i}.selectionLabel;
             end
-        end
-        
-        function imageSelections = getImageSelections(session)
-            images = session.getSubfolderSelection();
-            
-            numImages = lenth(images);
-            
-            imageSelections = cell(numImages, 1);
-            
-            for i=1:numImages
-                imageSelections{i} = images{i}.selectionLabel;
-            end
-        end
+        end              
         
         function subfolderSelection = getSubfolderSelection(session)
             
@@ -81,6 +61,18 @@ classdef Session
             else
                 subfolderSelection = [];
             end
+        end
+                
+        function session = updateSubfolderIndex(session, index)
+            session.subfolderIndex = index;
+        end
+        
+        function session = updateFileIndex(session, index)
+            subfolderSelection = session.getSubfolderSelection();
+            
+            subfolderSelection = subfolderSelection.updateFileIndex(index);  
+            
+            session.fileSelectionEntries{session.subfolderIndex} = subfolderSelection;
         end
     end
     

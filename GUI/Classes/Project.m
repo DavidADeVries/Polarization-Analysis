@@ -139,6 +139,22 @@ classdef Project
             
             project = project.updateTrial(trial);
         end
+        
+        function project = updateSubfolderIndex(project, index)
+            trial = project.getSelectedTrial();
+            
+            trial = trial.updateSubfolderIndex(index);
+            
+            project = project.updateTrial(trial);
+        end
+        
+        function project = updateFileIndex(project, index)
+            trial = project.getSelectedTrial();
+            
+            trial = trial.updateFileIndex(index);
+            
+            project = project.updateTrial(trial);
+        end
     end
     
 end

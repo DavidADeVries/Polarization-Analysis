@@ -168,6 +168,22 @@ classdef Trial
             
             trial = trial.updateSubject(subject);
         end
+        
+        function trial = updateSubfolderIndex(trial, index)
+            subject = trial.getSelectedSubject();
+            
+            subject = subject.updateSubfolderIndex(index);
+            
+            trial = trial.updateSubject(subject);
+        end
+        
+        function trial = updateFileIndex(trial, index)
+            subject = trial.getSelectedSubject();
+            
+            subject = subject.updateFileIndex(index);
+            
+            trial = trial.updateSubject(subject);
+        end
     end
     
 end

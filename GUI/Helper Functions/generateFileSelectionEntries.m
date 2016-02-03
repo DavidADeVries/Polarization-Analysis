@@ -8,7 +8,9 @@ function [ fileSelectionEntries ] = generateFileSelectionEntries(fileSelectionEn
 
 tab = getTab(Constants.TAB, depth);
 
-newEntry = FileSelectionEntry(path, [tab, dirName], {});
+currentPath = makePath(path, dirName);
+
+newEntry = FileSelectionEntry(currentPath, [tab, dirName], {});
 
 newEntryIndex = length(fileSelectionEntries) + 1;
 
@@ -16,28 +18,32 @@ fileSelectionEntries{newEntryIndex} = newEntry;
 
 % then add new entries for what is in the dir
 
-dirList = dir(path);
+dirList = dir(currentPath);
 
 fileList = {};
 
 fileCounter = 1;
 
-nextPath = makePath(path, dirName);
-
 for i=1:length(dirList)
     entry = dirList(i);
     
-    if entry.isdir        
-        fileSelectionEntries = generateFileSelectionEntries(fileSelectionEntries, nextPath, entry.name, depth+1);
-    else
-        fileList{fileCounter} = FileSelectionEntry(makePath(path, entry.name), entry.name, {});
-        
-        fileCounter = fileCounter + 1;
+    if ~strcmp(entry.name, '.') && ~strcmp(entry.name, '..')
+        if entry.isdir
+            fileSelectionEntries = generateFileSelectionEntries(fileSelectionEntries, currentPath, entry.name, depth+1);
+        else
+            fileList{fileCounter} = FileSelectionEntry(makePath(currentPath, entry.name), entry.name, {});
+            
+            fileCounter = fileCounter + 1;
+        end
     end
     
 end
 
-fileSelectionEntries{newEntryIndex} = fileList;
+fileSelectionEntries{newEntryIndex}.filesInDir = fileList;
+
+if ~isempty(fileList)
+    fileSelectionEntries{newEntryIndex}.fileIndex = 1;
+end
 
 end
 

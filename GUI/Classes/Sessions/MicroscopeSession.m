@@ -126,9 +126,6 @@ classdef MicroscopeSession < DataCollectionSession
             dirSubtitle = SessionNamingConventions.MICROSCOPE_DIR_SUBTITLE;
         end
         
-        function session = updateSubfolderIndex(session, index)
-            
-        end
     end
     
 end
