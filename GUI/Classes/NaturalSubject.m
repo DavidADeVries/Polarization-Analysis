@@ -193,7 +193,7 @@ classdef NaturalSubject < Subject
                 
                 set(handles.eyeSelect, 'String', eyeOptions, 'Value', subject.eyeIndex, 'Enable', 'on');
                 
-                subject.getSelectedEye().updateNavigationListboxes(handles);
+                handles = subject.getSelectedEye().updateNavigationListboxes(handles);
             end
         end
         
@@ -239,6 +239,16 @@ classdef NaturalSubject < Subject
             eye = eye.updateFileIndex(index);
             
             subject = subject.updateEye(eye);
+        end
+        
+        function fileSelection = getSelectedFile(subject)
+            eye = subject.getSelectedEye();
+            
+            if ~isempty(eye)
+                fileSelection = eye.getSelectedFile();
+            else
+                fileSelection = [];
+            end
         end
     end
     

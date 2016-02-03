@@ -75,11 +75,11 @@ classdef Session
             session.fileSelectionEntries{session.subfolderIndex} = subfolderSelection;
         end
         
-        function fileSelection = getSelectedFile(session)
-            subfolderSelection = session.getSubfolderSelection();
+        function fileSelection = getSelectedFile(sess)
+            trial = project.getSelectedTrial();
             
-            if ~isempty(subfolderSelection)
-                fileSelection = subfolderSelection.getFileSelection();
+            if ~isempty(trial)
+                fileSelection = trial.getSelectedFile();
             else
                 fileSelection = [];
             end

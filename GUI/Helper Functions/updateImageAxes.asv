@@ -7,12 +7,18 @@ imageData = [];
 if ~isempty(imageSelection)
     imagePath = imageSelection.toPath;
     
-    imageData = openFile(imagePath);    
+    fileExtension = getFileExtension(imagePath);
+    
+    if strcmp(fileExtension, Constants.BMP_EXT)
+        imageData = imread(imagePath);
+    else
+        imageData = [];
+    end
 end
 
 % update image axes
 
-handles.image = imshow(imageData, [], 'Parent', handles.imageAxes);
+handimshow(imageData, [], 'Parent', handles.imageAxes);
 
 
 end

@@ -221,7 +221,7 @@ classdef Location
                 
                 set(handles.sessionSelect, 'String', sessionOptions, 'Value', location.sessionIndex, 'Enable', 'on');
                 
-                location.getSelectedSession().updateNavigationListboxes(handles);
+                handles = location.getSelectedSession().updateNavigationListboxes(handles);
             end
         end
         
@@ -243,6 +243,16 @@ classdef Location
             session = session.updateFileIndex(index);
             
             location = location.updateSession(session);
+        end
+        
+        function fileSelection = getSelectedFile(location)
+            session = location.getSelectedSession();
+            
+            if ~isempty(session)
+                fileSelection = session.getSelectedFile();
+            else
+                fileSelection = [];
+            end
         end
     end
     

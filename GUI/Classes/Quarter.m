@@ -245,7 +245,7 @@ classdef Quarter
                 
                 set(handles.locationSelect, 'String', locationOptions, 'Value', quarter.locationIndex, 'Enable', 'on');
                 
-                quarter.getSelectedLocation().updateNavigationListboxes(handles);
+                handles = quarter.getSelectedLocation().updateNavigationListboxes(handles);
             end
         end
         
@@ -275,6 +275,16 @@ classdef Quarter
             location = location.updateFileIndex(index);
             
             quarter = quarter.updateLocation(location);
+        end
+        
+        function fileSelection = getSelectedFile(quarter)
+            location = quarter.getSelectedLocation();
+            
+            if ~isempty(location)
+                fileSelection = location.getSelectedFile();
+            else
+                fileSelection = [];
+            end
         end
     end
     

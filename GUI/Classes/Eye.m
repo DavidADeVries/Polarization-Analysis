@@ -216,7 +216,7 @@ classdef Eye
                 
                 set(handles.quarterSampleSelect, 'String', quarterOptions, 'Value', eye.quarterIndex, 'Enable', 'on');
                 
-                eye.getSelectedQuarter().updateNavigationListboxes(handles);
+                handles = eye.getSelectedQuarter().updateNavigationListboxes(handles);
             end
         end
         
@@ -254,6 +254,16 @@ classdef Eye
             quarter = quarter.updateFileIndex(index);
             
             eye = eye.updateQuarter(quarter);
+        end
+        
+        function fileSelection = getSelectedFile(eye)
+            quarter = eye.getSelectedQuarter();
+            
+            if ~isempty(quarter)
+                fileSelection = quarter.getSelectedFile();
+            else
+                fileSelection = [];
+            end
         end
     end
     

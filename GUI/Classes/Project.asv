@@ -156,15 +156,7 @@ classdef Project
             project = project.updateTrial(trial);
         end
         
-        function fileSelection = getSelectedFile(project)
-            trial = project.getSelectedTrial();
-            
-            if ~isempty(trial)
-                fileSelection = trial.getSelectedFile();
-            else
-                fileSelection = [];
-            end
-        end
+        function fileSelection = getFileSelection(proh
     end
     
 end

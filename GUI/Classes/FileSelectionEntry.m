@@ -50,7 +50,7 @@ classdef FileSelectionEntry
             else
                 set(handles.fileSelect, 'String', fileSelections, 'Value', entry.fileIndex, 'Enable', 'on');
                 
-                updateImageAxes(handles, entry.getFileSelection());
+                handles = updateImageAxes(handles, entry.getFileSelection());
             end
         end
     end

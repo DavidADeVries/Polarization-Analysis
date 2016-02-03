@@ -129,7 +129,7 @@ classdef Trial
                 
                 set(handles.subjectSelect, 'String', subjectOptions, 'Value', trial.subjectIndex, 'Enable', 'on');
                 
-                trial.getSelectedSubject().updateNavigationListboxes(handles);
+                handles = trial.getSelectedSubject().updateNavigationListboxes(handles);
             end
         end
         
@@ -183,6 +183,16 @@ classdef Trial
             subject = subject.updateFileIndex(index);
             
             trial = trial.updateSubject(subject);
+        end
+        
+        function fileSelection = getSelectedFile(trial)
+            subject = trial.getSelectedSubject();
+            
+            if ~isempty(subject)
+                fileSelection = subject.getSelectedFile();
+            else
+                fileSelection = [];
+            end
         end
     end
     
