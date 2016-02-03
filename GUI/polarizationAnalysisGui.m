@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 19-Jan-2016 17:52:59
+% Last Modified by GUIDE v2.5 01-Feb-2016 13:30:09
 
 % Begin initialization code - DO NOT EDIT
 
@@ -59,9 +59,12 @@ function polarizationAnalysisGui_OpeningFcn(hObject, eventdata, handles, varargi
 addpath('Callbacks');
 
 %default GUI values
-handles.projectDirectory = '';
-handles.project = 0; %stores metadata from file
-handles.localDirectory = '';
+handles.networkPath = '';
+handles.localPath = '';
+
+handles.networkProject = []; %stores project metadata
+handles.localProject = [];
+
 
 % Choose default command line output for polarizationAnalysisGui
 handles.output = hObject;
@@ -84,13 +87,13 @@ function varargout = polarizationAnalysisGui_OutputFcn(hObject, eventdata, handl
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in selectProject.
-function selectProject_Callback(hObject, eventdata, handles)
-% hObject    handle to selectProject (see GCBO)
+% --- Executes on button press in selectNetwork.
+function selectNetwork_Callback(hObject, eventdata, handles)
+% hObject    handle to selectNetwork (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-select_project(hObject, eventdata, handles);
+selectNetworkPath(hObject, eventdata, handles);
 
 
 % --- Executes on button press in selectLocalDirectory.
@@ -99,7 +102,7 @@ function selectLocalDirectory_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-select_local_directory(hObject, eventdata, handles);
+selectLocalPath(hObject, eventdata, handles);
 
 
 % --- Executes on button press in importData.
@@ -237,6 +240,10 @@ function trialSelect_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns trialSelect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from trialSelect
 
+trialSelect(hObject, eventdata, handles);
+
+
+
 
 % --- Executes during object creation, after setting all properties.
 function trialSelect_CreateFcn(hObject, eventdata, handles)
@@ -283,6 +290,7 @@ function subjectSelect_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns subjectSelect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from subjectSelect
 
+subjectSelect(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
 function subjectSelect_CreateFcn(hObject, eventdata, handles)
@@ -306,6 +314,7 @@ function eyeSelect_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns eyeSelect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from eyeSelect
 
+eyeSelect(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
 function eyeSelect_CreateFcn(hObject, eventdata, handles)
@@ -329,6 +338,7 @@ function quarterSampleSelect_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns quarterSampleSelect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from quarterSampleSelect
 
+quarterSampleSelect(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
 function quarterSampleSelect_CreateFcn(hObject, eventdata, handles)
@@ -352,6 +362,7 @@ function locationSelect_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns locationSelect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from locationSelect
 
+locationSelect(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
 function locationSelect_CreateFcn(hObject, eventdata, handles)
@@ -382,6 +393,7 @@ function sessionSelect_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns sessionSelect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from sessionSelect
 
+sessionSelect(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
 function sessionSelect_CreateFcn(hObject, eventdata, handles)
@@ -405,6 +417,7 @@ function subfolderSelect_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns subfolderSelect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from subfolderSelect
 
+subfolderSelect(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
 function subfolderSelect_CreateFcn(hObject, eventdata, handles)
@@ -428,6 +441,8 @@ function imageSelect_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns imageSelect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from imageSelect
 
+imageSelect(hObject, eventdata, handles);
+
 
 % --- Executes during object creation, after setting all properties.
 function imageSelect_CreateFcn(hObject, eventdata, handles)
@@ -440,3 +455,24 @@ function imageSelect_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in uplinkLocalToNetwork.
+function uplinkLocalToNetwork_Callback(hObject, eventdata, handles)
+% hObject    handle to uplinkLocalToNetwork (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in downlinkNetworkToLocal.
+function downlinkNetworkToLocal_Callback(hObject, eventdata, handles)
+% hObject    handle to downlinkNetworkToLocal (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function Untitled_1_Callback(hObject, eventdata, handles)
+% hObject    handle to Untitled_1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

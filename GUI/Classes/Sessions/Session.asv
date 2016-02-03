@@ -30,19 +30,19 @@ classdef Session
         end
         
         function handles = updateNavigationListboxes(session, handles)
-            subfolderSelections = session.getSubfolderSelections();
-            imageSelections = session.getImageSelections();
+            numSessions = length(session.fileSelectionEntries);
             
-            if isempty(subfolderSelections)
-                disableNavigationListboxes(handles, handles.subfolderSelect);
+            sessionOptions = cell(numSessions, 1);
+            
+            if numSessions == 0
+                disableNavigationListboxes(handles, handles.sessionSelect);
             else
-                set(handles.subfolderSelect, 'String', subfolderSelections, 'Value', session.subfolderIndex, 'Enable', 'on');
-                
-                if isempty(imageSelections)
-                    set(handles.imageSelect, 'String', imageSelections, 'Value', session.imageIndex, 'Enable', 'on');
-                else
-                    disableNavigationListboxes(handles, handles.imageSelect);
+                for i=1:numSessions
+                    sessionOptions{i} = location.sessions{i}.dirName;
                 end
+                
+                set(handles.subfolderSelect, 'String', session.getSubfolderSelections, 'Value', session.subfolderIndex, 'Enable', 'on');
+                set(handles.imageSelect, 'String', session.getImageSelections, 'Value', session.imageIndex, 'Enable', 'on');
             end
         end
         

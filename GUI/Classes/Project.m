@@ -7,6 +7,7 @@ classdef Project
         description
         
         trials
+        trialIndex = 0
         
         notes
     end
@@ -26,6 +27,10 @@ classdef Project
             for i=1:numTrials
                 project.trials{i} = project.trials{i}.loadTrial(projectDir, trialDirs{i});
             end
+            
+            if ~isempty(project.trials)
+                project.trialIndex = 1;
+            end
         end
         
         function project = updateTrial(project, trial)
@@ -43,6 +48,10 @@ classdef Project
             
             if ~updated % add new trial
                 project.trials{numTrials + 1} = trial;
+                
+                if project.trialIndex == 0
+                    project.trialIndex = 1;
+                end
             end            
         end
         
@@ -59,6 +68,76 @@ classdef Project
         
         function trial = getTrialFromChoice(project, choice)
             trial = project.trials{choice}; 
+        end
+        
+        function trial = getSelectedTrial(project)
+            trial = [];
+            
+            if project.trialIndex ~= 0
+                trial = project.trials{project.trialIndex};
+            end
+        end
+        
+        function handles = updateNavigationListboxes(project, handles)
+            numTrials = length(project.trials);
+            
+            trialOptions = cell(numTrials, 1);
+            
+            if numTrials == 0
+                disableNavigationListboxes(handles, handles.trialSelect);
+            else
+                for i=1:numTrials
+                    trialOptions{i} = project.trials{i}.dirName;
+                end
+                
+                set(handles.trialSelect, 'String', trialOptions, 'Value', project.trialIndex, 'Enable', 'on');
+                
+                project.getSelectedTrial().updateNavigationListboxes(handles);
+            end
+        end
+        
+        function project = updateTrialIndex(project, index)
+            project.trialIndex = index;
+        end
+        
+        function project = updateSubjectIndex(project, index)
+            trial = project.getSelectedTrial();
+            
+            trial = trial.updateSubjectIndex(index);
+            
+            project = project.updateTrial(trial);
+        end
+        
+        function project = updateEyeIndex(project, index)
+            trial = project.getSelectedTrial();
+            
+            trial = trial.updateEyeIndex(index);
+            
+            project = project.updateTrial(trial);
+        end
+        
+        function project = updateQuarterSampleIndex(project, index)
+            trial = project.getSelectedTrial();
+            
+            trial = trial.updateQuarterSampleIndex(index);
+            
+            project = project.updateTrial(trial);
+        end
+        
+        function project = updateLocationIndex(project, index)
+            trial = project.getSelectedTrial();
+            
+            trial = trial.updateLocationIndex(index);
+            
+            project = project.updateTrial(trial);
+        end
+        
+        function project = updateSessionIndex(project, index)
+            trial = project.getSelectedTrial();
+            
+            trial = trial.updateSessionIndex(index);
+            
+            project = project.updateTrial(trial);
         end
     end
     

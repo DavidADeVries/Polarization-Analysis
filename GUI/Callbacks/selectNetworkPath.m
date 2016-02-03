@@ -1,27 +1,27 @@
-function [ ] = select_project(hObject, eventdata, handles)
-%select_project
+function [ ] = selectNetworkPath(hObject, eventdata, handles)
+%selectNetworkPath
 %   allows the user to select the project that they wish to work on
 %   a directory is selected, from which appropriate metadata is gathered
 %   and data is found
 
-title = 'Select Project Directory (Shared/Backed-up Drive Recommended)';
+title = 'Select Network Directory (Shared/Backed-up Drive Recommended)';
 
-folderName = uigetdir('C:\', title);
+networkPath = uigetdir('C:\', title);
 
-if folderName ~= 0 % folder has been successfully selected
-    metadata_path = makePath(folderName, ProjectNamingConventions.METADATA_FILENAME);
+if networkPath ~= 0 % folder has been successfully selected
+    metadataPath = makePath(networkPath, ProjectNamingConventions.METADATA_FILENAME);
     
-    if exist(metadata_path, 'file') %check if metadata file exists    
+    if exist(metadataPath, 'file') %check if metadata file exists    
         %load project metadata
         project = Project;
         
-        project = project.loadProject(folderName);
+        project = project.loadProject(networkPath);
         
-        handles.project = project;
+        handles.networkProject = project;
         
-        handles.projectDirectory = folderName;
+        handles.networkPath = networkPath;
         
-        set(handles.projectDirectoryLabel, 'String', folderName);
+        set(handles.networkDirectoryLabel, 'String', networkPath);
          
         guidata(hObject, handles); %update variables
     else %an project directory with no metadata was selected
@@ -29,8 +29,7 @@ if folderName ~= 0 % folder has been successfully selected
         error_name = 'Invalid Project Directory';
         
        errordlg(error, error_name, 'modal'); 
-    end
-    
+    end   
     
 end
 

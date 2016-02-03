@@ -73,7 +73,7 @@ classdef MicroscopeSession < DataCollectionSession
         
         end
         
-        function [] = importData(session, sessionProjectPath, locationImportPath, projectPath, localPath, dataFilename)
+        function [] = importData(session, sessionProjectPath, locationImportPath, projectPath, dataFilename)
                        
             % get list of folders
             dirList = getAllFolders(locationImportPath);
@@ -117,7 +117,7 @@ classdef MicroscopeSession < DataCollectionSession
                 filename = strcat(dataFilename, filenameSection);
                 importPath = makePath(locationImportPath, dirName);
                 
-                importBmpNd2Files(sessionProjectPath, importPath, projectPath, localPath, filename, namingConventions, newDir);
+                importBmpNd2Files(sessionProjectPath, importPath, projectPath, filename, namingConventions, newDir);
             end           
             
         end
@@ -125,11 +125,15 @@ classdef MicroscopeSession < DataCollectionSession
         function dirSubtitle = getDirSubtitle(session)
             dirSubtitle = SessionNamingConventions.MICROSCOPE_DIR_SUBTITLE;
         end
+        
+        function session = updateSubfolderIndex(session, index)
+            
+        end
     end
     
 end
 
-function [] = importBmpNd2Files(sessionProjectPath, importPath, projectPath, localPath, dataFilename, namingConventions, newDir)
+function [] = importBmpNd2Files(sessionProjectPath, importPath, projectPath, dataFilename, namingConventions, newDir)
 
 % create folder to hold data to be imported
 createObjectDirectories(projectPath, localPath, sessionProjectPath, newDir);
@@ -168,7 +172,7 @@ if numBmpFiles == numNd2Files && length(filenames) == numBmpFiles + numNd2Files
         projectFilename = strcat(finalFilename, Constants.ND2_EXT);
         importFilenameNd2 = findSameFilenameWithDifferentExtension(nd2Filenames, importFilenameBmp);
         
-        importFile(projectToPath, importPath, projectPath, localPath, importFilenameNd2, projectFilename);
+        importFile(projectToPath, importPath, projectPath, importFilenameNd2, projectFilename);
         
         
         counts(index) = counts(index) + 1;

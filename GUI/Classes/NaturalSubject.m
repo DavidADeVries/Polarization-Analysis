@@ -8,7 +8,8 @@ classdef NaturalSubject < Subject
         ADDiagnosis % DiagnosisTypes
         causeOfDeath
         
-        eyes         
+        eyes
+        eyeIndex = 0
     end
     
     methods
@@ -32,9 +33,13 @@ classdef NaturalSubject < Subject
             for i=1:numEyes
                 subject.eyes{i} = subject.eyes{i}.loadEye(subjectPath, eyeDirs{i});
             end
+            
+            if ~isempty(subject.eyes)
+                subject.eyeIndex = 1;
+            end
         end
         
-        function subject = importSubject(subject, subjectProjectPath, subjectImportPath, projectPath, localPath)           
+        function subject = importSubject(subject, subjectProjectPath, subjectImportPath, projectPath)           
             dirList = getAllFolders(subjectImportPath);
             
             importEyeNumbers = getNumbersFromFolderNames(dirList);
@@ -51,10 +56,10 @@ classdef NaturalSubject < Subject
                     eye = eye.enterMetadata(importEyeNumbers{i});
                     
                     % make directory/metadata file
-                    eye = eye.createDirectories(subjectProjectPath, projectPath, localPath);
+                    eye = eye.createDirectories(subjectProjectPath, projectPath);
                     
                     saveToBackup = true;
-                    eye.saveMetadata(makePath(subjectProjectPath, eye.dirName), projectPath, localPath, saveToBackup);
+                    eye.saveMetadata(makePath(subjectProjectPath, eye.dirName), projectPath, saveToBackup);
                 else % old eye
                     eye = subject.getEyeByNumber(importEyeNumbers{i});
                 end
@@ -62,7 +67,7 @@ classdef NaturalSubject < Subject
                 eyeProjectPath = makePath(subjectProjectPath, eye.dirName);
                 eyeImportPath = makePath(subjectImportPath, dirList{i});
                 
-                eye = eye.importEye(eyeProjectPath, eyeImportPath, projectPath, localPath, dataFilename);
+                eye = eye.importEye(eyeProjectPath, eyeImportPath, projectPath, dataFilename);
                 
                 subject = subject.updateEye(eye);
             end            
@@ -83,6 +88,10 @@ classdef NaturalSubject < Subject
             
             if ~updated % add new eye
                 subject.eyes{numEyes + 1} = eye;
+                
+                if subject.eyeIndex == 0
+                    subject.eyeIndex = 1;
+                end
             end            
         end
         
@@ -160,6 +169,60 @@ classdef NaturalSubject < Subject
         function subject = wipeoutMetadataFields(subject)
             subject.dirName = '';
             subject.eyes = [];
+        end
+        
+        function eye = getSelectedEye(subject)
+            eye = [];
+            
+            if subject.eyeIndex ~= 0
+                eye = subject.eyes{subject.eyeIndex};
+            end
+        end
+        
+        function handles = updateNavigationListboxes(subject, handles)
+            numEyes = length(subject.eyes);
+            
+            eyeOptions = cell(numEyes, 1);
+            
+            if numEyes == 0
+                disableNavigationListboxes(handles, handles.eyeSelect);
+            else
+                for i=1:numEyes
+                    eyeOptions{i} = subject.eyes{i}.dirName;
+                end
+                
+                set(handles.eyeSelect, 'String', eyeOptions, 'Value', subject.eyeIndex, 'Enable', 'on');
+                
+                subject.getSelectedEye().updateNavigationListboxes(handles);
+            end
+        end
+        
+        function subject = updateEyeIndex(subject, index)            
+            subject = subject.eyeIndex(index);
+        end
+        
+        function subject = updateQuarterSampleIndex(subject, index)
+            eye = subject.getSelectedEye();
+            
+            eye = eye.updateQuarterSampleIndex(index);
+            
+            subject = subject.updateEye(eye);
+        end
+        
+        function subject = updateLocationIndex(subject, index)
+            eye = subject.getSelectedEye();
+            
+            eye = eye.updateLocationIndex(index);
+            
+            subject = subject.updateEye(eye);
+        end
+        
+        function subject = updateSessionIndex(subject, index)
+            eye = subject.getSelectedEye();
+            
+            eye = eye.updateSessionIndex(index);
+            
+            subject = subject.updateEye(eye);
         end
     end
     

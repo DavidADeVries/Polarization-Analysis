@@ -11,6 +11,8 @@ classdef Trial
         trialNumber
         
         subjects
+        subjectIndex = 0
+        
         subjectType % natural, artifical
         
         notes
@@ -42,6 +44,10 @@ classdef Trial
             
             for i=1:numSubjects
                 trial.subjects{i} = trial.subjects{i}.loadSubject(trialPath, subjectDirs{i});
+            end
+            
+            if ~isempty(trial.subjects)
+                trial.subjectIndex = 1;
             end
         end
         
@@ -82,6 +88,10 @@ classdef Trial
             
             if ~updated % add new subject
                 trial.subjects{numSubjects + 1} = subject;
+                
+                if trial.subjectIndex == 0
+                    trial.subjectIndex = 1;
+                end
             end            
         end
         
@@ -97,6 +107,67 @@ classdef Trial
             
         end
         
+        function subject = getSelectedSubject(trial)
+            subject = [];
+            
+            if trial.subjectIndex ~= 0
+                subject = trial.subjects{trial.subjectIndex};
+            end
+        end
+        
+        function handles = updateNavigationListboxes(trial, handles)
+            numSubjects = length(trial.subjects);
+            
+            subjectOptions = cell(numSubjects, 1);
+            
+            if numSubjects == 0
+                disableNavigationListboxes(handles, handles.subjectSelect);
+            else
+                for i=1:numSubjects
+                    subjectOptions{i} = trial.subjects{i}.dirName;
+                end
+                
+                set(handles.subjectSelect, 'String', subjectOptions, 'Value', trial.subjectIndex, 'Enable', 'on');
+                
+                trial.getSelectedSubject().updateNavigationListboxes(handles);
+            end
+        end
+        
+        function trial = updateSubjectIndex(trial, index)            
+            trial.subjectIndex(index) = index;
+        end
+        
+        function trial = updateEyeIndex(trial, index)
+            subject = trial.getSelectedSubject();
+            
+            subject = subject.updateEyeIndex(index);
+            
+            trial = trial.updateSubject(subject);
+        end
+        
+        function trial = updateQuarterSampleIndex(trial, index)
+            subject = trial.getSelectedSubject();
+            
+            subject = subject.updateQuarterSampleIndex(index);
+            
+            trial = trial.updateSubject(subject);
+        end
+        
+        function trial = updateLocationIndex(trial, index)
+            subject = trial.getSelectedSubject();
+            
+            subject = subject.updateLocationIndex(index);
+            
+            trial = trial.updateSubject(subject);
+        end
+        
+        function trial = updateSessionIndex(trial, index)
+            subject = trial.getSelectedSubject();
+            
+            subject = subject.updateSessionIndex(index);
+            
+            trial = trial.updateSubject(subject);
+        end
     end
     
 end

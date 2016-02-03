@@ -16,6 +16,7 @@ classdef Quarter
         quarterArbitrary % False if which quarter is which is truly known, true otherwise (choosing S,T,I,N is arbitrary, but consistent)
         
         locations
+        locationIndex = 0
         
         notes
     end
@@ -41,9 +42,13 @@ classdef Quarter
             for i=1:numLocations
                 quarter.locations{i} = quarter.locations{i}.loadLocation(quarterPath, locationsDirs{i});
             end
+            
+            if ~isempty(quarter.locations)
+                quarter.locationIndex = 1;
+            end
         end
         
-        function quarter = importQuarter(quarter, quarterProjectPath, quarterImportPath, projectPath, localPath, dataFilename)
+        function quarter = importQuarter(quarter, quarterProjectPath, quarterImportPath, projectPath, dataFilename)
             dirList = getAllFolders(quarterImportPath);
             
             importLocationNumbers = getNumbersFromFolderNames(dirList);
@@ -60,10 +65,10 @@ classdef Quarter
                     location = location.enterMetadata(importLocationNumbers{i});
                     
                     % make directory/metadata file
-                    location = location.createDirectories(quarterProjectPath, projectPath, localPath);
+                    location = location.createDirectories(quarterProjectPath, projectPath);
                     
                     saveToBackup = true;
-                    location.saveMetadata(makePath(quarterProjectPath, location.dirName), projectPath, localPath, saveToBackup);
+                    location.saveMetadata(makePath(quarterProjectPath, location.dirName), projectPath, saveToBackup);
                 else % old location
                     location = quarter.getLocationByNumber(importLocationNumbers{i});
                 end
@@ -71,7 +76,7 @@ classdef Quarter
                 locationProjectPath = makePath(quarterProjectPath, location.dirName);
                 locationImportPath = makePath(quarterImportPath, dirList{i});
                 
-                location = location.importLocation(locationProjectPath, locationImportPath, projectPath, localPath, dataFilename);
+                location = location.importLocation(locationProjectPath, locationImportPath, projectPath, dataFilename);
                 
                 quarter = quarter.updateLocation(location);
             end
@@ -92,6 +97,10 @@ classdef Quarter
             
             if ~updated
                 quarter.locations{numLocations + 1} = location;
+                
+                if quarter.locationIndex == 0
+                    quarter.locationIndex = 1;
+                end
             end   
         end
         
@@ -121,7 +130,7 @@ classdef Quarter
             nextLocationNumber = lastLocationNumber + 1;
         end
         
-        function quarter = enterMetadata(quarter, suggestedQuarterNumber)
+        function quarter = enterMetadata(quarter, suggestedQuarterNumber, eyeType, )
                        
             %stain
             prompt = 'Enter Quarter stain:';
@@ -195,23 +204,61 @@ classdef Quarter
             quarter.notes = response{1}; 
         end
         
-        function quarter = createDirectories(quarter, toEyePath, projectPath, localPath)
+        function quarter = createDirectories(quarter, toEyePath, projectPath)
             dirSubtitle = quarter.quarterType.displayString;
             
             quarterDirectory = createDirName(QuarterNamingConventions.DIR_PREFIX, num2str(quarter.quarterNumber), dirSubtitle);
             
-            createObjectDirectories(projectPath, localPath, toEyePath, quarterDirectory);
+            createObjectDirectories(projectPath, toEyePath, quarterDirectory);
                         
             quarter.dirName = quarterDirectory;
         end
         
-        function [] = saveMetadata(quarter, toQuarterPath, projectDir, localDir, saveToBackup)
-            saveObjectMetadata(quarter, projectDir, localDir, toQuarterPath, QuarterNamingConventions.METADATA_FILENAME, saveToBackup);            
+        function [] = saveMetadata(quarter, toQuarterPath, projectPath, saveToBackup)
+            saveObjectMetadata(quarter, projectPath, toQuarterPath, QuarterNamingConventions.METADATA_FILENAME, saveToBackup);            
         end
         
         function quarter = wipeoutMetadataFields(quarter)
             quarter.dirName = '';
             quarter.locations = [];
+        end
+        
+        function location = getSelectedLocation(quarter)
+            location = [];
+            
+            if quarter.locationIndex ~= 0
+                location = quarter.locations{quarter.locationIndex};
+            end
+        end
+        
+        function handles = updateNavigationListboxes(quarter, handles)
+            numLocations = length(quarter.locations);
+            
+            locationOptions = cell(numLocations, 1);
+            
+            if numLocations == 0
+                disableNavigationListboxes(handles, handles.locationSelect);
+            else
+                for i=1:numLocations
+                    locationOptions{i} = quarter.locations{i}.dirName;
+                end
+                
+                set(handles.locationSelect, 'String', locationOptions, 'Value', quarter.locationIndex, 'Enable', 'on');
+                
+                quarter.getSelectedLocation().updateNavigationListboxes(handles);
+            end
+        end
+        
+        function quarter = updateLocationIndex(quarter, index)
+            quarter.locationIndex = index;
+        end
+        
+        function quarter = updateSessionIndex(quarter, index)
+            location = quarter.getSelectedLocation();
+            
+            location = location.updateSessionIndex(index);
+            
+            quarter = quarter.updateLocation(location);
         end
     end
     

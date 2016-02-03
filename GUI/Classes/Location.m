@@ -12,6 +12,7 @@ classdef Location
         locationCoords %[x,y] for unit circle of radius 1 representing the retina, origin at centre
           
         sessions
+        sessionIndex = 0
         
         notes
     end
@@ -41,17 +42,33 @@ classdef Location
                 
                 session.dirName = sessionDirs{i};
                 
+                session = createFileSelectionEntries(session, locationPath);
+                
+                if ~isempty(session.fileSelectionEntries)
+                    session.subfolderIndex = 1;
+                    
+                    selection = session.getSubfolderSelection();
+                    
+                    if ~isempty(selection)
+                        session.imageIndex = 1;
+                    end
+                end
+                
                 sessions{i} = session;
             end
             
             location.sessions = sessions;
+            
+            if ~isempty(sessions)
+                location.sessionIndex = 1;
+            end
         end
         
-        function location = importLocation(location, locationProjectPath, locationImportPath, projectPath, localPath, dataFilename)
+        function location = importLocation(location, locationProjectPath, locationImportPath, projectPath, dataFilename)
             filenameSection = createFilenameSection(LocationNamingConventions.DATA_FILENAME_LABEL, num2str(location.locationNumber));
             dataFilename = strcat(dataFilename, filenameSection);
             
-            dataCollectionSession = importDataCollectionSession(location, locationProjectPath, locationImportPath, projectPath, localPath, dataFilename);
+            dataCollectionSession = importDataCollectionSession(location, locationProjectPath, locationImportPath, projectPath, dataFilename);
             
             location = location.addSession(dataCollectionSession);
         end
@@ -64,6 +81,10 @@ classdef Location
                 sessions{numSessions + 1} = session;
                 
                 location.sessions = sessions;
+                
+                if location.sessionIndex == 0
+                    location.sessionIndex = 1;
+                end
             end
         end        
         
@@ -143,23 +164,53 @@ classdef Location
             end
         end
         
-        function location = createDirectories(location, toQuarterPath, projectPath, localPath)
+        function location = createDirectories(location, toQuarterPath, projectPath)
             dirSubtitle = '';
             
             locationDirectory = createDirName(LocationNamingConventions.DIR_PREFIX, num2str(location.locationNumber), dirSubtitle);
             
-            createObjectDirectories(projectPath, localPath, toQuarterPath, locationDirectory);
+            createObjectDirectories(projectPath, toQuarterPath, locationDirectory);
                         
             location.dirName = locationDirectory;
         end
         
-        function [] = saveMetadata(location, toLocationPath, projectDir, localDir, saveToBackup)
-            saveObjectMetadata(location, projectDir, localDir, toLocationPath, LocationNamingConventions.METADATA_FILENAME, saveToBackup);            
+        function [] = saveMetadata(location, toLocationPath, projectPath, saveToBackup)
+            saveObjectMetadata(location, projectPath, toLocationPath, LocationNamingConventions.METADATA_FILENAME, saveToBackup);            
         end
         
         function location = wipeoutMetadataFields(location)
             location.dirName = '';
             location.sessions = [];
+        end
+        
+        function session = getSelectedSession(location)
+            session = [];
+            
+            if location.sessionIndex ~= 0
+                session = location.sessions{location.sessionIndex};
+            end
+        end
+        
+        function handles = updateNavigationListboxes(location, handles)
+            numSessions = length(location.sessions);
+            
+            sessionOptions = cell(numSessions, 1);
+            
+            if numSessions == 0
+                disableNavigationListboxes(handles, handles.sessionSelect);
+            else
+                for i=1:numSessions
+                    sessionOptions{i} = location.sessions{i}.dirName;
+                end
+                
+                set(handles.sessionSelect, 'String', sessionOptions, 'Value', location.sessionIndex, 'Enable', 'on');
+                
+                location.getSelectedSession().updateNavigationListboxes(handles);
+            end
+        end
+        
+        function location = updateSessionIndex(location, index)
+            location.sessionIndex(index);
         end
     end
     

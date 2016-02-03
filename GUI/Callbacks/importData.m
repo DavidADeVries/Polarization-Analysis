@@ -16,7 +16,7 @@ title = 'Select Subject Folder';
 importDir = uigetdir(start, title);
 
 if importDir ~= 0 %dir successfully selected
-    project = handles.project;
+    project = handles.localProject;
     
     %have user select trial that subject is from
     trialChoices = project.getTrialChoices();
@@ -93,19 +93,23 @@ if importDir ~= 0 %dir successfully selected
                 if length(indices) == 1
                     subject = selectedTrial.subjects{indices(1)};
                 else
-                    error(strcat('Multiple subjects with same Subject ID: ', subjectId));
+                    error(['Multiple subjects with same Subject ID: ', subjectId]);
                 end
             end
             
             toSubjectPath = makePath(toTrialPath, subject.dirName);
             
-            subject = subject.importSubject(toSubjectPath, importDir, handles.projectDirectory, handles.localDirectory);
+            subject = subject.importSubject(toSubjectPath, importDir, handles.projectPath);
             
             selectedTrial = selectedTrial.updateSubject(subject);
-            
+                        
             project = project.updateTrial(selectedTrial);
             
-            handles.project = project;
+            handles.localProject = project;
+            
+            % update list boxes
+            
+            updateNavigationListboxes(handles);
             
             guidata(hObject, handles);
             

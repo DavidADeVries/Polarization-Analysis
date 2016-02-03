@@ -14,6 +14,7 @@ classdef Eye
         dissectionDoneBy
         
         quarters
+        quarterIndex = 0
         
         notes
     end
@@ -39,9 +40,13 @@ classdef Eye
             for i=1:numQuarters
                 eye.quarters{i} = eye.quarters{i}.loadQuarter(eyePath, quarterDirs{i});
             end
+            
+            if ~isempty(eye.quarters)
+                eye.quarterIndex = 1;
+            end
         end
         
-        function eye = importEye(eye, eyeProjectPath, eyeImportPath, projectPath, localPath, dataFilename)  
+        function eye = importEye(eye, eyeProjectPath, eyeImportPath, projectPath, dataFilename)  
             dirList = getAllFolders(eyeImportPath);
             
             importQuarterNumbers = getNumbersFromFolderNames(dirList);
@@ -58,10 +63,10 @@ classdef Eye
                     quarter = quarter.enterMetadata(importQuarterNumbers{i});
                     
                     % make directory/metadata file
-                    quarter = quarter.createDirectories(eyeProjectPath, projectPath, localPath);
+                    quarter = quarter.createDirectories(eyeProjectPath, projectPath);
                     
                     saveToBackup = true;
-                    quarter.saveMetadata(makePath(eyeProjectPath, quarter.dirName), projectPath, localPath, saveToBackup);
+                    quarter.saveMetadata(makePath(eyeProjectPath, quarter.dirName), projectPath, saveToBackup);
                 else % old quarter
                     quarter = eye.getQuarterByNumber(importQuarterNumbers{i});
                 end
@@ -69,7 +74,7 @@ classdef Eye
                 quarterProjectPath = makePath(eyeProjectPath, quarter.dirName);
                 quarterImportPath = makePath(eyeImportPath, dirList{i});
                 
-                quarter = quarter.importQuarter(quarterProjectPath, quarterImportPath, projectPath, localPath, dataFilename);
+                quarter = quarter.importQuarter(quarterProjectPath, quarterImportPath, projectPath, dataFilename);
                 
                 eye = eye.updateQuarter(quarter);
             end
@@ -90,6 +95,10 @@ classdef Eye
             
             if ~updated
                 eye.quarters{numQuarters + 1} = quarter;
+                
+                if eye.quarterIndex == 0
+                    eye.quarterIndex = 1;
+                end
             end            
         end
         
@@ -166,23 +175,69 @@ classdef Eye
             eye.notes = response{1}; 
         end
         
-        function eye = createDirectories(eye, toSubjectPath, projectPath, localPath)
+        function eye = createDirectories(eye, toSubjectPath, projectPath)
             dirSubtitle = eye.eyeType.displayString;
             
             eyeDirectory = createDirName(EyeNamingConventions.DIR_PREFIX, num2str(eye.eyeNumber), dirSubtitle);
             
-            createObjectDirectories(projectPath, localPath, toSubjectPath, eyeDirectory);
+            createObjectDirectories(projectPath, toSubjectPath, eyeDirectory);
                         
             eye.dirName = eyeDirectory;
         end
         
-        function [] = saveMetadata(eye, toEyePath, projectPath, localPath, saveToBackup)
-            saveObjectMetadata(eye, projectPath, localPath, toEyePath, EyeNamingConventions.METADATA_FILENAME, saveToBackup);            
+        function [] = saveMetadata(eye, toEyePath, projectPath, saveToBackup)
+            saveObjectMetadata(eye, projectPath, toEyePath, EyeNamingConventions.METADATA_FILENAME, saveToBackup);            
         end
         
         function eye = wipeoutMetadataFields(eye)
             eye.dirName = '';
             eye.quarters = [];
+        end
+        
+        function quarter = getSelectedQuarter(eye)
+            quarter = [];
+            
+            if eye.quarterIndex ~= 0
+                quarter = eye.quarters{eye.quarterIndex};
+            end
+        end
+        
+        function handles = updateNavigationListboxes(eye, handles)
+            numQuarters = length(eye.quarters);
+            
+            quarterOptions = cell(numQuarters, 1);
+            
+            if numQuarters == 0
+                disableNavigationListboxes(handles, handles.quarterSampleSelect);
+            else
+                for i=1:numQuarters
+                    quarterOptions{i} = eye.quarters{i}.dirName;
+                end
+                
+                set(handles.quarterSampleSelect, 'String', quarterOptions, 'Value', eye.quarterIndex, 'Enable', 'on');
+                
+                eye.getSelectedQuarter().updateNavigationListboxes(handles);
+            end
+        end
+        
+        function eye = updateQuarterSampleIndex(eye, index)
+            eye.quarterIndex = index;
+        end
+        
+        function eye = updateLocationIndex(eye, index)
+            quarter = eye.getSelectedQuarter();
+            
+            quarter = quarter.updateLocationIndex(index);
+            
+            eye = eye.updateQuarter(quarter);
+        end
+        
+        function eye = updateSessionIndex(eye, index)
+            quarter = eye.getSelectedQuarter();
+            
+            quarter = quarter.updateSessionIndex(index);
+            
+            eye = eye.updateQuarter(quarter);
         end
     end
     
