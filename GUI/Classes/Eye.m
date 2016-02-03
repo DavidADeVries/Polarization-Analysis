@@ -121,7 +121,7 @@ classdef Eye
                 
         function eye = enterMetadata(eye, suggestedEyeNumber)
             
-            %Call to EyeDataInput GUI
+            %Call to EyeMetadataEntry GUI
             [eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(eye, suggestedEyeNumber);
             
             %Assigning values to Eye Properties

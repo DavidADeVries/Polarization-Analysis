@@ -168,7 +168,7 @@ contents = cellstr(get(hObject,'String'));
 handles.eyeTypeChoice = contents{get(hObject,'Value')};
 
 %Check if value is default value
-if strcmp(handles.eyeTypeChoice, handles.choiceListDefault) %TODO create a constant
+if strcmp(handles.eyeTypeChoice, handles.choiceListDefault) 
     handles.eyeTypeChoice = '';
 end
 
