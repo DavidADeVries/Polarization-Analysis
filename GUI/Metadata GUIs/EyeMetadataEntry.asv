@@ -202,12 +202,18 @@ function eyeNumberInput_Callback(hObject, eventdata, handles)
 
 %Get value from input box
 if isnan(str2double(get(hObject, 'String')))
+
     
-    set(handles.eyeNumberInput, 'String', '');
-    handles.eyeNumber = [];
+    warndlg('Eye Number must be numerical.', 'Eye Number Error', 'modal'); % TODO check modal createmode
     
-    warndlg('Eye Number must be numerical.', 'Eye Number Error', 'modal'); 
-    
+%     set(handles.eyeIdInput, 'enable', 'on');
+%     set(handles.eyeNumberInput, 'enable', 'on');
+%     set(handles.eyeTypeList, 'enable', 'on');
+%     set(handles.dissectionDateInput, 'enable', 'on');
+%     set(handles.dissectionDoneByInput, 'enable', 'on');
+%     set(handles.eyeNotesInput, 'enable', 'on');
+%     set(handles.Cancel, 'enable', 'on');
+%     checkToEnableOkButton(handles);
 else
     handles.eyeNumber = str2double(get(hObject, 'String'));
 end
