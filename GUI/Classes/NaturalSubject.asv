@@ -202,16 +202,14 @@ classdef NaturalSubject < Subject
             eye = subject.getSelectedEye();
                         
             if isempty(eye)
-                disableMetadataFields(handles, handles.eyeQuarterSampleMetadata);
+                disableMetadataFields(handles, handles.subjectMetadata);
             else
-                eyeMetadataString = eye.getMetadataString();
-                                
-                handles = eye.updateMetadataFields(handles, eyeMetadataString);
+                metadataString = eye.getMetadataString();
+                
+                set(handles.subjectMetadata, 'String', metadataString);
+                
+                handles = eye.updateMetadataFields(handles);
             end
-        end
-        
-        function metadataString = getMetadataString(subject)
-            metadataString = {'Subject Metadata'};
         end
         
         function subject = updateEyeIndex(subject, index)            

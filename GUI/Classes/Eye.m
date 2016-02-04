@@ -221,6 +221,28 @@ classdef Eye
             end
         end
         
+        function handles = updateMetadataFields(eye, handles, eyeMetadataString)
+            quarter = eye.getSelectedQuarter();
+                        
+            if isempty(quarter)
+                metadataString = eyeMetadataString;
+                
+                disableMetadataFields(handles, handles.locationMetadata);
+            else
+                quarterMetadataString = quarter.getMetadataString();
+                
+                metadataString = [eyeMetadataString, {' '}, quarterMetadataString];
+                
+                handles = quarter.updateMetadataFields(handles);
+            end
+            
+            set(handles.eyeQuarterSampleMetadata, 'String', metadataString);
+        end        
+        
+        function metadataString = getMetadataString(eye)
+            metadataString = {'Eye Metadata'};
+        end
+        
         function eye = updateQuarterSampleIndex(eye, index)
             eye.quarterIndex = index;
         end

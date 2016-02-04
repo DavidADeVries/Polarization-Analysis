@@ -27,6 +27,9 @@ if localPath ~= 0 % folder has been successfully selected
         
         % update list boxes
         handles.localProject.updateNavigationListboxes(handles);
+        
+        % update metadata
+        handles.localProject.updateMetadataFields(handles);
          
         guidata(hObject, handles); %update variables
     else %an project directory with no metadata was selected

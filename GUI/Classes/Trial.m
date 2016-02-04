@@ -121,6 +121,24 @@ classdef Trial
             end
         end
         
+        function handles = updateMetadataFields(trial, handles)
+            subject = trial.getSelectedSubject();
+                        
+            if isempty(subject)
+                disableMetadataFields(handles, handles.subjectMetadata);
+            else
+                metadataString = subject.getMetadataString();
+                
+                set(handles.subjectMetadata, 'String', metadataString);
+                
+                handles = subject.updateMetadataFields(handles);
+            end
+        end
+        
+        function metadataString = getMetadataString(trial)
+            metadataString = {'Trial Metadata'};
+        end
+        
         function trial = updateSubjectIndex(trial, index)            
             trial.subjectIndex(index) = index;
         end

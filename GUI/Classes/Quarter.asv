@@ -250,22 +250,22 @@ classdef Quarter
             end
         end
         
-        function handles = updateMetadataFields(quarter, handles)
-            location = quarter.getSelectedLocation();
+        function handles = updateMetadataFields(eye, handles, eyeMetadataString)
+            quarter = eye.getSelectedQuarter();
                         
-            if isempty(location)
+            if isempty(quarter)
+                metadataString = eyeMetadataString;
+                
                 disableMetadataFields(handles, handles.locationMetadata);
             else
-                metadataString = location.getMetadataString();
+                quarterMetadataString = quarter.getMetadataString();
                 
-                set(handles.locationMetadata, 'String', metadataString);
+                metadataString = {eyeMetadataString, {' '}, quarterMetadataString};                
                 
-                handles = location.updateMetadataFields(handles);
+                handles = quarter.updateMetadataFields(handles);
             end
-        end
-        
-        function metadataString = getMetadataString(quarter)
-            metadataString = {'Quarter Metadata'};
+            
+            set(handles.subjectMetadata, 'String', metadataString);
         end
         
         function quarter = updateLocationIndex(quarter, index)

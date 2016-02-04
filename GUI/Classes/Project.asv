@@ -97,16 +97,16 @@ classdef Project
         end
         
         function handles = updateMetadataFields(project, handles)
-            trial = project.getSelectedTrial();
+            numTrials = length(project.trials);
                         
-            if isempty(trial)
+            if numTrials == 0
                 disableMetadataFields(handles, handles.trialMetadata);
             else
-                metadataString = trial.getMetadataString();
+                trialMetadata = 
                 
-                set(handles.trialMetadata, 'String', metadataString);
+                set(handles.trialSelect, 'String', );
                 
-                handles = trial.updateMetadataFields(handles);
+                handles = project.getSelectedTrial().updateNavigationListboxes(handles);
             end
         end
         

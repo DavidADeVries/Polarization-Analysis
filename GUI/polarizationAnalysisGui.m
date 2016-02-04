@@ -60,6 +60,7 @@ addpath('Callbacks');
 
 handles = guiInitialize(handles);
 
+
 % Choose default command line output for polarizationAnalysisGui
 handles.output = hObject;
 

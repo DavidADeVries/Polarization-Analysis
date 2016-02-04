@@ -125,6 +125,10 @@ classdef MicroscopeSession < DataCollectionSession
         function dirSubtitle = getDirSubtitle(session)
             dirSubtitle = SessionNamingConventions.MICROSCOPE_DIR_SUBTITLE;
         end
+               
+        function metadataString = getMetadataString(session)
+            metadataString = {'Session Metadata'};
+        end
         
     end
     

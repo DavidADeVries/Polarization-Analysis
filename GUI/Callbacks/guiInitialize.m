@@ -1,4 +1,4 @@
-function handles = guiInitialize(handles)
+function [handles, quitApp] = guiInitialize(handles)
 % guiInitialize 
 % initializes handles variables and GUI elements
 
@@ -16,6 +16,9 @@ handles.image = [];
 % disable listboxes
 disableNavigationListboxes(handles, handles.trialSelect);
 
+% disable metadataFields
+disableMetadataFields(handles, handles.trialMetadata);
+
 % clear out image axes
 imshow([], [], 'Parent', handles.imageAxes);
 
@@ -25,12 +28,15 @@ prompt = 'Please enter user''s name (e.g. John Smith):';
 title = 'Enter User''s Name';
 
 userName = '';
+quitApp = false;
 
 while isempty(userName)
     response = inputdlg(prompt, title);
     
     if ~isempty(response)
         userName = response{1};
+    else
+        exit;
     end
 end
 

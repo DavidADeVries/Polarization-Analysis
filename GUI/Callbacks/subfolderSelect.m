@@ -9,6 +9,7 @@ project = handles.localProject;
 project = project.updateSubfolderIndex(index);
 
 handles = project.updateNavigationListboxes(handles);
+handles = project.updateMetadataFields(handles);
 
 handles.localProject = project;
 
