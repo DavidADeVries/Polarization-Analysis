@@ -18,6 +18,10 @@ classdef Session
         subfolderIndex = 0
         
         fileSelectionEntries
+                
+        rejected % T/F, will exclude data from being included in analysis
+        rejectedReason % reason that this data was rejected (suspected poor imaging, out of focus
+        rejectedBy
         
         notes
     end

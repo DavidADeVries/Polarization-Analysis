@@ -6,8 +6,6 @@ classdef DataCollectionSession < Session
     properties        
         dataCollectionSessionNumber
         
-        rejected % T/F, will exclude data from being included in analysis
-        rejectedReason % reason that this data was rejected (suspected poor imaging, out of focus
     end
     
     methods
