@@ -58,11 +58,11 @@ classdef Location
             end
         end
         
-        function location = importLocation(location, locationProjectPath, locationImportPath, projectPath, dataFilename)
+        function location = importLocation(location, locationProjectPath, locationImportPath, projectPath, dataFilename, userName)
             filenameSection = createFilenameSection(LocationNamingConventions.DATA_FILENAME_LABEL, num2str(location.locationNumber));
             dataFilename = strcat(dataFilename, filenameSection);
             
-            dataCollectionSession = importDataCollectionSession(location, locationProjectPath, locationImportPath, projectPath, dataFilename);
+            dataCollectionSession = importDataCollectionSession(location, locationProjectPath, locationImportPath, projectPath, dataFilename, userName);
             
             location = location.addSession(dataCollectionSession);
         end
@@ -104,7 +104,7 @@ classdef Location
             end   
         end
         
-        function location = enterMetadata(location, suggestedLocationNumber)
+        function location = enterMetadata(location, suggestedLocationNumber, importPath, userName)
             %locationNumber
             prompt = {'Enter Location Number:'};
             title = 'Location Number';

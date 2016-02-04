@@ -78,7 +78,7 @@ if importDir ~= 0 %dir successfully selected
             if isempty(indices) %must create new subject
                 subject = selectedTrial.createNewSubject();
                 
-                subject = subject.enterMetadata();
+                subject = subject.enterMetadata(importDir, handles.userName);
                 
                 subject.subjectNumber = selectedTrial.nextSubjectNumber();
                 subject.subjectId = subjectId;
@@ -99,7 +99,7 @@ if importDir ~= 0 %dir successfully selected
             
             toSubjectPath = makePath(toTrialPath, subject.dirName);
             
-            subject = subject.importSubject(toSubjectPath, importDir, handles.localPath);
+            subject = subject.importSubject(toSubjectPath, importDir, handles.localPath, handles.userName);
             
             selectedTrial = selectedTrial.updateSubject(subject);
                         

@@ -14,7 +14,7 @@ classdef MicroscopeSession < DataCollectionSession
     end
     
     methods
-        function session = enterMetadata(session)
+        function session = enterMetadata(session, importPath, userName)
             
             %magnification
             prompt = {'Enter Magnification (decimal):'};

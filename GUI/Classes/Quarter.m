@@ -48,7 +48,7 @@ classdef Quarter
             end
         end
         
-        function quarter = importQuarter(quarter, quarterProjectPath, quarterImportPath, projectPath, dataFilename)
+        function quarter = importQuarter(quarter, quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName)
             dirList = getAllFolders(quarterImportPath);
             
             importLocationNumbers = getNumbersFromFolderNames(dirList);
@@ -59,10 +59,12 @@ classdef Quarter
             for i=1:length(dirList)
                 indices = findInArray(importLocationNumbers{i}, quarter.getLocationNumbers());
                 
+                locationImportPath = makePath(quarterImportPath, dirList{i});
+                
                 if isempty(indices) % new location
                     location = Location;
                     
-                    location = location.enterMetadata(importLocationNumbers{i});
+                    location = location.enterMetadata(importLocationNumbers{i}, locationImportPath, userName);
                     
                     % make directory/metadata file
                     location = location.createDirectories(quarterProjectPath, projectPath);
@@ -74,7 +76,6 @@ classdef Quarter
                 end
                 
                 locationProjectPath = makePath(quarterProjectPath, location.dirName);
-                locationImportPath = makePath(quarterImportPath, dirList{i});
                 
                 location = location.importLocation(locationProjectPath, locationImportPath, projectPath, dataFilename);
                 
@@ -130,7 +131,7 @@ classdef Quarter
             nextLocationNumber = lastLocationNumber + 1;
         end
         
-        function quarter = enterMetadata(quarter, suggestedQuarterNumber)
+        function quarter = enterMetadata(quarter, suggestedQuarterNumber, importPath, userName)
                        
             %stain
             prompt = 'Enter Quarter stain:';

@@ -62,7 +62,7 @@ classdef Eye
                 if isempty(indices) % new quarter
                     quarter = Quarter;
                     
-                    quarter = quarter.enterMetadata(importQuarterNumbers{i}, quarterImportPath, userName);
+                    quarter = quarter.enterMetadata(importQuarterNumbers{i}, quarterImportPath);
                     
                     % make directory/metadata file
                     quarter = quarter.createDirectories(eyeProjectPath, projectPath);
@@ -75,7 +75,7 @@ classdef Eye
                 
                 quarterProjectPath = makePath(eyeProjectPath, quarter.dirName);
                 
-                quarter = quarter.importQuarter(quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName);
+                quarter = quarter.importQuarter(quarterProjectPath, quarterImportPath, projectPath, dataFilename);
                 
                 eye = eye.updateQuarter(quarter);
             end
@@ -129,7 +129,7 @@ classdef Eye
             nextQuarterNumber = lastQuarterNumber + 1;
         end
                 
-        function eye = enterMetadata(eye, suggestedEyeNumber, importPath, userName)
+        function eye = enterMetadata(eye, suggestedEyeNumber)
             %eyeId
             prompt = 'Enter Eye ID:';
             title = 'Eye ID';

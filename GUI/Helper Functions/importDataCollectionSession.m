@@ -1,4 +1,4 @@
-function [ session ] = importDataCollectionSession(location, locationProjectPath, locationImportPath, projectPath, dataFilename)
+function [ session ] = importDataCollectionSession(location, locationProjectPath, locationImportPath, projectPath, dataFilename, userName)
 %importDataCollectionSession
 % imports a data collection session. Copies over images, prompts user for
 % metadata, back-ups raw data, and puts data on working directory
@@ -9,7 +9,7 @@ listString = DataCollectionSession.getDataCollectionSessionChoices();
 
 session = DataCollectionSession.getSelection(choice);
 
-session = session.enterMetadata();
+session = session.enterMetadata(locationImportPath, userName);
 
 session.sessionNumber = location.getNextSessionNumber();
 session.dataCollectionSessionNumber = location.getNextDataCollectionSessionNumber();

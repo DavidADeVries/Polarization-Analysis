@@ -39,7 +39,7 @@ classdef NaturalSubject < Subject
             end
         end
         
-        function subject = importSubject(subject, subjectProjectPath, subjectImportPath, projectPath)           
+        function subject = importSubject(subject, subjectProjectPath, subjectImportPath, projectPath, userName)           
             dirList = getAllFolders(subjectImportPath);
             
             importEyeNumbers = getNumbersFromFolderNames(dirList);
@@ -50,10 +50,12 @@ classdef NaturalSubject < Subject
             for i=1:length(dirList)
                 indices = findInArray(importEyeNumbers{i}, subject.getEyeNumbers());
                 
+                eyeImportPath = makePath(subjectImportPath, dirList{i});
+                
                 if isempty(indices) % new eye
                     eye = Eye;
                     
-                    eye = eye.enterMetadata(importEyeNumbers{i});
+                    eye = eye.enterMetadata(importEyeNumbers{i}, eyeImportPath, userName);
                     
                     % make directory/metadata file
                     eye = eye.createDirectories(subjectProjectPath, projectPath);
@@ -65,9 +67,8 @@ classdef NaturalSubject < Subject
                 end
                 
                 eyeProjectPath = makePath(subjectProjectPath, eye.dirName);
-                eyeImportPath = makePath(subjectImportPath, dirList{i});
                 
-                eye = eye.importEye(eyeProjectPath, eyeImportPath, projectPath, dataFilename);
+                eye = eye.importEye(eyeProjectPath, eyeImportPath, projectPath, dataFilename, userName);
                 
                 subject = subject.updateEye(eye);
             end            
@@ -121,7 +122,7 @@ classdef NaturalSubject < Subject
             nextEyeNumber = lastEyeNumber + 1;
         end
         
-        function subject = enterMetadata(subject)
+        function subject = enterMetadata(subject, importPath, userName)
             % age:
             prompt = 'Enter subject''s age (decimal number only):';
             title = 'Subject Age';
