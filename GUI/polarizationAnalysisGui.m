@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 03-Feb-2016 17:13:56
+% Last Modified by GUIDE v2.5 04-Feb-2016 10:56:11
 
 % Begin initialization code - DO NOT EDIT
 
@@ -107,8 +107,8 @@ function selectLocalDirectory_Callback(hObject, eventdata, handles)
 selectLocalPath(hObject, eventdata, handles);
 
 
-% --- Executes on button press in importData.
-function importData_Callback(hObject, eventdata, handles)
+% --------------------------------------------------------------------
+function importData_ClickedCallback(hObject, eventdata, handles)
 % hObject    handle to importData (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -473,11 +473,7 @@ function downlinkNetworkToLocal_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --------------------------------------------------------------------
-function Untitled_1_Callback(hObject, eventdata, handles)
-% hObject    handle to Untitled_1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+
 
 
 % --- Executes on button press in radiobutton1.
@@ -498,3 +494,153 @@ function openInNewFigure_ClickedCallback(hObject, eventdata, handles)
 openInNewFigure(hObject, eventdata, handles);
 
 
+
+
+
+function subjectMetadata_Callback(hObject, eventdata, handles)
+% hObject    handle to subjectMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of subjectMetadata as text
+%        str2double(get(hObject,'String')) returns contents of subjectMetadata as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function subjectMetadata_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to subjectMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function eyeQuarterSampleMetadata_Callback(hObject, eventdata, handles)
+% hObject    handle to eyeQuarterSampleMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of eyeQuarterSampleMetadata as text
+%        str2double(get(hObject,'String')) returns contents of eyeQuarterSampleMetadata as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function eyeQuarterSampleMetadata_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to eyeQuarterSampleMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function locationMetadata_Callback(hObject, eventdata, handles)
+% hObject    handle to locationMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of locationMetadata as text
+%        str2double(get(hObject,'String')) returns contents of locationMetadata as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function locationMetadata_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to locationMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function sessionMetadata_Callback(hObject, eventdata, handles)
+% hObject    handle to sessionMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of sessionMetadata as text
+%        str2double(get(hObject,'String')) returns contents of sessionMetadata as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function sessionMetadata_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sessionMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function trialMetadata_Callback(hObject, eventdata, handles)
+% hObject    handle to trialMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of trialMetadata as text
+%        str2double(get(hObject,'String')) returns contents of trialMetadata as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function trialMetadata_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to trialMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+% --------------------------------------------------------------------
+function projectMenu_Callback(hObject, eventdata, handles)
+% hObject    handle to projectMenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% --------------------------------------------------------------------
+function trialMenu_Callback(hObject, eventdata, handles)
+% hObject    handle to trialMenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function eyeMenu_Callback(hObject, eventdata, handles)
+% hObject    handle to eyeMenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function locationMenu_Callback(hObject, eventdata, handles)
+% hObject    handle to locationMenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function sessionMenu_Callback(hObject, eventdata, handles)
+% hObject    handle to sessionMenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
