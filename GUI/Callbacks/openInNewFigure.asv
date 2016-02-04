@@ -10,7 +10,7 @@ if ~isempty(selectedFile)
     imageData = openFile(selectedFile.toPath);
     
     if ~isempty(imageData)
-        figure('name', getFilename(selectedFile.toPath));
+        figure('name', );
         imshow(imageData, []);
     end
 end
