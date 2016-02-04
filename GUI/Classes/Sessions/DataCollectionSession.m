@@ -36,18 +36,18 @@ classdef DataCollectionSession < Session
     end
        
     methods
-        function session = createDirectories(session, toLocationPath, projectPath, localPath)
+        function session = createDirectories(session, toLocationPath, projectPath)
             dirSubtitle = session.getDirSubtitle(); % defined in each specific sessionsclass
             
             sessionDirectory = createDirName(SessionNamingConventions.DATA_COLLECTION_DIR_PREFIX, num2str(session.dataCollectionSessionNumber), dirSubtitle);
             
-            createObjectDirectories(projectPath, localPath, toLocationPath, sessionDirectory);
+            createObjectDirectories(projectPath, toLocationPath, sessionDirectory);
                         
             session.dirName = sessionDirectory;
         end
         
-        function [] = saveMetadata(session, toSessionPath, projectPath, localPath, saveToBackup)
-            saveObjectMetadata(session, projectPath, localPath, toSessionPath, SessionNamingConventions.METADATA_FILENAME, saveToBackup);            
+        function [] = saveMetadata(session, toSessionPath, projectPath, saveToBackup)
+            saveObjectMetadata(session, projectPath, toSessionPath, SessionNamingConventions.METADATA_FILENAME, saveToBackup);            
         end
     end
     

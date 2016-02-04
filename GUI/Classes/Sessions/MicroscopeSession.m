@@ -133,7 +133,7 @@ end
 function [] = importBmpNd2Files(sessionProjectPath, importPath, projectPath, dataFilename, namingConventions, newDir)
 
 % create folder to hold data to be imported
-createObjectDirectories(projectPath, localPath, sessionProjectPath, newDir);
+createObjectDirectories(projectPath, sessionProjectPath, newDir);
 projectToPath = makePath(sessionProjectPath, newDir);
 
 % import files
@@ -163,7 +163,7 @@ if numBmpFiles == numNd2Files && length(filenames) == numBmpFiles + numNd2Files
         
         % import .bmp
         projectFilename = strcat(finalFilename, Constants.BMP_EXT);
-        importFile(projectToPath, importPath, projectPath, localPath, importFilenameBmp, projectFilename);
+        importFile(projectToPath, importPath, projectPath, importFilenameBmp, projectFilename);
         
         % import .nd2
         projectFilename = strcat(finalFilename, Constants.ND2_EXT);

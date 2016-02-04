@@ -1,4 +1,4 @@
-function [ session ] = importDataCollectionSession(location, locationProjectPath, locationImportPath, projectPath, localPath, dataFilename)
+function [ session ] = importDataCollectionSession(location, locationProjectPath, locationImportPath, projectPath, dataFilename)
 %importDataCollectionSession
 % imports a data collection session. Copies over images, prompts user for
 % metadata, back-ups raw data, and puts data on working directory
@@ -15,18 +15,18 @@ session.sessionNumber = location.getNextSessionNumber();
 session.dataCollectionSessionNumber = location.getNextDataCollectionSessionNumber();
 
 % make directory/metadata file
-session = session.createDirectories(locationProjectPath, projectPath, localPath);
+session = session.createDirectories(locationProjectPath, projectPath);
 
 saveToBackup = true;
 sessionProjectPath = makePath(locationProjectPath, session.dirName);
-session.saveMetadata(sessionProjectPath, projectPath, localPath, saveToBackup);
+session.saveMetadata(sessionProjectPath, projectPath, saveToBackup);
 
 % time to copy over the files! At long last!
 
 filenameSection = createFilenameSection(SessionNamingConventions.DATA_FILENAME_LABEL, num2str(session.sessionNumber));
 dataFilename = strcat(dataFilename, filenameSection);
 
-session.importData(sessionProjectPath, locationImportPath, projectPath, localPath, dataFilename);
+session.importData(sessionProjectPath, locationImportPath, projectPath, dataFilename);
 
 end
 

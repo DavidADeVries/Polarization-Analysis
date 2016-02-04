@@ -99,7 +99,7 @@ if importDir ~= 0 %dir successfully selected
             
             toSubjectPath = makePath(toTrialPath, subject.dirName);
             
-            subject = subject.importSubject(toSubjectPath, importDir, handles.projectPath);
+            subject = subject.importSubject(toSubjectPath, importDir, handles.localPath);
             
             selectedTrial = selectedTrial.updateSubject(subject);
                         

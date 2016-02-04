@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 04-Feb-2016 10:56:11
+% Last Modified by GUIDE v2.5 04-Feb-2016 14:34:39
 
 % Begin initialization code - DO NOT EDIT
 
@@ -58,15 +58,7 @@ function polarizationAnalysisGui_OpeningFcn(hObject, eventdata, handles, varargi
 % import needed libraries
 addpath('Callbacks');
 
-%default GUI values
-handles.networkPath = '';
-handles.localPath = '';
-
-handles.networkProject = []; %stores project metadata
-handles.localProject = [];
-
-handles.image = [];
-
+handles = guiInitialize(handles);
 
 % Choose default command line output for polarizationAnalysisGui
 handles.output = hObject;
@@ -183,18 +175,18 @@ end
 
 
 
-function userName_Callback(hObject, eventdata, handles)
-% hObject    handle to userName (see GCBO)
+function userNameTextbox_Callback(hObject, eventdata, handles)
+% hObject    handle to userNameTextbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of userName as text
-%        str2double(get(hObject,'String')) returns contents of userName as a double
+% Hints: get(hObject,'String') returns contents of userNameTextbox as text
+%        str2double(get(hObject,'String')) returns contents of userNameTextbox as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function userName_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to userName (see GCBO)
+function userNameTextbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to userNameTextbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
