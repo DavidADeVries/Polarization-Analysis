@@ -112,10 +112,10 @@ classdef NaturalSubject < Subject
             nextEyeNumber = lastEyeNumber + 1;
         end
         
-        function subject = enterMetadata(subject)
+        function subject = enterMetadata(subject, userName, importPath)
             
             %Call to NaturalSubjectMetadataEntry GUI
-            [age, gender, ADDiagnosis, causeOfDeath, notes] = NaturalSubjectMetadataEntry();
+            [age, gender, ADDiagnosis, causeOfDeath, notes] = NaturalSubjectMetadataEntry(userName, importPath);
             
             %Assigning values to NaturalSubject Properties
             NaturalSubject.age = age;

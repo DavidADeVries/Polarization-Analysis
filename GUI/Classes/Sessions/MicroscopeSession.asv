@@ -15,11 +15,8 @@ classdef MicroscopeSession < DataCollectionSession
     
     methods
         function session = enterMetadata(session, userName, importPath)
-            
-            %Call to Microscope Session Metadata Entry GUI
             [magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason] = MicroscopeSessionMetadataEntry(userName, importPath);
             
-            %Assigning values to Microscope Session Properties
             session.magnification = magnification;
             session.pixelSizeMicrons = pixelSizeMicrons;
             session.instrument = instrument;
@@ -31,6 +28,60 @@ classdef MicroscopeSession < DataCollectionSession
             session.notes = notes;
             session.rejected = rejected;
             session.rejectedReason = rejectedReason;
+%             %magnification
+%             prompt = {'Enter Magnification (decimal):'};
+%             title = 'Magnification';
+%             
+%             session.magnification = str2double(inputdlg(prompt, title));
+%             
+%             %pixelSizeMicrons
+%             prompt = {'Enter Pixel Size in microns (decimal):'};
+%             title = 'Pixel Size';
+%             
+%             session.pixelSizeMicrons = str2double(inputdlg(prompt, title));
+%             
+%             %instrument
+%             prompt = {'Enter instrument used:'};
+%             title = 'Instrument Used';
+%             
+%             response = inputdlg(prompt, title);
+%             session.instrument = response{1};
+%             
+%             %fluoroSignature
+%             session.fluoroSignature = true;
+%             
+%             %crossedSignature
+%             session.crossedSignature = false;
+%             
+%             %visualSignature % T/F
+%             session.visualSignature = false;
+%             
+%             %sessionDate
+%             %sessionDoneBy
+%             prompt = {'Enter imaginge date (e.g. Jan 1, 2016):', 'Enter imaging done by:'};
+%             title = 'Imaging Information';
+%             numLines = 2;
+%             
+%             responses = inputdlg(prompt, title, numLines);
+%             
+%             session.sessionDate = responses{1};
+%             session.sessionDoneBy = responses{2};
+%             
+%             %notes
+%             
+%             prompt = 'Enter Session notes:';
+%             title = 'Session Notes';
+%             
+%             response = inputdlg(prompt, title);
+%             session.notes = response{1}; 
+%             
+%             
+%             %rejected % T/F, will exclude data from being included in analysis
+%             %rejectedReason % reason that this data was rejected (suspected poor imaging, out of focus
+%             
+%             session.rejected = false;
+%             session.rejectedReason = 'N/A';
+%                    
         
         end
         

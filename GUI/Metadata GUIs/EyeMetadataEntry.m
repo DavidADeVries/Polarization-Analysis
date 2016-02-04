@@ -64,6 +64,12 @@ else
     handles.suggestedEyeNumber = '';
 end
 
+handles.userName = varargin{3};% Parameter name is 'userName' 
+handles.importPath = varargin{4};% Parameter name is 'importPath' 
+
+set(handles.importPathTitle, 'String', strcat('Import Path: ', handles.importPath));
+set(handles.dissectionDoneByInput, 'String', handles.userName);
+
 %Set default Eye number based on input to function
 set(handles.eyeNumberInput, 'String', handles.suggestedEyeNumber); 
 
@@ -88,7 +94,7 @@ handles.eyeId = '';
 handles.eyeTypeChoice = '';
 handles.eyeNumber = handles.suggestedEyeNumber;
 handles.dissectionDate = '';
-handles.dissectionDoneBy = '';
+handles.dissectionDoneBy = handles.userName;
 handles.eyeNotes = '';
 
 set(handles.OK, 'enable', 'off');

@@ -22,7 +22,7 @@ function varargout = NaturalSubjectMetadataEntry(varargin)
 
 % Edit the above text to modify the response to help NaturalSubjectMetadataEntry
 
-% Last Modified by GUIDE v2.5 03-Feb-2016 15:17:09
+% Last Modified by GUIDE v2.5 04-Feb-2016 16:11:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,6 +54,12 @@ function NaturalSubjectMetadataEntry_OpeningFcn(hObject, eventdata, handles, var
 
 % Choose default command line output for NaturalSubjectMetadataEntry
 handles.output = hObject;
+
+handles.userName = varargin{1}; %Param is userName
+handles.importPath = varargin{2}; % Param is importPath
+
+%Display the import path name
+set(handles.importPathTitle, 'String', strcat('Import Path:', handles.importPath));
 
 %Defining the different input variables as empty, awaiting user input
 handles.age = [];
@@ -346,6 +352,28 @@ else
 end
 end
 
+function importPathTitle_Callback(hObject, eventdata, handles)
+% hObject    handle to importPathTitle (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of importPathTitle as text
+%        str2double(get(hObject,'String')) returns contents of importPathTitle as a double
+end
+
+% --- Executes during object creation, after setting all properties.
+function importPathTitle_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to importPathTitle (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+end
+
 %% Local Functions
 
 function checkToEnableOkButton(handles)
@@ -360,3 +388,6 @@ else
 end
 
 end
+
+
+

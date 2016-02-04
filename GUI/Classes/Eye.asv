@@ -119,10 +119,10 @@ classdef Eye
             nextQuarterNumber = lastQuarterNumber + 1;
         end
                 
-        function eye = enterMetadata(eye, suggestedEyeNumber)
+        function eye = enterMetadata(eye, suggestedEyeNumber, userName, importPath)
             
-            %Call to EyeDataInput GUI
-            [eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(eye, suggestedEyeNumber);
+            %Call to EyeMetadataEntry GUI
+            [eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(eye, suggestedEyeNumber, user);
             
             %Assigning values to Eye Properties
             eye.eyeId = eyeId;
