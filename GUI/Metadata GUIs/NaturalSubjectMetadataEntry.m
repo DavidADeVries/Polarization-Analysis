@@ -63,8 +63,8 @@ set(handles.importPathTitle, 'String', strcat('Import Path:', handles.importPath
 
 %Defining the different input variables as empty, awaiting user input
 handles.age = [];
-handles.gender = '';
-handles.ADDiagnosis = '';
+handles.gender = [];
+handles.ADDiagnosis = [];
 handles.causeOfDeath = '';
 handles.subjectNotes = '';
 
@@ -166,12 +166,12 @@ function genderInput_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from genderInput
 
 %Get value from popup list
-contents = cellstr(get(hObject,'String'));
-handles.gender = contents{get(hObject,'Value')};
+[genderChoice,~] = choicesFromEnum('GenderTypes');
 
-%Check if value is default value
-if strcmp(handles.gender, handles.genderChoiceListDefault)
-    handles.gender = '';
+if get(hObject, 'Value') == 1 
+    handles.gender = [];
+else
+    handles.gender = genderChoice(get(hObject, 'Value')-1); 
 end
 
 checkToEnableOkButton(handles);
@@ -202,13 +202,15 @@ function diagnosisInput_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns diagnosisInput contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from diagnosisInput
 
-%Get value from popup list
-contents = cellstr(get(hObject,'String'));
-handles.ADDiagnosis = contents{get(hObject,'Value')};
+
+
+[diagnosisChoice,~] = choicesFromEnum('DiagnosisTypes');
 
 %Check if value is default value
-if strcmp(handles.ADDiagnosis, handles.diagnosisChoiceListDefault)
-    handles.ADDiagnosis = '';
+if get(hObject, 'Value') == 1 
+    handles.ADDiagnosis = [];
+else
+    handles.ADDiagnosis = diagnosisChoice(get(hObject, 'Value')-1); 
 end
 
 checkToEnableOkButton(handles);
@@ -302,8 +304,8 @@ switch exit
     case 'Yes'
         %Clears variables in the case that they wish to exit the program
         handles.age = [];
-        handles.gender = '';
-        handles.ADDiagnosis = '';
+        handles.gender = [];
+        handles.ADDiagnosis = [];
         handles.causeOfDeath = '';
         handles.subjectNotes = '';
         guidata(hObject, handles);
@@ -334,8 +336,8 @@ function NaturalSubjectMetadataEntry_CloseRequestFcn(hObject, eventdata, handles
 if isequal(get(hObject, 'waitstatus'), 'waiting')
     % The GUI is still in UIWAIT, us UIRESUME
     handles.age = [];
-    handles.gender = '';
-    handles.ADDiagnosis = '';
+    handles.gender = [];
+    handles.ADDiagnosis = [];
     handles.causeOfDeath = '';
     handles.subjectNotes = '';
     guidata(hObject, handles);
@@ -343,8 +345,8 @@ if isequal(get(hObject, 'waitstatus'), 'waiting')
 else
     % The GUI is no longer waiting, just close it
     handles.age = [];
-    handles.gender = '';
-    handles.ADDiagnosis = '';
+    handles.gender = [];
+    handles.ADDiagnosis = [];
     handles.causeOfDeath = '';
     handles.subjectNotes = '';
     guidata(hObject, handles);

@@ -55,7 +55,11 @@ function NaturalSubjectMetadataEntry_OpeningFcn(hObject, eventdata, handles, var
 % Choose default command line output for NaturalSubjectMetadataEntry
 handles.output = hObject;
 
+handles.userName = varargin{1}; %Param is userName
+handles.importPath = varargin{2}; % Param is importPath
 
+%Display the import path name
+set(handles.importPathTitle, 'String', strcat('Import Path:', handles.importPath));
 
 %Defining the different input variables as empty, awaiting user input
 handles.age = [];
@@ -162,13 +166,8 @@ function genderInput_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from genderInput
 
 %Get value from popup list
-contents = cellstr(get(hObject,'String'));
-handles.gender = contents{get(hObject,'Value')};
+[genderChoice,~] = choicesFromEnum('GenderTypes');
 
-%Check if value is default value
-if strcmp(handles.gender, handles.genderChoiceListDefault)
-    handles.gender = '';
-end
 
 checkToEnableOkButton(handles);
 
@@ -198,9 +197,9 @@ function diagnosisInput_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns diagnosisInput contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from diagnosisInput
 
-%Get value from popup list
-contents = cellstr(get(hObject,'String'));
-handles.ADDiagnosis = contents{get(hObject,'Value')};
+
+
+[~, diagnosisChoice] = choicesFromEnum('DiagnosisTypes');
 
 %Check if value is default value
 if strcmp(handles.ADDiagnosis, handles.diagnosisChoiceListDefault)
