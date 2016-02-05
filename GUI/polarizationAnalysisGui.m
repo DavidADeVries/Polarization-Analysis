@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 04-Feb-2016 14:34:39
+% Last Modified by GUIDE v2.5 05-Feb-2016 11:18:37
 
 % Begin initialization code - DO NOT EDIT
 
@@ -82,18 +82,18 @@ function varargout = polarizationAnalysisGui_OutputFcn(hObject, eventdata, handl
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in selectNetwork.
-function selectNetwork_Callback(hObject, eventdata, handles)
-% hObject    handle to selectNetwork (see GCBO)
+% --- Executes on button press in selectNetworkPath.
+function selectNetworkPath_Callback(hObject, eventdata, handles)
+% hObject    handle to selectNetworkPath (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 selectNetworkPath(hObject, eventdata, handles);
 
 
-% --- Executes on button press in selectLocalDirectory.
-function selectLocalDirectory_Callback(hObject, eventdata, handles)
-% hObject    handle to selectLocalDirectory (see GCBO)
+% --- Executes on button press in selectLocalPath.
+function selectLocalPath_Callback(hObject, eventdata, handles)
+% hObject    handle to selectLocalPath (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -108,73 +108,6 @@ function importData_ClickedCallback(hObject, eventdata, handles)
 
 importData(hObject, eventdata, handles);
 
-% --- Executes on button press in registerImages.
-function registerImages_Callback(hObject, eventdata, handles)
-% hObject    handle to registerImages (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in performAnalysis.
-function performAnalysis_Callback(hObject, eventdata, handles)
-% hObject    handle to performAnalysis (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in performStats.
-function performStats_Callback(hObject, eventdata, handles)
-% hObject    handle to performStats (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-
-function edit1_Callback(hObject, eventdata, handles)
-% hObject    handle to edit1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit1 as text
-%        str2double(get(hObject,'String')) returns contents of edit1 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function edit2_Callback(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit2 as text
-%        str2double(get(hObject,'String')) returns contents of edit2 as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function edit2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
 
 function userNameTextbox_Callback(hObject, eventdata, handles)
 % hObject    handle to userNameTextbox (see GCBO)
@@ -183,6 +116,8 @@ function userNameTextbox_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of userNameTextbox as text
 %        str2double(get(hObject,'String')) returns contents of userNameTextbox as a double
+
+userNameTextbox(hObject, eventdata, handles);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -198,34 +133,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pushbutton7.
-function pushbutton7_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton7 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton8.
-function pushbutton8_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton8 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton9.
-function pushbutton9_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton9 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton10.
-function pushbutton10_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton10 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
 % --- Executes on selection change in trialSelect.
 function trialSelect_Callback(hObject, eventdata, handles)
 % hObject    handle to trialSelect (see GCBO)
@@ -237,35 +144,9 @@ function trialSelect_Callback(hObject, eventdata, handles)
 
 trialSelect(hObject, eventdata, handles);
 
-
-
-
 % --- Executes during object creation, after setting all properties.
 function trialSelect_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to trialSelect (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: listbox controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes on selection change in listbox3.
-function listbox3_Callback(hObject, eventdata, handles)
-% hObject    handle to listbox3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns listbox3 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from listbox3
-
-
-% --- Executes during object creation, after setting all properties.
-function listbox3_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to listbox3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -372,13 +253,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pushbutton11.
-function pushbutton11_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton11 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
 % --- Executes on selection change in sessionSelect.
 function sessionSelect_Callback(hObject, eventdata, handles)
 % hObject    handle to sessionSelect (see GCBO)
@@ -466,18 +340,6 @@ function downlinkNetworkToLocal_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-
-
-
-% --- Executes on button press in radiobutton1.
-function radiobutton1_Callback(hObject, eventdata, handles)
-% hObject    handle to radiobutton1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of radiobutton1
-
-
 % --------------------------------------------------------------------
 function openInNewFigure_ClickedCallback(hObject, eventdata, handles)
 % hObject    handle to openInNewFigure (see GCBO)
@@ -485,9 +347,6 @@ function openInNewFigure_ClickedCallback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 openInNewFigure(hObject, eventdata, handles);
-
-
-
 
 
 function subjectMetadata_Callback(hObject, eventdata, handles)
@@ -637,3 +496,14 @@ function sessionMenu_Callback(hObject, eventdata, handles)
 % hObject    handle to sessionMenu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on key press with focus on userNameTextbox and none of its controls.
+function userNameTextbox_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to userNameTextbox (see GCBO)
+% eventdata  structure with the following fields (see UICONTROL)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+

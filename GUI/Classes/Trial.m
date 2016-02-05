@@ -13,7 +13,7 @@ classdef Trial
         subjects
         subjectIndex = 0
         
-        subjectType % natural, artifical
+        subjectType % dog, human, artifical
         
         notes
     end

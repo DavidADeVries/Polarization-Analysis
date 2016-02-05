@@ -4,7 +4,7 @@ function [ ] = selectNetworkPath(hObject, eventdata, handles)
 %   a directory is selected, from which appropriate metadata is gathered
 %   and data is found
 
-title = 'Select Network Directory (Shared/Backed-up Drive Recommended)';
+title = 'Select Network Directory (Sub-Directory of Y:\ Recommended)';
 
 networkPath = uigetdir('C:\', title);
 
@@ -22,13 +22,26 @@ if networkPath ~= 0 % folder has been successfully selected
         handles.networkPath = networkPath;
         
         set(handles.networkDirectoryLabel, 'String', networkPath);
-         
+                 
         guidata(hObject, handles); %update variables
-    else %an project directory with no metadata was selected
-        error = 'The directory selected is not a valid project directory. Please select a directory that contains a project metadata file or create the appropriate metadata file.';
-        error_name = 'Invalid Project Directory';
+    else %a project directory with no metadata was selected
+        prompt = 'The network project directory selected did not contain any project data. Would you like to still use this directory as your network project directory? You will have to uplink a local project in order to setup a project in this network directory.';
+        title = 'Network Project Directory';
+        yes = 'Yes';
+        no = 'No';
+        default = yes;
         
-       errordlg(error, error_name, 'modal'); 
+        button = questdlg(prompt, title, yes, no, default);
+        
+        if strcmp(button, yes)
+            handles.networkPath = networkPath;
+            handles.networkProject = Project; %empty project
+            
+            set(handles.networkDirectoryLabel, 'String', networkPath);
+            
+            guidata(hObject, handles);
+        end     
+        
     end   
     
 end
