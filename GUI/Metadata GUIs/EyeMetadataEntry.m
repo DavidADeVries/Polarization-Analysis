@@ -67,7 +67,7 @@ end
 handles.userName = varargin{3};% Parameter name is 'userName' 
 handles.importPath = varargin{4};% Parameter name is 'importPath' 
 
-set(handles.importPathTitle, 'String', strcat('Import Path: ', handles.importPath));
+set(handles.importPathTitle, 'String', handles.importPath);
 set(handles.dissectionDoneByInput, 'String', handles.userName);
 
 %Set default Eye number based on input to function

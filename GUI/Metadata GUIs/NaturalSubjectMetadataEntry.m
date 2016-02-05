@@ -59,7 +59,7 @@ handles.userName = varargin{1}; %Param is userName
 handles.importPath = varargin{2}; % Param is importPath
 
 %Display the import path name
-set(handles.importPathTitle, 'String', strcat('Import Path:', handles.importPath));
+set(handles.importPathTitle, 'String', handles.importPath);
 
 %Defining the different input variables as empty, awaiting user input
 handles.age = [];

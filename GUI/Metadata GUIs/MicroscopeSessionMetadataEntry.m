@@ -71,7 +71,7 @@ handles.sessionNotes = '';
 handles.rejected = 0;
 handles.rejectedReason = '';
 
-set(handles.importPathTitle, 'String', strcat('Import Path: ', handles.importPath));
+set(handles.importPathTitle, 'String', handles.importPath);
 set(handles.sessionDoneByInput, 'String', handles.userName);
 set(handles.yesRejectedButton, 'Value', 0);
 set(handles.noRejectedButton, 'Value', 1);
