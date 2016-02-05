@@ -168,10 +168,10 @@ function eyeTypeList_Callback(hObject, eventdata, handles)
 
 %Set the list of choices for the popupmenu
 
+[choices, ~] = choicesFromEnum('EyeTypes');
 
 %Get value from popup list
-contents = cellstr(get(hObject,'String'));
-handles.eyeTypeChoice = contents{get(hObject,'Value')};
+handles.eyeTypeChoice = choices{get(hObject, 'Value') - 1}; % TODO: fix eyeType saving
 
 %Check if value is default value
 if strcmp(handles.eyeTypeChoice, handles.choiceListDefault) 
