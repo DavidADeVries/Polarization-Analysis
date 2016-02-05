@@ -238,7 +238,15 @@ classdef Location
         end
         
         function metadataString = getMetadataString(location)
-            metadataString = {'Location Metadata'};
+            
+            locationNumberString = ['Location Number; ', location.locationNumber];
+            depositString = ['Deposit: ', location.deposit];
+            locationCoordsString = ['Location Coordinates: ', location.locationCoords];
+            sessionsString = ['Session: ', location.sessions];
+            locationNotesString = ['Notes; ', location.notes];
+            
+            metadataString = {locationNumberString, depositString, locationCoordsString, sessionsString, locationNotesString};
+            
         end
         
         function location = updateSessionIndex(location, index)

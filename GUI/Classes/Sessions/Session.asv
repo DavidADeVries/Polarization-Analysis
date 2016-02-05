@@ -92,11 +92,11 @@ classdef Session
             
             sessionDateString = ['Date: ', session.sessionDate];
             sessionDoneByString = ['Done By: ', session.sessionDoneBy];
-            sessionNumberString = ['Session Number: ', session.sessionNumber];
-            rejectedString = ['Rejected: ' , session.rejected];
-            rejectedReasonString = ['Rejected Reason: ', session.rejectedReason];
-            rejectedByString = ['Rejected By: ', session.rejectedBy];
-            sessionNotesString = ['Notes: ', session.notes];
+            sessionNumberString = ['Session Number
+            rejectedString
+            rejectedReasonString
+            rejectedByString
+            sessionNotesString
             
         end
     end

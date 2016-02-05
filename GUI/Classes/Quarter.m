@@ -263,9 +263,20 @@ classdef Quarter
                 handles = location.updateMetadataFields(handles);
             end
         end
-        
+       
         function metadataString = getMetadataString(quarter)
-            metadataString = {'Quarter Metadata'};
+            
+            fixingDateString = ['Fixing Date: ', quarter.fixingDate];
+            fixingDoneByString = ['Fixing Done By: ', quarter.fixingDoneBy];
+            stainString = ['Stain: ', quarter.stain];
+            slideMaterialString = ['Slide Material: ', quarter.slideMaterial];
+            quarterTypeString = ['Quarter Type: ', quarter.quarterType];
+            quarterNumberString = ['Quarter number: ', quarter.quarterNumber];
+            quarterArbitraryString = ['Quarter Arbitrary: ', quarter.quarterArbitrary];
+            locationsString = ['Location: ', quarter.locations];
+            quarterNotesString = ['Notes: ', quarter.notes];
+            
+            metadataString = {'Quarter:', fixingDateString, fixingDoneByString, stainString, slideMaterialString, quarterTypeString, quarterNumberString, quarterArbitraryString, locationsString, quarterNotesString};
         end
         
         function quarter = updateLocationIndex(quarter, index)

@@ -226,7 +226,7 @@ classdef Location
         end
         
         function handles = updateMetadataFields(location, handles)
-            session = location.getSelectedEye();
+            session = location.getSelectedSession();
                         
             if isempty(session)
                 disableMetadataFields(handles, handles.sessionMetadata);
@@ -234,9 +234,11 @@ classdef Location
                 metadataString = session.getMetadataString();
                 
                 set(handles.sessionMetadata, 'String', metadataString);
-                
-                handles = session.updateMetadataFields(handles);
             end
+        end
+        %---
+        function metadataString = getMetadataString(location)
+            metadataString = {'Location Metadata'};
         end
         
         function location = updateSessionIndex(location, index)

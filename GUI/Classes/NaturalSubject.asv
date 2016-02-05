@@ -178,7 +178,7 @@ classdef NaturalSubject < Subject
                 handles = eye.updateMetadataFields(handles, eyeMetadataString);
             end
         end
-       
+        %---
         function metadataString = getMetadataString(subject)
             
             [subjectIdString, subjectNumberString, subjectNotesString] = getSubjectMetadataString(subject);
@@ -186,11 +186,9 @@ classdef NaturalSubject < Subject
             ageString = ['Age: ', subject.age];
             genderString = ['Gender; ', subject.gender];
             ADDiagnosisString = ['AD Diagnosis: ', subject.ADDiagnosis];
-            causeOfDeathString = ['Cause of Death: ', subject.causeOfDeath];
-            eyesString = ['Eyes: ', subject.eyes];
+            causeOfDeathString = ['Cause of Deat
             
-            metadataString = {subjectIdString, subjectNumberString, ageString, genderString, ADDiagnosisString, causeOfDeathString, eyesString, subjectNotesString};
-            
+            metadataString = {subjectIdString, subjectNumberString, subjectNotesString};
         end
         
         function subject = updateEyeIndex(subject, index)            
