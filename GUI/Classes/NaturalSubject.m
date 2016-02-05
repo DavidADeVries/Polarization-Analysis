@@ -121,49 +121,18 @@ classdef NaturalSubject < Subject
             lastEyeNumber = max(subject.getEyeNumbers());
             nextEyeNumber = lastEyeNumber + 1;
         end
-        
+       
         function subject = enterMetadata(subject, importPath, userName)
-            % age:
-            prompt = 'Enter subject''s age (decimal number only):';
-            title = 'Subject Age';
             
-            subject.age = str2double(inputdlg(prompt, title));
+            %Call to NaturalSubjectMetadataEntry GUI
+            [age, gender, ADDiagnosis, causeOfDeath, notes] = NaturalSubjectMetadataEntry(userName, importPath);
             
-            % gender
-            prompt = 'Choose subject''s gender';
-            selectionMode = 'single';
-            title = 'Subject Gender';
-            
-            [choices, choiceStrings] = choicesFromEnum('GenderTypes');
-            
-            [selection, ok] = listdlg('ListString', choiceStrings, 'SelectionMode', selectionMode, 'Name', title, 'PromptString', prompt);
-            
-            subject.gender = choices(selection);
-            
-            %ADDiagnosis
-            prompt = 'Choose subject''s AD Diagnosis';
-            selectionMode = 'single';
-            title = 'Subject AD Diagnosis';
-            
-            [choices, choiceStrings] = choicesFromEnum('DiagnosisTypes');
-            
-            [selection, ok] = listdlg('ListString', choiceStrings, 'SelectionMode', selectionMode, 'Name', title, 'PromptString', prompt);
-            
-            subject.ADDiagnosis = choices(selection);
-            
-            %causeOfDeath
-            prompt = 'Enter subject''s cause of death:';
-            title = 'Subject Cause of Death';
-            
-            response = inputdlg(prompt, title);
-            subject.causeOfDeath = response{1};
-            
-            %notes
-            prompt = 'Enter subject notes:';
-            title = 'Subject Notes';
-            
-            response = inputdlg(prompt, title);
-            subject.notes = response{1};
+            %Assigning values to NaturalSubject Properties
+            subject.age = age;
+            subject.gender = gender;
+            subject.ADDiagnosis = ADDiagnosis;
+            subject.causeOfDeath = causeOfDeath;
+            subject.notes = notes;
             
         end
         
