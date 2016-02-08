@@ -22,7 +22,7 @@ function varargout = LocationMetadataEntry(varargin)
 
 % Edit the above text to modify the response to help LocationMetadataEntry
 
-% Last Modified by GUIDE v2.5 08-Feb-2016 14:51:35
+% Last Modified by GUIDE v2.5 08-Feb-2016 15:43:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -201,6 +201,7 @@ handles.yCoords = [];
 handles.locationNumber = str2double(handles.suggestedLocationNumber);
 handles.deposit = 1;
 handles.locationNotes = '';
+handles.coordsUnknown = false;
 handles.marker = plot(handles.xCoords, handles.yCoords, handles.MarkerStyle, 'MarkerSize', handles.MarkerSize, 'MarkerEdgeColor', handles.MarkerEdgeColor, 'MarkerFaceColor', handles.MarkerFaceColor, 'Visible', 'off'); 
 
 
@@ -607,4 +608,3 @@ else
 end
 
 end
-
