@@ -22,8 +22,16 @@ if importDir ~= 0 %dir successfully selected
     if ok
         trial = project.getTrialFromChoice(selection);
         
+        while true
+            prompt = '
+        end
+        
         if trial.subjectType.subjectClass == SubjectClassTypes.Natural
             
+        elseif trial.subjectType.subjectClass == SubjectClassTypes.Artifical
+            
+        else
+            error('Invalid subject type');
         end
     end
 end
