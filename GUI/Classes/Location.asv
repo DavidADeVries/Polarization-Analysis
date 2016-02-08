@@ -104,17 +104,45 @@ classdef Location
             end   
         end
         
-        function location = enterMetadata(location, suggestedLocationNumber, subjectType, eyeType, quarterType, importPath)
+        function location = enterMetadata(location, suggestedLocationNumber, subjectType, eyeType, quarterType, importPath, userName)
+            %locationNumber
+            prompt = {'Enter Location Number:'};
+            title = 'Location Number';
+            numLines = 1;
+            defaultAns = {num2str(suggestedLocationNumber)};
             
-            %Call to LocationMetadataEntry Function
-            [coords, locationNumber, deposit, notes] = LocationMetadataEntry(eyeType, subjectType, quarterType, suggestedLocationNumber, importPath);
+            location.locationNumber = str2double(inputdlg(prompt, title, numLines, defaultAns));
             
-            %Assigning values to the location class properties
-            location.locationNumber = locationNumber;
+            
+            % deposit
+            
+            prompt = 'Is the location a blank, control field';
+            selectionMode = 'single';
+            title = 'Deposit at Location';
+            choices = {'Control Field','Deposit Field'};
+            
+            [selection, ok] = listdlg('ListString', choices, 'SelectionMode', selectionMode, 'Name', title, 'PromptString', prompt);
+            
+            if selection == 1
+                deposit = false;
+            else
+                deposit = true;
+            end               
+                
             location.deposit = deposit;
-            location.locationCoords = coords;
-            location.notes = notes;
             
+            % locationCoords 
+            
+            location.locationCoords = 'N/A';
+            
+                       
+            %notes
+            
+            prompt = 'Enter Location notes:';
+            title = 'Location Notes';
+            
+            response = inputdlg(prompt, title);
+            location.notes = response{1}; 
         end
         
         function nextSessionNumber = getNextSessionNumber(location)
