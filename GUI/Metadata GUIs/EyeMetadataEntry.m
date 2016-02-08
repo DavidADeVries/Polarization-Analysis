@@ -92,7 +92,7 @@ set(handles.eyeTypeList, 'String', choiceList);
 %Defining the different input variables as empty, awaiting user input
 handles.eyeId = ''; 
 handles.eyeTypeChoice = [];
-handles.eyeNumber = handles.suggestedEyeNumber;
+handles.eyeNumber = str2double(handles.suggestedEyeNumber);
 handles.dissectionDate = '';
 handles.dissectionDoneBy = handles.userName;
 handles.eyeNotes = '';
@@ -219,7 +219,7 @@ end
 checkToEnableOkButton(handles);
 
 guidata(hObject, handles);
-% --- Executes during object creation, after setting all properties.
+
 end
 
 function eyeNumberInput_CreateFcn(hObject, eventdata, handles)
