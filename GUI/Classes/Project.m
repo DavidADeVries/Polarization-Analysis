@@ -179,6 +179,14 @@ classdef Project
                 fileSelection = [];
             end
         end
+        
+        function project = incrementFileIndex(project, increment)            
+            trial = project.getSelectedTrial();
+            
+            trial = trial.incrementFileIndex(increment);
+            
+            project = project.updateTrial(trial);
+        end
     end
     
 end

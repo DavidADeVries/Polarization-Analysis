@@ -255,6 +255,14 @@ classdef Eye
                 fileSelection = [];
             end
         end
+        
+        function eye = incrementFileIndex(eye, increment)            
+            quarter = eye.getSelectedQuarter();
+            
+            quarter = quarter.incrementFileIndex(increment);
+            
+            eye = eye.updateQuarter(quarter);
+        end
     end
     
 end

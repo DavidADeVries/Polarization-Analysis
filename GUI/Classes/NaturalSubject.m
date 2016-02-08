@@ -236,6 +236,14 @@ classdef NaturalSubject < Subject
                 fileSelection = [];
             end
         end
+        
+        function subject = incrementFileIndex(subject, increment)            
+            eye = subject.getSelectedEye();
+            
+            eye = eye.incrementFileIndex(increment);
+            
+            subject = subject.updateEye(eye);
+        end
     end
     
 end

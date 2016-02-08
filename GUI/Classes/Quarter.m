@@ -305,6 +305,14 @@ classdef Quarter
                 fileSelection = [];
             end
         end
+        
+        function quarter = incrementFileIndex(quarter, increment)            
+            location = quarter.getSelectedLocation();
+            
+            location = location.incrementFileIndex(increment);
+            
+            quarter = quarter.updateLocation(location);
+        end
     end
     
 end

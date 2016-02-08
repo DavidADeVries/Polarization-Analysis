@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 05-Feb-2016 11:18:37
+% Last Modified by GUIDE v2.5 08-Feb-2016 12:35:06
 
 % Begin initialization code - DO NOT EDIT
 
@@ -68,7 +68,7 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 % UIWAIT makes polarizationAnalysisGui wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+% uiwait(handles.polarizationAnalysisGui);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -507,3 +507,41 @@ function userNameTextbox_KeyPressFcn(hObject, eventdata, handles)
 %	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
 % handles    structure with handles and user data (see GUIDATA)
 
+
+
+
+
+% --- Executes on key press with focus on fileSelect and none of its controls.
+function fileSelect_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to fileSelect (see GCBO)
+% eventdata  structure with the following fields (see UICONTROL)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+
+fileSelectKeyPressFcn(hObject, eventdata, handles);
+
+
+
+
+% --------------------------------------------------------------------
+function Untitled_1_Callback(hObject, eventdata, handles)
+% hObject    handle to Untitled_1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function importLegacyData_Callback(hObject, eventdata, handles)
+% hObject    handle to importLegacyData (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+importLegacyData(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function importDataCollectionSession_Callback(hObject, eventdata, handles)
+% hObject    handle to importDataCollectionSession (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

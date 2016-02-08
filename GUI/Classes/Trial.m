@@ -200,6 +200,14 @@ classdef Trial
                 fileSelection = [];
             end
         end
+        
+        function trial = incrementFileIndex(trial, increment)            
+            subject = trial.getSelectedSubject();
+            
+            subject = subject.incrementFileIndex(increment);
+            
+            trial = trial.updateSubject(subject);
+        end
     end
     
 end

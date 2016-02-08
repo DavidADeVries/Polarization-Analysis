@@ -270,6 +270,14 @@ classdef Location
                 fileSelection = [];
             end
         end
+        
+        function location = incrementFileIndex(location, increment)            
+            session = location.getSelectedSession();
+            
+            session = session.incrementFileIndex(increment);
+            
+            location = location.updateSession(session);
+        end
     end
     
 end

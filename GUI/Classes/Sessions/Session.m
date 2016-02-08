@@ -88,6 +88,22 @@ classdef Session
                 fileSelection = [];
             end
         end
+        
+        function session = incrementFileIndex(session, increment)            
+            subfolderSelection = session.getSubfolderSelection();
+            
+            subfolderSelection = incrementFileIndex(subfolderSelection, increment);
+            
+            index = subfolderSelection.fileIndex;
+            
+            newIndex = index + increment;
+            
+            newIndex = (mod(newIndex-1, length(subfolderSelection.filesInDir))) + 1;
+            
+            subfolderSelection.fileIndex = newIndex;
+            
+            session = session.updateFileIndex(newIndex);
+        end
     end
     
 end

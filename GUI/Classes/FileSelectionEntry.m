@@ -53,6 +53,31 @@ classdef FileSelectionEntry
                 handles = updateImageAxes(handles, entry.getFileSelection());
             end
         end
+        
+        function fileSelection = incrementFileIndex(fileSelection, increment)
+            index = fileSelection.fileIndex;
+            
+            files = fileSelection.filesInDir;
+            numFiles = length(files);
+            
+            newIndex = index + increment;            
+            newIndex = (mod(newIndex-1, numFiles)) + 1; % loop around appropriately
+            
+            nudge = increment/abs(increment);
+            
+            counter = 0;
+            
+            while ~openableFile(files{newIndex}) && counter < numFiles
+                newIndex = index + nudge;            
+                newIndex = (mod(newIndex-1, numFiles)) + 1; % loop around appropriately
+                
+                counter = counter + 1;
+            end
+            
+            if counter ~= numFiles %suitable file found, update index
+                fileSelection.fileIndex = newIndex;
+            end
+        end
     end
     
 end
