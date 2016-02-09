@@ -39,7 +39,7 @@ classdef NaturalSubject < Subject
             end
         end
         
-        function subject = importSubject(subject, subjectProjectPath, subjectImportPath, projectPath, userName)           
+        function subject = importSubject(subject, subjectProjectPath, subjectImportPath, projectPath, userName, subjectType)           
             dirList = getAllFolders(subjectImportPath);
             
             importEyeNumbers = getNumbersFromFolderNames(dirList);
@@ -68,7 +68,7 @@ classdef NaturalSubject < Subject
                 
                 eyeProjectPath = makePath(subjectProjectPath, eye.dirName);
                 
-                eye = eye.importEye(eyeProjectPath, eyeImportPath, projectPath, dataFilename, userName);
+                eye = eye.importEye(eyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType);
                 
                 subject = subject.updateEye(eye);
             end            

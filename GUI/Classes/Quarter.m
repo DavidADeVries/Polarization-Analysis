@@ -50,7 +50,7 @@ classdef Quarter
             end
         end
         
-        function quarter = importQuarter(quarter, quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName)
+        function quarter = importQuarter(quarter, quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType, eyeType)
             dirList = getAllFolders(quarterImportPath);
             
             importLocationNumbers = getNumbersFromFolderNames(dirList);
@@ -66,7 +66,7 @@ classdef Quarter
                 if isempty(indices) % new location
                     location = Location;
                     
-                    location = location.enterMetadata(importLocationNumbers{i}, locationImportPath, userName);
+                    location = location.enterMetadata(importLocationNumbers{i}, subjectType, eyeType, quarter.quarterType, locationImportPath);
                     
                     % make directory/metadata file
                     location = location.createDirectories(quarterProjectPath, projectPath);
@@ -79,7 +79,7 @@ classdef Quarter
                 
                 locationProjectPath = makePath(quarterProjectPath, location.dirName);
                 
-                location = location.importLocation(locationProjectPath, locationImportPath, projectPath, dataFilename);
+                location = location.importLocation(locationProjectPath, locationImportPath, projectPath, dataFilename, userName);
                 
                 quarter = quarter.updateLocation(location);
             end

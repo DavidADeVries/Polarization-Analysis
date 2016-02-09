@@ -99,7 +99,7 @@ if importDir ~= 0 %dir successfully selected
             
             toSubjectPath = makePath(toTrialPath, subject.dirName);
             
-            subject = subject.importSubject(toSubjectPath, importDir, handles.localPath, handles.userName);
+            subject = subject.importSubject(toSubjectPath, importDir, handles.localPath, handles.userName, selectedTrial.subjectType);
             
             selectedTrial = selectedTrial.updateSubject(subject);
                         
@@ -109,7 +109,7 @@ if importDir ~= 0 %dir successfully selected
             
             % update list boxes
             
-            updateNavigationListboxes(handles);
+            handles = project.updateNavigationListboxes(handles);
             
             guidata(hObject, handles);
             

@@ -48,7 +48,7 @@ classdef Eye
             end
         end
         
-        function eye = importEye(eye, eyeProjectPath, eyeImportPath, projectPath, dataFilename, userName)  
+        function eye = importEye(eye, eyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType)  
             dirList = getAllFolders(eyeImportPath);
             
             importQuarterNumbers = getNumbersFromFolderNames(dirList);
@@ -77,7 +77,7 @@ classdef Eye
                 
                 quarterProjectPath = makePath(eyeProjectPath, quarter.dirName);
                 
-                quarter = quarter.importQuarter(quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName);
+                quarter = quarter.importQuarter(quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType, eye.eyeType);
                 
                 eye = eye.updateQuarter(quarter);
             end
