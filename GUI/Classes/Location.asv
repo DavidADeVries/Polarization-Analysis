@@ -215,7 +215,7 @@ classdef Location
             
             locationNumberString = ['Location Number: ', num2str(location.locationNumber)];
             depositString = ['Deposit: ', booleanToString(location.deposit)];
-            locationCoordsString = ['Location Coordinates: ', coordsIntoString(location.locationCoords(1), location.locationCoords(2))];
+            locationCoordsString = ['Location Coordinates: ', location.locationCoords];
             locationNotesString = ['Notes: ', location.notes];
             
             metadataString = {locationNumberString, depositString, locationCoordsString, locationNotesString};
@@ -258,6 +258,9 @@ classdef Location
             session = session.incrementFileIndex(increment);
             
             location = location.updateSession(session);
+        end
+        function coordsString = coordsIntoString(xValue, yValue)
+            coordsString = [num2str(xValue)
         end
     end
     
