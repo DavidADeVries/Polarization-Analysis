@@ -14,6 +14,8 @@ classdef Constants
         MATLAB_EXT = '.mat';
         
         FIGURE_INIT_SIZE_WARNING_ID = 'images:initSize:adjustingMag';
+        
+        DEFAULT_EYE_TYPE = EyeTypes.Right;
     end
     
     methods

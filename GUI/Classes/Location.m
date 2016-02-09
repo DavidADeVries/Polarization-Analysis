@@ -106,45 +106,17 @@ classdef Location
             end   
         end
         
-        function location = enterMetadata(location, suggestedLocationNumber, importPath, userName)
-            %locationNumber
-            prompt = {'Enter Location Number:'};
-            title = 'Location Number';
-            numLines = 1;
-            defaultAns = {num2str(suggestedLocationNumber)};
+        function location = enterMetadata(location, suggestedLocationNumber, subjectType, eyeType, quarterType, importPath)
             
-            location.locationNumber = str2double(inputdlg(prompt, title, numLines, defaultAns));
+            %Call to LocationMetadataEntry Function
+            [coords, locationNumber, deposit, notes] = LocationMetadataEntry(eyeType, subjectType, quarterType, suggestedLocationNumber, importPath);
             
-            
-            % deposit
-            
-            prompt = 'Is the location a blank, control field';
-            selectionMode = 'single';
-            title = 'Deposit at Location';
-            choices = {'Control Field','Deposit Field'};
-            
-            [selection, ok] = listdlg('ListString', choices, 'SelectionMode', selectionMode, 'Name', title, 'PromptString', prompt);
-            
-            if selection == 1
-                deposit = false;
-            else
-                deposit = true;
-            end               
-                
+            %Assigning values to the location class properties
+            location.locationNumber = locationNumber;
             location.deposit = deposit;
+            location.locationCoords = coords;
+            location.notes = notes;
             
-            % locationCoords 
-            
-            location.locationCoords = 'N/A';
-            
-                       
-            %notes
-            
-            prompt = 'Enter Location notes:';
-            title = 'Location Notes';
-            
-            response = inputdlg(prompt, title);
-            location.notes = response{1}; 
         end
         
         function nextSessionNumber = getNextSessionNumber(location)
@@ -240,7 +212,15 @@ classdef Location
         end
         
         function metadataString = getMetadataString(location)
-            metadataString = {'Location Metadata'};
+            
+            locationNumberString = ['Location Number; ', location.locationNumber];
+            depositString = ['Deposit: ', location.deposit];
+            locationCoordsString = ['Location Coordinates: ', location.locationCoords];
+            sessionsString = ['Session: ', location.sessions];
+            locationNotesString = ['Notes; ', location.notes];
+            
+            metadataString = {locationNumberString, depositString, locationCoordsString, sessionsString, locationNotesString};
+            
         end
         
         function location = updateSessionIndex(location, index)

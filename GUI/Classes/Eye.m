@@ -209,7 +209,18 @@ classdef Eye
         end        
         
         function metadataString = getMetadataString(eye)
-            metadataString = {'Eye Metadata'};
+            
+            eyeIdString = ['Eye ID: ', eye.eyeId];
+            eyeTypeString = ['Eye Type: ', eye.eyeType];
+            eyeNumberString = ['Eye Number: ', eye.eyeNumber];
+            dissectionDateString = ['Dissection Date: ', eye.dissectionDate];
+            dissectionDoneByString = ['Dissection Done By: ', eye.dissectionDoneBy];
+            quartersString = ['Quarter: ', eye.quarters];
+            eyeNotesString = ['Notes: ', eye.notes];
+            
+            
+            metadataString = {'Eye:', eyeIdString, eyeTypeString, eyeNumberString, dissectionDateString, dissectionDoneByString, quartersString, eyeNotesString};
+            
         end
         
         function eye = updateQuarterSampleIndex(eye, index)

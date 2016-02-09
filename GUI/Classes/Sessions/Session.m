@@ -106,6 +106,17 @@ classdef Session
             
             session = session.updateFileIndex(newIndex);
         end
+        
+        function [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString] = getSessionMetadataString(session)
+            
+            sessionDateString = ['Date: ', session.sessionDate];
+            sessionDoneByString = ['Done By: ', session.sessionDoneBy];
+            sessionNumberString = ['Session Number: ', session.sessionNumber];
+            rejectedString = ['Rejected: ' , session.rejected];
+            rejectedReasonString = ['Rejected Reason: ', session.rejectedReason];
+            rejectedByString = ['Rejected By: ', session.rejectedBy];
+            sessionNotesString = ['Notes: ', session.notes];
+        end
     end
     
 end

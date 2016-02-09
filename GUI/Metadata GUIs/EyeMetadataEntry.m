@@ -67,7 +67,7 @@ end
 handles.userName = varargin{3};% Parameter name is 'userName' 
 handles.importPath = varargin{4};% Parameter name is 'importPath' 
 
-set(handles.importPathTitle, 'String', strcat('Import Path: ', handles.importPath));
+set(handles.importPathTitle, 'String', handles.importPath);
 set(handles.dissectionDoneByInput, 'String', handles.userName);
 
 %Set default Eye number based on input to function
@@ -91,8 +91,8 @@ set(handles.eyeTypeList, 'String', choiceList);
 
 %Defining the different input variables as empty, awaiting user input
 handles.eyeId = ''; 
-handles.eyeTypeChoice = '';
-handles.eyeNumber = handles.suggestedEyeNumber;
+handles.eyeTypeChoice = [];
+handles.eyeNumber = str2double(handles.suggestedEyeNumber);
 handles.dissectionDate = '';
 handles.dissectionDoneBy = handles.userName;
 handles.eyeNotes = '';
@@ -166,16 +166,14 @@ function eyeTypeList_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns EyeTypeList contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from EyeTypeList
 
-%Set the list of choices for the popupmenu
-
 [choices, ~] = choicesFromEnum('EyeTypes');
 
-%Get value from popup list
-handles.eyeTypeChoice = choices{get(hObject, 'Value') - 1}; % TODO: fix eyeType saving
 
-%Check if value is default value
-if strcmp(handles.eyeTypeChoice, handles.choiceListDefault) 
-    handles.eyeTypeChoice = '';
+% Check if value is default value
+if get(hObject, 'Value') == 1 
+    handles.eyeTypeChoice = [];
+else
+    handles.eyeTypeChoice = choices(get(hObject, 'Value')-1); 
 end
 
 checkToEnableOkButton(handles);
@@ -221,7 +219,7 @@ end
 checkToEnableOkButton(handles);
 
 guidata(hObject, handles);
-% --- Executes during object creation, after setting all properties.
+
 end
 
 function eyeNumberInput_CreateFcn(hObject, eventdata, handles)
@@ -337,7 +335,7 @@ function EyeMetadataEntry_CloseRequestFcn(hObject, eventdata, handles)
 if isequal(get(hObject, 'waitstatus'), 'waiting')
     % The GUI is still in UIWAIT, us UIRESUME
     handles.eyeId = '';
-    handles.eyeTypeChoice = '';
+    handles.eyeTypeChoice = [];
     handles.eyeNumber = [];
     handles.dissectionDate = '';
     handles.dissectionDoneBy = '';
@@ -347,7 +345,7 @@ if isequal(get(hObject, 'waitstatus'), 'waiting')
 else
     % The GUI is no longer waiting, just close it
     handles.eyeId = '';
-    handles.eyeTypeChoice = '';
+    handles.eyeTypeChoice = [];
     handles.eyeNumber = [];
     handles.dissectionDate = '';
     handles.dissectionDoneBy = '';
@@ -381,7 +379,7 @@ switch exit
     case 'Yes'
         %Clears variables in the case that they wish to exit the program
         handles.eyeId = '';
-        handles.eyeTypeChoice = '';
+        handles.eyeTypeChoice = [];
         handles.eyeNumber = [];
         handles.dissectionDate = '';
         handles.dissectionDoneBy = '';

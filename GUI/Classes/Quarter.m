@@ -134,77 +134,20 @@ classdef Quarter
         end
         
         function quarter = enterMetadata(quarter, suggestedQuarterNumber, importPath, userName)
-                       
-            %stain
-            prompt = 'Enter Quarter stain:';
-            title = 'Quarter Stain';
+              
+            %Call to QuarterMetadataEntry GUI
+            [stain, slideMaterial, quarterType, quarterArbitrary, quarterNumber, fixingDate, fixingDoneBy, notes] = QuarterMetadataEntry(suggestedQuarterNumber, importPath, userName);
             
-            response = inputdlg(prompt, title);
-            quarter.stain = response{1};
+            %Assigning values to Quarter Properties
+            quarter.stain = stain;
+            quarter.slideMaterial = slideMaterial;
+            quarter.quarterType = quarterType;
+            quarter.quarterArbitrary = quarterArbitrary;
+            quarter.quarterNumber = quarterNumber;
+            quarter.fixingDate = fixingDate;
+            quarter.fixingDoneBy = fixingDoneBy;
+            quarter.notes = notes;
             
-            %slideMaterial
-            prompt = 'Enter Quarter slide material:';
-            title = 'Quarter Slide Material';
-            
-            response = inputdlg(prompt, title);
-            quarter.slideMaterial = response{1};
-            
-            %quarterLabel % one of [S,T,I,N] (superior, temporal, inferior, nasal, unknown]
-            prompt = 'Choose Quarter label:';
-            selectionMode = 'single';
-            title = 'Quarter Type';
-            
-            [choices, choiceStrings] = choicesFromEnum('QuarterTypes');
-            
-            [selection, ok] = listdlg('ListString', choiceStrings, 'SelectionMode', selectionMode, 'Name', title, 'PromptString', prompt);
-            
-            quarter.quarterType = choices(selection);
-            
-            
-            %quarterArbitrary % False if which quarter is which is truly known, true otherwise (choosing S,T,I,N is arbitrary, but consistent)
-            prompt = 'Do you know the true quarter location, or are did you arbitrarily decide which one would be which?';
-            selectionMode = 'single';
-            title = 'Quarter Type';
-            choices = {'I know the true quarter labels','I arbitrarily decided the quarter labels'};
-            
-            [selection, ok] = listdlg('ListString', choices, 'SelectionMode', selectionMode, 'Name', title, 'PromptString', prompt);
-            
-            if selection == 1
-                arbitrary = false;
-            else
-                arbitrary = true;
-            end               
-                
-            quarter.quarterArbitrary = arbitrary;
-                     
-            
-            %quarterNumber
-            prompt = {'Enter Quarter Number:'};
-            title = 'Quarter Number';
-            numLines = 1;
-            defaultAns = {num2str(suggestedQuarterNumber)};
-            
-            quarter.quarterNumber = str2double(inputdlg(prompt, title, numLines, defaultAns));
-            
-            %fixingDate
-            %fixingDoneBy
-            
-            prompt = {'Enter Quarter fixing date (e.g. Jan 1, 2016):', 'Enter Quarter fixing done by:'};
-            title = 'Quarter Fixing Information';
-            numLines = 2;
-            
-            responses = inputdlg(prompt, title, numLines);
-            
-            quarter.fixingDate = responses{1};
-            quarter.fixingDoneBy = responses{2};
-            
-            %notes
-            
-            prompt = 'Enter Quarter notes:';
-            title = 'Quarter Notes';
-            
-            response = inputdlg(prompt, title);
-            quarter.notes = response{1}; 
         end
         
         function quarter = createDirectories(quarter, toEyePath, projectPath)
@@ -265,9 +208,20 @@ classdef Quarter
                 handles = location.updateMetadataFields(handles);
             end
         end
-        
+       
         function metadataString = getMetadataString(quarter)
-            metadataString = {'Quarter Metadata'};
+            
+            fixingDateString = ['Fixing Date: ', quarter.fixingDate];
+            fixingDoneByString = ['Fixing Done By: ', quarter.fixingDoneBy];
+            stainString = ['Stain: ', quarter.stain];
+            slideMaterialString = ['Slide Material: ', quarter.slideMaterial];
+            quarterTypeString = ['Quarter Type: ', quarter.quarterType];
+            quarterNumberString = ['Quarter number: ', quarter.quarterNumber];
+            quarterArbitraryString = ['Quarter Arbitrary: ', quarter.quarterArbitrary];
+            locationsString = ['Location: ', quarter.locations];
+            quarterNotesString = ['Notes: ', quarter.notes];
+            
+            metadataString = {'Quarter:', fixingDateString, fixingDoneByString, stainString, slideMaterialString, quarterTypeString, quarterNumberString, quarterArbitraryString, locationsString, quarterNotesString};
         end
         
         function quarter = updateLocationIndex(quarter, index)

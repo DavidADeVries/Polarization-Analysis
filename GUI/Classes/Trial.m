@@ -149,7 +149,15 @@ classdef Trial
         end
         
         function metadataString = getMetadataString(trial)
-            metadataString = {'Trial Metadata'};
+            
+            trialTitleString = ['Title: ', trial.title];
+            trialDescriptionString = ['Description: ', trial.description];
+            trialNumberString = ['Trial Number: ', trial.trialNumber];
+            trialSubjectsString = ['Subjects: ', trial.subjects];
+            trialSubjectTypeString = ['Subject Type: ', trial.subjectType];
+            trialNotesString = ['Notes: ', trial.notes];
+            
+            metadataString = {trialTitleString, trialDescriptionString, trialNumberString, trialSubjectsString, trialSubjectTypeString, trialNotesString};
         end
         
         function trial = updateSubjectIndex(trial, index)            
