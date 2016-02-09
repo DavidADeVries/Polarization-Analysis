@@ -7,6 +7,8 @@ classdef Subject
         subjectId % person ID, dog name
         
         subjectNumber
+        
+        metadataHistory
                 
         notes
     end

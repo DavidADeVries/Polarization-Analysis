@@ -16,6 +16,8 @@ classdef Eye
         quarters
         quarterIndex = 0
         
+        metadataHistory
+        
         notes
     end
     

@@ -128,31 +128,7 @@ if importDir ~= 0 %dir successfully selected
                                     quarter = eye.getSelectedQuarter(choice);
                                 end
                                 
-                                % get location
-                                prompt = 'Please select the location that this data was from:';
-                                title = 'Select Location';
-                                choices = quarter.getLocationChoices();
                                 
-                                [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
-                                
-                                if ~cancel
-                                    if createNew
-                                        location = Location;
-                                        
-                                        location = location.enterMetadata(displayPath, handles.userName);
-                                        
-                                        toQuarterPath = makePath(toEyePath, quarter.dirName);
-                                        
-                                        location = location.createDirectories(toQuarterPath, handles);
-                                        
-                                        saveToBackup = true;
-                                        location.saveMetadata(makePath(toQuarterPath, location.dirName), handles, saveToBackup);
-                                    else
-                                        location = quarter.getSelectedLocation(choice);
-                                    end
-                                    
-                                    % import raw data
-                                end
                             end
                         end
                     end

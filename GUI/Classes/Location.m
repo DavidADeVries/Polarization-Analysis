@@ -14,6 +14,8 @@ classdef Location
         sessions
         sessionIndex = 0
         
+        metadataHistory
+        
         notes
     end
     

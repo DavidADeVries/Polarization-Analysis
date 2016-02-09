@@ -23,6 +23,8 @@ classdef Session
         rejectedReason % reason that this data was rejected (suspected poor imaging, out of focus
         rejectedBy
         
+        metadataHistory
+        
         notes
     end
     

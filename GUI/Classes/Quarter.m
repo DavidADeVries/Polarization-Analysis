@@ -18,6 +18,8 @@ classdef Quarter
         locations
         locationIndex = 0
         
+        metadataHistory
+        
         notes
     end
     
