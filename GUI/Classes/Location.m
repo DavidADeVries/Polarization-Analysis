@@ -213,13 +213,12 @@ classdef Location
         
         function metadataString = getMetadataString(location)
             
-            locationNumberString = ['Location Number; ', location.locationNumber];
-            depositString = ['Deposit: ', location.deposit];
+            locationNumberString = ['Location Number: ', num2str(location.locationNumber)];
+            depositString = ['Deposit: ', booleanToString(location.deposit)];
             locationCoordsString = ['Location Coordinates: ', location.locationCoords];
-            sessionsString = ['Session: ', location.sessions];
-            locationNotesString = ['Notes; ', location.notes];
+            locationNotesString = ['Notes: ', location.notes];
             
-            metadataString = {locationNumberString, depositString, locationCoordsString, sessionsString, locationNotesString};
+            metadataString = {locationNumberString, depositString, locationCoordsString, locationNotesString};
             
         end
         

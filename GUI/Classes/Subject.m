@@ -28,7 +28,7 @@ classdef Subject
         function [subjectIdString, subjectNumberString, subjectNotesString] = getSubjectMetadataString(subject)
             
             subjectIdString = ['Subject ID: ', subject.subjectId];
-            subjectNumberString = ['Subject Number: ', subject.subjectNumber];
+            subjectNumberString = ['Subject Number: ', num2str(subject.subjectNumber)];
             subjectNotesString = ['Notes: ', subject.notes];
 
         end

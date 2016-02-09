@@ -91,12 +91,12 @@ classdef MicroscopeSession < DataCollectionSession
             
             [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString] = getSessionMetadataString(session);
             
-            magnificationString = ['Magnification: ', session.magnification];
-            pixelSizeMicronsString = ['Pixel Size (microns): ', session.pixelSizeMicrons];
+            magnificationString = ['Magnification: ', num2str(session.magnification)];
+            pixelSizeMicronsString = ['Pixel Size (microns): ', num2str(session.pixelSizeMicrons)];
             instrumentString = ['Instrument: ', session.instrument];
-            fluoroSignatureString = ['Fluoro Signature: ', session.fluoroSignature];
-            crossedSignatureString = ['Crossed Signature: ', session.crossedSignature];
-            visualSignatureString = ['Visual Signature: ' ,session.visualSignature];
+            fluoroSignatureString = ['Fluoro Signature: ', booleanToString(session.fluoroSignature)];
+            crossedSignatureString = ['Crossed Signature: ', booleanToString(session.crossedSignature)];
+            visualSignatureString = ['Visual Signature: ', booleanToString(session.visualSignature)];
             
             
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, magnificationString, pixelSizeMicronsString, instrumentString, fluoroSignatureString, crossedSignatureString, visualSignatureString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};

@@ -152,12 +152,11 @@ classdef Trial
             
             trialTitleString = ['Title: ', trial.title];
             trialDescriptionString = ['Description: ', trial.description];
-            trialNumberString = ['Trial Number: ', trial.trialNumber];
-            trialSubjectsString = ['Subjects: ', trial.subjects];
-            trialSubjectTypeString = ['Subject Type: ', trial.subjectType];
+            trialNumberString = ['Trial Number: ', num2str(trial.trialNumber)];
+            trialSubjectTypeString = ['Subject Type: ', trial.subjectType.displayString];
             trialNotesString = ['Notes: ', trial.notes];
             
-            metadataString = {trialTitleString, trialDescriptionString, trialNumberString, trialSubjectsString, trialSubjectTypeString, trialNotesString};
+            metadataString = {trialTitleString, trialDescriptionString, trialNumberString, trialSubjectTypeString, trialNotesString};
         end
         
         function trial = updateSubjectIndex(trial, index)            

@@ -211,15 +211,14 @@ classdef Eye
         function metadataString = getMetadataString(eye)
             
             eyeIdString = ['Eye ID: ', eye.eyeId];
-            eyeTypeString = ['Eye Type: ', eye.eyeType];
-            eyeNumberString = ['Eye Number: ', eye.eyeNumber];
+            eyeTypeString = ['Eye Type: ', eye.eyeType.displayString];
+            eyeNumberString = ['Eye Number: ', num2str(eye.eyeNumber)];
             dissectionDateString = ['Dissection Date: ', eye.dissectionDate];
             dissectionDoneByString = ['Dissection Done By: ', eye.dissectionDoneBy];
-            quartersString = ['Quarter: ', eye.quarters];
             eyeNotesString = ['Notes: ', eye.notes];
             
             
-            metadataString = {'Eye:', eyeIdString, eyeTypeString, eyeNumberString, dissectionDateString, dissectionDoneByString, quartersString, eyeNotesString};
+            metadataString = {'Eye:', eyeIdString, eyeTypeString, eyeNumberString, dissectionDateString, dissectionDoneByString, eyeNotesString};
             
         end
         

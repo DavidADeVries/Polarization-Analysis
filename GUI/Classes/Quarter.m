@@ -215,13 +215,12 @@ classdef Quarter
             fixingDoneByString = ['Fixing Done By: ', quarter.fixingDoneBy];
             stainString = ['Stain: ', quarter.stain];
             slideMaterialString = ['Slide Material: ', quarter.slideMaterial];
-            quarterTypeString = ['Quarter Type: ', quarter.quarterType];
-            quarterNumberString = ['Quarter number: ', quarter.quarterNumber];
-            quarterArbitraryString = ['Quarter Arbitrary: ', quarter.quarterArbitrary];
-            locationsString = ['Location: ', quarter.locations];
+            quarterTypeString = ['Quarter Type: ', quarter.quarterType.displayString];
+            quarterNumberString = ['Quarter number: ', num2str(quarter.quarterNumber)];
+            quarterArbitraryString = ['Quarter Arbitrary: ', booleanToString(quarter.quarterArbitrary)];
             quarterNotesString = ['Notes: ', quarter.notes];
             
-            metadataString = {'Quarter:', fixingDateString, fixingDoneByString, stainString, slideMaterialString, quarterTypeString, quarterNumberString, quarterArbitraryString, locationsString, quarterNotesString};
+            metadataString = {'Quarter:', fixingDateString, fixingDoneByString, stainString, slideMaterialString, quarterTypeString, quarterNumberString, quarterArbitraryString, quarterNotesString};
         end
         
         function quarter = updateLocationIndex(quarter, index)

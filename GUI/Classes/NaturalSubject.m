@@ -181,15 +181,14 @@ classdef NaturalSubject < Subject
        
         function metadataString = getMetadataString(subject)
             
-            [subjectIdString, subjectNumberString, subjectNotesString] = getSubjectMetadataString(subject);
+            [subjectIdString, subjectNumberString, subjectNotesString] = subject.getSubjectMetadataString();
             
-            ageString = ['Age: ', subject.age];
-            genderString = ['Gender; ', subject.gender];
-            ADDiagnosisString = ['AD Diagnosis: ', subject.ADDiagnosis];
+            ageString = ['Age: ', num2str(subject.age)];
+            genderString = ['Gender: ', subject.gender.displayString];
+            ADDiagnosisString = ['AD Diagnosis: ', subject.ADDiagnosis.displayString];
             causeOfDeathString = ['Cause of Death: ', subject.causeOfDeath];
-            eyesString = ['Eyes: ', subject.eyes];
             
-            metadataString = {subjectIdString, subjectNumberString, ageString, genderString, ADDiagnosisString, causeOfDeathString, eyesString, subjectNotesString};
+            metadataString = {subjectIdString, subjectNumberString, ageString, genderString, ADDiagnosisString, causeOfDeathString, subjectNotesString};
             
         end
         
