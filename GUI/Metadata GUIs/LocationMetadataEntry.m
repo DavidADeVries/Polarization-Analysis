@@ -155,18 +155,18 @@ plot(x1, y2);
 %is a fovea
 if handles.eye == EyeTypes.Right && handles.plotFovea
 %Plot fovea for right eye
-    foveaX = -0.1;
+    foveaX = -0.2;
     foveaY = 0;
-    foveaRadius = 0.05;
+    foveaRadius = 0.025;
 
     circle(foveaX, foveaY, foveaRadius);
     
     set(handles.MapTitle,'String','Right Eye with Fovea');
 elseif handles.eye == EyeTypes.Left && handles.plotFovea
     %Plot fovea for left eye
-    foveaX = 0.1;
+    foveaX = 0.2;
     foveaY = 0;
-    foveaRadius = 0.05;
+    foveaRadius = 0.025;
 
     circle(foveaX, foveaY, foveaRadius);
     
