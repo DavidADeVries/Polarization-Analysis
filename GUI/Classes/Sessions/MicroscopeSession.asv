@@ -86,7 +86,7 @@ classdef MicroscopeSession < DataCollectionSession
                 importBmpNd2Files(sessionProjectPath, importPath, projectPath, filename, namingConventions, newDir);
             end      
 
-            delete(waitHandle);     
+    delete(waitHandle);     
             
         end
          
