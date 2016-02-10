@@ -1,7 +1,0 @@
-[coords, locationNumber, deposit, notes] = LocationMetadataEntry(EyeTypes.Right, SubjectTypes.Human, QuarterTypes.Nasal, 7, 'importPath')
-
-
-%%
-function coordsString = coordsIntoString(xValue, yValue)
-    coordsString = ['[',num2str(xValue), ', ', num2str(yValue), ']'];
-end
