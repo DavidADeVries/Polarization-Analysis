@@ -10,6 +10,8 @@ project = project.updateQuarterSampleIndex(index);
 
 handles = project.updateNavigationListboxes(handles);
 
+handles = project.updateMetadataFields(handles);
+
 handles.localProject = project;
 
 guidata(hObject, handles);

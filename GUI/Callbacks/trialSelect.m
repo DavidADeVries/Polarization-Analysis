@@ -9,6 +9,7 @@ project = handles.localProject;
 project = project.updateTrialIndex(index);
 
 handles = project.updateNavigationListboxes(handles);
+
 handles = project.updateMetadataFields(handles);
 
 handles.localProject = project;
