@@ -215,7 +215,11 @@ classdef Location
             
             locationNumberString = ['Location Number: ', num2str(location.locationNumber)];
             depositString = ['Deposit: ', booleanToString(location.deposit)];
-            locationCoordsString = ['Location Coordinates: ', location.locationCoords];
+            if ~isempty(location.locationCoords)
+                locationCoordsString = ['Location Coordinates: ', coordsIntoString(location.locationCoords(1), location.locationCoords(2))];
+            else
+                locationCoordsString = ['Location Coordinates: ', 'Unknown'];
+            end
             locationNotesString = ['Notes: ', location.notes];
             
             metadataString = {locationNumberString, depositString, locationCoordsString, locationNotesString};

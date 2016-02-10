@@ -465,6 +465,10 @@ function importPathDisplay_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of importPathDisplay as text
 %        str2double(get(hObject,'String')) returns contents of importPathDisplay as a double
+
+set(handles.importPathDisplay, 'String', handles.importPath);
+guidata(hObject, handles);
+
 end
 
 % --- Executes during object creation, after setting all properties.

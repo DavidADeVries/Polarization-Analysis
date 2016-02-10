@@ -390,6 +390,15 @@ switch exit
 end
 end
 
+function importPathTitle_Callback(hObject, eventdata, handles)
+% hObject    handle to Cancel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+set(handles.importPathTitle, 'String', handles.importPath);
+guidata(hObject, handles);
+
+end
 
 %% Local Functions
 

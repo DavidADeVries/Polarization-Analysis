@@ -59,9 +59,9 @@ handles.userName = varargin{1}; %Param is userName
 handles.importPath = varargin{2}; % Param is importPath
 
 %Defining the different input variables, awaiting user input
-handles.magnification = [];
-handles.pixelSizeMicrons = [];
-handles.instrument = '';
+handles.magnification = MicroscopeNamingConventions.DEFAULT_METADATA_GUI_MAGNIFICATION;
+handles.pixelSizeMicrons = MicroscopeNamingConventions.DEFAULT_METADATA_GUI_PIXEL_SIZE_MICRONS;
+handles.instrument = MicroscopeNamingConventions.DEFAULT_METADATA_GUI_INSTRUMENT;
 handles.fluoroSignature = 0;
 handles.crossedSignature = 0;
 handles.visualSignature = 0;
@@ -73,9 +73,13 @@ handles.rejectedReason = '';
 
 set(handles.importPathTitle, 'String', handles.importPath);
 set(handles.sessionDoneByInput, 'String', handles.userName);
+set(handles.magnificationInput, 'String', num2str(MicroscopeNamingConventions.DEFAULT_METADATA_GUI_MAGNIFICATION));
+set(handles.pixelSizeInput, 'String', num2str(MicroscopeNamingConventions.DEFAULT_METADATA_GUI_PIXEL_SIZE_MICRONS));
+set(handles.instrumentInput, 'String', MicroscopeNamingConventions.DEFAULT_METADATA_GUI_INSTRUMENT);
 set(handles.yesRejectedButton, 'Value', 0);
 set(handles.noRejectedButton, 'Value', 1);
 set(handles.OK, 'enable', 'off');
+set(handles.reasonForRejectionInput, 'enable', 'off');
 
 % Update handles structure
 guidata(hObject, handles);
@@ -439,6 +443,8 @@ set(handles.noRejectedButton, 'Value', 0);
 
 checkToEnableOkButton(handles);
 
+set(handles.reasonForRejectionInput, 'enable', 'on');
+
 guidata(hObject, handles);
 
 end
@@ -457,6 +463,11 @@ handles.rejected = false;
 set(handles.yesRejectedButton, 'Value', 0);
 
 checkToEnableOkButton(handles);
+
+set(handles.reasonForRejectionInput, 'enable', 'off');
+set(handles.reasonForRejectionInput, 'String', '');
+
+handles.rejectedReason = '';
 
 guidata(hObject, handles);
 
@@ -509,6 +520,10 @@ function importPathTitle_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of importPathTitle as text
 %        str2double(get(hObject,'String')) returns contents of importPathTitle as a double
+
+set(handles.importPathTitle, 'String', handles.importPath);
+guidata(hObject, handles);
+
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -532,11 +547,15 @@ function checkToEnableOkButton(handles)
 %This function will check to see if any of the input variables are empty,
 %and if not it will enable the OK button
 
-if ~isempty(handles.magnification) && ~isempty(handles.pixelSizeMicrons) && ~isempty(handles.instrument) && ~isempty(handles.sessionDate) && ~isempty(handles.sessionDoneBy) && ~isempty(handles.rejected) && ~isempty(handles.rejectedReason)
-    if handles.visualSignature || handles.crossedSignature || handles.fluoroSignature 
-        set(handles.OK, 'enable', 'on');
+if ~isempty(handles.magnification) && ~isempty(handles.pixelSizeMicrons) && ~isempty(handles.instrument) && ~isempty(handles.sessionDate) && ~isempty(handles.sessionDoneBy) && ~isempty(handles.rejected)
+    if handles.rejected 
+        if ~isempty(handles.rejectedReason)
+            set(handles.OK, 'enable', 'on');
+        else
+            set(handles.OK, 'enable', 'off');
+        end
     else
-        set(handles.OK, 'enable', 'off');
+        set(handles.OK, 'enable', 'on');
     end
 else
     set(handles.OK, 'enable', 'off');
