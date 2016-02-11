@@ -22,7 +22,7 @@ function varargout = MicroscopeSessionMetadataEntry(varargin)
 
 % Edit the above text to modify the response to help MicroscopeSessionMetadataEntry
 
-% Last Modified by GUIDE v2.5 10-Feb-2016 17:03:36
+% Last Modified by GUIDE v2.5 10-Feb-2016 14:09:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -80,7 +80,6 @@ set(handles.yesRejectedButton, 'Value', 0);
 set(handles.noRejectedButton, 'Value', 1);
 set(handles.OK, 'enable', 'off');
 set(handles.reasonForRejectionInput, 'enable', 'off');
-
 
 % Update handles structure
 guidata(hObject, handles);
@@ -221,9 +220,25 @@ end
 end
 
 
+function sessionDateInput_Callback(hObject, eventdata, handles)
+% hObject    handle to sessionDateInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of sessionDateInput as text
+%        str2double(get(hObject,'String')) returns contents of sessionDateInput as a double
+
+handles.sessionDate = get(hObject, 'String');
+
+checkToEnableOkButton(handles);
+
+guidata(hObject, handles);
+
+end
+
 % --- Executes during object creation, after setting all properties.
-function sessionDateDisplay_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to sessionDateDisplay (see GCBO)
+function sessionDateInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sessionDateInput (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -292,9 +307,6 @@ function sessionNotesInput_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-enableLineScrolling(hObject);
-
 end
 
 
@@ -325,9 +337,6 @@ function reasonForRejectionInput_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-enableLineScrolling(hObject);
-
 end
 
 % --- Executes on button press in Cancel.
@@ -539,12 +548,9 @@ function pickImagingDate_Callback(hObject, eventdata, handles)
 
 serialDate = guiDatePicker(now);
 
+disp('?');
+
 handles.sessionDate = serialDate;
-set(handles.sessionDateDisplay, 'String', displayDate(serialDate));
-
-checkToEnableOkButton(handles);
-
-guidata(hObject, handles);
 
 end
 
