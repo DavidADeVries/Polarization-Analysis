@@ -22,7 +22,7 @@ function varargout = guiDatePicker(varargin)
 
 % Edit the above text to modify the response to help guiDatePicker
 
-% Last Modified by GUIDE v2.5 21-Apr-2011 12:54:26
+% Last Modified by GUIDE v2.5 11-Feb-2016 12:39:41
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -297,5 +297,3 @@ handles.Day = x{1};
 
 % Close handles structure
 guidata(hObject, handles);
-
-

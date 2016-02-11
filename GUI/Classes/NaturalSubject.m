@@ -7,6 +7,7 @@ classdef NaturalSubject < Subject
         gender % GenderTypes
         ADDiagnosis % DiagnosisTypes
         causeOfDeath
+        medicalHistory
         
         eyes
         eyeIndex = 0
@@ -132,6 +133,7 @@ classdef NaturalSubject < Subject
             subject.gender = gender;
             subject.ADDiagnosis = ADDiagnosis;
             subject.causeOfDeath = causeOfDeath;
+            subject.medicalHistory = ''; % TODO
             subject.notes = notes;
             
         end
@@ -187,8 +189,9 @@ classdef NaturalSubject < Subject
             genderString = ['Gender: ', subject.gender.displayString];
             ADDiagnosisString = ['AD Diagnosis: ', subject.ADDiagnosis.displayString];
             causeOfDeathString = ['Cause of Death: ', subject.causeOfDeath];
+            medicalHistoryString = ['Medical History: ', subject.medicalHistory];
             
-            metadataString = {subjectIdString, subjectNumberString, ageString, genderString, ADDiagnosisString, causeOfDeathString, subjectNotesString};
+            metadataString = {subjectIdString, subjectNumberString, ageString, genderString, ADDiagnosisString, causeOfDeathString, medicalHistoryString, subjectNotesString};
             
         end
         
