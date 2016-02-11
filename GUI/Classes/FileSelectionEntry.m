@@ -67,8 +67,8 @@ classdef FileSelectionEntry
             
             counter = 0;
             
-            while ~openableFile(files{newIndex}) && counter < numFiles
-                newIndex = index + nudge;            
+            while ~isOpenableFile(files{newIndex}) && counter < numFiles
+                newIndex = newIndex + nudge;            
                 newIndex = (mod(newIndex-1, numFiles)) + 1; % loop around appropriately
                 
                 counter = counter + 1;

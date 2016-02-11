@@ -68,6 +68,10 @@ classdef Session
                 subfolderSelection = [];
             end
         end
+        
+        function session = updateCurrentSubfolderSelection(session, subfolderSelection)
+            session.fileSelectionEntries{session.subfolderIndex} = subfolderSelection;
+        end
                 
         function session = updateSubfolderIndex(session, index)
             session.subfolderIndex = index;
@@ -94,22 +98,14 @@ classdef Session
         function session = incrementFileIndex(session, increment)            
             subfolderSelection = session.getSubfolderSelection();
             
-            subfolderSelection = incrementFileIndex(subfolderSelection, increment);
+            subfolderSelection = subfolderSelection.incrementFileIndex(increment);            
             
-            index = subfolderSelection.fileIndex;
-            
-            newIndex = index + increment;
-            
-            newIndex = (mod(newIndex-1, length(subfolderSelection.filesInDir))) + 1;
-            
-            subfolderSelection.fileIndex = newIndex;
-            
-            session = session.updateFileIndex(newIndex);
+            session = session.updateCurrentSubfolderSelection(subfolderSelection);
         end
         
         function [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString] = getSessionMetadataString(session)
             
-            sessionDateString = ['Date: ', session.sessionDate];
+            sessionDateString = ['Date: ', displayDate(session.sessionDate)];
             sessionDoneByString = ['Done By: ', session.sessionDoneBy];
             sessionNumberString = ['Session Number: ', num2str(session.sessionNumber)];
             rejectedString = ['Rejected: ' , booleanToString(session.rejected)];
