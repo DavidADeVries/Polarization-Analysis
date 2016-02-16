@@ -322,6 +322,9 @@ function eyeNotesInput_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+enableLineScrolling(hObject);
+
 end
 
 
@@ -396,6 +399,23 @@ function importPathTitle_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 set(handles.importPathTitle, 'String', handles.importPath);
+guidata(hObject, handles);
+
+end
+
+% --- Executes on button press in pickImagingDate.
+function pickDissectionDate_Callback(hObject, eventdata, handles)
+% hObject    handle to pickImagingDate (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+serialDate = guiDatePicker(now);
+
+handles.dissectionDate = serialDate;
+set(handles.dissectionDateInput, 'String', displayDate(serialDate));
+
+checkToEnableOkButton(handles);
+
 guidata(hObject, handles);
 
 end

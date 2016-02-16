@@ -144,7 +144,7 @@ classdef Quarter
             quarter.quarterType = quarterType;
             quarter.quarterArbitrary = quarterArbitrary;
             quarter.quarterNumber = quarterNumber;
-            quarter.fixingDate = fixingDate;
+            quarter.fixingDate = displayDate(fixingDate);
             quarter.fixingDoneBy = fixingDoneBy;
             quarter.notes = notes;
             

@@ -22,7 +22,7 @@ function varargout = QuarterMetadataEntry(varargin)
 
 % Edit the above text to modify the response to help QuarterMetadataEntry
 
-% Last Modified by GUIDE v2.5 08-Feb-2016 10:50:07
+% Last Modified by GUIDE v2.5 16-Feb-2016 12:20:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -303,12 +303,6 @@ function fixingDateInput_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of fixingDateInput as text
 %        str2double(get(hObject,'String')) returns contents of fixingDateInput as a double
 
-handles.fixingDate = get(hObject, 'String');
-
-checkToEnableOkButton(handles);
-
-guidata(hObject, handles);
-
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -383,6 +377,9 @@ function quarterNotesInput_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+enableLineScrolling(hObject);
+
 end
 
 % --- Executes on button press in Cancel.
@@ -498,6 +495,22 @@ end
 
 end
 
+% --- Executes on button press in pickFixingDate.
+function pickFixingDate_Callback(hObject, eventdata, handles)
+% hObject    handle to pickFixingDate (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+serialDate = guiDatePicker(now);
+
+handles.fixingDate = serialDate;
+set(handles.fixingDateInput, 'String', displayDate(serialDate));
+
+checkToEnableOkButton(handles);
+
+guidata(hObject, handles);
+
+end
 %% Local Functions
 
 function checkToEnableOkButton(handles)
@@ -512,6 +525,8 @@ else
 end
 
 end
+
+
 
 
 

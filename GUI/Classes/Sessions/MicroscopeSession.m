@@ -26,7 +26,7 @@ classdef MicroscopeSession < DataCollectionSession
             session.fluoroSignature = fluoroSignature;
             session.crossedSignature = crossedSignature;
             session.visualSignature = visualSignature;
-            session.sessionDate = sessionDate;
+            session.sessionDate = displayDate(sessionDate);
             session.sessionDoneBy = sessionDoneBy;
             session.notes = notes;
             session.rejected = rejected;
