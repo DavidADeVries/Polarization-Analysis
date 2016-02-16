@@ -164,7 +164,7 @@ classdef NaturalSubject < Subject
         function [cancel, subject] = enterMetadata(subject, subjectNumber, existingSubjectNumbers, importPath, userName)
             
             %Call to NaturalSubjectMetadataEntry GUI
-            [cancel, subjectNumber, age, gender, ADDiagnosis, causeOfDeath, notes] = NaturalSubjectMetadataEntry(subjectNumber, existingSubjectNumbers, userName, importPath);
+            [cancel, subjectNumber, subjectId, age, gender, ADDiagnosis, causeOfDeath, medicalHistory, notes] = NaturalSubjectMetadataEntry(subjectNumber, existingSubjectNumbers, userName, importPath);
             
             if ~cancel
                 %Assigning values to NaturalSubject Properties
