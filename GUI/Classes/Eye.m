@@ -163,7 +163,7 @@ classdef Eye
             eye.eyeId = eyeId;
             eye.eyeType = eyeType;
             eye.eyeNumber = eyeNumber;
-            eye.dissectionDate = displayDate(dissectionDate);
+            eye.dissectionDate = dissectionDate;
             eye.dissectionDoneBy = dissectionDoneBy;
             eye.notes = notes;
         end
