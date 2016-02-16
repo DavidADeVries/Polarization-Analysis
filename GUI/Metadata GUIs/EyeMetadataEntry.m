@@ -55,6 +55,10 @@ function EyeMetadataEntry_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for EyeMetadataEntry
 handles.output = hObject;
 
+% **************************************************************************
+% INPUT: (eye, suggestedEyeNumber, existingEyeNumbers, userName, importPath)
+% **************************************************************************
+
 %Input arguments from function call in Eye class function
 handles.eye = varargin{1}; % Parameter name is 'eye' from Eye class function
 
@@ -64,8 +68,11 @@ else
     handles.suggestedEyeNumber = '';
 end
 
-handles.userName = varargin{3};% Parameter name is 'userName' 
-handles.importPath = varargin{4};% Parameter name is 'importPath' 
+handles.existingEyeNumbers = varargin{3};
+handles.userName = varargin{4};% Parameter name is 'userName' 
+handles.importPath = varargin{5};% Parameter name is 'importPath' 
+
+handles.cancel = false;
 
 set(handles.importPathTitle, 'String', handles.importPath);
 set(handles.dissectionDoneByInput, 'String', handles.userName);
@@ -112,14 +119,17 @@ function varargout = EyeMetadataEntry_OutputFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Get default command line output from handles structure
+% ************************************************************************************
+% OUTPUT: [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes]
+% ************************************************************************************
 
-varargout{1} = handles.eyeId; %Output eyeId variable
-varargout{2} = handles.eyeTypeChoice;  %Output eyeTypeChoice variable
-varargout{3} = handles.eyeNumber;  %Output eyeNumber variable
-varargout{4} = handles.dissectionDate; %Output dissectionDate variable
-varargout{5} = handles.dissectionDoneBy; %Output dissectionDoneBy variable
-varargout{6} = handles.eyeNotes; %Output eyeNotes variable
+varargout{1} = handles.cancel;
+varargout{2} = handles.eyeId; %Output eyeId variable
+varargout{3} = handles.eyeTypeChoice;  %Output eyeTypeChoice variable
+varargout{4} = handles.eyeNumber;  %Output eyeNumber variable
+varargout{5} = handles.dissectionDate; %Output dissectionDate variable
+varargout{6} = handles.dissectionDoneBy; %Output dissectionDoneBy variable
+varargout{7} = handles.eyeNotes; %Output eyeNotes variable
 
 close(handles.EyeMetadataEntry);
 end

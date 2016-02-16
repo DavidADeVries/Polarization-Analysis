@@ -88,7 +88,7 @@ classdef NaturalSubject < Subject
                         
                         eye = Eye(suggestedEyeNumber, subject.existingEyeNumbers(), toSubjectProjectPath, projectPath, subjectImportPath, userName);
                     else
-                        eye = subject.getSelectedEye(choice);
+                        eye = subject.getEyeFromChoice(choice);
                     end
                     
                     if ~isempty(eye)
@@ -100,6 +100,21 @@ classdef NaturalSubject < Subject
                     end
                 end                
             end          
+        end
+        
+        function eye = getEyeFromChoice(subject, choice)
+            eye = subject.eyes{choice};
+        end
+        
+        function eyeChoices = getEyeChoices(subject)
+            eyes = subject.eyes;
+            numEyes = length(eyes);
+            
+            eyeChoices = cell(numEyes, 1);
+            
+            for i=1:numEyes
+                eyeChoices{i} = eyes{i}.dirName;
+            end
         end
         
         function subject = updateEye(subject, eye)

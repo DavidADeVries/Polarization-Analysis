@@ -65,11 +65,8 @@ else
     handles.suggestedQuarterNumber = '';
 end
 
-handles.existingQuarterNumbers = varargin{2};
-handles.importPath = varargin{3};
-handles.userName = varargin{4};
-
-handles.cancel = false;
+handles.importPath = varargin{2};
+handles.userName = varargin{3};
 
 %Defining the default input variables, awaiting user input
 handles.stain = '';
@@ -119,20 +116,15 @@ function varargout = QuarterMetadataEntry_OutputFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% *********************************************************************************************************************
-% OUTPUT: [cancel, stain, slideMaterial, quarterType, quarterArbitrary, quarterNumber, fixingDate, fixingDoneBy, notes]
-% *********************************************************************************************************************
-
 % Outputting the different quarter Metadata values
-varargout{1} = handles.cancel;
-varargout{2} = handles.stain;
-varargout{3} = handles.slideMaterial;
-varargout{4} = handles.quarterType;
-varargout{5} = handles.quarterArbitrary;
-varargout{6} = handles.quarterNumber;
-varargout{7} = handles.fixingDate;
-varargout{8} = handles.fixingDoneBy;
-varargout{9} = handles.quarterNotes;
+varargout{1} = handles.stain;
+varargout{2} = handles.slideMaterial;
+varargout{3} = handles.quarterType;
+varargout{4} = handles.quarterArbitrary;
+varargout{5} = handles.quarterNumber;
+varargout{6} = handles.fixingDate;
+varargout{7} = handles.fixingDoneBy;
+varargout{8} = handles.quarterNotes;
 
 close(handles.quarterMetadataEntry);
 end
@@ -403,8 +395,6 @@ exit = questdlg('Are you sure you want to quit?','Quit','Yes','No','No');
 switch exit
     case 'Yes'
         %Clears variables in the case that they wish to exit the program
-        handles.cancel = true;        
-        
         handles.stain = '';
         handles.slideMaterial = '';
         handles.quarterType = [];

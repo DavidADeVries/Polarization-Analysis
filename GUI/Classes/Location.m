@@ -22,7 +22,7 @@ classdef Location
         
         
         function location = Location(suggestedLocationNumber, existingLocationNumbers, toQuarterPath, projectPath, importDir, userName, subjectType, eyeType, quarterType)
-            [cancel, location] = enterMetadata(suggestedLocationNumber, existingLocationNumbers, subjectType, eyeType, quarterType, importDir, userName);
+            [cancel, location] = location.enterMetadata(suggestedLocationNumber, existingLocationNumbers, subjectType, eyeType, quarterType, importDir, userName);
             
             if ~cancel
                 % set metadata history

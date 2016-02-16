@@ -21,9 +21,10 @@ classdef Subject
             subject.dirName = subjectDirectory;
         end
         
-        function [] = saveMetadata(subject, toSubjectPath, handles, saveToBackup)
-            saveObjectMetadata(subject, handles.localPath, toSubjectPath, SubjectNamingConventions.METADATA_FILENAME, saveToBackup);            
+        function [] = saveMetadata(subject, toSubjectPath, projectPath, saveToBackup)
+            saveObjectMetadata(subject, projectPath, toSubjectPath, SubjectNamingConventions.METADATA_FILENAME, saveToBackup);            
         end
+        
         function [subjectIdString, subjectNumberString, subjectNotesString] = getSubjectMetadataString(subject)
             
             subjectIdString = ['Subject ID: ', subject.subjectId];

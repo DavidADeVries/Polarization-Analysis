@@ -21,8 +21,8 @@ classdef Eye
     end
     
     methods
-        function eye = Eye(eyeNumber, existingEyeNumbers, toSubjectPath, projectPath, importDir, userName)
-            [cancel, eye] = enterMetadata(eyeNumber, existingEyeNumbers, importDir, userName);
+        function eye = Eye(eyeNumber, existingEyeNumbers, toSubjectPath, projectPath, importPath, userName)
+            [cancel, eye] = eye.enterMetadata(eyeNumber, existingEyeNumbers, importPath, userName);
             
             if ~cancel
                 % set metadata history
@@ -78,7 +78,7 @@ classdef Eye
                 
                 prompt = ['Select the quarter to which the data being imported from ', quarterImportPath, ' belongs to.'];
                 title = 'Select Quarter';
-                choices = subject.getEyeChoices();
+                choices = eye.getQuarterChoices();
                 
                 [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
                 
@@ -92,7 +92,7 @@ classdef Eye
                         
                         quarter = Quarter(suggestedEyeNumber, eye.existingQuarterNumbers(), toEyeProjectPath, projectPath, quarterImportPath, userName);
                     else
-                        quarter = eye.getSelectedQuarter(choice);
+                        quarter = eye.getQuarterFromChoice(choice);
                     end
                     
                     if ~isempty(quarter)
@@ -103,6 +103,32 @@ classdef Eye
                         eye = eye.updateQuarter(quarter);
                     end
                 end
+            end
+        end
+        
+        function quarter = getQuarterFromChoice(eye, choice)
+            quarter = eye.quarters{choice};
+        end
+        
+        function quarterChoices = getQuarterChoices(eye)
+            quarters = eye.quarters;
+            numQuarters = length(quarters);
+            
+            quarterChoices = cell(numQuarters, 1);
+            
+            for i=1:numQuarters
+                quarterChoices{i} = quarters{i}.dirName;
+            end
+        end
+        
+        function quarterNumbers = existingQuarterNumbers(eye)
+            quarters = eye.quarters;
+            numQuarters = length(quarters);
+            
+            quarterNumbers = zeros(numQuarters, 1);
+            
+            for i=1:numQuarters
+                quarterNumbers(i) = quarters{i}.quarterNumber;
             end
         end
         
@@ -154,18 +180,20 @@ classdef Eye
             nextQuarterNumber = lastQuarterNumber + 1;
         end
                 
-        function eye = enterMetadata(eye, suggestedEyeNumber, importPath, userName)
+        function [cancel, eye] = enterMetadata(eye, suggestedEyeNumber, existingEyeNumbers, importPath, userName)
             
             %Call to EyeMetadataEntry GUI
-            [eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(eye, suggestedEyeNumber, userName, importPath);
+            [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(eye, suggestedEyeNumber, existingEyeNumbers, userName, importPath);
             
-            %Assigning values to Eye Properties
-            eye.eyeId = eyeId;
-            eye.eyeType = eyeType;
-            eye.eyeNumber = eyeNumber;
-            eye.dissectionDate = dissectionDate;
-            eye.dissectionDoneBy = dissectionDoneBy;
-            eye.notes = notes;
+            if ~cancel
+                %Assigning values to Eye Properties
+                eye.eyeId = eyeId;
+                eye.eyeType = eyeType;
+                eye.eyeNumber = eyeNumber;
+                eye.dissectionDate = dissectionDate;
+                eye.dissectionDoneBy = dissectionDoneBy;
+                eye.notes = notes;
+            end
         end
         
         function eye = createDirectories(eye, toSubjectPath, projectPath)
@@ -236,7 +264,7 @@ classdef Eye
             eyeIdString = ['Eye ID: ', eye.eyeId];
             eyeTypeString = ['Eye Type: ', eye.eyeType.displayString];
             eyeNumberString = ['Eye Number: ', num2str(eye.eyeNumber)];
-            dissectionDateString = ['Dissection Date: ', eye.dissectionDate];
+            dissectionDateString = ['Dissection Date: ', displayDate(eye.dissectionDate)];
             dissectionDoneByString = ['Dissection Done By: ', eye.dissectionDoneBy];
             eyeNotesString = ['Notes: ', eye.notes];
             

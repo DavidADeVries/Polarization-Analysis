@@ -77,9 +77,15 @@ classdef Trial
             
             if ~cancel
                 if createNew
-                    subject = trial.createNewSubject(trial.nextSubjectNumber, trial.existingSubjectNumbers, trial.dirName, handles.localPath, importDir, handles.userName);
+                    suggestedSubjectNumber = getNumberFromFolderName(getFilename(importDir));
+                    
+                    if isnan(suggestedSubjectNumber)
+                        suggestedSubjectNumber = trial.nextSubjectNumber();
+                    end
+                        
+                    subject = trial.createNewSubject(suggestedSubjectNumber, trial.existingSubjectNumbers, trial.dirName, handles.localPath, importDir, handles.userName);
                 else
-                    subject = trial.getSelectedTrial(choice);
+                    subject = trial.getSubjectFromChoice(choice);
                 end
                 
                 if ~isempty(subject)
@@ -199,6 +205,10 @@ classdef Trial
                 subjectChoices{i} = subjects{i}.dirName;
             end
         end
+        
+        function subject = getSubjectFromChoice(trial, choice)
+            subject = trial.subjects{choice}; 
+        end      
         
         function subject = getSelectedSubject(trial)
             subject = [];

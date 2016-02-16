@@ -24,7 +24,7 @@ classdef Quarter
     
     methods
         function quarter = Quarter(suggestedQuarterNumber, existingQuarterNumbers, toEyePath, projectPath, importDir, userName)
-            [cancel, quarter] = enterMetadata(suggestedQuarterNumber, existingQuarterNumbers, importDir, userName);
+            [cancel, quarter] = quarter.enterMetadata(suggestedQuarterNumber, existingQuarterNumbers, importDir, userName);
             
             if ~cancel
                 % set metadata history
@@ -94,7 +94,7 @@ classdef Quarter
                         
                         quarter = Quarter(suggestedLocationNumber, quarter.existingLocationNumbers(), toQuarterProjectPath, projectPath, locationImportPath, userName);
                     else
-                        quarter = quarter.getSelectedLocation(choice);
+                        quarter = quarter.getLocationFromChoice(choice);
                     end
                     
                     if ~isempty(quarter)
@@ -105,6 +105,32 @@ classdef Quarter
                         quarter = quarter.updateLocation(location);
                     end
                 end
+            end
+        end
+
+        function location = getLocationFromChoice(quarter, choice)
+            location = quarter.locations{choice};
+        end
+        
+        function locationChoices = getLocationChoices(quarter)
+            locations = quarter.locations;
+            numLocations = length(locations);
+            
+            locationChoices = cell(numLocations, 1);
+            
+            for i=1:numLocations
+                locationChoices{i} = locations{i}.dirName;
+            end
+        end
+        
+        function locationNumbers = existingLocationNumbers(quarter)
+            locations = quarter.locations;
+            numLocations = length(locations);
+            
+            locationNumbers = zeros(numLocations, 1);
+            
+            for i=1:numLocations
+                locationNumbers(i) = locations{i}.locationNumber;
             end
         end
         
