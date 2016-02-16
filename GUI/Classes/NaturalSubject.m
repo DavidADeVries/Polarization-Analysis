@@ -169,11 +169,12 @@ classdef NaturalSubject < Subject
             if ~cancel
                 %Assigning values to NaturalSubject Properties
                 subject.subjectNumber = subjectNumber;
+                subject.subjectId = subjectId;
                 subject.age = age;
                 subject.gender = gender;
                 subject.ADDiagnosis = ADDiagnosis;
                 subject.causeOfDeath = causeOfDeath;
-                subject.medicalHistory = ''; % TODO
+                subject.medicalHistory = medicalHistory;
                 subject.notes = notes;
             end
             
