@@ -3,7 +3,8 @@ classdef DataCollectionSession < Session
     % emcompasses all location sessions that involved collecting data
     % (microscope, cslo, afm)
     
-    properties        
+    properties
+        % set by metadata entry
         dataCollectionSessionNumber
         
     end
@@ -20,7 +21,8 @@ classdef DataCollectionSession < Session
             choices = {'Microscope', 'CSLO', 'Unknown'};
         end
         
-        function session = getSelection(choice)
+        
+        function session = createSession(choice, suggestedSessionNumber, existingSessionNumbers, locationProjectPath, projectPath, locationImportPath, userName)
             if choice == 1
                 session = MicroscopeSession;
             elseif choice == 2

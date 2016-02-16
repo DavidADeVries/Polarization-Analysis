@@ -2,18 +2,39 @@ classdef NaturalSubject < Subject
     % NaturalSubject 
     % a NaturalSubject is a person or animal
     
-    properties      
+    properties
+        % set by metadata entry
         age %number (decimal please!)
         gender % GenderTypes
         ADDiagnosis % DiagnosisTypes
         causeOfDeath
         medicalHistory
         
+        % list of eyes and index
         eyes
         eyeIndex = 0
     end
     
     methods
+        function subject = NaturalSubject(subjectNumber, existingSubjectNumbers, toTrialPath, projectPath, importDir, userName)
+            [cancel, subject] = subject.enterMetadata(subjectNumber, existingSubjectNumbers, importDir, userName);
+            
+            if ~cancel
+                % set metadata history
+                subject.metadataHistory = {MetadataHistoryEntry(userName)};
+                
+                % make directory/metadata file
+                subject = subject.createDirectories(toTrialPath, projectPath);
+                
+                % save metadata
+                saveToBackup = true;
+                subject.saveMetadata(makePath(toTrialPath, subject.dirName), projectPath, saveToBackup);
+            else
+                subject = NaturalSubject.empty;
+            end  
+            
+        end
+        
         function subject = loadSubject(subject, toSubjectPath, subjectDir)
             subjectPath = makePath(toSubjectPath, subjectDir);
             
@@ -29,7 +50,7 @@ classdef NaturalSubject < Subject
             
             numEyes = length(eyeDirs);
             
-            subject.eyes = createEmptyCellArray(Eye, numEyes);
+            subject.eyes = createEmptyCellArray(Eye.empty, numEyes);
             
             for i=1:numEyes
                 subject.eyes{i} = subject.eyes{i}.loadEye(subjectPath, eyeDirs{i});
@@ -40,39 +61,45 @@ classdef NaturalSubject < Subject
             end
         end
         
-        function subject = importSubject(subject, subjectProjectPath, subjectImportPath, projectPath, userName, subjectType)           
+        function subject = importSubject(subject, subjectProjectPath, subjectImportPath, projectPath, dataFilename, userName, subjectType)
             dirList = getAllFolders(subjectImportPath);
             
-            importEyeNumbers = getNumbersFromFolderNames(dirList);
-                
             filenameSection = createFilenameSection(SubjectNamingConventions.DATA_FILENAME_LABEL, num2str(subject.subjectNumber));
-            dataFilename = filenameSection; % filename start
-                        
+            dataFilename = [dataFilename, filenameSection]; 
+            
             for i=1:length(dirList)
-                indices = findInArray(importEyeNumbers{i}, subject.getEyeNumbers());
+                folderName = dirList{i};
                 
-                eyeImportPath = makePath(subjectImportPath, dirList{i});
+                eyeImportPath = makePath(subjectImportPath, folderName);
                 
-                if isempty(indices) % new eye
-                    eye = Eye;
+                prompt = ['Select the eye to which the data being imported from ', eyeImportPath, ' belongs to.'];
+                title = 'Select Eye';
+                choices = subject.getEyeChoices();
+                
+                [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+                
+                if ~cancel
+                    if createNew                        
+                        suggestedEyeNumber = getNumberFromFolderName(folderName);
+                        
+                        if isnan(suggestedEyeNumber)
+                            suggestedEyeNumber = subject.getNextEyeNumber();
+                        end
+                        
+                        eye = Eye(suggestedEyeNumber, subject.existingEyeNumbers(), subjectProjectPath, projectPath, subjectImportPath, userName);
+                    else
+                        eye = subject.getSelectedEye(choice);
+                    end
                     
-                    eye = eye.enterMetadata(importEyeNumbers{i}, eyeImportPath, userName);
-                    
-                    % make directory/metadata file
-                    eye = eye.createDirectories(subjectProjectPath, projectPath);
-                    
-                    saveToBackup = true;
-                    eye.saveMetadata(makePath(subjectProjectPath, eye.dirName), projectPath, saveToBackup);
-                else % old eye
-                    eye = subject.getEyeByNumber(importEyeNumbers{i});
-                end
-                
-                eyeProjectPath = makePath(subjectProjectPath, eye.dirName);
-                
-                eye = eye.importEye(eyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType);
-                
-                subject = subject.updateEye(eye);
-            end            
+                    if ~isempty(eye)
+                        eyeProjectPath = makePath(subjectProjectPath, eye.dirName);
+                        
+                        eye = eye.importEye(eyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType);
+                        
+                        subject = subject.updateEye(eye);
+                    end
+                end                
+            end          
         end
         
         function subject = updateEye(subject, eye)
@@ -122,19 +149,33 @@ classdef NaturalSubject < Subject
             lastEyeNumber = max(subject.getEyeNumbers());
             nextEyeNumber = lastEyeNumber + 1;
         end
+        
+        function eyeNumbers = existingEyeNumbers(subject)
+            eyes = subject.eyes;
+            numEyes = length(eyes);
+            
+            eyeNumbers = zeros(numEyes, 1);
+            
+            for i=1:numEyes
+                eyeNumbers(i) = eyes{i}.eyeNumber;
+            end
+        end
        
-        function subject = enterMetadata(subject, importPath, userName)
+        function [cancel, subject] = enterMetadata(subject, subjectNumber, existingSubjectNumbers, importPath, userName)
             
             %Call to NaturalSubjectMetadataEntry GUI
-            [age, gender, ADDiagnosis, causeOfDeath, notes] = NaturalSubjectMetadataEntry(userName, importPath);
+            [cancel, subjectNumber, age, gender, ADDiagnosis, causeOfDeath, notes] = NaturalSubjectMetadataEntry(subjectNumber, existingSubjectNumbers, userName, importPath);
             
-            %Assigning values to NaturalSubject Properties
-            subject.age = age;
-            subject.gender = gender;
-            subject.ADDiagnosis = ADDiagnosis;
-            subject.causeOfDeath = causeOfDeath;
-            subject.medicalHistory = ''; % TODO
-            subject.notes = notes;
+            if ~cancel
+                %Assigning values to NaturalSubject Properties
+                subject.subjectNumber = subjectNumber;
+                subject.age = age;
+                subject.gender = gender;
+                subject.ADDiagnosis = ADDiagnosis;
+                subject.causeOfDeath = causeOfDeath;
+                subject.medicalHistory = ''; % TODO
+                subject.notes = notes;
+            end
             
         end
         

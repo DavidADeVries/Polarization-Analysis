@@ -3,6 +3,7 @@ classdef MicroscopeSession < DataCollectionSession
     %holds metadata for images taken in the microscope
     
     properties
+        % set by metadata entry
         magnification
         pixelSizeMicrons % size of pixel in microns (used for generating scale bars)
         instrument
@@ -14,23 +15,46 @@ classdef MicroscopeSession < DataCollectionSession
     end
     
     methods
+        function session = MicroscopeSession(sessionNumber, toLocationPath, projectPath, importDir, userName)
+            [cancel, session] = enterMetadata(importDir, userName);
+            
+            if ~cancel
+                % set session number
+                session.sessionNumber = sessionNumber;
+                
+                % set metadata history
+                session.metadataHistory = {MetadataHistoryEntry(userName)};
+                
+                % make directory/metadata file
+                session = session.createDirectories(toLocationPath, projectPath);
+                
+                % save metadata
+                saveToBackup = true;
+                session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
+            else
+                session = MicroscopeSession.empty;
+            end              
+        end
+        
         function session = enterMetadata(session, importPath, userName)
             
             %Call to Microscope Session Metadata Entry GUI
-            [magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason] = MicroscopeSessionMetadataEntry(userName, importPath);
+            [cancel, magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason] = MicroscopeSessionMetadataEntry(userName, importPath);
             
-            %Assigning values to Microscope Session Properties
-            session.magnification = magnification;
-            session.pixelSizeMicrons = pixelSizeMicrons;
-            session.instrument = instrument;
-            session.fluoroSignature = fluoroSignature;
-            session.crossedSignature = crossedSignature;
-            session.visualSignature = visualSignature;
-            session.sessionDate = sessionDate;
-            session.sessionDoneBy = sessionDoneBy;
-            session.notes = notes;
-            session.rejected = rejected;
-            session.rejectedReason = rejectedReason;
+            if ~cancel
+                %Assigning values to Microscope Session Properties
+                session.magnification = magnification;
+                session.pixelSizeMicrons = pixelSizeMicrons;
+                session.instrument = instrument;
+                session.fluoroSignature = fluoroSignature;
+                session.crossedSignature = crossedSignature;
+                session.visualSignature = visualSignature;
+                session.sessionDate = sessionDate;
+                session.sessionDoneBy = sessionDoneBy;
+                session.notes = notes;
+                session.rejected = rejected;
+                session.rejectedReason = rejectedReason;
+            end
         
         end
         

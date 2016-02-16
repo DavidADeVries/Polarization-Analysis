@@ -6,26 +6,24 @@ classdef Session
     % a lot of classes inherit from this bad boy
     
     properties
+        % set at initialization
         dirName
+        metadataHistory
         
+        % set by metadata entry
         sessionDate
-        sessionDoneBy
-           
-        sessionNumber
-        
+        sessionDoneBy           
+        sessionNumber        
         isDataCollectionSession
+        notes
         
-        subfolderIndex = 0
-        
-        fileSelectionEntries
-                
         rejected % T/F, will exclude data from being included in analysis
         rejectedReason % reason that this data was rejected (suspected poor imaging, out of focus
         rejectedBy
         
-        metadataHistory
-        
-        notes
+        % list of files for the session and the index   
+        fileSelectionEntries     
+        subfolderIndex = 0
     end
     
     methods

@@ -8,6 +8,11 @@ classdef MetadataHistoryEntry
     end
     
     methods
+        function entry = MetadataHistoryEntry(userName)
+            entry.userName = userName;
+            entry.userName = now; % current serial date stamp
+        end
+        
         function dateString = getDateString(entry)
             dateString = datestr(entry.timestamp);
         end

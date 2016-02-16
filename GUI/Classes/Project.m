@@ -24,7 +24,7 @@ classdef Project
             trialDirs = getMetadataFolders(projectDir, TrialNamingConventions.METADATA_FILENAME);
             
             numTrials = length(trialDirs);
-            project.trials = createEmptyCellArray(Trial, numTrials);
+            project.trials = createEmptyCellArray(Trial.empty, numTrials);
             
             for i=1:numTrials
                 project.trials{i} = project.trials{i}.loadTrial(projectDir, trialDirs{i});
@@ -80,6 +80,29 @@ classdef Project
             end
         end
         
+        function nextNumber = nextTrialNumber(project)
+            trials = project.trials;
+            
+            if isempty(trials)
+                nextNumber = 1;
+            else
+                lastNumber = trials{length(trials)}.trialNumber;
+                
+                nextNumber = lastNumber + 1;
+            end
+        end
+        
+        function existingTrialNumbers = existingTrialNumbers(project)
+            trials = project.trials;
+            numTrials = length(trials);
+            
+            existingTrialNumbers = zeros(numTrials, 1);
+            
+            for i=1:numTrials
+                existingTrialNumbers(i) = trials{i}.trialNumber;
+            end
+        end
+        
         function handles = updateNavigationListboxes(project, handles)
             numTrials = length(project.trials);
             
@@ -110,6 +133,30 @@ classdef Project
                 
                 handles = trial.updateMetadataFields(handles);
             end
+        end
+        
+        function project = importData(project, handles, importDir)
+            % select trial
+            
+            prompt = ['Select the trial to which the subject being imported belongs to. Import path: ', importDir];
+            title = 'Select Trial';
+            choices = project.getTrialChoices();
+            
+            [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+            
+            if ~cancel
+                if createNew
+                    trial = Trial(project.nextTrialNumber, project.existingTrialNumbers, handles.userName, handles.localPath, importDir);
+                else
+                    trial = project.getTrialFromChoice(choice);
+                end
+                
+                if ~isempty(trial)
+                    trial = trial.importData(handles, importDir);
+                
+                    project = project.updateTrial(trial);
+                end
+            end            
         end
         
         function project = updateTrialIndex(project, index)

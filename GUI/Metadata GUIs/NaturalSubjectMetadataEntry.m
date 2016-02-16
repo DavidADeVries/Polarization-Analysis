@@ -55,8 +55,12 @@ function NaturalSubjectMetadataEntry_OpeningFcn(hObject, eventdata, handles, var
 % Choose default command line output for NaturalSubjectMetadataEntry
 handles.output = hObject;
 
-handles.userName = varargin{1}; %Param is userName
-handles.importPath = varargin{2}; % Param is importPath
+% input: (subjectNumber, existingSubjectNumbers, userName, importPath)
+
+handles.subjectNumber = varargin{1};
+handles.existingSubjectNumbers = varargin{2};
+handles.userName = varargin{3};
+handles.importPath = varargin{4};
 
 %Display the import path name
 set(handles.importPathTitle, 'String', handles.importPath);

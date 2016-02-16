@@ -3,25 +3,42 @@ classdef Eye
     % metadata about an eye
         
     properties
-        dirName
-        
-        eyeId
-        eyeType % EyeTypes
-        
-        eyeNumber
-        
-        dissectionDate
-        dissectionDoneBy
-        
-        quarters
-        quarterIndex = 0
-        
+        % set at initialization
+        dirName        
         metadataHistory
         
+        % set by metadata entry
+        eyeId
+        eyeType % EyeTypes        
+        eyeNumber        
+        dissectionDate
+        dissectionDoneBy
         notes
+        
+        % list of quarters and index
+        quarters
+        quarterIndex = 0        
     end
     
     methods
+        function eye = Eye(eyeNumber, existingEyeNumbers, toSubjectPath, projectPath, importDir, userName)
+            [cancel, eye] = enterMetadata(eyeNumber, existingEyeNumbers, importDir, userName);
+            
+            if ~cancel
+                % set metadata history
+                eye.metadataHistory = {MetadataHistoryEntry(userName)};
+                
+                % make directory/metadata file
+                eye = eye.createDirectories(toSubjectPath, projectPath);
+                
+                % save metadata
+                saveToBackup = true;
+                eye.saveMetadata(makePath(toSubjectPath, eye.dirName), projectPath, saveToBackup);
+            else
+                eye = Eye.empty;
+            end              
+        end
+        
         function eye = loadEye(eye, toEyePath, eyeDir)
             eyePath = makePath(toEyePath, eyeDir);
 
@@ -37,7 +54,7 @@ classdef Eye
             
             numQuarters = length(quarterDirs);
             
-            eye.quarters = createEmptyCellArray(Quarter, numQuarters);
+            eye.quarters = createEmptyCellArray(Quarter.empty, numQuarters);
             
             for i=1:numQuarters
                 eye.quarters{i} = eye.quarters{i}.loadQuarter(eyePath, quarterDirs{i});
@@ -51,35 +68,41 @@ classdef Eye
         function eye = importEye(eye, eyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType)  
             dirList = getAllFolders(eyeImportPath);
             
-            importQuarterNumbers = getNumbersFromFolderNames(dirList);
-                            
             filenameSection = createFilenameSection(EyeNamingConventions.DATA_FILENAME_LABEL, num2str(eye.eyeNumber));
-            dataFilename = strcat(dataFilename, filenameSection);
+            dataFilename = [dataFilename, filenameSection];
             
             for i=1:length(dirList)
-                indices = findInArray(importQuarterNumbers{i}, eye.getQuarterNumbers());
+                folderName = dirList{i};
                 
-                quarterImportPath = makePath(eyeImportPath, dirList{i});
+                quarterImportPath = makePath(eyeImportPath, folderName);
                 
-                if isempty(indices) % new quarter
-                    quarter = Quarter;
+                prompt = ['Select the quarter to which the data being imported from ', quarterImportPath, ' belongs to.'];
+                title = 'Select Quarter';
+                choices = subject.getEyeChoices();
+                
+                [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+                
+                if ~cancel
+                    if createNew
+                        suggestedEyeNumber = getNumberFromFolderName(folderName);
+                        
+                        if isnan(suggestedEyeNumber)
+                            suggestedEyeNumber = subject.getNextEyeNumber();
+                        end
+                        
+                        quarter = Quarter(suggestedEyeNumber, eye.existingQuarterNumbers(), eyeProjectPath, projectPath, quarterImportPath, userName);
+                    else
+                        quarter = eye.getSelectedQuarter(choice);
+                    end
                     
-                    quarter = quarter.enterMetadata(importQuarterNumbers{i}, quarterImportPath, userName);
-                    
-                    % make directory/metadata file
-                    quarter = quarter.createDirectories(eyeProjectPath, projectPath);
-                    
-                    saveToBackup = true;
-                    quarter.saveMetadata(makePath(eyeProjectPath, quarter.dirName), projectPath, saveToBackup);
-                else % old quarter
-                    quarter = eye.getQuarterByNumber(importQuarterNumbers{i});
+                    if ~isempty(quarter)
+                        quarterProjectPath = makePath(eyeProjectPath, quarter.dirName);
+                        
+                        quarter = quarter.importQuarter(quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType);
+                        
+                        eye = eye.updateQuarter(quarter);
+                    end
                 end
-                
-                quarterProjectPath = makePath(eyeProjectPath, quarter.dirName);
-                
-                quarter = quarter.importQuarter(quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType, eye.eyeType);
-                
-                eye = eye.updateQuarter(quarter);
             end
         end
         

@@ -3,24 +3,105 @@ classdef Trial
     %holds metadata and more important directory location for a trial
     
     properties
-        dirName
-        
-        title
-        description
-        
-        trialNumber
-        
-        subjects
-        subjectIndex = 0
-        
-        subjectType % dog, human, artifical
-        
+        % set at initialization
+        dirName        
         metadataHistory
         
+        % set by metadata entry
+        title
+        description        
+        trialNumber        
+        subjectType % dog, human, artifical        
         notes
+        
+        % list of subjects and the index
+        subjects
+        subjectIndex = 0
     end
     
-    methods        
+    methods
+        function trial = Trial(trialNumber, existingTrialNumbers, userName, projectPath, importPath)
+            [cancel, trial] = trial.enterMetadata(trialNumber, existingTrialNumbers, importPath);
+            
+            if ~cancel
+                % set metadata history
+                trial.metadataHistory = {MetadataHistoryEntry(userName)};
+                
+                % make directory/metadata file
+                toTrialPath = ''; %starts at project path
+                trial = trial.createDirectories(toTrialPath, projectPath);
+                
+                % save metadata
+                saveToBackup = true;
+                trial.saveMetadata(trial.dirName, projectPath, saveToBackup);
+            else
+                trial = Trial.empty;
+            end            
+            
+        end
+        
+        function [cancel, trial] = enterMetadata(trial, suggestedTrialNumber, existingTrialNumbers, importPath)
+            [cancel, title, description, trialNumber, subjectType, trialNotes] = TrialMetadataEntry(suggestedTrialNumber, existingTrialNumbers, importPath);
+            
+            if ~cancel
+                trial.title = title;
+                trial.description = description;
+                trial.trialNumber = trialNumber;
+                trial.subjectType = subjectType;
+                trial.notes = trialNotes;
+            end
+        end
+        
+        function trial = createDirectories(trial, toProjectPath, projectPath)
+            dirSubtitle = trial.subjectType.displayString;
+            
+            trialDirectory = createDirName(TrialNamingConventions.DIR_PREFIX, num2str(trial.trialNumber), dirSubtitle);
+            
+            createObjectDirectories(projectPath, toProjectPath, trialDirectory);
+                        
+            trial.dirName = trialDirectory;
+        end
+        
+        function [] = saveMetadata(trial, toTrialPath, projectPath, saveToBackup)
+            saveObjectMetadata(trial, projectPath, toTrialPath, TrialNamingConventions.METADATA_FILENAME, saveToBackup);            
+        end
+        
+        function trial = importData(trial, handles, importDir)
+            % select subject
+            
+            prompt = ['Select the subject to which the data being imported from ', importDir, ' belongs to.'];
+            title = 'Select Subject';
+            choices = trial.getSubjectChoices();
+            
+            [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+            
+            if ~cancel
+                if createNew
+                    subject = trial.createNewSubject(trial.nextSubjectNumber, trial.existingSubjectNumbers, trial.dirName, handles.localPath, importDir, handles.userName);
+                else
+                    subject = trial.getSelectedTrial(choice);
+                end
+                
+                if ~isempty(subject)
+                    dataFilename = createFilenameSection(TrialNamingConventions.DATA_FILENAME_LABEL, num2str(trial.trialNumber));
+                    subject = subject.importSubject(makePath(trial.dirName, subject.dirName), importDir, handles.localPath, dataFilename, handles.userName, trial.subjectType);
+                
+                    trial = trial.updateTrial(subject);
+                end
+            end            
+        end
+        
+        function existingSubjectNumbers = existingSubjectNumbers(trial)
+            subjects = trial.subjects;
+            numSubjects = length(subjects);
+            
+            existingSubjectNumbers = zeros(numSubjects, 1);
+            
+            for i=1:numSubjects
+                existingSubjectNumbers(i) = subjects{i}.subjectNumber;
+            end
+        end
+        
         function trial = loadTrial(trial, toTrialPath, trialDir)
             trialPath = makePath(toTrialPath, trialDir);
 
@@ -36,7 +117,7 @@ classdef Trial
             
             numSubjects = length(subjectDirs);
             
-            trial.subjects = createEmptyCellArray(trial.subjectType.subjectClass, numSubjects);
+            trial.subjects = createEmptyCellArray(trial.subjectType.subjectClass.empty, numSubjects);
             
             for i=1:numSubjects
                 trial.subjects{i} = trial.subjects{i}.loadSubject(trialPath, subjectDirs{i});
@@ -47,8 +128,19 @@ classdef Trial
             end
         end
         
-        function subject = createNewSubject(trial)
-            subject = trial.subjectType.subjectClass;
+        function trial = wipeoutMetadataFields(trial)
+            trial.dirName = '';
+            trial.subjects = [];
+        end        
+        
+        function subject = createNewSubject(trial, nextSubjectNumber, existingSubjectNumbers, toTrialPath, localPath, importDir, userName)
+            if trial.subjectType.subjectClassType == SubjectClassTypes.Natural
+                subject = NaturalSubject(nextSubjectNumber, existingSubjectNumbers, toTrialPath, localPath, importDir, userName);
+            elseif trial.subjectType.subjectClassType == SubjectClassTypes.Artifical
+                subject = ArtificalSubject();
+            else
+                error('Unknown Subject Type');
+            end
         end
         
         function nextNumber = nextSubjectNumber(trial)
@@ -98,10 +190,10 @@ classdef Trial
         end
         
         function subjectChoices = getSubjectChoices(trial)
-            subject = trial.subjects;
+            subjects = trial.subjects;
             numSubjects = length(subjects);
             
-            subjectChoies = cell(numSubjects, 1);
+            subjectChoices = cell(numSubjects, 1);
             
             for i=1:numSubjects
                 subjectChoices{i} = subjects{i}.dirName;

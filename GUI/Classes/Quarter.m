@@ -3,27 +3,44 @@ classdef Quarter
     % stores information about about a quarter of a retina
     
     properties
+        % set at initialization
         dirName
+        metadataHistory
         
+        % set by metadata entry        
         fixingDate
-        fixingDoneBy
-        
+        fixingDoneBy        
         stain
-        slideMaterial
-        
+        slideMaterial        
         quarterType % one of [S,T,I,N] (superior, temporal, inferior, nasal, unknown]
         quarterNumber %1, 2, 3, 4 (used for imaging)
         quarterArbitrary % False if which quarter is which is truly known, true otherwise (choosing S,T,I,N is arbitrary, but consistent)
+        notes
         
+        % locations list and index
         locations
         locationIndex = 0
-        
-        metadataHistory
-        
-        notes
     end
     
     methods
+        function quarter = Quarter(suggestedQuarterNumber, existingQuarterNumbers, toEyePath, projectPath, importDir, userName)
+            [cancel, quarter] = enterMetadata(suggestedQuarterNumber, existingQuarterNumbers, importDir, userName);
+            
+            if ~cancel
+                % set metadata history
+                quarter.metadataHistory = {MetadataHistoryEntry(userName)};
+                
+                % make directory/metadata file
+                quarter = quarter.createDirectories(toEyePath, projectPath);
+                
+                % save metadata
+                saveToBackup = true;
+                quarter.saveMetadata(makePath(toEyePath, quarter.dirName), projectPath, saveToBackup);
+            else
+                quarter = Quarter.empty;
+            end              
+        end
+        
         function quarter = loadQuarter(quarter, toQuarterPath, quarterDir)
             quarterPath = makePath(toQuarterPath, quarterDir);
             
@@ -39,7 +56,7 @@ classdef Quarter
             
             numLocations = length(locationsDirs);
             
-            quarter.locations = createEmptyCellArray(Location, numLocations);
+            quarter.locations = createEmptyCellArray(Location.empty, numLocations);
                         
             for i=1:numLocations
                 quarter.locations{i} = quarter.locations{i}.loadLocation(quarterPath, locationsDirs{i});
@@ -53,35 +70,41 @@ classdef Quarter
         function quarter = importQuarter(quarter, quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType, eyeType)
             dirList = getAllFolders(quarterImportPath);
             
-            importLocationNumbers = getNumbersFromFolderNames(dirList);
-            
             filenameSection = createFilenameSection(QuarterNamingConventions.DATA_FILENAME_LABEL, num2str(quarter.quarterNumber));
-            dataFilename = strcat(dataFilename, filenameSection);
-                
+            dataFilename = [dataFilename, filenameSection];
+            
             for i=1:length(dirList)
-                indices = findInArray(importLocationNumbers{i}, quarter.getLocationNumbers());
+                folderName = dirList{i};
                 
-                locationImportPath = makePath(quarterImportPath, dirList{i});
+                locationImportPath = makePath(quarterImportPath, folderName);
                 
-                if isempty(indices) % new location
-                    location = Location;
+                prompt = ['Select the location to which the data being imported from ', locationImportPath, ' belongs to.'];
+                title = 'Select Location';
+                choices = quarter.getLocationChoices();
+                
+                [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+                
+                if ~cancel
+                    if createNew
+                        suggestedLocationNumber = getNumberFromFolderName(folderName);
+                        
+                        if isnan(suggestedLocationNumber)
+                            suggestedLocationNumber = quarter.getNextLocationNumber();
+                        end
+                        
+                        quarter = Quarter(suggestedLocationNumber, quarter.existingLocationNumbers(), quarterProjectPath, projectPath, locationImportPath, userName);
+                    else
+                        quarter = quarter.getSelectedLocation(choice);
+                    end
                     
-                    location = location.enterMetadata(importLocationNumbers{i}, subjectType, eyeType, quarter.quarterType, locationImportPath);
-                    
-                    % make directory/metadata file
-                    location = location.createDirectories(quarterProjectPath, projectPath);
-                    
-                    saveToBackup = true;
-                    location.saveMetadata(makePath(quarterProjectPath, location.dirName), projectPath, saveToBackup);
-                else % old location
-                    location = quarter.getLocationByNumber(importLocationNumbers{i});
+                    if ~isempty(quarter)
+                        locationProjectPath = makePath(quarterProjectPath, location.dirName);
+                        
+                        location = location.importLocation(locationProjectPath, locationImportPath, projectPath, dataFilename, userName);
+                        
+                        quarter = quarter.updateLocation(location);
+                    end
                 end
-                
-                locationProjectPath = makePath(quarterProjectPath, location.dirName);
-                
-                location = location.importLocation(locationProjectPath, locationImportPath, projectPath, dataFilename, userName);
-                
-                quarter = quarter.updateLocation(location);
             end
         end
         
@@ -133,20 +156,21 @@ classdef Quarter
             nextLocationNumber = lastLocationNumber + 1;
         end
         
-        function quarter = enterMetadata(quarter, suggestedQuarterNumber, importPath, userName)
-              
+        function [cancel, quarter] = enterMetadata(quarter, suggestedQuarterNumber, existingQuarterNumbers, importPath, userName)
             %Call to QuarterMetadataEntry GUI
-            [stain, slideMaterial, quarterType, quarterArbitrary, quarterNumber, fixingDate, fixingDoneBy, notes] = QuarterMetadataEntry(suggestedQuarterNumber, importPath, userName);
+            [cancel, stain, slideMaterial, quarterType, quarterArbitrary, quarterNumber, fixingDate, fixingDoneBy, notes] = QuarterMetadataEntry(suggestedQuarterNumber, existingQuarterNumbers, importPath, userName);
             
-            %Assigning values to Quarter Properties
-            quarter.stain = stain;
-            quarter.slideMaterial = slideMaterial;
-            quarter.quarterType = quarterType;
-            quarter.quarterArbitrary = quarterArbitrary;
-            quarter.quarterNumber = quarterNumber;
-            quarter.fixingDate = fixingDate;
-            quarter.fixingDoneBy = fixingDoneBy;
-            quarter.notes = notes;
+            if ~cancel
+                %Assigning values to Quarter Properties
+                quarter.stain = stain;
+                quarter.slideMaterial = slideMaterial;
+                quarter.quarterType = quarterType;
+                quarter.quarterArbitrary = quarterArbitrary;
+                quarter.quarterNumber = quarterNumber;
+                quarter.fixingDate = fixingDate;
+                quarter.fixingDoneBy = fixingDoneBy;
+                quarter.notes = notes;
+            end
             
         end
         

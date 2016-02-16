@@ -61,7 +61,8 @@ else
     handles.suggestedTrialNumber = '';
 end
 
-handles.importPath = varargin{2}; %Parameter name is 'importPath'
+handles.existingTrialNumbers = varargin{2}; % the existing trial numbers
+handles.importPath = varargin{3}; %Parameter name is 'importPath'
 
 set(handles.importPathDisplay, 'String', handles.importPath);
 set(handles.trialNumberInput, 'String', handles.suggestedTrialNumber);
@@ -81,6 +82,8 @@ set(handles.subjectTypesMenu, 'String', choiceList);
 
 
 %Define default variables
+handles.cancel = false;
+
 handles.title = '';
 handles.description = '';
 handles.trialNumber = str2double(handles.suggestedTrialNumber);
@@ -104,12 +107,16 @@ function varargout = TrialMetadataEntry_OutputFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
+
+% Output: [cancel, title, description, trialNumber, subjectType, trialNotes]
+
 %Output variables
-varargout{1} = handles.title;
-varargout{2} = handles.description;
-varargout{3} = handles.trialNumber;
-varargout{4} = handles.subjectType;
-varargout{5} = handles.trialNotes;
+varargout{1} = handles.cancel;
+varargout{2} = handles.title;
+varargout{3} = handles.description;
+varargout{4} = handles.trialNumber;
+varargout{5} = handles.subjectType;
+varargout{6} = handles.trialNotes;
 
 close(handles.trialMetadataEntry);
 end
@@ -286,6 +293,7 @@ exit = questdlg('Are you sure you want to quit?','Quit','Yes','No','No');
 switch exit
     case 'Yes'
         %Clears variables in the case that they wish to exit the program
+        handles.cancel = true;
         handles.title = '';
         handles.description = '';
         handles.trialNumber = [];

@@ -2,22 +2,21 @@ classdef Subject
     %subject
     
     properties
-        dirName
-        
-        subjectId % person ID, dog name
-        
-        subjectNumber
-        
+        % set at initialization
+        dirName        
         metadataHistory
-                
+        
+        % set by metadata entry        
+        subjectId % person ID, dog name        
+        subjectNumber                
         notes
     end
     
     methods
-        function subject = createDirectories(subject, toTrialPath, handles)
+        function subject = createDirectories(subject, toTrialPath, projectPath)
             subjectDirectory = createDirName(SubjectNamingConventions.DIR_PREFIX, num2str(subject.subjectNumber), subject.subjectId);
             
-            createObjectDirectories(handles.localPath, toTrialPath, subjectDirectory);
+            createObjectDirectories(projectPath, toTrialPath, subjectDirectory);
                         
             subject.dirName = subjectDirectory;
         end

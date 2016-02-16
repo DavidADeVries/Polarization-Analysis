@@ -11,7 +11,7 @@ classdef SubjectClassTypes
     end
     
     methods
-        function enum = SubjectTypes(string)
+        function enum = SubjectClassTypes(string)
             enum.displayString = string;
         end
     end
