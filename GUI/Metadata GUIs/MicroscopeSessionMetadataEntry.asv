@@ -71,8 +71,6 @@ handles.sessionNotes = '';
 handles.rejected = 0;
 handles.rejectedReason = '';
 
-handles.cancel = false;
-
 set(handles.importPathTitle, 'String', handles.importPath);
 set(handles.sessionDoneByInput, 'String', handles.userName);
 set(handles.magnificationInput, 'String', num2str(MicroscopeNamingConventions.DEFAULT_METADATA_GUI_MAGNIFICATION));
@@ -98,23 +96,20 @@ function varargout = MicroscopeSessionMetadataEntry_OutputFcn(hObject, eventdata
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% ******************************************************************************************************************************************************************************
-% OUTPUT: [cancel, magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason]
-% ******************************************************************************************************************************************************************************
+
 
 %Output from GUI
-varargout{1} = handles.cancel;
-varargout{2} = handles.magnification;
-varargout{3} = handles.pixelSizeMicrons;
-varargout{4} = handles.instrument;
-varargout{5} = handles.fluoroSignature;
-varargout{6} = handles.crossedSignature;
-varargout{7} = handles.visualSignature;
-varargout{8} = handles.sessionDate;
-varargout{9} = handles.sessionDoneBy;
-varargout{10} = handles.sessionNotes;
-varargout{11} = handles.rejected;
-varargout{12} = handles.rejectedReason;
+varargout{1} = handles.magnification;
+varargout{2} = handles.pixelSizeMicrons;
+varargout{3} = handles.instrument;
+varargout{4} = handles.fluoroSignature;
+varargout{5} = handles.crossedSignature;
+varargout{6} = handles.visualSignature;
+varargout{7} = handles.sessionDate;
+varargout{8} = handles.sessionDoneBy;
+varargout{9} = handles.sessionNotes;
+varargout{10} = handles.rejected;
+varargout{11} = handles.rejectedReason;
 
 close(handles.MicroscopeSessionMetadataEntry);
 end
@@ -347,8 +342,6 @@ exit = questdlg('Are you sure you want to quit?','Quit','Yes','No','No');
 switch exit
     case 'Yes'
         %Clears variables in the case that they wish to exit the program
-        handles.cancel = true;
-        
         handles.magnification = [];
         handles.pixelSizeMicrons = [];
         handles.instrument = '';

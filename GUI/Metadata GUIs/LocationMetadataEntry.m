@@ -71,6 +71,10 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
+% ********************************************************************************************************
+% INPUT: (eyeType, subjectType, quarterType, suggestedLocationNumber, existingLocationNumbers, importPath)
+% ********************************************************************************************************
+
 %Variable inputs from program calling this GUI
 handles.eye = varargin{1}; %Input param is 'eyeType', determines whether the left or right eye will be displayed
 handles.subjectType = varargin{2}; %Input parameter is 'subjectType', and determines whether or not the fovea will be plotted
@@ -82,7 +86,12 @@ else
     handles.suggestedLocationNumber = '';
 end
 
-handles.importPath = varargin{5}; %Input parameter is 'importPath'
+handles.existingLocationNumbers = varargin{5};
+
+handles.importPath = varargin{6}; %Input parameter is 'importPath'
+
+
+handles.cancel = false;
 
 %Chooses right eye to map if selected eye is unknown
 if handles.eye == EyeTypes.Unknown
@@ -234,11 +243,16 @@ function varargout = LocationMetadataEntry_OutputFcn(hObject, eventdata, handles
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% ********************************************************
+% OUTPUT: [cancel, coords, locationNumber, deposit, notes]
+% ********************************************************
+
 % Get default command line output from handles structure
-varargout{1} = [handles.xCoords,handles.yCoords];
-varargout{2} = handles.locationNumber;
-varargout{3} = handles.deposit;
-varargout{4} = handles.locationNotes;
+varargout{1} = handles.cancel;
+varargout{2} = [handles.xCoords, handles.yCoords];
+varargout{3} = handles.locationNumber;
+varargout{4} = handles.deposit;
+varargout{5} = handles.locationNotes;
 close(handles.LocationMetadataEntry);
 end
 
@@ -269,6 +283,7 @@ exit = questdlg('Are you sure you want to quit?','Quit','Yes','No','No'); % TODO
 switch exit
     case 'Yes'
         %Clears variables in the case that they wish to exit the program
+        handles.cancel = true;
         handles.xCoords = [];
         handles.yCoords = [];
         handles.locationNumber = [];

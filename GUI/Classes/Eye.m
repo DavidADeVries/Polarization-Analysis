@@ -65,7 +65,7 @@ classdef Eye
             end
         end
         
-        function eye = importEye(eye, eyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType)  
+        function eye = importEye(eye, toEyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType)  
             dirList = getAllFolders(eyeImportPath);
             
             filenameSection = createFilenameSection(EyeNamingConventions.DATA_FILENAME_LABEL, num2str(eye.eyeNumber));
@@ -90,13 +90,13 @@ classdef Eye
                             suggestedEyeNumber = subject.getNextEyeNumber();
                         end
                         
-                        quarter = Quarter(suggestedEyeNumber, eye.existingQuarterNumbers(), eyeProjectPath, projectPath, quarterImportPath, userName);
+                        quarter = Quarter(suggestedEyeNumber, eye.existingQuarterNumbers(), toEyeProjectPath, projectPath, quarterImportPath, userName);
                     else
                         quarter = eye.getSelectedQuarter(choice);
                     end
                     
                     if ~isempty(quarter)
-                        quarterProjectPath = makePath(eyeProjectPath, quarter.dirName);
+                        quarterProjectPath = makePath(toEyeProjectPath, quarter.dirName);
                         
                         quarter = quarter.importQuarter(quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType);
                         

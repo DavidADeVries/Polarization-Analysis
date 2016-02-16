@@ -40,7 +40,7 @@ classdef Location
         end
         
         
-        function location = importLocation(location, locationProjectPath, locationImportPath, projectPath, dataFilename, userName)
+        function location = importLocation(location, toLocationProjectPath, locationImportPath, projectPath, dataFilename, userName)
             filenameSection = createFilenameSection(LocationNamingConventions.DATA_FILENAME_LABEL, num2str(location.locationNumber));
             dataFilename = strcat(dataFilename, filenameSection);
             
@@ -60,7 +60,7 @@ classdef Location
                     if ok
                         suggestedSessionNumber = location.getNextSessionNumber();
                     
-                        session = DataCollectionSession.createSession(choice, suggestedSessionNumber, location.existingSessionNumbers(), locationProjectPath, projectPath, locationImportPath, userName);
+                        session = DataCollectionSession.createSession(choice, suggestedSessionNumber, location.existingSessionNumbers(), toLocationProjectPath, projectPath, locationImportPath, userName);
                     else
                         session = DataCollectionSession.empty;
                     end
@@ -69,9 +69,9 @@ classdef Location
                 end
                 
                 if ~isempty(quarter)
-                    locationProjectPath = makePath(quarterProjectPath, location.dirName);
+                    toLocationProjectPath = makePath(quarterProjectPath, location.dirName);
                     
-                    location = location.importLocation(locationProjectPath, locationImportPath, projectPath, dataFilename, userName);
+                    location = location.importLocation(toLocationProjectPath, locationImportPath, projectPath, dataFilename, userName);
                     
                     quarter = quarter.updateLocation(location);
                 end
@@ -83,7 +83,7 @@ classdef Location
             
             
             
-            dataCollectionSession = importDataCollectionSession(location, locationProjectPath, locationImportPath, projectPath, dataFilename, userName);
+            dataCollectionSession = importDataCollectionSession(location, toLocationProjectPath, locationImportPath, projectPath, dataFilename, userName);
             
             location = location.addSession(dataCollectionSession);
         end
@@ -169,16 +169,18 @@ classdef Location
         end
         
         
-        function location = enterMetadata(location, suggestedLocationNumber, existingLocationNumbers, subjectType, eyeType, quarterType, importPath)
+        function [cancel, location] = enterMetadata(location, suggestedLocationNumber, existingLocationNumbers, subjectType, eyeType, quarterType, importPath)
             
             %Call to LocationMetadataEntry Function
-            [coords, locationNumber, deposit, notes] = LocationMetadataEntry(eyeType, subjectType, quarterType, suggestedLocationNumber, existingLocationNumbers, importPath);
+            [cancel, coords, locationNumber, deposit, notes] = LocationMetadataEntry(eyeType, subjectType, quarterType, suggestedLocationNumber, existingLocationNumbers, importPath);
             
-            %Assigning values to the location class properties
-            location.locationNumber = locationNumber;
-            location.deposit = deposit;
-            location.locationCoords = coords;
-            location.notes = notes;
+            if ~cancel
+                %Assigning values to the location class properties
+                location.locationNumber = locationNumber;
+                location.deposit = deposit;
+                location.locationCoords = coords;
+                location.notes = notes;
+            end
             
         end
         

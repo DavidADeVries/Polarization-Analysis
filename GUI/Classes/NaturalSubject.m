@@ -61,7 +61,7 @@ classdef NaturalSubject < Subject
             end
         end
         
-        function subject = importSubject(subject, subjectProjectPath, subjectImportPath, projectPath, dataFilename, userName, subjectType)
+        function subject = importSubject(subject, toSubjectProjectPath, subjectImportPath, projectPath, dataFilename, userName, subjectType)
             dirList = getAllFolders(subjectImportPath);
             
             filenameSection = createFilenameSection(SubjectNamingConventions.DATA_FILENAME_LABEL, num2str(subject.subjectNumber));
@@ -86,13 +86,13 @@ classdef NaturalSubject < Subject
                             suggestedEyeNumber = subject.getNextEyeNumber();
                         end
                         
-                        eye = Eye(suggestedEyeNumber, subject.existingEyeNumbers(), subjectProjectPath, projectPath, subjectImportPath, userName);
+                        eye = Eye(suggestedEyeNumber, subject.existingEyeNumbers(), toSubjectProjectPath, projectPath, subjectImportPath, userName);
                     else
                         eye = subject.getSelectedEye(choice);
                     end
                     
                     if ~isempty(eye)
-                        eyeProjectPath = makePath(subjectProjectPath, eye.dirName);
+                        eyeProjectPath = makePath(toSubjectProjectPath, eye.dirName);
                         
                         eye = eye.importEye(eyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType);
                         
@@ -173,7 +173,7 @@ classdef NaturalSubject < Subject
                 subject.gender = gender;
                 subject.ADDiagnosis = ADDiagnosis;
                 subject.causeOfDeath = causeOfDeath;
-                subject.medicalHistory = ''; % TODO
+                subject.medicalHistory = medicalHistory;
                 subject.notes = notes;
             end
             

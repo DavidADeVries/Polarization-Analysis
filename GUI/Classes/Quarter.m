@@ -67,7 +67,7 @@ classdef Quarter
             end
         end
         
-        function quarter = importQuarter(quarter, quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType, eyeType)
+        function quarter = importQuarter(quarter, toQuarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType, eyeType)
             dirList = getAllFolders(quarterImportPath);
             
             filenameSection = createFilenameSection(QuarterNamingConventions.DATA_FILENAME_LABEL, num2str(quarter.quarterNumber));
@@ -92,13 +92,13 @@ classdef Quarter
                             suggestedLocationNumber = quarter.getNextLocationNumber();
                         end
                         
-                        quarter = Quarter(suggestedLocationNumber, quarter.existingLocationNumbers(), quarterProjectPath, projectPath, locationImportPath, userName);
+                        quarter = Quarter(suggestedLocationNumber, quarter.existingLocationNumbers(), toQuarterProjectPath, projectPath, locationImportPath, userName);
                     else
                         quarter = quarter.getSelectedLocation(choice);
                     end
                     
                     if ~isempty(quarter)
-                        locationProjectPath = makePath(quarterProjectPath, location.dirName);
+                        locationProjectPath = makePath(toQuarterProjectPath, location.dirName);
                         
                         location = location.importLocation(locationProjectPath, locationImportPath, projectPath, dataFilename, userName);
                         
