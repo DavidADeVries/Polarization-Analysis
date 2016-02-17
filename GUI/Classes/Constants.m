@@ -17,9 +17,6 @@ classdef Constants
         
         DEFAULT_EYE_TYPE = EyeTypes.Right;
         
-        DEFAULT_STAIN = 'Thioflavin S and Dapi';
-        
-        DEFAULT_SLIDE_MATERIAL = 'Glass';
     end
     
     methods

@@ -72,8 +72,8 @@ handles.userName = varargin{4};
 handles.cancel = false;
 
 %Defining the default input variables, awaiting user input
-handles.stain = Constants.DEFAULT_STAIN;
-handles.slideMaterial = Constants.DEFAULT_SLIDE_MATERIAL;
+handles.stain = QuarterNamingConventions.DEFAULT_METADATA_GUI_STAIN;
+handles.slideMaterial = QuarterNamingConventions.DEFAULT_METADATA_GUI_SLIDE_MATERIAL;
 handles.quarterType = [];
 handles.quarterArbitrary = 0;
 handles.quarterNumber = str2double(handles.suggestedQuarterNumber);
@@ -103,8 +103,8 @@ set(handles.arbitraryLabelsButton, 'Value', 0);
 set(handles.trueLabelsButton, 'Value', 1);
 set(handles.OK, 'enable', 'off');
 set(handles.quarterNumberInput, 'String', handles.suggestedQuarterNumber);
-set(handles.quarterStainInput, 'String', Constants.DEFAULT_STAIN);
-set(handles.slideMaterialInput, 'String', Constants.DEFAULT_SLIDE_MATERIAL);
+set(handles.quarterStainInput, 'String', QuarterNamingConventions.DEFAULT_METADATA_GUI_STAIN);
+set(handles.slideMaterialInput, 'String', QuarterNamingConventions.DEFAULT_METADATA_GUI_SLIDE_MATERIAL);
 
 % Update handles structure
 guidata(hObject, handles);
