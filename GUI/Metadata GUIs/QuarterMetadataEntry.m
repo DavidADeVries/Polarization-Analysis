@@ -89,11 +89,10 @@ handles.choiceListDefault = 'Select a Quarter Type';
 
 %Setting the list values for the Quarter Type pop up menu
 choiceList = {handles.choiceListDefault};
-choiceList{2} = choiceStrings{1};
-choiceList{3} = choiceStrings{2};
-choiceList{4} = choiceStrings{3};
-choiceList{5} = choiceStrings{4};
-choiceList{6} = choiceStrings{5};
+for i = 1:size(choiceStrings)
+    choiceList{i+1} = choiceStrings{i};
+end
+
 set(handles.quarterTypeMenu, 'String', choiceList);
 
 

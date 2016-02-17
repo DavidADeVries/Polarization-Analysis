@@ -1,4 +1,4 @@
-[coords, locationNumber, deposit, notes] = LocationMetadataEntry(EyeTypes.Right, SubjectTypes.Human, QuarterTypes.Nasal, 7, 'importPath')
+[cancel, coords, locationNumber, deposit, notes] = LocationMetadataEntry(EyeTypes.Right, SubjectTypes.Human, QuarterTypes.Unknown, 7, 7, 'importPath')
 
 
 if ~isempty(coords)

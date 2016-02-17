@@ -87,16 +87,16 @@ handles.diagnosisChoiceListDefault = 'Select a Diagnosis';
 
 %Setting the list values for the Gender Type pop up menu
 genderChoiceList = {handles.genderChoiceListDefault};
-genderChoiceList{2} = genderChoiceStrings{1};
-genderChoiceList{3} = genderChoiceStrings{2};
-genderChoiceList{4} = genderChoiceStrings{3};
+for i = 1:size(genderChoiceStrings)
+    genderChoiceList{i+1} = genderChoiceStrings{i};
+end
 set(handles.genderInput, 'String', genderChoiceList);
 
 %Setting the list values for the Diagnosis Type pop up menu
 diagnosisChoiceList = {handles.diagnosisChoiceListDefault};
-diagnosisChoiceList{2} = diagnosisChoiceStrings{1};
-diagnosisChoiceList{3} = diagnosisChoiceStrings{2};
-diagnosisChoiceList{4} = diagnosisChoiceStrings{3};
+for i = 1:size(diagnosisChoiceStrings)
+    diagnosisChoiceList{i+1} = diagnosisChoiceStrings{i};
+end
 set(handles.diagnosisInput, 'String', diagnosisChoiceList);
 
 set(handles.OK, 'enable', 'off');

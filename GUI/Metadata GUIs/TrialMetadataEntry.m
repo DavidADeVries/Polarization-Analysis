@@ -75,9 +75,9 @@ handles.choiceListDefault = 'Select a Subject Type';
 
 %Setting the list values for the Eye Type pop up menu
 choiceList = {handles.choiceListDefault};
-choiceList{2} = choiceStrings{1};
-choiceList{3} = choiceStrings{2};
-choiceList{4} = choiceStrings{3};
+for i = 1:size(choiceStrings)
+    choiceList{i+1} = choiceStrings{i};
+end
 set(handles.subjectTypesMenu, 'String', choiceList);
 
 
