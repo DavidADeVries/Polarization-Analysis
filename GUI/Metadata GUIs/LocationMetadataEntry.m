@@ -149,7 +149,7 @@ yRetina = 0; %y value for the center of retina
 rRetina = 1; %radius of retina
 
 circle(xRetina,yRetina,rRetina); 
-
+hold on
 x1 = [-1,0,1];
 y1 = abs(x1);
 
@@ -216,7 +216,7 @@ handles.marker = plot(handles.xCoords, handles.yCoords, handles.MarkerStyle, 'Ma
 
 [choices, quarterChoiceStrings] = choicesFromEnum('QuarterTypes');
 
-for i = (1:5)
+for i = (1:size(quarterChoiceStrings))
     if handles.selectedQuarter == choices(i)
         handles.selectedQuarterDisplay = quarterChoiceStrings(i); %creates the appropriate quarter type string
     end
@@ -356,6 +356,11 @@ elseif handles.selectedQuarter == QuarterTypes.Nasal
                waitfor(warndlg('Selected point conflicts with selected quarter type.','Invalid Point Selection'));
                [handles.xCoords,handles.yCoords] = ginput(1);
          end
+    end
+elseif handles.selectedQuarter == QuarterTypes.Unknown
+    while sqrt((handles.xCoords)^2 + (handles.yCoords)^2) > 1
+        waitfor(warndlg('Selected point conflicts with selected quarter type.','Invalid Point Selection'));
+        [handles.xCoords,handles.yCoords] = ginput(1);
     end
 end
 
