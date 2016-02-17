@@ -22,11 +22,11 @@ classdef DataCollectionSession < Session
         end
         
         
-        function session = createSession(choice, suggestedSessionNumber, existingSessionNumbers, locationProjectPath, projectPath, locationImportPath, userName)
+        function session = createSession(choice, sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName)
             if choice == 1
-                session = MicroscopeSession;
+                session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
             elseif choice == 2
-                session = CLSOSession;
+                session = CLSOSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
             elseif choice == 3
                 session = DataCollectionSession;
             else

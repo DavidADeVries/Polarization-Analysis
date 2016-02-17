@@ -18,11 +18,10 @@ classdef Location
         sessionIndex = 0
     end
     
-    methods
-        
+    methods       
         
         function location = Location(suggestedLocationNumber, existingLocationNumbers, toQuarterPath, projectPath, importDir, userName, subjectType, eyeType, quarterType)
-            [cancel, location] = location.enterMetadata(suggestedLocationNumber, existingLocationNumbers, subjectType, eyeType, quarterType, importDir, userName);
+            [cancel, location] = location.enterMetadata(suggestedLocationNumber, existingLocationNumbers, subjectType, eyeType, quarterType, importDir);
             
             if ~cancel
                 % set metadata history
@@ -44,7 +43,6 @@ classdef Location
             filenameSection = createFilenameSection(LocationNamingConventions.DATA_FILENAME_LABEL, num2str(location.locationNumber));
             dataFilename = strcat(dataFilename, filenameSection);
             
-                
             prompt = ['Select the session to which the data being imported from ', locationImportPath, ' belongs to.'];
             title = 'Select Session';
             choices = location.getSessionChoices();
@@ -58,34 +56,42 @@ classdef Location
                     [choice, ok] = listdlg('ListString', listString, 'SelectionMode', 'single', 'Name', 'Select Data Collection Type', 'PromptString', 'For the data being imported, please select how the data was collected:');
                     
                     if ok
-                        suggestedSessionNumber = location.getNextSessionNumber();
+                        sessionNumber = location.getNextSessionNumber();
+                        dataCollectionSessionNumber = location.getNextDataCollectionSessionNumber();
                     
-                        session = DataCollectionSession.createSession(choice, suggestedSessionNumber, location.existingSessionNumbers(), toLocationProjectPath, projectPath, locationImportPath, userName);
+                        session = DataCollectionSession.createSession(choice, sessionNumber, dataCollectionSessionNumber, toLocationProjectPath, projectPath, locationImportPath, userName);
                     else
                         session = DataCollectionSession.empty;
                     end
                 else
-                    session = session.getSelectedSession(choice);
+                    session = location.getSessionFromChoice(choice);
                 end
                 
-                if ~isempty(quarter)
-                    toLocationProjectPath = makePath(quarterProjectPath, location.dirName);
+                if ~isempty(session)
+                    toSessionProjectPath = makePath(toLocationProjectPath, session.dirName);
                     
-                    location = location.importLocation(toLocationProjectPath, locationImportPath, projectPath, dataFilename, userName);
+                    session = session.importSession(toSessionProjectPath, locationImportPath, projectPath, dataFilename);
                     
-                    quarter = quarter.updateLocation(location);
+                    location = location.updateSession(session);
                 end
             end
+        end
+        
+        
+        function session = getSessionFromChoice(location, choice)
+            session = location.sessions{choice};
+        end
+        
+        
+        function sessionChoices = getSessionChoices(location)
+            sessions = location.sessions;
+            numSessions = length(sessions);
             
+            sessionChoices = cell(numSessions, 1);
             
-            
-            
-            
-            
-            
-            dataCollectionSession = importDataCollectionSession(location, toLocationProjectPath, locationImportPath, projectPath, dataFilename, userName);
-            
-            location = location.addSession(dataCollectionSession);
+            for i=1:numSessions
+                sessionChoices{i} = sessions{i}.dirName;
+            end            
         end
         
         
@@ -126,22 +132,6 @@ classdef Location
             
             if ~isempty(sessions)
                 location.sessionIndex = 1;
-            end
-        end
-        
-        
-        function location = addSession(location, session)
-            if ~isempty(session)
-                sessions = location.sessions;
-                numSessions = length(sessions);
-                
-                sessions{numSessions + 1} = session;
-                
-                location.sessions = sessions;
-                
-                if location.sessionIndex == 0
-                    location.sessionIndex = 1;
-                end
             end
         end
         

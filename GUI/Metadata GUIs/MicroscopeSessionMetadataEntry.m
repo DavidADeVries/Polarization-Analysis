@@ -55,6 +55,10 @@ function MicroscopeSessionMetadataEntry_OpeningFcn(hObject, eventdata, handles, 
 % Choose default command line output for MicroscopeSessionMetadataEntry
 handles.output = hObject;
 
+% *****************************
+% INPUT: (userName, importPath)
+% *****************************
+
 handles.userName = varargin{1}; %Param is userName
 handles.importPath = varargin{2}; % Param is importPath
 

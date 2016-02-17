@@ -15,12 +15,13 @@ classdef MicroscopeSession < DataCollectionSession
     end
     
     methods
-        function session = MicroscopeSession(sessionNumber, toLocationPath, projectPath, importDir, userName)
-            [cancel, session] = enterMetadata(importDir, userName);
+        function session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, toLocationPath, projectPath, importDir, userName)
+            [cancel, session] = session.enterMetadata(importDir, userName);
             
             if ~cancel
-                % set session number
+                % set session numbers
                 session.sessionNumber = sessionNumber;
+                session.dataCollectionSessionNumber = dataCollectionSessionNumber;
                 
                 % set metadata history
                 session.metadataHistory = {MetadataHistoryEntry(userName)};
@@ -36,7 +37,7 @@ classdef MicroscopeSession < DataCollectionSession
             end              
         end
         
-        function session = enterMetadata(session, importPath, userName)
+        function [cancel, session] = enterMetadata(session, importPath, userName)
             
             %Call to Microscope Session Metadata Entry GUI
             [cancel, magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason] = MicroscopeSessionMetadataEntry(userName, importPath);
@@ -58,7 +59,9 @@ classdef MicroscopeSession < DataCollectionSession
         
         end
         
-        function [] = importData(session, sessionProjectPath, locationImportPath, projectPath, dataFilename)
+        function session = importSession(session, sessionProjectPath, locationImportPath, projectPath, dataFilename)            
+            filenameSection = createFilenameSection(SessionNamingConventions.DATA_FILENAME_LABEL, num2str(session.sessionNumber));
+            dataFilename = strcat(dataFilename, filenameSection);
             
             waitText = 'Importing session data. Please wait.';
             waitTitle = 'Importing Data';

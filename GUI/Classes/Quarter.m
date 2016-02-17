@@ -92,12 +92,12 @@ classdef Quarter
                             suggestedLocationNumber = quarter.getNextLocationNumber();
                         end
                         
-                        quarter = Quarter(suggestedLocationNumber, quarter.existingLocationNumbers(), toQuarterProjectPath, projectPath, locationImportPath, userName);
+                        location = Location(suggestedLocationNumber, quarter.existingLocationNumbers(), toQuarterProjectPath, projectPath, locationImportPath, userName, subjectType, eyeType, quarter.quarterType); 
                     else
-                        quarter = quarter.getLocationFromChoice(choice);
+                        location = quarter.getLocationFromChoice(choice);
                     end
                     
-                    if ~isempty(quarter)
+                    if ~isempty(location)
                         locationProjectPath = makePath(toQuarterProjectPath, location.dirName);
                         
                         location = location.importLocation(locationProjectPath, locationImportPath, projectPath, dataFilename, userName);
@@ -261,7 +261,7 @@ classdef Quarter
        
         function metadataString = getMetadataString(quarter)
             
-            fixingDateString = ['Fixing Date: ', quarter.fixingDate];
+            fixingDateString = ['Fixing Date: ', displayDate(quarter.fixingDate)];
             fixingDoneByString = ['Fixing Done By: ', quarter.fixingDoneBy];
             stainString = ['Stain: ', quarter.stain];
             slideMaterialString = ['Slide Material: ', quarter.slideMaterial];

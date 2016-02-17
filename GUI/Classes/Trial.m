@@ -92,7 +92,7 @@ classdef Trial
                     dataFilename = createFilenameSection(TrialNamingConventions.DATA_FILENAME_LABEL, num2str(trial.trialNumber));
                     subject = subject.importSubject(makePath(trial.dirName, subject.dirName), importDir, handles.localPath, dataFilename, handles.userName, trial.subjectType);
                 
-                    trial = trial.updateTrial(subject);
+                    trial = trial.updateSubject(subject);
                 end
             end            
         end
@@ -107,6 +107,7 @@ classdef Trial
                 existingSubjectNumbers(i) = subjects{i}.subjectNumber;
             end
         end
+        
         
         function trial = loadTrial(trial, toTrialPath, trialDir)
             trialPath = makePath(toTrialPath, trialDir);

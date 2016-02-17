@@ -98,7 +98,7 @@ classdef Eye
                     if ~isempty(quarter)
                         quarterProjectPath = makePath(toEyeProjectPath, quarter.dirName);
                         
-                        quarter = quarter.importQuarter(quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType);
+                        quarter = quarter.importQuarter(quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType, eye.eyeType);
                         
                         eye = eye.updateQuarter(quarter);
                     end
