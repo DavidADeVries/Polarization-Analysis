@@ -5,7 +5,7 @@ classdef LegacyRegistrationSession
     
     properties
         registrationType % registrationType
-        registrationParams
+        registrationParameters
     end
     
     methods
