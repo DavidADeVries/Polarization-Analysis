@@ -3,6 +3,7 @@ classdef MicroscopeSession < DataCollectionSession
     %holds metadata for images taken in the microscope
     
     properties
+        % set by metadata entry
         magnification
         pixelSizeMicrons % size of pixel in microns (used for generating scale bars)
         instrument
@@ -14,67 +15,59 @@ classdef MicroscopeSession < DataCollectionSession
     end
     
     methods
-        function session = enterMetadata(session)
+        function session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, toLocationPath, projectPath, importDir, userName)
+            [cancel, session] = session.enterMetadata(importDir, userName);
             
-            %magnification
-            prompt = {'Enter Magnification (decimal):'};
-            title = 'Magnification';
+            if ~cancel
+                % set session numbers
+                session.sessionNumber = sessionNumber;
+                session.dataCollectionSessionNumber = dataCollectionSessionNumber;
+                
+                % set metadata history
+                session.metadataHistory = {MetadataHistoryEntry(userName)};
+                
+                % make directory/metadata file
+                session = session.createDirectories(toLocationPath, projectPath);
+                
+                % save metadata
+                saveToBackup = true;
+                session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
+            else
+                session = MicroscopeSession.empty;
+            end              
+        end
+        
+        function [cancel, session] = enterMetadata(session, importPath, userName)
             
-            session.magnification = str2double(inputdlg(prompt, title));
+            %Call to Microscope Session Metadata Entry GUI
+            [cancel, magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason] = MicroscopeSessionMetadataEntry(userName, importPath);
             
-            %pixelSizeMicrons
-            prompt = {'Enter Pixel Size in microns (decimal):'};
-            title = 'Pixel Size';
-            
-            session.pixelSizeMicrons = str2double(inputdlg(prompt, title));
-            
-            %instrument
-            prompt = {'Enter instrument used:'};
-            title = 'Instrument Used';
-            
-            response = inputdlg(prompt, title);
-            session.instrument = response{1};
-            
-            %fluoroSignature
-            session.fluoroSignature = true;
-            
-            %crossedSignature
-            session.crossedSignature = false;
-            
-            %visualSignature % T/F
-            session.visualSignature = false;
-            
-            %sessionDate
-            %sessionDoneBy
-            prompt = {'Enter imaginge date (e.g. Jan 1, 2016):', 'Enter imaging done by:'};
-            title = 'Imaging Information';
-            numLines = 2;
-            
-            responses = inputdlg(prompt, title, numLines);
-            
-            session.sessionDate = responses{1};
-            session.sessionDoneBy = responses{2};
-            
-            %notes
-            
-            prompt = 'Enter Session notes:';
-            title = 'Session Notes';
-            
-            response = inputdlg(prompt, title);
-            session.notes = response{1}; 
-            
-            
-            %rejected % T/F, will exclude data from being included in analysis
-            %rejectedReason % reason that this data was rejected (suspected poor imaging, out of focus
-            
-            session.rejected = false;
-            session.rejectedReason = 'N/A';
-                   
+            if ~cancel
+                %Assigning values to Microscope Session Properties
+                session.magnification = magnification;
+                session.pixelSizeMicrons = pixelSizeMicrons;
+                session.instrument = instrument;
+                session.fluoroSignature = fluoroSignature;
+                session.crossedSignature = crossedSignature;
+                session.visualSignature = visualSignature;
+                session.sessionDate = sessionDate;
+                session.sessionDoneBy = sessionDoneBy;
+                session.notes = notes;
+                session.rejected = rejected;
+                session.rejectedReason = rejectedReason;
+            end
         
         end
         
-        function [] = importData(session, sessionProjectPath, locationImportPath, projectPath, localPath, dataFilename)
-                       
+        function session = importSession(session, sessionProjectPath, locationImportPath, projectPath, dataFilename)            
+            filenameSection = createFilenameSection(SessionNamingConventions.DATA_FILENAME_LABEL, num2str(session.sessionNumber));
+            dataFilename = strcat(dataFilename, filenameSection);
+            
+            waitText = 'Importing session data. Please wait.';
+            waitTitle = 'Importing Data';
+            
+            waitHandle = popupMessage(waitText, waitTitle);
+
             % get list of folders
             dirList = getAllFolders(locationImportPath);
             
@@ -117,22 +110,43 @@ classdef MicroscopeSession < DataCollectionSession
                 filename = strcat(dataFilename, filenameSection);
                 importPath = makePath(locationImportPath, dirName);
                 
-                importBmpNd2Files(sessionProjectPath, importPath, projectPath, localPath, filename, namingConventions, newDir);
-            end           
+                importBmpNd2Files(sessionProjectPath, importPath, projectPath, filename, namingConventions, newDir);
+            end      
+
+            delete(waitHandle);     
             
         end
          
         function dirSubtitle = getDirSubtitle(session)
             dirSubtitle = SessionNamingConventions.MICROSCOPE_DIR_SUBTITLE;
         end
+               
+        function metadataString = getMetadataString(session)
+            
+            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString] = getSessionMetadataString(session);
+            
+            magnificationString = ['Magnification: ', num2str(session.magnification)];
+            pixelSizeMicronsString = ['Pixel Size (microns): ', num2str(session.pixelSizeMicrons)];
+            instrumentString = ['Instrument: ', session.instrument];
+            fluoroSignatureString = ['Fluoro Signature: ', booleanToString(session.fluoroSignature)];
+            crossedSignatureString = ['Crossed Signature: ', booleanToString(session.crossedSignature)];
+            visualSignatureString = ['Visual Signature: ', booleanToString(session.visualSignature)];
+            
+            
+            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, magnificationString, pixelSizeMicronsString, instrumentString, fluoroSignatureString, crossedSignatureString, visualSignatureString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            
+        end
+        
     end
     
 end
 
-function [] = importBmpNd2Files(sessionProjectPath, importPath, projectPath, localPath, dataFilename, namingConventions, newDir)
+function [] = importBmpNd2Files(sessionProjectPath, importPath, projectPath, dataFilename, namingConventions, newDir)
+
+
 
 % create folder to hold data to be imported
-createObjectDirectories(projectPath, localPath, sessionProjectPath, newDir);
+createObjectDirectories(projectPath, sessionProjectPath, newDir);
 projectToPath = makePath(sessionProjectPath, newDir);
 
 % import files
@@ -162,13 +176,13 @@ if numBmpFiles == numNd2Files && length(filenames) == numBmpFiles + numNd2Files
         
         % import .bmp
         projectFilename = strcat(finalFilename, Constants.BMP_EXT);
-        importFile(projectToPath, importPath, projectPath, localPath, importFilenameBmp, projectFilename);
+        importFile(projectToPath, importPath, projectPath, importFilenameBmp, projectFilename);
         
         % import .nd2
         projectFilename = strcat(finalFilename, Constants.ND2_EXT);
         importFilenameNd2 = findSameFilenameWithDifferentExtension(nd2Filenames, importFilenameBmp);
         
-        importFile(projectToPath, importPath, projectPath, localPath, importFilenameNd2, projectFilename);
+        importFile(projectToPath, importPath, projectPath, importFilenameNd2, projectFilename);
         
         
         counts(index) = counts(index) + 1;

@@ -2,16 +2,39 @@ classdef NaturalSubject < Subject
     % NaturalSubject 
     % a NaturalSubject is a person or animal
     
-    properties      
+    properties
+        % set by metadata entry
         age %number (decimal please!)
         gender % GenderTypes
         ADDiagnosis % DiagnosisTypes
         causeOfDeath
+        medicalHistory
         
-        eyes         
+        % list of eyes and index
+        eyes
+        eyeIndex = 0
     end
     
     methods
+        function subject = NaturalSubject(subjectNumber, existingSubjectNumbers, toTrialPath, projectPath, importDir, userName)
+            [cancel, subject] = subject.enterMetadata(subjectNumber, existingSubjectNumbers, importDir, userName);
+            
+            if ~cancel
+                % set metadata history
+                subject.metadataHistory = {MetadataHistoryEntry(userName)};
+                
+                % make directory/metadata file
+                subject = subject.createDirectories(toTrialPath, projectPath);
+                
+                % save metadata
+                saveToBackup = true;
+                subject.saveMetadata(makePath(toTrialPath, subject.dirName), projectPath, saveToBackup);
+            else
+                subject = NaturalSubject.empty;
+            end  
+            
+        end
+        
         function subject = loadSubject(subject, toSubjectPath, subjectDir)
             subjectPath = makePath(toSubjectPath, subjectDir);
             
@@ -27,45 +50,71 @@ classdef NaturalSubject < Subject
             
             numEyes = length(eyeDirs);
             
-            subject.eyes = createEmptyCellArray(Eye, numEyes);
+            subject.eyes = createEmptyCellArray(Eye.empty, numEyes);
             
             for i=1:numEyes
                 subject.eyes{i} = subject.eyes{i}.loadEye(subjectPath, eyeDirs{i});
             end
+            
+            if ~isempty(subject.eyes)
+                subject.eyeIndex = 1;
+            end
         end
         
-        function subject = importSubject(subject, subjectProjectPath, subjectImportPath, projectPath, localPath)           
+        function subject = importSubject(subject, toSubjectProjectPath, subjectImportPath, projectPath, dataFilename, userName, subjectType)
             dirList = getAllFolders(subjectImportPath);
             
-            importEyeNumbers = getNumbersFromFolderNames(dirList);
-                
             filenameSection = createFilenameSection(SubjectNamingConventions.DATA_FILENAME_LABEL, num2str(subject.subjectNumber));
-            dataFilename = filenameSection; % filename start
-                        
+            dataFilename = [dataFilename, filenameSection]; 
+            
             for i=1:length(dirList)
-                indices = findInArray(importEyeNumbers{i}, subject.getEyeNumbers());
+                folderName = dirList{i};
                 
-                if isempty(indices) % new eye
-                    eye = Eye;
+                eyeImportPath = makePath(subjectImportPath, folderName);
+                
+                prompt = ['Select the eye to which the data being imported from ', eyeImportPath, ' belongs to.'];
+                title = 'Select Eye';
+                choices = subject.getEyeChoices();
+                
+                [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+                
+                if ~cancel
+                    if createNew                        
+                        suggestedEyeNumber = getNumberFromFolderName(folderName);
+                        
+                        if isnan(suggestedEyeNumber)
+                            suggestedEyeNumber = subject.getNextEyeNumber();
+                        end
+                        
+                        eye = Eye(suggestedEyeNumber, subject.existingEyeNumbers(), toSubjectProjectPath, projectPath, subjectImportPath, userName);
+                    else
+                        eye = subject.getEyeFromChoice(choice);
+                    end
                     
-                    eye = eye.enterMetadata(importEyeNumbers{i});
-                    
-                    % make directory/metadata file
-                    eye = eye.createDirectories(subjectProjectPath, projectPath, localPath);
-                    
-                    saveToBackup = true;
-                    eye.saveMetadata(makePath(subjectProjectPath, eye.dirName), projectPath, localPath, saveToBackup);
-                else % old eye
-                    eye = subject.getEyeByNumber(importEyeNumbers{i});
-                end
-                
-                eyeProjectPath = makePath(subjectProjectPath, eye.dirName);
-                eyeImportPath = makePath(subjectImportPath, dirList{i});
-                
-                eye = eye.importEye(eyeProjectPath, eyeImportPath, projectPath, localPath, dataFilename);
-                
-                subject = subject.updateEye(eye);
-            end            
+                    if ~isempty(eye)
+                        eyeProjectPath = makePath(toSubjectProjectPath, eye.dirName);
+                        
+                        eye = eye.importEye(eyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType);
+                        
+                        subject = subject.updateEye(eye);
+                    end
+                end                
+            end          
+        end
+        
+        function eye = getEyeFromChoice(subject, choice)
+            eye = subject.eyes{choice};
+        end
+        
+        function eyeChoices = getEyeChoices(subject)
+            eyes = subject.eyes;
+            numEyes = length(eyes);
+            
+            eyeChoices = cell(numEyes, 1);
+            
+            for i=1:numEyes
+                eyeChoices{i} = eyes{i}.dirName;
+            end
         end
         
         function subject = updateEye(subject, eye)
@@ -83,6 +132,10 @@ classdef NaturalSubject < Subject
             
             if ~updated % add new eye
                 subject.eyes{numEyes + 1} = eye;
+                
+                if subject.eyeIndex == 0
+                    subject.eyeIndex = 1;
+                end
             end            
         end
         
@@ -112,54 +165,153 @@ classdef NaturalSubject < Subject
             nextEyeNumber = lastEyeNumber + 1;
         end
         
-        function subject = enterMetadata(subject)
-            % age:
-            prompt = 'Enter subject''s age (decimal number only):';
-            title = 'Subject Age';
+        function eyeNumbers = existingEyeNumbers(subject)
+            eyes = subject.eyes;
+            numEyes = length(eyes);
             
-            subject.age = str2double(inputdlg(prompt, title));
+            eyeNumbers = zeros(numEyes, 1);
             
-            % gender
-            prompt = 'Choose subject''s gender';
-            selectionMode = 'single';
-            title = 'Subject Gender';
+            for i=1:numEyes
+                eyeNumbers(i) = eyes{i}.eyeNumber;
+            end
+        end
+       
+        function [cancel, subject] = enterMetadata(subject, subjectNumber, existingSubjectNumbers, importPath, userName)
             
-            [choices, choiceStrings] = choicesFromEnum('GenderTypes');
+            %Call to NaturalSubjectMetadataEntry GUI
+            [cancel, subjectNumber, subjectId, age, gender, ADDiagnosis, causeOfDeath, medicalHistory, notes] = NaturalSubjectMetadataEntry(subjectNumber, existingSubjectNumbers, userName, importPath);
             
-            [selection, ok] = listdlg('ListString', choiceStrings, 'SelectionMode', selectionMode, 'Name', title, 'PromptString', prompt);
-            
-            subject.gender = choices(selection);
-            
-            %ADDiagnosis
-            prompt = 'Choose subject''s AD Diagnosis';
-            selectionMode = 'single';
-            title = 'Subject AD Diagnosis';
-            
-            [choices, choiceStrings] = choicesFromEnum('DiagnosisTypes');
-            
-            [selection, ok] = listdlg('ListString', choiceStrings, 'SelectionMode', selectionMode, 'Name', title, 'PromptString', prompt);
-            
-            subject.ADDiagnosis = choices(selection);
-            
-            %causeOfDeath
-            prompt = 'Enter subject''s cause of death:';
-            title = 'Subject Cause of Death';
-            
-            response = inputdlg(prompt, title);
-            subject.causeOfDeath = response{1};
-            
-            %notes
-            prompt = 'Enter subject notes:';
-            title = 'Subject Notes';
-            
-            response = inputdlg(prompt, title);
-            subject.notes = response{1};
+            if ~cancel
+                %Assigning values to NaturalSubject Properties
+                subject.subjectNumber = subjectNumber;
+                subject.subjectId = subjectId;
+                subject.age = age;
+                subject.gender = gender;
+                subject.ADDiagnosis = ADDiagnosis;
+                subject.causeOfDeath = causeOfDeath;
+                subject.medicalHistory = medicalHistory;
+                subject.notes = notes;
+            end
             
         end
         
         function subject = wipeoutMetadataFields(subject)
             subject.dirName = '';
             subject.eyes = [];
+        end
+        
+        function eye = getSelectedEye(subject)
+            eye = [];
+            
+            if subject.eyeIndex ~= 0
+                eye = subject.eyes{subject.eyeIndex};
+            end
+        end
+        
+        function handles = updateNavigationListboxes(subject, handles)
+            numEyes = length(subject.eyes);
+            
+            eyeOptions = cell(numEyes, 1);
+            
+            if numEyes == 0
+                disableNavigationListboxes(handles, handles.eyeSelect);
+            else
+                for i=1:numEyes
+                    eyeOptions{i} = subject.eyes{i}.dirName;
+                end
+                
+                set(handles.eyeSelect, 'String', eyeOptions, 'Value', subject.eyeIndex, 'Enable', 'on');
+                
+                handles = subject.getSelectedEye().updateNavigationListboxes(handles);
+            end
+        end
+        
+        function handles = updateMetadataFields(subject, handles)
+            eye = subject.getSelectedEye();
+                        
+            if isempty(eye)
+                disableMetadataFields(handles, handles.eyeQuarterSampleMetadata);
+            else
+                eyeMetadataString = eye.getMetadataString();
+                                
+                handles = eye.updateMetadataFields(handles, eyeMetadataString);
+            end
+        end
+       
+        function metadataString = getMetadataString(subject)
+            
+            [subjectIdString, subjectNumberString, subjectNotesString] = subject.getSubjectMetadataString();
+            
+            ageString = ['Age: ', num2str(subject.age)];
+            genderString = ['Gender: ', subject.gender.displayString];
+            ADDiagnosisString = ['AD Diagnosis: ', subject.ADDiagnosis.displayString];
+            causeOfDeathString = ['Cause of Death: ', subject.causeOfDeath];
+            medicalHistoryString = ['Medical History: ', subject.medicalHistory];
+            
+            metadataString = {subjectIdString, subjectNumberString, ageString, genderString, ADDiagnosisString, causeOfDeathString, medicalHistoryString, subjectNotesString};
+            
+        end
+        
+        function subject = updateEyeIndex(subject, index)            
+            subject = subject.eyeIndex(index);
+        end
+        
+        function subject = updateQuarterSampleIndex(subject, index)
+            eye = subject.getSelectedEye();
+            
+            eye = eye.updateQuarterSampleIndex(index);
+            
+            subject = subject.updateEye(eye);
+        end
+        
+        function subject = updateLocationIndex(subject, index)
+            eye = subject.getSelectedEye();
+            
+            eye = eye.updateLocationIndex(index);
+            
+            subject = subject.updateEye(eye);
+        end
+        
+        function subject = updateSessionIndex(subject, index)
+            eye = subject.getSelectedEye();
+            
+            eye = eye.updateSessionIndex(index);
+            
+            subject = subject.updateEye(eye);
+        end
+        
+        function subject = updateSubfolderIndex(subject, index)
+            eye = subject.getSelectedEye();
+            
+            eye = eye.updateSubfolderIndex(index);
+            
+            subject = subject.updateEye(eye);
+        end
+        
+        function subject = updateFileIndex(subject, index)
+            eye = subject.getSelectedEye();
+            
+            eye = eye.updateFileIndex(index);
+            
+            subject = subject.updateEye(eye);
+        end
+        
+        function fileSelection = getSelectedFile(subject)
+            eye = subject.getSelectedEye();
+            
+            if ~isempty(eye)
+                fileSelection = eye.getSelectedFile();
+            else
+                fileSelection = [];
+            end
+        end
+        
+        function subject = incrementFileIndex(subject, increment)            
+            eye = subject.getSelectedEye();
+            
+            eye = eye.incrementFileIndex(increment);
+            
+            subject = subject.updateEye(eye);
         end
     end
     

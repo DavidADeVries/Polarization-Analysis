@@ -3,24 +3,44 @@ classdef Quarter
     % stores information about about a quarter of a retina
     
     properties
+        % set at initialization
         dirName
+        metadataHistory
         
+        % set by metadata entry        
         fixingDate
-        fixingDoneBy
-        
+        fixingDoneBy        
         stain
-        slideMaterial
-        
+        slideMaterial        
         quarterType % one of [S,T,I,N] (superior, temporal, inferior, nasal, unknown]
         quarterNumber %1, 2, 3, 4 (used for imaging)
         quarterArbitrary % False if which quarter is which is truly known, true otherwise (choosing S,T,I,N is arbitrary, but consistent)
-        
-        locations
-        
         notes
+        
+        % locations list and index
+        locations
+        locationIndex = 0
     end
     
     methods
+        function quarter = Quarter(suggestedQuarterNumber, existingQuarterNumbers, toEyePath, projectPath, importDir, userName)
+            [cancel, quarter] = quarter.enterMetadata(suggestedQuarterNumber, existingQuarterNumbers, importDir, userName);
+            
+            if ~cancel
+                % set metadata history
+                quarter.metadataHistory = {MetadataHistoryEntry(userName)};
+                
+                % make directory/metadata file
+                quarter = quarter.createDirectories(toEyePath, projectPath);
+                
+                % save metadata
+                saveToBackup = true;
+                quarter.saveMetadata(makePath(toEyePath, quarter.dirName), projectPath, saveToBackup);
+            else
+                quarter = Quarter.empty;
+            end              
+        end
+        
         function quarter = loadQuarter(quarter, toQuarterPath, quarterDir)
             quarterPath = makePath(toQuarterPath, quarterDir);
             
@@ -36,44 +56,81 @@ classdef Quarter
             
             numLocations = length(locationsDirs);
             
-            quarter.locations = createEmptyCellArray(Location, numLocations);
+            quarter.locations = createEmptyCellArray(Location.empty, numLocations);
                         
             for i=1:numLocations
                 quarter.locations{i} = quarter.locations{i}.loadLocation(quarterPath, locationsDirs{i});
             end
+            
+            if ~isempty(quarter.locations)
+                quarter.locationIndex = 1;
+            end
         end
         
-        function quarter = importQuarter(quarter, quarterProjectPath, quarterImportPath, projectPath, localPath, dataFilename)
+        function quarter = importQuarter(quarter, toQuarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType, eyeType)
             dirList = getAllFolders(quarterImportPath);
             
-            importLocationNumbers = getNumbersFromFolderNames(dirList);
-            
             filenameSection = createFilenameSection(QuarterNamingConventions.DATA_FILENAME_LABEL, num2str(quarter.quarterNumber));
-            dataFilename = strcat(dataFilename, filenameSection);
-                
+            dataFilename = [dataFilename, filenameSection];
+            
             for i=1:length(dirList)
-                indices = findInArray(importLocationNumbers{i}, quarter.getLocationNumbers());
+                folderName = dirList{i};
                 
-                if isempty(indices) % new location
-                    location = Location;
+                locationImportPath = makePath(quarterImportPath, folderName);
+                
+                prompt = ['Select the location to which the data being imported from ', locationImportPath, ' belongs to.'];
+                title = 'Select Location';
+                choices = quarter.getLocationChoices();
+                
+                [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+                
+                if ~cancel
+                    if createNew
+                        suggestedLocationNumber = getNumberFromFolderName(folderName);
+                        
+                        if isnan(suggestedLocationNumber)
+                            suggestedLocationNumber = quarter.getNextLocationNumber();
+                        end
+                        
+                        location = Location(suggestedLocationNumber, quarter.existingLocationNumbers(), toQuarterProjectPath, projectPath, locationImportPath, userName, subjectType, eyeType, quarter.quarterType); 
+                    else
+                        location = quarter.getLocationFromChoice(choice);
+                    end
                     
-                    location = location.enterMetadata(importLocationNumbers{i});
-                    
-                    % make directory/metadata file
-                    location = location.createDirectories(quarterProjectPath, projectPath, localPath);
-                    
-                    saveToBackup = true;
-                    location.saveMetadata(makePath(quarterProjectPath, location.dirName), projectPath, localPath, saveToBackup);
-                else % old location
-                    location = quarter.getLocationByNumber(importLocationNumbers{i});
+                    if ~isempty(location)
+                        locationProjectPath = makePath(toQuarterProjectPath, location.dirName);
+                        
+                        location = location.importLocation(locationProjectPath, locationImportPath, projectPath, dataFilename, userName);
+                        
+                        quarter = quarter.updateLocation(location);
+                    end
                 end
-                
-                locationProjectPath = makePath(quarterProjectPath, location.dirName);
-                locationImportPath = makePath(quarterImportPath, dirList{i});
-                
-                location = location.importLocation(locationProjectPath, locationImportPath, projectPath, localPath, dataFilename);
-                
-                quarter = quarter.updateLocation(location);
+            end
+        end
+
+        function location = getLocationFromChoice(quarter, choice)
+            location = quarter.locations{choice};
+        end
+        
+        function locationChoices = getLocationChoices(quarter)
+            locations = quarter.locations;
+            numLocations = length(locations);
+            
+            locationChoices = cell(numLocations, 1);
+            
+            for i=1:numLocations
+                locationChoices{i} = locations{i}.dirName;
+            end
+        end
+        
+        function locationNumbers = existingLocationNumbers(quarter)
+            locations = quarter.locations;
+            numLocations = length(locations);
+            
+            locationNumbers = zeros(numLocations, 1);
+            
+            for i=1:numLocations
+                locationNumbers(i) = locations{i}.locationNumber;
             end
         end
         
@@ -92,6 +149,10 @@ classdef Quarter
             
             if ~updated
                 quarter.locations{numLocations + 1} = location;
+                
+                if quarter.locationIndex == 0
+                    quarter.locationIndex = 1;
+                end
             end   
         end
         
@@ -121,97 +182,141 @@ classdef Quarter
             nextLocationNumber = lastLocationNumber + 1;
         end
         
-        function quarter = enterMetadata(quarter, suggestedQuarterNumber)
-                       
-            %stain
-            prompt = 'Enter Quarter stain:';
-            title = 'Quarter Stain';
+        function [cancel, quarter] = enterMetadata(quarter, suggestedQuarterNumber, existingQuarterNumbers, importPath, userName)
+            %Call to QuarterMetadataEntry GUI
+            [cancel, stain, slideMaterial, quarterType, quarterArbitrary, quarterNumber, fixingDate, fixingDoneBy, notes] = QuarterMetadataEntry(suggestedQuarterNumber, existingQuarterNumbers, importPath, userName);
             
-            response = inputdlg(prompt, title);
-            quarter.stain = response{1};
+            if ~cancel
+                %Assigning values to Quarter Properties
+                quarter.stain = stain;
+                quarter.slideMaterial = slideMaterial;
+                quarter.quarterType = quarterType;
+                quarter.quarterArbitrary = quarterArbitrary;
+                quarter.quarterNumber = quarterNumber;
+                quarter.fixingDate = fixingDate;
+                quarter.fixingDoneBy = fixingDoneBy;
+                quarter.notes = notes;
+            end
             
-            %slideMaterial
-            prompt = 'Enter Quarter slide material:';
-            title = 'Quarter Slide Material';
-            
-            response = inputdlg(prompt, title);
-            quarter.slideMaterial = response{1};
-            
-            %quarterLabel % one of [S,T,I,N] (superior, temporal, inferior, nasal, unknown]
-            prompt = 'Choose Quarter label:';
-            selectionMode = 'single';
-            title = 'Quarter Type';
-            
-            [choices, choiceStrings] = choicesFromEnum('QuarterTypes');
-            
-            [selection, ok] = listdlg('ListString', choiceStrings, 'SelectionMode', selectionMode, 'Name', title, 'PromptString', prompt);
-            
-            quarter.quarterType = choices(selection);
-            
-            
-            %quarterArbitrary % False if which quarter is which is truly known, true otherwise (choosing S,T,I,N is arbitrary, but consistent)
-            prompt = 'Do you know the true quarter location, or are did you arbitrarily decide which one would be which?';
-            selectionMode = 'single';
-            title = 'Quarter Type';
-            choices = {'I know the true quarter labels','I arbitrarily decided the quarter labels'};
-            
-            [selection, ok] = listdlg('ListString', choices, 'SelectionMode', selectionMode, 'Name', title, 'PromptString', prompt);
-            
-            if selection == 1
-                arbitrary = false;
-            else
-                arbitrary = true;
-            end               
-                
-            quarter.quarterArbitrary = arbitrary;
-                     
-            
-            %quarterNumber
-            prompt = {'Enter Quarter Number:'};
-            title = 'Quarter Number';
-            numLines = 1;
-            defaultAns = {num2str(suggestedQuarterNumber)};
-            
-            quarter.quarterNumber = str2double(inputdlg(prompt, title, numLines, defaultAns));
-            
-            %fixingDate
-            %fixingDoneBy
-            
-            prompt = {'Enter Quarter fixing date (e.g. Jan 1, 2016):', 'Enter Quarter fixing done by:'};
-            title = 'Quarter Fixing Information';
-            numLines = 2;
-            
-            responses = inputdlg(prompt, title, numLines);
-            
-            quarter.fixingDate = responses{1};
-            quarter.fixingDoneBy = responses{2};
-            
-            %notes
-            
-            prompt = 'Enter Quarter notes:';
-            title = 'Quarter Notes';
-            
-            response = inputdlg(prompt, title);
-            quarter.notes = response{1}; 
         end
         
-        function quarter = createDirectories(quarter, toEyePath, projectPath, localPath)
+        function quarter = createDirectories(quarter, toEyePath, projectPath)
             dirSubtitle = quarter.quarterType.displayString;
             
             quarterDirectory = createDirName(QuarterNamingConventions.DIR_PREFIX, num2str(quarter.quarterNumber), dirSubtitle);
             
-            createObjectDirectories(projectPath, localPath, toEyePath, quarterDirectory);
+            createObjectDirectories(projectPath, toEyePath, quarterDirectory);
                         
             quarter.dirName = quarterDirectory;
         end
         
-        function [] = saveMetadata(quarter, toQuarterPath, projectDir, localDir, saveToBackup)
-            saveObjectMetadata(quarter, projectDir, localDir, toQuarterPath, QuarterNamingConventions.METADATA_FILENAME, saveToBackup);            
+        function [] = saveMetadata(quarter, toQuarterPath, projectPath, saveToBackup)
+            saveObjectMetadata(quarter, projectPath, toQuarterPath, QuarterNamingConventions.METADATA_FILENAME, saveToBackup);            
         end
         
         function quarter = wipeoutMetadataFields(quarter)
             quarter.dirName = '';
             quarter.locations = [];
+        end
+        
+        function location = getSelectedLocation(quarter)
+            location = [];
+            
+            if quarter.locationIndex ~= 0
+                location = quarter.locations{quarter.locationIndex};
+            end
+        end
+        
+        function handles = updateNavigationListboxes(quarter, handles)
+            numLocations = length(quarter.locations);
+            
+            locationOptions = cell(numLocations, 1);
+            
+            if numLocations == 0
+                disableNavigationListboxes(handles, handles.locationSelect);
+            else
+                for i=1:numLocations
+                    locationOptions{i} = quarter.locations{i}.dirName;
+                end
+                
+                set(handles.locationSelect, 'String', locationOptions, 'Value', quarter.locationIndex, 'Enable', 'on');
+                
+                handles = quarter.getSelectedLocation().updateNavigationListboxes(handles);
+            end
+        end
+        
+        function handles = updateMetadataFields(quarter, handles)
+            location = quarter.getSelectedLocation();
+                        
+            if isempty(location)
+                disableMetadataFields(handles, handles.locationMetadata);
+            else
+                metadataString = location.getMetadataString();
+                
+                set(handles.locationMetadata, 'String', metadataString);
+                
+                handles = location.updateMetadataFields(handles);
+            end
+        end
+       
+        function metadataString = getMetadataString(quarter)
+            
+            fixingDateString = ['Fixing Date: ', displayDate(quarter.fixingDate)];
+            fixingDoneByString = ['Fixing Done By: ', quarter.fixingDoneBy];
+            stainString = ['Stain: ', quarter.stain];
+            slideMaterialString = ['Slide Material: ', quarter.slideMaterial];
+            quarterTypeString = ['Quarter Type: ', quarter.quarterType.displayString];
+            quarterNumberString = ['Quarter number: ', num2str(quarter.quarterNumber)];
+            quarterArbitraryString = ['Quarter Arbitrary: ', booleanToString(quarter.quarterArbitrary)];
+            quarterNotesString = ['Notes: ', quarter.notes];
+            
+            metadataString = {'Quarter:', fixingDateString, fixingDoneByString, stainString, slideMaterialString, quarterTypeString, quarterNumberString, quarterArbitraryString, quarterNotesString};
+        end
+        
+        function quarter = updateLocationIndex(quarter, index)
+            quarter.locationIndex = index;
+        end
+        
+        function quarter = updateSessionIndex(quarter, index)
+            location = quarter.getSelectedLocation();
+            
+            location = location.updateSessionIndex(index);
+            
+            quarter = quarter.updateLocation(location);
+        end
+        
+        function quarter = updateSubfolderIndex(quarter, index)
+            location = quarter.getSelectedLocation();
+            
+            location = location.updateSubfolderIndex(index);
+            
+            quarter = quarter.updateLocation(location);
+        end
+        
+        function quarter = updateFileIndex(quarter, index)
+            location = quarter.getSelectedLocation();
+            
+            location = location.updateFileIndex(index);
+            
+            quarter = quarter.updateLocation(location);
+        end
+        
+        function fileSelection = getSelectedFile(quarter)
+            location = quarter.getSelectedLocation();
+            
+            if ~isempty(location)
+                fileSelection = location.getSelectedFile();
+            else
+                fileSelection = [];
+            end
+        end
+        
+        function quarter = incrementFileIndex(quarter, increment)            
+            location = quarter.getSelectedLocation();
+            
+            location = location.incrementFileIndex(increment);
+            
+            quarter = quarter.updateLocation(location);
         end
     end
     

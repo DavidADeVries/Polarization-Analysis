@@ -3,22 +3,42 @@ classdef Eye
     % metadata about an eye
         
     properties
-        dirName
+        % set at initialization
+        dirName        
+        metadataHistory
         
+        % set by metadata entry
         eyeId
-        eyeType % EyeTypes
-        
-        eyeNumber
-        
+        eyeType % EyeTypes        
+        eyeNumber        
         dissectionDate
         dissectionDoneBy
-        
-        quarters
-        
         notes
+        
+        % list of quarters and index
+        quarters
+        quarterIndex = 0        
     end
     
     methods
+        function eye = Eye(eyeNumber, existingEyeNumbers, toSubjectPath, projectPath, importPath, userName)
+            [cancel, eye] = eye.enterMetadata(eyeNumber, existingEyeNumbers, importPath, userName);
+            
+            if ~cancel
+                % set metadata history
+                eye.metadataHistory = {MetadataHistoryEntry(userName)};
+                
+                % make directory/metadata file
+                eye = eye.createDirectories(toSubjectPath, projectPath);
+                
+                % save metadata
+                saveToBackup = true;
+                eye.saveMetadata(makePath(toSubjectPath, eye.dirName), projectPath, saveToBackup);
+            else
+                eye = Eye.empty;
+            end              
+        end
+        
         function eye = loadEye(eye, toEyePath, eyeDir)
             eyePath = makePath(toEyePath, eyeDir);
 
@@ -34,44 +54,81 @@ classdef Eye
             
             numQuarters = length(quarterDirs);
             
-            eye.quarters = createEmptyCellArray(Quarter, numQuarters);
+            eye.quarters = createEmptyCellArray(Quarter.empty, numQuarters);
             
             for i=1:numQuarters
                 eye.quarters{i} = eye.quarters{i}.loadQuarter(eyePath, quarterDirs{i});
             end
+            
+            if ~isempty(eye.quarters)
+                eye.quarterIndex = 1;
+            end
         end
         
-        function eye = importEye(eye, eyeProjectPath, eyeImportPath, projectPath, localPath, dataFilename)  
+        function eye = importEye(eye, toEyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType)  
             dirList = getAllFolders(eyeImportPath);
             
-            importQuarterNumbers = getNumbersFromFolderNames(dirList);
-                            
             filenameSection = createFilenameSection(EyeNamingConventions.DATA_FILENAME_LABEL, num2str(eye.eyeNumber));
-            dataFilename = strcat(dataFilename, filenameSection);
+            dataFilename = [dataFilename, filenameSection];
             
             for i=1:length(dirList)
-                indices = findInArray(importQuarterNumbers{i}, eye.getQuarterNumbers());
+                folderName = dirList{i};
                 
-                if isempty(indices) % new quarter
-                    quarter = Quarter;
+                quarterImportPath = makePath(eyeImportPath, folderName);
+                
+                prompt = ['Select the quarter to which the data being imported from ', quarterImportPath, ' belongs to.'];
+                title = 'Select Quarter';
+                choices = eye.getQuarterChoices();
+                
+                [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+                
+                if ~cancel
+                    if createNew
+                        suggestedEyeNumber = getNumberFromFolderName(folderName);
+                        
+                        if isnan(suggestedEyeNumber)
+                            suggestedEyeNumber = subject.getNextEyeNumber();
+                        end
+                        
+                        quarter = Quarter(suggestedEyeNumber, eye.existingQuarterNumbers(), toEyeProjectPath, projectPath, quarterImportPath, userName);
+                    else
+                        quarter = eye.getQuarterFromChoice(choice);
+                    end
                     
-                    quarter = quarter.enterMetadata(importQuarterNumbers{i});
-                    
-                    % make directory/metadata file
-                    quarter = quarter.createDirectories(eyeProjectPath, projectPath, localPath);
-                    
-                    saveToBackup = true;
-                    quarter.saveMetadata(makePath(eyeProjectPath, quarter.dirName), projectPath, localPath, saveToBackup);
-                else % old quarter
-                    quarter = eye.getQuarterByNumber(importQuarterNumbers{i});
+                    if ~isempty(quarter)
+                        quarterProjectPath = makePath(toEyeProjectPath, quarter.dirName);
+                        
+                        quarter = quarter.importQuarter(quarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType, eye.eyeType);
+                        
+                        eye = eye.updateQuarter(quarter);
+                    end
                 end
-                
-                quarterProjectPath = makePath(eyeProjectPath, quarter.dirName);
-                quarterImportPath = makePath(eyeImportPath, dirList{i});
-                
-                quarter = quarter.importQuarter(quarterProjectPath, quarterImportPath, projectPath, localPath, dataFilename);
-                
-                eye = eye.updateQuarter(quarter);
+            end
+        end
+        
+        function quarter = getQuarterFromChoice(eye, choice)
+            quarter = eye.quarters{choice};
+        end
+        
+        function quarterChoices = getQuarterChoices(eye)
+            quarters = eye.quarters;
+            numQuarters = length(quarters);
+            
+            quarterChoices = cell(numQuarters, 1);
+            
+            for i=1:numQuarters
+                quarterChoices{i} = quarters{i}.dirName;
+            end
+        end
+        
+        function quarterNumbers = existingQuarterNumbers(eye)
+            quarters = eye.quarters;
+            numQuarters = length(quarters);
+            
+            quarterNumbers = zeros(numQuarters, 1);
+            
+            for i=1:numQuarters
+                quarterNumbers(i) = quarters{i}.quarterNumber;
             end
         end
         
@@ -90,6 +147,10 @@ classdef Eye
             
             if ~updated
                 eye.quarters{numQuarters + 1} = quarter;
+                
+                if eye.quarterIndex == 0
+                    eye.quarterIndex = 1;
+                end
             end            
         end
         
@@ -119,70 +180,151 @@ classdef Eye
             nextQuarterNumber = lastQuarterNumber + 1;
         end
                 
-        function eye = enterMetadata(eye, suggestedEyeNumber)
-            %eyeId
-            prompt = 'Enter Eye ID:';
-            title = 'Eye ID';
+        function [cancel, eye] = enterMetadata(eye, suggestedEyeNumber, existingEyeNumbers, importPath, userName)
             
-            response = inputdlg(prompt, title);
-            eye.eyeId = response{1};            
+            %Call to EyeMetadataEntry GUI
+            [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(eye, suggestedEyeNumber, existingEyeNumbers, userName, importPath);
             
-            %eyeType
-            prompt = 'Choose Eye Type:';
-            selectionMode = 'single';
-            title = 'Eye Type';
-            
-            [choices, choiceStrings] = choicesFromEnum('EyeTypes');
-            
-            [selection, ok] = listdlg('ListString', choiceStrings, 'SelectionMode', selectionMode, 'Name', title, 'PromptString', prompt);
-            
-            eye.eyeType = choices(selection);
-            
-            %eyeNumber
-            prompt = {'Enter Eye Number:'};
-            title = 'Eye Number';
-            numLines = 1;
-            defaultAns = {num2str(suggestedEyeNumber)};
-            
-            eye.eyeNumber = str2double(inputdlg(prompt, title, numLines, defaultAns));
-            
-            %dissectionDate & dissectionDoneBy
-            
-            prompt = {'Enter Eye dissection date (e.g. Jan 1, 2016):', 'Enter Eye dissection done by:'};
-            title = 'Eye Dissection Information';
-            numLines = 2;
-            
-            responses = inputdlg(prompt, title, numLines);
-            
-            eye.dissectionDate = responses{1};
-            eye.dissectionDoneBy = responses{2};
-            
-            %notes
-            
-            prompt = 'Enter Eye notes:';
-            title = 'Eye Notes';
-            
-            response = inputdlg(prompt, title);
-            eye.notes = response{1}; 
+            if ~cancel
+                %Assigning values to Eye Properties
+                eye.eyeId = eyeId;
+                eye.eyeType = eyeType;
+                eye.eyeNumber = eyeNumber;
+                eye.dissectionDate = dissectionDate;
+                eye.dissectionDoneBy = dissectionDoneBy;
+                eye.notes = notes;
+            end
         end
         
-        function eye = createDirectories(eye, toSubjectPath, projectPath, localPath)
+        function eye = createDirectories(eye, toSubjectPath, projectPath)
             dirSubtitle = eye.eyeType.displayString;
             
             eyeDirectory = createDirName(EyeNamingConventions.DIR_PREFIX, num2str(eye.eyeNumber), dirSubtitle);
             
-            createObjectDirectories(projectPath, localPath, toSubjectPath, eyeDirectory);
+            createObjectDirectories(projectPath, toSubjectPath, eyeDirectory);
                         
             eye.dirName = eyeDirectory;
         end
         
-        function [] = saveMetadata(eye, toEyePath, projectPath, localPath, saveToBackup)
-            saveObjectMetadata(eye, projectPath, localPath, toEyePath, EyeNamingConventions.METADATA_FILENAME, saveToBackup);            
+        function [] = saveMetadata(eye, toEyePath, projectPath, saveToBackup)
+            saveObjectMetadata(eye, projectPath, toEyePath, EyeNamingConventions.METADATA_FILENAME, saveToBackup);            
         end
         
         function eye = wipeoutMetadataFields(eye)
             eye.dirName = '';
             eye.quarters = [];
+        end
+        
+        function quarter = getSelectedQuarter(eye)
+            quarter = [];
+            
+            if eye.quarterIndex ~= 0
+                quarter = eye.quarters{eye.quarterIndex};
+            end
+        end
+        
+        function handles = updateNavigationListboxes(eye, handles)
+            numQuarters = length(eye.quarters);
+            
+            quarterOptions = cell(numQuarters, 1);
+            
+            if numQuarters == 0
+                disableNavigationListboxes(handles, handles.quarterSampleSelect);
+            else
+                for i=1:numQuarters
+                    quarterOptions{i} = eye.quarters{i}.dirName;
+                end
+                
+                set(handles.quarterSampleSelect, 'String', quarterOptions, 'Value', eye.quarterIndex, 'Enable', 'on');
+                
+                handles = eye.getSelectedQuarter().updateNavigationListboxes(handles);
+            end
+        end
+        
+        function handles = updateMetadataFields(eye, handles, eyeMetadataString)
+            quarter = eye.getSelectedQuarter();
+                        
+            if isempty(quarter)
+                metadataString = eyeMetadataString;
+                
+                disableMetadataFields(handles, handles.locationMetadata);
+            else
+                quarterMetadataString = quarter.getMetadataString();
+                
+                metadataString = [eyeMetadataString, {' '}, quarterMetadataString];
+                
+                handles = quarter.updateMetadataFields(handles);
+            end
+            
+            set(handles.eyeQuarterSampleMetadata, 'String', metadataString);
+        end        
+        
+        function metadataString = getMetadataString(eye)
+            
+            eyeIdString = ['Eye ID: ', eye.eyeId];
+            eyeTypeString = ['Eye Type: ', eye.eyeType.displayString];
+            eyeNumberString = ['Eye Number: ', num2str(eye.eyeNumber)];
+            dissectionDateString = ['Dissection Date: ', displayDate(eye.dissectionDate)];
+            dissectionDoneByString = ['Dissection Done By: ', eye.dissectionDoneBy];
+            eyeNotesString = ['Notes: ', eye.notes];
+            
+            
+            metadataString = {'Eye:', eyeIdString, eyeTypeString, eyeNumberString, dissectionDateString, dissectionDoneByString, eyeNotesString};
+            
+        end
+        
+        function eye = updateQuarterSampleIndex(eye, index)
+            eye.quarterIndex = index;
+        end
+        
+        function eye = updateLocationIndex(eye, index)
+            quarter = eye.getSelectedQuarter();
+            
+            quarter = quarter.updateLocationIndex(index);
+            
+            eye = eye.updateQuarter(quarter);
+        end
+        
+        function eye = updateSessionIndex(eye, index)
+            quarter = eye.getSelectedQuarter();
+            
+            quarter = quarter.updateSessionIndex(index);
+            
+            eye = eye.updateQuarter(quarter);
+        end
+        
+        function eye = updateSubfolderIndex(eye, index)
+            quarter = eye.getSelectedQuarter();
+            
+            quarter = quarter.updateSubfolderIndex(index);
+            
+            eye = eye.updateQuarter(quarter);
+        end
+        
+        function eye = updateFileIndex(eye, index)
+            quarter = eye.getSelectedQuarter();
+            
+            quarter = quarter.updateFileIndex(index);
+            
+            eye = eye.updateQuarter(quarter);
+        end
+        
+        function fileSelection = getSelectedFile(eye)
+            quarter = eye.getSelectedQuarter();
+            
+            if ~isempty(quarter)
+                fileSelection = quarter.getSelectedFile();
+            else
+                fileSelection = [];
+            end
+        end
+        
+        function eye = incrementFileIndex(eye, increment)            
+            quarter = eye.getSelectedQuarter();
+            
+            quarter = quarter.incrementFileIndex(increment);
+            
+            eye = eye.updateQuarter(quarter);
         end
     end
     

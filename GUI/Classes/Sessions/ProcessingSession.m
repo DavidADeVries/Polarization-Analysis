@@ -3,7 +3,7 @@ classdef ProcessingSession < Session
     %holds metadata for an image/data processing sessions
     
     properties
-        dataCollectionSessionIds %ids of the data collection sessions which data is being processed
+        relatedSessionIds %ids of the data collection sessions from which data is being processed (can be a combination of data collection and/or processing sessions)
     end
     
     methods

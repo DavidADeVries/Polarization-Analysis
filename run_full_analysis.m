@@ -1,6 +1,6 @@
 addpath('circular_stats','compute_MM','write_analysis_files','MM_full_analysis','helper_functions','grand_data_slam','metric_labels','analysis_handlers');
 
-path = 'C:\AD TORONTO DATA RUN\AD\';
+path = 'C:\PROD WORK\CSLO Test Measurements\';
 
 disp(datestr(now));
 
