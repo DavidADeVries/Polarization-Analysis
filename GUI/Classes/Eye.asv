@@ -328,36 +328,7 @@ classdef Eye
         end
         
         function eye = importLegacyData(eye, toEyeProjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType)
-            filenameSection = createFilenameSection(EyeNamingConventions.DATA_FILENAME_LABEL, num2str(eye.eyeNumber));
-            dataFilename = [dataFilename, filenameSection];
             
-            prompt = ['Select the quarter to which the data being imported from ', displayImportPath, ' belongs to.'];
-            title = 'Select Quarter';
-            choices = eye.getQuarterChoices();
-            
-            [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
-            
-            if ~cancel
-                if createNew
-                    suggestedEyeNumber = getNumberFromFolderName(folderName);
-                    
-                    if isnan(suggestedEyeNumber)
-                        suggestedEyeNumber = subject.getNextEyeNumber();
-                    end
-                    
-                    quarter = Quarter(suggestedEyeNumber, eye.existingQuarterNumbers(), toEyeProjectPath, localProjectPath, displayImportPath, userName);
-                else
-                    quarter = eye.getQuarterFromChoice(choice);
-                end
-                
-                if ~isempty(quarter)
-                    toQuarterProjectPath = makePath(toEyeProjectPath, quarter.dirName);
-                    
-                    quarter = quarter.importLegacyData(toQuarterProjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType, eye.eyeType);
-                    
-                    eye = eye.updateQuarter(quarter);
-                end
-            end
         end
         
     end

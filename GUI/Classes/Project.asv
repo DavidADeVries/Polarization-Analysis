@@ -254,7 +254,7 @@ classdef Project
                 if ~isempty(trial)
                     trial = trial.importLegacyData(legacySubjectImportDir, localProjectPath, userName);
                     
-                    project = project.updateTrial(trial);
+                    
                 end
             end
         end

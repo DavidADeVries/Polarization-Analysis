@@ -72,9 +72,9 @@ classdef Subject
                         end
                     end
                     
-                    legacyImportPaths = struct('rawDataPath', rawDataPath, 'registeredDataPath', registeredDataPath, 'positiveAreaPath', positiveAreaPath, 'negativeAreaPath', negativeAreaPath);
+                    legacyImportPaths = struct('rawDataPath', rawDataPath, 're
                     
-                    subject = subject.importLegacyDataTypeSpecific(toSubjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType);
+                    subject = subject.importLegacyDataTypeSpecific(toSubjectPath, paths, displayImportPath, localProjectPath, dataFilename, userName, subjectType);
                 end
             end
         end

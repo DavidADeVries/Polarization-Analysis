@@ -349,21 +349,19 @@ classdef Trial
                         suggestedSubjectNumber = trial.nextSubjectNumber();
                     end
                         
-                    subject = trial.createNewSubject(suggestedSubjectNumber, trial.existingSubjectNumbers, trial.dirName, localProjectPath, legacySubjectImportDir, userName);
+                    subject = trial.createNewSubject(suggestedSubjectNumber, trial.existingSubjectNumbers, trial.dirName, handles.localPath, importDir, userName);
                 else
                     subject = trial.getSubjectFromChoice(choice);
                 end
                 
                 if ~isempty(subject)
                     dataFilename = createFilenameSection(TrialNamingConventions.DATA_FILENAME_LABEL, num2str(trial.trialNumber));
-                    
-                    subject = subject.importLegacyData(makePath(trial.dirName, subject.dirName), importDir, localProjectPath, dataFilename, userName, trial.subjectType);
+                    subject = subject.importSubject(makePath(trial.dirName, subject.dirName), importDir, handles.localPath, dataFilename, handles.userName, trial.subjectType);
                 
                     trial = trial.updateSubject(subject);
                 end
             end            
         end
-        
     end
     
 end

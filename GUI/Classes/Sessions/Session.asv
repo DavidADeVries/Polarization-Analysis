@@ -32,15 +32,15 @@ classdef Session
         end
         
         
-        function session = createSession(choice, sessionNumber, dataCollectionSessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName)
+        function session = createSession(choice, sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName)
             if choice == 1
                 session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
             elseif choice == 2
                 session = CLSOSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
             elseif choice == 3
-                session = LegacyRegistrationSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
+                session = LegacyRegistrationSession(..);
             elseif choice == 4
-                session = LegacySubsectionSelectionSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
+                session = LegacySubsectionSelectionSession(..);
             elseif choice == 5
                 session = Session;
             else

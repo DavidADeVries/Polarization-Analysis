@@ -226,7 +226,7 @@ classdef Location
             if isempty(lastDataProcessingSession)
                 nextDataProcessingSessionNumber = 1;
             else
-                lastDataProcessingSessionNumber = lastDataProcessingSession.dataProcessingSessionNumber;
+                lastDataProcessingSessionNumber = lastDataProcessingSession.processingSessionNumber;
                 
                 nextDataProcessingSessionNumber = lastDataProcessingSessionNumber + 1;
             end
@@ -394,7 +394,7 @@ classdef Location
                         dataCollectionSessionNumber = location.getNextDataCollectionSessionNumber();
                         dataProcessingSessionNumber = location.getNextDataProcessingSessionNumber();
                         
-                        session = Session.createSession(choice, sessionNumber, dataCollectionSessionNumber, dataProcessingSessionNumber, toLocationProjectPath, localProjectPath, displayImportPath, userName);
+                        session = Session.createSession(choice, sessionNumber, dataCollectionSessionNumber, processingSessionNumber, toLocationProjectPath, localProjectPath, displayImportPath, userName);
                     else
                         session = Session.empty;
                     end
@@ -405,7 +405,7 @@ classdef Location
                 if ~isempty(session)
                     toSessionProjectPath = makePath(toLocationProjectPath, session.dirName);
                                         
-                    session = session.importSession(toSessionProjectPath, importPath, localProjectPath, dataFilename);               
+                    session.import                   
                     
                     location = location.updateSession(session);
                 end

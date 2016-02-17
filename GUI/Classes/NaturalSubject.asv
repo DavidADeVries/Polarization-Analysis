@@ -315,7 +315,7 @@ classdef NaturalSubject < Subject
         end
         
         
-        function subject = importLegacyDataTypeSpecific(subject, toSubjectProjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType)
+        function subject = importLegacyDataTypeSpecific(subject, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType)
             filenameSection = createFilenameSection(SubjectNamingConventions.DATA_FILENAME_LABEL, num2str(subject.subjectNumber));
             dataFilename = [dataFilename, filenameSection];
             
@@ -333,15 +333,16 @@ classdef NaturalSubject < Subject
                         suggestedEyeNumber = subject.getNextEyeNumber();
                     end
                     
-                    eye = Eye(suggestedEyeNumber, subject.existingEyeNumbers(), toSubjectProjectPath, localProjectPath, displayImportPath, userName);
+                    eye = Eye(suggestedEyeNumber, subject.existingEyeNumbers(), toSubjectProjectPath, projectPath, subjectImportPath, userName);
                 else
                     eye = subject.getEyeFromChoice(choice);
                 end
                 
                 if ~isempty(eye)
-                    toEyeProjectPath = makePath(toSubjectProjectPath, eye.dirName);
+                    eyeProjectPath = makePath(toSubjectProjectPath, eye.dirName);
                     
-                    eye = eye.importLegacyData(toEyeProjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType);
+                    eye = eye.importLegacyData(legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType);
+                                                            eyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType);
                     
                     subject = subject.updateEye(eye);
                 end

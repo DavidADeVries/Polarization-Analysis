@@ -337,15 +337,15 @@ classdef Quarter
                         suggestedLocationNumber = quarter.getNextLocationNumber();
                     end
                     
-                    location = Location(suggestedLocationNumber, quarter.existingLocationNumbers(), toQuarterProjectPath, localProjectPath, displayImportPath, userName, subjectType, eyeType, quarter.quarterType);
+                    location = Location(suggestedLocationNumber, quarter.existingLocationNumbers(), toQuarterProjectPath, localProjectPath, locationImportPath, userName, subjectType, eyeType, quarter.quarterType);
                 else
                     location = quarter.getLocationFromChoice(choice);
                 end
                 
                 if ~isempty(location)
-                    toLocationProjectPath = makePath(toQuarterProjectPath, location.dirName);
+                    locationProjectPath = makePath(toQuarterProjectPath, location.dirName);
                     
-                    location = location.importLegacyData(toLocationProjectPath, legacyImportPaths, localProjectPath, dataFilename, userName);
+                    location = location.importLocation(locationProjectPath, locationImportPath, projectPath, dataFilename, userName);
                     
                     quarter = quarter.updateLocation(location);
                 end

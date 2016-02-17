@@ -10,18 +10,6 @@ subjectImportDir = uigetdir(start, title);
 if subjectImportDir ~= 0 %dir successfully selected
     project = handles.localProject;
     
-    project = project.importLegacyData(subjectImportDir, handles.localPath, handles.userName);
-    
-    handles.localProject = project;
-end
-    
-    
-    
-    
-    
-    
-    
-    
     % select trial
     
     prompt = ['Select the trial to which the subject being imported belongs to. Import path: ', subjectImportDir];
