@@ -347,6 +347,7 @@ function EyeMetadataEntry_CloseRequestFcn(hObject, eventdata, handles)
 
 if isequal(get(hObject, 'waitstatus'), 'waiting')
     % The GUI is still in UIWAIT, us UIRESUME
+    handles.cancel = true;
     handles.eyeId = '';
     handles.eyeTypeChoice = [];
     handles.eyeNumber = [];
@@ -357,6 +358,7 @@ if isequal(get(hObject, 'waitstatus'), 'waiting')
     uiresume(hObject);
 else
     % The GUI is no longer waiting, just close it
+    handles.cancel = true;
     handles.eyeId = '';
     handles.eyeTypeChoice = [];
     handles.eyeNumber = [];
@@ -391,6 +393,7 @@ exit = questdlg('Are you sure you want to quit?','Quit','Yes','No','No'); % TODO
 switch exit
     case 'Yes'
         %Clears variables in the case that they wish to exit the program
+        handles.cancel = true;
         handles.eyeId = '';
         handles.eyeTypeChoice = [];
         handles.eyeNumber = [];
