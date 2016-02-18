@@ -419,6 +419,7 @@ function LocationMetadataEntry_CloseRequestFcn(hObject, eventdata, handles)
 % Hint: delete(hObject) closes the figure
 if isequal(get(hObject, 'waitstatus'), 'waiting')
     % The GUI is still in UIWAIT, us UIRESUME
+    handles.cancel = true;
     handles.xCoords = [];
     handles.yCoords = [];
     handles.locationNumber = [];
@@ -428,6 +429,7 @@ if isequal(get(hObject, 'waitstatus'), 'waiting')
     uiresume(hObject);
 else
     % The GUI is no longer waiting, just close it
+    handles.cancel = true;
     handles.xCoords = [];
     handles.yCoords = [];
     handles.locationNumber = [];

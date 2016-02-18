@@ -371,6 +371,7 @@ function trialMetadataEntry_CloseRequestFcn(hObject, eventdata, handles)
 
 if isequal(get(hObject, 'waitstatus'), 'waiting')
     % The GUI is still in UIWAIT, us UIRESUME
+    handles.cancel = true;
     handles.title = '';
     handles.description = '';
     handles.trialNumber = [];
@@ -380,6 +381,7 @@ if isequal(get(hObject, 'waitstatus'), 'waiting')
     uiresume(hObject);
 else
     % The GUI is no longer waiting, just close it
+    handles.cancel = true;
     handles.title = '';
     handles.description = '';
     handles.trialNumber = [];

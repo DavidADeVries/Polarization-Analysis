@@ -479,6 +479,7 @@ function quarterMetadataEntry_CloseRequestFcn(hObject, eventdata, handles)
 if isequal(get(hObject, 'waitstatus'), 'waiting')
     % The GUI is still in UIWAIT, us UIRESUME
     %Clears variables in the case that they wish to exit the program
+    handles.cancel = true;
     handles.stain = '';
     handles.slideMaterial = '';
     handles.quarterType = [];
@@ -492,6 +493,7 @@ if isequal(get(hObject, 'waitstatus'), 'waiting')
 else
     % The GUI is no longer waiting, just close it
     %Clears variables in the case that they wish to exit the program
+    handles.cancel = true;
     handles.stain = '';
     handles.slideMaterial = '';
     handles.quarterType = [];

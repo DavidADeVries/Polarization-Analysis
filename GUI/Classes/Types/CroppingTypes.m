@@ -14,7 +14,7 @@ classdef CroppingTypes
     end
     
     methods
-        function enum = DiagnosisTypes(string)
+        function enum = CroppingTypes(string)
             enum.displayString = string;
         end
     end
