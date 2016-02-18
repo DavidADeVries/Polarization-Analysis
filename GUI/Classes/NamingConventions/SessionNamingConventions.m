@@ -9,6 +9,8 @@ classdef SessionNamingConventions
         DATA_FILENAME_LABEL = 'S';
         
         MICROSCOPE_DIR_SUBTITLE = 'Microscope';
+        LEGACY_SUBSECTION_SELECTION_DIR_SUBTITLE = 'Legacy Subsection Selection';
+        LEGACY_REGISTRATION_DIR_SUBTITLE = 'Legacy Registration';
     end
     
 end

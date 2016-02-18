@@ -301,7 +301,7 @@ classdef Location
             locationNumberString = ['Location Number: ', num2str(location.locationNumber)];
             depositString = ['Deposit: ', booleanToString(location.deposit)];
             if ~isempty(location.locationCoords)
-                locationCoordsString = ['Location Coordinates: ', coordsIntoString(location.locationCoords(1), location.locationCoords(2))];
+                locationCoordsString = ['Location Coordinates: ', coordsToString(location.locationCoords)];
             else
                 locationCoordsString = ['Location Coordinates: ', 'Unknown'];
             end
