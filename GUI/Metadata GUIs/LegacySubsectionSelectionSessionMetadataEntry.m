@@ -113,6 +113,10 @@ function varargout = LegacySubsectionSelectionSessionMetadataEntry_OutputFcn(hOb
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+%****************************************************************************************************************
+%OUTPUT:  [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy]
+%****************************************************************************************************************
+
 % Get default command line output from handles structure
 varargout{1} = handles.cancel;
 varargout{2} = handles.sessionDate;
@@ -492,6 +496,9 @@ function rejectedReasonInput_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+enableLineScrolling(hObject);
+
 end
 
 
@@ -580,13 +587,13 @@ handles.rejected = true;
 
 set(handles.yesRejected, 'Value', 1);
 
-checkToEnableOkButton(handles);
-
 set(handles.rejectedReasonInput, 'enable', 'on');
 set(handles.rejectedByInput, 'enable', 'on');
 set(handles.rejectedByInput, 'String', handles.userName);
 
 handles.rejectedBy = handles.userName;
+
+checkToEnableOkButton(handles);
 
 guidata(hObject, handles);
 
@@ -606,8 +613,6 @@ handles.rejected = false;
 
 set(handles.yesRejected, 'Value', 0);
 
-checkToEnableOkButton(handles);
-
 set(handles.rejectedReasonInput, 'enable', 'off');
 set(handles.rejectedByInput, 'enable', 'off');
 set(handles.rejectedReasonInput, 'String', '');
@@ -615,6 +620,8 @@ set(handles.rejectedByInput, 'String', '');
 
 handles.rejectedBy = '';
 handles.rejectedReason = '';
+
+checkToEnableOkButton(handles);
 
 guidata(hObject, handles);
 

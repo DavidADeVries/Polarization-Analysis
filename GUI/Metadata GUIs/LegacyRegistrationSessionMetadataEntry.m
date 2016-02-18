@@ -1,35 +1,35 @@
-function varargout = LegacySubsectionSelectionSessionMetadataEntry(varargin)
-% LEGACYSUBSECTIONSELECTIONSESSIONMETADATAENTRY MATLAB code for LegacySubsectionSelectionSessionMetadataEntry.fig
-%      LEGACYSUBSECTIONSELECTIONSESSIONMETADATAENTRY, by itself, creates a new LEGACYSUBSECTIONSELECTIONSESSIONMETADATAENTRY or raises the existing
+function varargout = LegacyRegistrationSessionMetadataEntry(varargin)
+% LEGACYREGISTRATIONSESSIONMETADATAENTRY MATLAB code for LegacyRegistrationSessionMetadataEntry.fig
+%      LEGACYREGISTRATIONSESSIONMETADATAENTRY, by itself, creates a new LEGACYREGISTRATIONSESSIONMETADATAENTRY or raises the existing
 %      singleton*.
 %
-%      H = LEGACYSUBSECTIONSELECTIONSESSIONMETADATAENTRY returns the handle to a new LEGACYSUBSECTIONSELECTIONSESSIONMETADATAENTRY or the handle to
+%      H = LEGACYREGISTRATIONSESSIONMETADATAENTRY returns the handle to a new LEGACYREGISTRATIONSESSIONMETADATAENTRY or the handle to
 %      the existing singleton*.
 %
-%      LEGACYSUBSECTIONSELECTIONSESSIONMETADATAENTRY('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in LEGACYSUBSECTIONSELECTIONSESSIONMETADATAENTRY.M with the given input arguments.
+%      LEGACYREGISTRATIONSESSIONMETADATAENTRY('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in LEGACYREGISTRATIONSESSIONMETADATAENTRY.M with the given input arguments.
 %
-%      LEGACYSUBSECTIONSELECTIONSESSIONMETADATAENTRY('Property','Value',...) creates a new LEGACYSUBSECTIONSELECTIONSESSIONMETADATAENTRY or raises the
+%      LEGACYREGISTRATIONSESSIONMETADATAENTRY('Property','Value',...) creates a new LEGACYREGISTRATIONSESSIONMETADATAENTRY or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before LegacySubsectionSelectionSessionMetadataEntry_OpeningFcn gets called.  An
+%      applied to the GUI before LegacyRegistrationSessionMetadataEntry_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to LegacySubsectionSelectionSessionMetadataEntry_OpeningFcn via varargin.
+%      stop.  All inputs are passed to LegacyRegistrationSessionMetadataEntry_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help LegacySubsectionSelectionSessionMetadataEntry
+% Edit the above text to modify the response to help LegacyRegistrationSessionMetadataEntry
 
-% Last Modified by GUIDE v2.5 18-Feb-2016 12:02:59
+% Last Modified by GUIDE v2.5 18-Feb-2016 14:34:21
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @LegacySubsectionSelectionSessionMetadataEntry_OpeningFcn, ...
-                   'gui_OutputFcn',  @LegacySubsectionSelectionSessionMetadataEntry_OutputFcn, ...
+                   'gui_OpeningFcn', @LegacyRegistrationSessionMetadataEntry_OpeningFcn, ...
+                   'gui_OutputFcn',  @LegacyRegistrationSessionMetadataEntry_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,15 +44,15 @@ end
 % End initialization code - DO NOT EDIT
 end
 
-% --- Executes just before LegacySubsectionSelectionSessionMetadataEntry is made visible.
-function LegacySubsectionSelectionSessionMetadataEntry_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before LegacyRegistrationSessionMetadataEntry is made visible.
+function LegacyRegistrationSessionMetadataEntry_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to LegacySubsectionSelectionSessionMetadataEntry (see VARARGIN)
+% varargin   command line arguments to LegacyRegistrationSessionMetadataEntry (see VARARGIN)
 
-% Choose default command line output for LegacySubsectionSelectionSessionMetadataEntry
+% Choose default command line output for LegacyRegistrationSessionMetadataEntry
 handles.output = hObject;
 
 %*****************************
@@ -67,12 +67,8 @@ handles.cancel = false;
 handles.sessionDate = [];
 handles.sessionDoneBy = handles.userName;
 handles.sessionNotes = '';
-handles.croppingType = [];
-handles.xCoord = [];
-handles.yCoord = [];
-handles.width = [];
-handles.height = [];
-handles.coords = [handles.xCoord, handles.yCoord, handles.width, handles.height];
+handles.registrationType = [];
+handles.registrationParams = '';
 handles.rejected = false;
 handles.rejectedReason = '';
 handles.rejectedBy = '';
@@ -87,47 +83,49 @@ set(handles.noRejected, 'Value', 1);
 set(handles.sessionDoneByInput, 'String', handles.userName);
 
 %Get choice strings from CroppingTypes class
-[~, choiceStrings] = choicesFromEnum('CroppingTypes');
+[~, choiceStrings] = choicesFromEnum('RegistrationTypes');
 
 %Default choice list setting
-handles.choiceListDefault = 'Select a Cropping Type';
+handles.choiceListDefault = 'Select a Registration Type';
 
 %Setting the list values for the Cropping Type pop up menu
 choiceList = {handles.choiceListDefault};
 for i = 1:size(choiceStrings)
     choiceList{i+1} = choiceStrings{i};
 end
-set(handles.croppingTypeMenu, 'String', choiceList);
+set(handles.registrationTypeList, 'String', choiceList);
 
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes LegacySubsectionSelectionSessionMetadataEntry wait for user response (see UIRESUME)
-uiwait(handles.legacySubsectionSelectionSessionMetadataEntry);
+% UIWAIT makes LegacyRegistrationSessionMetadataEntry wait for user response (see UIRESUME)
+uiwait(handles.legacyRegistrationSessionMetadataEntry);
 end
 
 % --- Outputs from this function are returned to the command line.
-function varargout = LegacySubsectionSelectionSessionMetadataEntry_OutputFcn(hObject, eventdata, handles) 
+function varargout = LegacyRegistrationSessionMetadataEntry_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-%**************************************************************
-%OUTPUT: 
+%*******************************************************************************************************************************
+%OUTPUT: [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy]
+%*******************************************************************************************************************************
+
 
 % Get default command line output from handles structure
 varargout{1} = handles.cancel;
 varargout{2} = handles.sessionDate;
 varargout{3} = handles.sessionDoneBy;
 varargout{4} = handles.sessionNotes;
-varargout{5} = handles.croppingType;
-varargout{6} = handles.coords;
+varargout{5} = handles.registrationType;
+varargout{6} = handles.registrationParams;
 varargout{7} = handles.rejected;
 varargout{8} = handles.rejectedReason;
 varargout{9} = handles.rejectedBy;
 
-close(handles.legacySubsectionSelectionSessionMetadataEntry);
+close(handles.legacyRegistrationSessionMetadataEntry);
 end
 
 
@@ -195,7 +193,6 @@ checkToEnableOkButton(handles);
 
 guidata(hObject, handles);
 
-
 end
 
 
@@ -261,23 +258,53 @@ enableLineScrolling(hObject);
 
 end
 
-% --- Executes on selection change in croppingTypeMenu.
-function croppingTypeMenu_Callback(hObject, eventdata, handles)
-% hObject    handle to croppingTypeMenu (see GCBO)
+
+function registrationParamsInput_Callback(hObject, eventdata, handles)
+% hObject    handle to registrationParamsInput (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns croppingTypeMenu contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from croppingTypeMenu
+% Hints: get(hObject,'String') returns contents of registrationParamsInput as text
+%        str2double(get(hObject,'String')) returns contents of registrationParamsInput as a double
 
-[choices, ~] = choicesFromEnum('CroppingTypes');
+handles.registrationParams = get(hObject, 'String');
+
+checkToEnableOkButton(handles);
+
+guidata(hObject, handles);
+
+end
+
+% --- Executes during object creation, after setting all properties.
+function registrationParamsInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to registrationParamsInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+end
+
+% --- Executes on selection change in registrationTypeList.
+function registrationTypeList_Callback(hObject, eventdata, handles)
+% hObject    handle to registrationTypeList (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns registrationTypeList contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from registrationTypeList
+
+[choices, ~] = choicesFromEnum('RegistrationTypes');
 
 
 % Check if value is default value
 if get(hObject, 'Value') == 1 
-    handles.croppingType = [];
+    handles.registrationType = [];
 else
-    handles.croppingType = choices(get(hObject, 'Value')-1); 
+    handles.registrationType = choices(get(hObject, 'Value')-1); 
 end
 
 checkToEnableOkButton(handles);
@@ -287,180 +314,12 @@ guidata(hObject, handles);
 end
 
 % --- Executes during object creation, after setting all properties.
-function croppingTypeMenu_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to croppingTypeMenu (see GCBO)
+function registrationTypeList_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to registrationTypeList (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-end
-
-
-function xCoordInput_Callback(hObject, eventdata, handles)
-% hObject    handle to xCoordInput (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of xCoordInput as text
-%        str2double(get(hObject,'String')) returns contents of xCoordInput as a double
-
-%Get value from input box
-if isnan(str2double(get(hObject, 'String')))
-    
-    set(handles.xCoordInput, 'String', '');
-    handles.xCoord = [];
-    
-    warndlg('X Coordinate must be numerical.', 'Coordinates Error', 'modal'); 
-    
-else
-    handles.xCoord = str2double(get(hObject, 'String'));
-end
-
-handles.coords = [handles.xCoord, handles.yCoord, handles.width, handles.height];
-
-checkToEnableOkButton(handles);
-
-guidata(hObject, handles);
-
-end
-
-% --- Executes during object creation, after setting all properties.
-function xCoordInput_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to xCoordInput (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-end
-
-
-function yCoordInput_Callback(hObject, eventdata, handles)
-% hObject    handle to yCoordInput (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of yCoordInput as text
-%        str2double(get(hObject,'String')) returns contents of yCoordInput as a double
-
-%Get value from input box
-if isnan(str2double(get(hObject, 'String')))
-    
-    set(handles.yCoordInput, 'String', '');
-    handles.yCoord = [];
-    
-    warndlg('Y Coordinate must be numerical.', 'Coordinates Error', 'modal'); 
-    
-else
-    handles.yCoord = str2double(get(hObject, 'String'));
-end
-
-handles.coords = [handles.xCoord, handles.yCoord, handles.width, handles.height];
-
-checkToEnableOkButton(handles);
-
-guidata(hObject, handles);
-
-end
-
-% --- Executes during object creation, after setting all properties.
-function yCoordInput_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to yCoordInput (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-end
-
-
-function widthInput_Callback(hObject, eventdata, handles)
-% hObject    handle to widthInput (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of widthInput as text
-%        str2double(get(hObject,'String')) returns contents of widthInput as a double
-
-%Get value from input box
-if isnan(str2double(get(hObject, 'String')))
-    
-    set(handles.widthInput, 'String', '');
-    handles.width = [];
-    
-    warndlg('Width must be numerical.', 'Width Error', 'modal'); 
-    
-else
-    handles.width = str2double(get(hObject, 'String'));
-end
-
-handles.coords = [handles.xCoord, handles.yCoord, handles.width, handles.height];
-
-checkToEnableOkButton(handles);
-
-guidata(hObject, handles);
-
-end
-
-% --- Executes during object creation, after setting all properties.
-function widthInput_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to widthInput (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-end
-
-
-function heightInput_Callback(hObject, eventdata, handles)
-% hObject    handle to heightInput (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of heightInput as text
-%        str2double(get(hObject,'String')) returns contents of heightInput as a double
-
-%Get value from input box
-if isnan(str2double(get(hObject, 'String')))
-    
-    set(handles.heightInput, 'String', '');
-    handles.height = [];
-    
-    warndlg('Height must be numerical.', 'Height Error', 'modal'); 
-    
-else
-    handles.height = str2double(get(hObject, 'String'));
-end
-
-handles.coords = [handles.xCoord, handles.yCoord, handles.width, handles.height];
-
-checkToEnableOkButton(handles);
-
-guidata(hObject, handles);
-
-end
-
-% --- Executes during object creation, after setting all properties.
-function heightInput_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to heightInput (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
@@ -541,21 +400,16 @@ switch exit
     case 'Yes'
         %Clears variables in the case that they wish to exit the program
         handles.cancel = true;
-        
         handles.sessionDate = [];
         handles.sessionDoneBy = '';
         handles.sessionNotes = '';
-        handles.croppingType = [];
-        handles.xCoord = [];
-        handles.yCoord = [];
-        handles.width = [];
-        handles.height = [];
-        handles.coords = [handles.xCoord, handles.yCoord, handles.width, handles.height];
+        handles.registrationType = [];
+        handles.registrationParams = '';
         handles.rejected = [];
         handles.rejectedReason = '';
         handles.rejectedBy = '';
         guidata(hObject, handles);
-        uiresume(handles.legacySubsectionSelectionSessionMetadataEntry);
+        uiresume(handles.legacyRegistrationSessionMetadataEntry);
     case 'No'
 end
 
@@ -568,7 +422,7 @@ function OK_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 guidata(hObject, handles);
-uiresume(handles.legacySubsectionSelectionSessionMetadataEntry);
+uiresume(handles.legacyRegistrationSessionMetadataEntry);
 
 end
 
@@ -626,9 +480,9 @@ guidata(hObject, handles);
 
 end
 
-% --- Executes when user attempts to close legacySubsectionSelectionSessionMetadataEntry.
-function legacySubsectionSelectionSessionMetadataEntry_CloseRequestFcn(hObject, eventdata, handles)
-% hObject    handle to legacySubsectionSelectionSessionMetadataEntry (see GCBO)
+% --- Executes when user attempts to close legacyRegistrationSessionMetadataEntry.
+function legacyRegistrationSessionMetadataEntry_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to legacyRegistrationSessionMetadataEntry (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -639,12 +493,8 @@ if isequal(get(hObject, 'waitstatus'), 'waiting')
     handles.sessionDate = [];
     handles.sessionDoneBy = '';
     handles.sessionNotes = '';
-    handles.croppingType = [];
-    handles.xCoord = [];
-    handles.yCoord = [];
-    handles.width = [];
-    handles.height = [];
-    handles.coords = [handles.xCoord, handles.yCoord, handles.width, handles.height];
+    handles.registrationType = [];
+    handles.registrationParams = '';
     handles.rejected = [];
     handles.rejectedReason = '';
     handles.rejectedBy = '';
@@ -656,12 +506,8 @@ else
     handles.sessionDate = [];
     handles.sessionDoneBy = '';
     handles.sessionNotes = '';
-    handles.croppingType = [];
-    handles.xCoord = [];
-    handles.yCoord = [];
-    handles.width = [];
-    handles.height = [];
-    handles.coords = [handles.xCoord, handles.yCoord, handles.width, handles.height];
+    handles.registrationType = [];
+    handles.registrationParams = '';
     handles.rejected = [];
     handles.rejectedReason = '';
     handles.rejectedBy = '';
@@ -676,7 +522,7 @@ function checkToEnableOkButton(handles)
 %This function will check to see if any of the input variables are empty,
 %and if not it will enable the OK button
 
-if ~isempty(handles.sessionDate) && ~isempty(handles.sessionDoneBy) && ~isempty(handles.croppingType) && ~isempty(handles.xCoord) && ~isempty(handles.yCoord) && ~isempty(handles.width) && ~isempty(handles.height) && ~isempty(handles.rejected)
+if ~isempty(handles.sessionDate) && ~isempty(handles.sessionDoneBy) && ~isempty(handles.registrationType) && ~isempty(handles.registrationParams) && ~isempty(handles.rejected)
     if handles.rejected 
         if ~isempty(handles.rejectedReason) && ~isempty(handles.rejectedBy)
             set(handles.OK, 'enable', 'on');
@@ -691,5 +537,6 @@ else
 end
 
 end
+
 
 
