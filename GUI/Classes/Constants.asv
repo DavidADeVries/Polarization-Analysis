@@ -17,6 +17,9 @@ classdef Constants
         
         DEFAULT_EYE_TYPE = EyeTypes.Right;
         
+        DEFAULT_STAIN = '';
+        
+        DEFAULT_SLIDE_MATERIAL = '';
     end
     
     methods
