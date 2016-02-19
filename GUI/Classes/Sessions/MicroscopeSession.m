@@ -40,7 +40,7 @@ classdef MicroscopeSession < DataCollectionSession
         function [cancel, session] = enterMetadata(session, importPath, userName)
             
             %Call to Microscope Session Metadata Entry GUI
-            [cancel, magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason] = MicroscopeSessionMetadataEntry(userName, importPath);
+            [cancel, magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason, rejectedBy] = MicroscopeSessionMetadataEntry(userName, importPath);
             
             if ~cancel
                 %Assigning values to Microscope Session Properties
@@ -55,6 +55,7 @@ classdef MicroscopeSession < DataCollectionSession
                 session.notes = notes;
                 session.rejected = rejected;
                 session.rejectedReason = rejectedReason;
+                session.rejectedBy = rejectedBy;
             end
         
         end
