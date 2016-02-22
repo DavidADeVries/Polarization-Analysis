@@ -366,7 +366,6 @@ switch exit
         handles.sessionNotes = '';
         handles.rejected = [];
         handles.rejectedReason = '';
-        handles.rejectedBy = '';
         guidata(hObject, handles);
         uiresume(handles.MicroscopeSessionMetadataEntry);
     case 'No'
@@ -445,15 +444,13 @@ function yesRejectedButton_Callback(hObject, eventdata, handles)
 set(handles.yesRejectedButton, 'Value', 1);
 
 handles.rejected = true;
-handles.rejectedBy = handles.userName;
+handles.rejectedBy = handles.username;
 
 set(handles.noRejectedButton, 'Value', 0);
 
-set(handles.reasonForRejectionInput, 'enable', 'on');
-set(handles.rejectedByInput, 'enable', 'on');
-set(handles.rejectedByInput, 'String', handles.userName);
-
 checkToEnableOkButton(handles);
+
+set(handles.reasonForRejectionInput, 'enable', 'on');
 
 guidata(hObject, handles);
 
@@ -528,7 +525,6 @@ else
     guidata(hObject, handles);
     delete(hObject);
 end
-
 end
 
 function importPathTitle_Callback(hObject, eventdata, handles)
