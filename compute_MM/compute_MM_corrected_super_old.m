@@ -144,23 +144,24 @@ clear image4_4;
 % Calculation of M_A in correspondance of Bueno/Campbell Paper
 % each M_AX is the first row of the MM of an analyzer state, that is the
 % MM of a HLP multiplied by the MM of a rotated QWP
-M_A1 = [0.5  0  0  -0.5]; %QWP at -45
-M_A2 = [0.5  0.5      0       0]; %QWP at 0
-M_A3 = [0.5 0.125   -0.2165   0.433]; %QWP at 30
-M_A4 = [0.5 0.125   0.2165    0.433]; %QWP at 60
-M_A = [M_A1; M_A2; M_A3; M_A4]; %combine to make M_A
-inv_M_A = inv(M_A); %take the inverse, as is required
+Spsa1=[1  0      0       -1];
+Spsa2=[1  1      0       0];
+Spsa3=[1  0.25   0.433   0.866];
+Spsa4=[1  0.25   -0.433  0.866];
+mp_psaV=0.5 .* [Spsa1; Spsa2; Spsa3; Spsa4];
+inv_M_A = inv(mp_psaV); %take the inverse, as is required
 
 % Calculation of M_G, as outlined in Bueno/Campbell Paper
 % each column is the Stokes vector of light exiting from the 4 generator
 % states. The input light into the generator is unpolarized light: 
 % S = [1;0;0;0;]
 % Then to find S_out, S_out = MM_QWP * MM_HLP * S
-M_G1 = [0.5;  0; 0; 0.5;]; %QWP at -45
-M_G2 = [0.5;  0.5; 0; 0;]; %QWP at 0
-M_G3 = [0.5;  0.125; -0.2165; -0.433;]; %QWP at 30
-M_G4 = [0.5;  0.125; 0.2165; -0.433;]; %QWP at 60
-M_G = [M_G1 M_G2 M_G3 M_G4]; %combine to make M_G
+Spsg1=[1;  0; 0; 1;];
+Spsg2=[1;  1; 0; 0;];
+Spsg3=[1;  0.25; 0.433; -0.866;];
+Spsg4=[1;  0.25; -0.433; -0.866;];
+m_psgV=0.5 .* [Spsg1 Spsg2 Spsg3 Spsg4];
+M_G = m_psgV; %combine to make M_G
 
 MM_pixelwise_norm = zeros(N,M,4,4); %allocate memory for the image's MMs, each pixel have an associated 4x4 MM
 MM_m00_max_norm = zeros(N,M,4,4);
