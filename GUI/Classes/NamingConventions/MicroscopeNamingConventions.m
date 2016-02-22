@@ -46,10 +46,10 @@ classdef MicroscopeNamingConventions
             
             for i=1:length(MicroscopeNamingConventions.MM_IMAGES_PSG)
                 for j=1:length(MicroscopeNamingConventions.MM_IMAGES_PSA)
-                    import = strcat(MicroscopeNamingConventions.MM_IMAGES_PSG{i}.import, MicroscopeNamingConventions.MM_IMAGES_PSA{j}.import);
+                    import = strcat(MicroscopeNamingConventions.MM_IMAGES_PSG{i}.import{1}, MicroscopeNamingConventions.MM_IMAGES_PSA{j}.import{1});
                     project = strcat(MicroscopeNamingConventions.MM_IMAGES_PSG{i}.project, MicroscopeNamingConventions.MM_IMAGES_PSA{j}.project);
                     
-                    namingConventions{counter} = NamingConvention(import, project);
+                    namingConventions{counter} = NamingConvention({import}, project);
                     counter = counter + 1;
                 end
             end
@@ -61,14 +61,15 @@ classdef MicroscopeNamingConventions
             
             for i=1:length(MicroscopeNamingConventions.LPO_IMAGES_ANGLES)
                 for j=1:length(MicroscopeNamingConventions.LPO_IMAGES_CROSSED)
-                    import = [MicroscopeNamingConventions.LPO_IMAGES_ANGLES{i}.import, MicroscopeNamingConventions.LPO_IMAGES_CROSSED{j}.import];
+                    import = [MicroscopeNamingConventions.LPO_IMAGES_ANGLES{i}.import{1}, MicroscopeNamingConventions.LPO_IMAGES_CROSSED{j}.import{1}];
                     project = [MicroscopeNamingConventions.LPO_IMAGES_ANGLES{i}.project, ' ', MicroscopeNamingConventions.LPO_IMAGES_CROSSED{j}.project];
                     
-                    namingConventions{counter} = NamingConvention(import, project);
+                    namingConventions{counter} = NamingConvention({import}, project);
                     counter = counter + 1;
                 end
             end
         end
+        
     end
     
 end

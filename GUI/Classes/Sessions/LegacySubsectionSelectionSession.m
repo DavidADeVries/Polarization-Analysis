@@ -53,7 +53,29 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
         end
         
         
-        function session = importSession(session, sessionProjectPath, locationImportPath, projectPath, dataFilename)    
+        function session = importSession(session, sessionProjectPath, importPath, projectPath, dataFilename) 
+            
+            filenameSection = createFilenameSection(SessionNamingConventions.DATA_FILENAME_LABEL, num2str(session.sessionNumber));
+            dataFilename = strcat(dataFilename, filenameSection);
+            
+            waitText = 'Importing session data. Please wait.';
+            waitTitle = 'Importing Data';
+            
+            waitHandle = popupMessage(waitText, waitTitle);
+                        
+            % import the files
+            filename = strcat(dataFilename, filenameSection);
+            
+            newDir = LegacySubsectionSelectionNamingConventions.MM_DIR;
+            namingConventions = LegacyRegistrationNamingConventions.getMMNamingConventions();
+            
+            createObjectDirectories(projectPath, sessionProjectPath, newDir);
+            
+            fileExtensions = {Constants.BMP_EXT};
+            
+            importBmpFiles(sessionProjectPath, importPath, projectPath, filename, namingConventions, newDir, fileExtensions);
+
+            delete(waitHandle);     
         end
         
          

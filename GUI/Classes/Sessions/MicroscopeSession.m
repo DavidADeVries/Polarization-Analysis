@@ -77,7 +77,7 @@ classdef MicroscopeSession < DataCollectionSession
                 if MicroscopeNamingConventions.FLUORO_DIR.importMatches(dirName)
                     filenameSection = createFilenameSection(MicroscopeNamingConventions.FLUORO_FILENAME_LABEL, '');
                     
-                    namingConventions = MicroscopeNamingConventions.FLUORO_IMAGES;
+                    namingConventions = MicroscopeNamingConventions.getFluoroNamingConventions;
                     
                     newDir = MicroscopeNamingConventions.FLUORO_DIR.project;
                     
@@ -91,7 +91,7 @@ classdef MicroscopeSession < DataCollectionSession
                 elseif MicroscopeNamingConventions.TR_DIR.importMatches(dirName)
                     filenameSection = createFilenameSection(MicroscopeNamingConventions.TR_FILENAME_LABEL, '');
                     
-                    namingConventions = MicroscopeNamingConventions.TR_IMAGES;
+                    namingConventions = MicroscopeNamingConventions.getTRNamingConventions();
                     
                     newDir = MicroscopeNamingConventions.TR_DIR.project;
                     
@@ -103,14 +103,25 @@ classdef MicroscopeSession < DataCollectionSession
                     newDir = MicroscopeNamingConventions.LPO_DIR.project;
                     
                 else % the folder name did not match one the expected
-                    error('Invalid folder found in import directory');
+                    importPath = makePath(locationImportPath, dirName);
+                    filenames = getFilenamesForTagAssignment(importPath);
+                    
+                    [cancel, newDir, directoryTag, filenameTags] = UnexpectedImportDirectory(importPath, filenames);
+                    
+                    filenameSection = createFilenameSeciont(directoryTag, '');
+                    
+                    if ~cancel
+                        namingConventions = createNamingConventionsFromFilenameTags(filenames, filenameTags);
+                    end
                 end
                 
                 % import the files
                 filename = strcat(dataFilename, filenameSection);
                 importPath = makePath(locationImportPath, dirName);
                 
-                importBmpNd2Files(sessionProjectPath, importPath, projectPath, filename, namingConventions, newDir);
+                filenameExtensions = {Constants.BMP_EXT, Constants.ND2_EXT};
+                
+                importFiles(sessionProjectPath, importPath, projectPath, filename, namingConventions, newDir, filenameExtensions);
             end      
 
             delete(waitHandle);     
@@ -143,8 +154,6 @@ end
 
 function [] = importBmpNd2Files(sessionProjectPath, importPath, projectPath, dataFilename, namingConventions, newDir)
 
-
-
 % create folder to hold data to be imported
 createObjectDirectories(projectPath, sessionProjectPath, newDir);
 projectToPath = makePath(sessionProjectPath, newDir);
@@ -158,7 +167,32 @@ nd2Filenames = getFilesByExtension(filenames, Constants.ND2_EXT);
 numBmpFiles = length(bmpFilenames);
 numNd2Files = length(nd2Filenames);
 
-if numBmpFiles == numNd2Files && length(filenames) == numBmpFiles + numNd2Files    
+if numBmpFiles == 0
+    prompt = ['No .bmp files were found at: ', importPath, '. Please select where the .bmp files are stored'];
+    title = 'No .bmp Files Found';
+    msgbox(prompt, title);
+    
+    bmpPath = uigetdir(importPath, 'Select .bmp files');
+    
+    filenames = getAllFiles(bmpPath);
+    bmpFilenames = getFilesByExtension(filenames, Constants.BMP_EXT);
+    numBmpFiles = length(bmpFilenames);
+end
+
+if numNdsFiles == 0
+    prompt = ['No .nd2 files were found at: ', importPath, '. Please select where the .nd2 files are stored'];
+    title = 'No .nd2 Files Found';
+    msgbox(prompt, title);
+    
+    nd2Path = uigetdir(importPath, 'Select .nd2 files');
+    
+    filenames = getAllFiles(nd2Path);
+    nd2Filenames = getFilesByExtension(filenames, Constants.BMP_EXT);
+    numNd2Files = length(nd2Filenames);
+end
+
+
+if numNd2Files == numBmpFiles && length(filenames) == numNd2Files + numBmpFiles    
     counts = zeros(length(namingConventions), 1); % this will keep track of the number of each type of image we get (easy check for duplicate)
     
     for i=1:numBmpFiles

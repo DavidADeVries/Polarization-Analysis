@@ -14,7 +14,7 @@ index = 0;
 namingConvention = [];
 
 for i=1:length(namingConventions)
-    searchString = namingConventions{i}.import;
+    searchString = namingConventions{i}.import{1};
     
     indices = strfind(trimmedFilename, searchString);
     
