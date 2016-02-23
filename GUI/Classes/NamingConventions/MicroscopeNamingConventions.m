@@ -4,10 +4,10 @@ classdef MicroscopeNamingConventions
     
     properties (Constant)
         % directories
-        FLUORO_DIR = NamingConvention({'F', 'FL', 'FLUOROSCENT', 'FLUORO'}, 'Fluoroscent');
-        MM_DIR = NamingConvention({'MM', 'M M', 'Mueller'}, 'MM');
+        FLUORO_DIR = NamingConvention({'F', 'FL', 'Fluorescent', 'Fluoro'}, 'Fluorescent');
+        MM_DIR = NamingConvention({'MM', 'M M', 'Mueller', 'Mueller Matrix'}, 'MM');
         TR_DIR = NamingConvention({'TR', 'T R', 'Top Row'}, 'Top Row');
-        LPO_DIR = NamingConvention({'JP', 'J P', 'Polarizers', 'Just Polarizers'}, 'Linear Polarizers Only');
+        LPO_DIR = NamingConvention({'JP', 'J P', 'Polarizers', 'Just Polarizers', 'Polarizers Only'}, 'Linear Polarizers Only');
         
         
         % image series
@@ -69,6 +69,15 @@ classdef MicroscopeNamingConventions
                 end
             end
         end
+        
+        function namingConventions = getFluoroNamingConventions()
+            namingConventions = MicroscopeNamingConventions.FLUORO_IMAGES;
+        end
+        
+        function namingConventions = getTRNamingConventions()
+            namingConventions = MicroscopeNamingConventions.TR_IMAGES;
+        end
+        
         
     end
     

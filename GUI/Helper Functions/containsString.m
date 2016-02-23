@@ -1,13 +1,15 @@
-function doesContain = containsString(stringCellArray, string)
+function indices = containsString(stringCellArray, string)
 % containsString
-% returns true if the stringCellArray contains the string
+% returns indicies where the stringCellArray contains the string
 
-doesContain = false;
+indices = [];
+
+counter = 1;
 
 for i=1:length(stringCellArray)
     if strcmp(stringCellArray{i}, string)
-        doesContain = true;
-        break;
+        indices(counter) = i;
+        counter = counter + 1;
     end
 end
 

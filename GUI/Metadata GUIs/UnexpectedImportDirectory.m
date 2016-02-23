@@ -52,16 +52,16 @@ function UnexpectedImportDirectory_OpeningFcn(hObject, eventdata, handles, varar
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to UnexpectedImportDirectory (see VARARGIN)
 
-% ******************************
-% INPUT: (importPath, filenames)
-% ******************************
+% ****************************************************************************************************
+% INPUT: (importPath, filenames, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags)
+% ****************************************************************************************************
 
 handles.importPath = varargin{1};
 handles.filenames = varargin{2};
 
-handles.folderName = '';
-handles.directoryTag = '';
-handles.filenameTags = {};
+handles.folderName = varargin{3};
+handles.directoryTag = varargin{4};
+handles.filenameTags = varargin{5};
 
 handles.cancel = false;
 
@@ -76,7 +76,7 @@ set(handles.filenameTagsInput, 'String', handles.filenameTags);
 guidata(hObject, handles);
 
 % UIWAIT makes UnexpectedImportDirectory wait for user response (see UIRESUME)
-% uiwait(handles.UnexpectedImportDirectory);
+uiwait(handles.UnexpectedImportDirectory);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -241,7 +241,7 @@ handles.folderName = '';
 handles.directoryTag = '';
 handles.filenameTags = {};
 
-guidate(hObject, handles);
+guidata(hObject, handles);
 
 if isequal(get(hObject, 'waitstatus'), 'waiting')
     uiresume(hObject);

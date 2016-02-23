@@ -83,10 +83,10 @@ classdef NaturalSubject < Subject
                         suggestedEyeNumber = getNumberFromFolderName(folderName);
                         
                         if isnan(suggestedEyeNumber)
-                            suggestedEyeNumber = subject.getNextEyeNumber();
+                            suggestedEyeNumber = subject.nextEyeNumber();
                         end
                         
-                        eye = Eye(suggestedEyeNumber, subject.existingEyeNumbers(), toSubjectProjectPath, projectPath, subjectImportPath, userName);
+                        eye = Eye(suggestedEyeNumber, subject.getEyeNumbers(), toSubjectProjectPath, projectPath, subjectImportPath, userName);
                     else
                         eye = subject.getEyeFromChoice(choice);
                     end
@@ -153,26 +153,24 @@ classdef NaturalSubject < Subject
         end
         
         function eyeNumbers = getEyeNumbers(subject)
-            eyeNumbers = zeros(length(subject.eyes), 1); % want this to be an matrix, not cell array
-            
-            for i=1:length(subject.eyes)
-                eyeNumbers(i) = subject.eyes{i}.eyeNumber;                
-            end
-        end
-        
-        function nextEyeNumber = getNextEyeNumber(subject)
-            lastEyeNumber = max(subject.getEyeNumbers());
-            nextEyeNumber = lastEyeNumber + 1;
-        end
-        
-        function eyeNumbers = existingEyeNumbers(subject)
             eyes = subject.eyes;
             numEyes = length(eyes);
             
-            eyeNumbers = zeros(numEyes, 1);
+            eyeNumbers = zeros(numEyes, 1); % want this to be an matrix, not cell array
             
             for i=1:numEyes
-                eyeNumbers(i) = eyes{i}.eyeNumber;
+                eyeNumbers(i) = eyes{i}.eyeNumber;                
+            end
+        end
+        
+        function nextEyeNumber = nextEyeNumber(subject)
+            eyeNumbers = subject.getEyeNumbers();
+            
+            if isempty(eyeNumbers)
+                nextEyeNumber = 1;
+            else
+                lastEyeNumber = max(eyeNumbers);
+                nextEyeNumber = lastEyeNumber + 1;
             end
         end
        
@@ -327,13 +325,9 @@ classdef NaturalSubject < Subject
             
             if ~cancel
                 if createNew
-                    suggestedEyeNumber = getNumberFromFolderName(folderName);
+                    suggestedEyeNumber = subject.nextEyeNumber();
                     
-                    if isnan(suggestedEyeNumber)
-                        suggestedEyeNumber = subject.getNextEyeNumber();
-                    end
-                    
-                    eye = Eye(suggestedEyeNumber, subject.existingEyeNumbers(), toSubjectProjectPath, localProjectPath, displayImportPath, userName);
+                    eye = Eye(suggestedEyeNumber, subject.getEyeNumbers(), toSubjectProjectPath, localProjectPath, displayImportPath, userName);
                 else
                     eye = subject.getEyeFromChoice(choice);
                 end

@@ -7,12 +7,23 @@ source = makePath(importPath, importFilename);
 % import to project directory
 
 dest = makePath(projectPath, toFilePath, projectFilename);
-copyfile(source, dest);
+
+try
+    copyfile(source, dest);
+catch
+    error(['copyfile error: From "', source, '" to "', dest, '"']);
+end
 
 % import to back-up directory
 
 dest = makePath(projectPath, Constants.BACKUP_DIR, toFilePath, projectFilename);
-copyfile(source, dest);
+
+try
+    copyfile(source, dest);
+catch
+    error(['copyfile error: From "', source, '" to "', dest, '"']);
+end
+
 
 
 end

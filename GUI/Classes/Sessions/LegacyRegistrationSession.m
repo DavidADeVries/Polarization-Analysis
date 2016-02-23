@@ -34,7 +34,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
         function [cancel, session] = enterMetadata(session, importPath, userName)
             
             %Call to Legacy Registration Session Metadata Entry GUI
-            [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy] = LegacyRegistrationSessionMetadataEntry(userName, importPath);
+            [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy] = LegacyRegistrationSessionMetadataEntry(importPath, userName);
             
             if ~cancel
                 %Assigning values to Legacy Registration Session Properties
@@ -56,22 +56,37 @@ classdef LegacyRegistrationSession < DataProcessingSession
             filenameSection = createFilenameSection(SessionNamingConventions.DATA_FILENAME_LABEL, num2str(session.sessionNumber));
             dataFilename = strcat(dataFilename, filenameSection);
             
+            filenameExtensions = {Constants.BMP_EXT};
+            
             waitText = 'Importing session data. Please wait.';
             waitTitle = 'Importing Data';
             
             waitHandle = popupMessage(waitText, waitTitle);
                         
-            % import the files
-            filename = strcat(dataFilename, filenameSection);
             
-            newDir = LegacyRegistrationNamingConventions.MM_DIR;
-            namingConventions = LegacyRegistrationNamingConventions.getMMNamingConventions();
+            suggestedDirectoryName = MicroscopeNamingConventions.MM_DIR.project;
+            suggestedDirectoryTag = MicroscopeNamingConventions.MM_FILENAME_LABEL;
             
-            createObjectDirectories(projectPath, sessionProjectPath, newDir);
+            namingConventions = MicroscopeNamingConventions.getMMNamingConventions();
+                                                        
+            extensionImportPaths = getExtensionImportPaths(importPath, filenameExtensions, 'Registration');
+                
+            [filenames, pathIndicesForFilenames] = getFilenamesForTagAssignment(extensionImportPaths);
             
-            fileExtensions = {Constants.BMP_EXT};
+            suggestedFilenameTags = createSuggestedFilenameTags(filenames, namingConventions);
             
-            importBmpFiles(sessionProjectPath, importPath, projectPath, filename, namingConventions, newDir, fileExtensions);
+            
+            [cancel, newDir, directoryTag, filenameTags] = UnexpectedImportDirectory(importPath, filenames, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags);
+            
+            
+            if ~cancel
+                filenameSection = createFilenameSection(directoryTag, '');
+                
+                % import the files
+                dataFilename = strcat(dataFilename, filenameSection);
+                
+                importFiles(sessionProjectPath, extensionImportPaths, projectPath, dataFilename, filenames, pathIndicesForFilenames, filenameExtensions, filenameTags, newDir);
+            end
 
             delete(waitHandle);     
             

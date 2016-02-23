@@ -26,27 +26,39 @@ classdef Session
         subfolderIndex = 0
     end
     
-    methods
-        function choices = getDataCollectionSessionChoices()
-            choices = {'Microscope Imaging Sessions', 'CSLO Imaging Session', 'Legacy Registration Session', 'Legacy Subsection Selection Session', 'Unknown'};
-        end
+    methods(Static)
         
-        
-        function session = createSession(choice, sessionNumber, dataCollectionSessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName)
-            if choice == 1
+        function session = createSession(sessionType, sessionNumber, dataCollectionSessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName)
+            
+            if sessionType == SessionTypes.Microscope
                 session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
-            elseif choice == 2
+                
+            elseif sessionType == SessionTypes.CSLO
                 session = CLSOSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
-            elseif choice == 3
+                
+            elseif sessionType == SessionTypes.LegacyRegistration
                 session = LegacyRegistrationSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
-            elseif choice == 4
+                
+            elseif sessionType == SessionTypes.LegacySubsectionSelection
                 session = LegacySubsectionSelectionSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
-            elseif choice == 5
-                session = Session;
+                
+            elseif sessionType == SessionTypes.FrameAveraging
+                session = FrameAveragingSession();
+                
+            elseif sessionType == SessionTypes.Registration
+                session = RegistrationSession();
+                
+            elseif sessionType == SessionTypes.PolarizationAnalysis
+                session = PolarizationAnalysisSession();
+                
             else
-                error('Invalid Data Collection Session type!');
+                error('Invalid Session type!');
             end                
         end
+        
+    end
+    
+    methods
         
         function session = wipeoutMetadataFields(session)
             session.dirName = '';

@@ -57,7 +57,7 @@ classdef Subject
                     end
                 end
                 
-                [cancel, rawDataPath, registeredDataPath, positiveAreaPath, negativeAreaPath] = selectLegacyDataPaths(subjectImportDir);
+                [cancel, rawDataPath, registeredDataPath, positiveAreaPath, negativeAreaPath] = selectLegacyDataPaths(legacySubjectImportPath);
                 
                 % TODO: could add a path validation here
                 
@@ -75,6 +75,8 @@ classdef Subject
                     legacyImportPaths = struct('rawDataPath', rawDataPath, 'registeredDataPath', registeredDataPath, 'positiveAreaPath', positiveAreaPath, 'negativeAreaPath', negativeAreaPath);
                     
                     subject = subject.importLegacyDataTypeSpecific(toSubjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType);
+                    
+                    counter = counter + 1;
                 end
             end
         end

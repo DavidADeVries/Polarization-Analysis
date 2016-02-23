@@ -116,7 +116,7 @@ classdef MicroscopeSession < DataCollectionSession
                                     
                 extensionImportPaths = getExtensionImportPaths(importPath, filenameExtensions, dirName);
                 
-                [filenames, pathIndicesForFilenames] = getFilenamesForTagAssignment(extensionImportPaths);
+                [filenames, extensionsForFilenames] = getFilenamesForTagAssignment(extensionImportPaths);
                 
                 if isempty(namingConventions)
                     suggestedFilenameTags = {};
@@ -132,8 +132,9 @@ classdef MicroscopeSession < DataCollectionSession
                     % import the files
                     dataFilename = strcat(dataFilename, filenameSection);
                     
-                    importFiles(sessionProjectPath, extensionImportPaths, projectPath, dataFilename, filenames, pathIndicesForFilenames, filenameExtensions, filenameTags, newDir);
-                end                
+                    importFiles(sessionProjectPath, extensionImportPaths, projectPath, dataFilename, filenames, extensionsForFilenames, filenameTags, newDir);
+                end
+                
                
             end      
 

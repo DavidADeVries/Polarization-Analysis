@@ -84,13 +84,9 @@ classdef Eye
                 
                 if ~cancel
                     if createNew
-                        suggestedEyeNumber = getNumberFromFolderName(folderName);
+                        suggestedQuarterNumber = eye.getNextQuarterNumber();
                         
-                        if isnan(suggestedEyeNumber)
-                            suggestedEyeNumber = subject.getNextEyeNumber();
-                        end
-                        
-                        quarter = Quarter(suggestedEyeNumber, eye.existingQuarterNumbers(), toEyeProjectPath, projectPath, quarterImportPath, userName);
+                        quarter = Quarter(suggestedQuarterNumber, eye.getQuarterNumbers(), toEyeProjectPath, projectPath, quarterImportPath, userName);
                     else
                         quarter = eye.getQuarterFromChoice(choice);
                     end
@@ -118,17 +114,6 @@ classdef Eye
             
             for i=1:numQuarters
                 quarterChoices{i} = quarters{i}.dirName;
-            end
-        end
-        
-        function quarterNumbers = existingQuarterNumbers(eye)
-            quarters = eye.quarters;
-            numQuarters = length(quarters);
-            
-            quarterNumbers = zeros(numQuarters, 1);
-            
-            for i=1:numQuarters
-                quarterNumbers(i) = quarters{i}.quarterNumber;
             end
         end
         
@@ -168,16 +153,25 @@ classdef Eye
         end
         
         function quarterNumbers = getQuarterNumbers(eye)
-            quarterNumbers = zeros(length(eye.quarters), 1); % want this to be an matrix, not cell array
+            quarters = eye.quarters;
+            numQuarters = length(quarters);
             
-            for i=1:length(eye.quarters)
-                quarterNumbers(i) = eye.quarters{i}.quarterNumber;                
+            quarterNumbers = zeros(numQuarters, 1); % want this to be an matrix, not cell array
+                        
+            for i=1:numQuarters
+                quarterNumbers(i) = quarters{i}.quarterNumber;                
             end
         end
         
-        function nextQuarterNumber = getNextQuarterNumber(eye)
-            lastQuarterNumber = max(eye.getQuarterNumbers());
-            nextQuarterNumber = lastQuarterNumber + 1;
+        function nextNumber = nextQuarterNumber(eye)
+            quarterNumbers = eye.getQuarterNumbers();
+            
+            if isempty(quarterNumbers)
+                nextNumber = 1;
+            else
+                lastNumber = max(quarterNumbers);
+                nextNumber = lastNumber + 1;
+            end
         end
                 
         function [cancel, eye] = enterMetadata(eye, suggestedEyeNumber, existingEyeNumbers, importPath, userName)
@@ -339,13 +333,9 @@ classdef Eye
             
             if ~cancel
                 if createNew
-                    suggestedEyeNumber = getNumberFromFolderName(folderName);
+                    suggestedQuarterNumber = eye.nextQuarterNumber();
                     
-                    if isnan(suggestedEyeNumber)
-                        suggestedEyeNumber = subject.getNextEyeNumber();
-                    end
-                    
-                    quarter = Quarter(suggestedEyeNumber, eye.existingQuarterNumbers(), toEyeProjectPath, localProjectPath, displayImportPath, userName);
+                    quarter = Quarter(suggestedQuarterNumber, eye.getQuarterNumbers(), toEyeProjectPath, localProjectPath, displayImportPath, userName);
                 else
                     quarter = eye.getQuarterFromChoice(choice);
                 end

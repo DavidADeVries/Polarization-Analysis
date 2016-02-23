@@ -83,7 +83,7 @@ classdef Trial
                         suggestedSubjectNumber = trial.nextSubjectNumber();
                     end
                         
-                    subject = trial.createNewSubject(suggestedSubjectNumber, trial.existingSubjectNumbers, trial.dirName, handles.localPath, importDir, handles.userName);
+                    subject = trial.createNewSubject(suggestedSubjectNumber, trial.getSubjectNumbers(), trial.dirName, handles.localPath, importDir, handles.userName);
                 else
                     subject = trial.getSubjectFromChoice(choice);
                 end
@@ -95,17 +95,6 @@ classdef Trial
                     trial = trial.updateSubject(subject);
                 end
             end            
-        end
-        
-        function existingSubjectNumbers = existingSubjectNumbers(trial)
-            subjects = trial.subjects;
-            numSubjects = length(subjects);
-            
-            existingSubjectNumbers = zeros(numSubjects, 1);
-            
-            for i=1:numSubjects
-                existingSubjectNumbers(i) = subjects{i}.subjectNumber;
-            end
         end
         
         
@@ -150,14 +139,24 @@ classdef Trial
             end
         end
         
-        function nextNumber = nextSubjectNumber(trial)
+        function subjectNumbers = getSubjectNumbers(trial)
             subjects = trial.subjects;
+            numSubjects = length(subjects);
             
-            if isempty(subjects)
+            subjectNumbers = zeros(numSubjects, 1); % want this to be an matrix, not cell array
+            
+            for i=1:numSubjects
+                subjectNumbers(i) = subjects{i}.subjectNumber;                
+            end
+        end
+        
+        function nextNumber = nextSubjectNumber(trial)
+            subjectNumbers = trial.getSubjectNumbers();
+            
+            if isempty(subjectNumbers)
                 nextNumber = 1;
             else
-                lastNumber = subjects{length(subjects)}.subjectNumber;
-                
+                lastNumber = max(subjectNumbers);
                 nextNumber = lastNumber + 1;
             end
         end
@@ -263,7 +262,7 @@ classdef Trial
         end
         
         function trial = updateSubjectIndex(trial, index)            
-            trial.subjectIndex(index) = index;
+            trial.subjectIndex = index;
         end
         
         function trial = updateEyeIndex(trial, index)
@@ -335,7 +334,7 @@ classdef Trial
         function trial = importLegacyData(trial, legacySubjectImportDir, localProjectPath, userName)
             % select subject
             
-            prompt = ['Select the subject to which the data being imported from ', importDir, ' belongs to.'];
+            prompt = ['Select the subject to which the data being imported from ', legacySubjectImportDir, ' belongs to.'];
             title = 'Select Subject';
             choices = trial.getSubjectChoices();
             
@@ -343,13 +342,9 @@ classdef Trial
             
             if ~cancel
                 if createNew
-                    suggestedSubjectNumber = getNumberFromFolderName(getFilename(importDir));
-                    
-                    if isnan(suggestedSubjectNumber)
-                        suggestedSubjectNumber = trial.nextSubjectNumber();
-                    end
+                    suggestedSubjectNumber = trial.nextSubjectNumber();
                         
-                    subject = trial.createNewSubject(suggestedSubjectNumber, trial.existingSubjectNumbers, trial.dirName, localProjectPath, legacySubjectImportDir, userName);
+                    subject = trial.createNewSubject(suggestedSubjectNumber, trial.getSubjectNumbers(), trial.dirName, localProjectPath, legacySubjectImportDir, userName);
                 else
                     subject = trial.getSubjectFromChoice(choice);
                 end
@@ -357,7 +352,7 @@ classdef Trial
                 if ~isempty(subject)
                     dataFilename = createFilenameSection(TrialNamingConventions.DATA_FILENAME_LABEL, num2str(trial.trialNumber));
                     
-                    subject = subject.importLegacyData(makePath(trial.dirName, subject.dirName), importDir, localProjectPath, dataFilename, userName, trial.subjectType);
+                    subject = subject.importLegacyData(makePath(trial.dirName, subject.dirName), legacySubjectImportDir, localProjectPath, dataFilename, userName, trial.subjectType);
                 
                     trial = trial.updateSubject(subject);
                 end

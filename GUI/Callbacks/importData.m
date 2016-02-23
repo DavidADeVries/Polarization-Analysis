@@ -21,6 +21,12 @@ if importDir ~= 0 %dir successfully selected
     project = project.importData(handles, importDir);
     
     handles.localProject = project;
+    
+    % update gui
+    handles = project.updateNavigationListboxes(handles);
+    handles = project.updateMetadataFields(handles);
+    
+    guidata(hObject, handles);
 end
     
 

@@ -14,15 +14,13 @@ for i=1:length(filenames)
     pathIndicesForFilename = pathIndicesForFilenames{i};
     
     % split up filename tag (comma seperated)
-    splitupTags = strsplit(filenameTag, ',');
+    splitupTags = strsplit(filenameTag);
     
-    finalFilename = dataFilename;
+    finalFilename
     
     for j=1:length(splitupTags)
-        tag = strtrim(splitupTags{j});
-        
-        filenameSection = createFilenameSection(tag, '');
-        finalFilename = strcat(finalFilename, filenameSection); %just needs extension
+    filenameSection = createFilenameSection(filenameTag, '');
+    finalFilename = strcat(dataFilename, filenameSection); %just needs extension
     end
         
     for j=1:length(pathIndicesForFilename)

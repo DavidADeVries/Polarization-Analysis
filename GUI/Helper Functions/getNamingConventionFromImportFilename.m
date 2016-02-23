@@ -1,33 +1,30 @@
-function [namingConvention, index] = getNamingConventionFromImportFilename(filename, namingConventions)
+function matchedNamingConventions = getNamingConventionFromImportFilename(filename, namingConventions)
 % getNamingConventionFromFilename
 % for a given import filename, a match from the import names from a naming
 % convention list is attempted to be found.
-% If there's a singular match, the naming convention and where it was found
-% in the list are kicked back
-% multiple/no match kicks back an error
 
 trimmedFilename = removeFileExtension(filename);
 
-numMatches = 0;
+matchedNamingConventions = {};
 
-index = 0;
-namingConvention = [];
+counter = 1;
 
 for i=1:length(namingConventions)
-    searchString = namingConventions{i}.import{1};
+    searchStrings = namingConventions{i}.import;
     
-    indices = strfind(trimmedFilename, searchString);
+    hitFound = false;
     
-    if ~isempty(indices) %we have a match!
-        numMatches = numMatches + 1;
-        
-        index = i;
-        namingConvention = namingConventions{i};
+    for j=1:length(searchStrings)
+        if ~isempty(strfind(trimmedFilename, searchStrings{j}))
+            hitFound = true;
+            break;
+        end
     end
-end
-
-if numMatches ~= 1
-    error('Singular naming convention match not found!');
+    
+    if hitFound
+        matchedNamingConventions{counter} = namingConventions{i};
+        counter = counter + 1;
+    end
 end
 
 

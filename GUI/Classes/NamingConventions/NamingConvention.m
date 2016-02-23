@@ -17,8 +17,8 @@ classdef NamingConvention
         function matchFound = importMatches(namingConvention, matchString)
             matchFound = false;
             
-            for i=1:length(namingConvention.import)
-                if strcmpi(namingConvention.import{i}, matchString) % ignore case using strcmpi
+            for i=1:length(namingConvention.import)                
+                if strcmpi(namingConvention.import{i}, matchString) % ignore case
                     matchFound = true;
                     break;
                 end
