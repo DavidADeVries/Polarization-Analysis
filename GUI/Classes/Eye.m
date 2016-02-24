@@ -84,13 +84,9 @@ classdef Eye
                 
                 if ~cancel
                     if createNew
-                        suggestedEyeNumber = getNumberFromFolderName(folderName);
+                        suggestedQuarterNumber = eye.nextQuarterNumber();
                         
-                        if isnan(suggestedEyeNumber)
-                            suggestedEyeNumber = subject.getNextEyeNumber();
-                        end
-                        
-                        quarter = Quarter(suggestedEyeNumber, eye.existingQuarterNumbers(), toEyeProjectPath, projectPath, quarterImportPath, userName);
+                        quarter = Quarter(suggestedQuarterNumber, eye.getQuarterNumbers(), toEyeProjectPath, projectPath, quarterImportPath, userName);
                     else
                         quarter = eye.getQuarterFromChoice(choice);
                     end
@@ -118,17 +114,6 @@ classdef Eye
             
             for i=1:numQuarters
                 quarterChoices{i} = quarters{i}.dirName;
-            end
-        end
-        
-        function quarterNumbers = existingQuarterNumbers(eye)
-            quarters = eye.quarters;
-            numQuarters = length(quarters);
-            
-            quarterNumbers = zeros(numQuarters, 1);
-            
-            for i=1:numQuarters
-                quarterNumbers(i) = quarters{i}.quarterNumber;
             end
         end
         
@@ -168,16 +153,25 @@ classdef Eye
         end
         
         function quarterNumbers = getQuarterNumbers(eye)
-            quarterNumbers = zeros(length(eye.quarters), 1); % want this to be an matrix, not cell array
+            quarters = eye.quarters;
+            numQuarters = length(quarters);
             
-            for i=1:length(eye.quarters)
-                quarterNumbers(i) = eye.quarters{i}.quarterNumber;                
+            quarterNumbers = zeros(numQuarters, 1); % want this to be an matrix, not cell array
+                        
+            for i=1:numQuarters
+                quarterNumbers(i) = quarters{i}.quarterNumber;                
             end
         end
         
-        function nextQuarterNumber = getNextQuarterNumber(eye)
-            lastQuarterNumber = max(eye.getQuarterNumbers());
-            nextQuarterNumber = lastQuarterNumber + 1;
+        function nextNumber = nextQuarterNumber(eye)
+            quarterNumbers = eye.getQuarterNumbers();
+            
+            if isempty(quarterNumbers)
+                nextNumber = 1;
+            else
+                lastNumber = max(quarterNumbers);
+                nextNumber = lastNumber + 1;
+            end
         end
                 
         function [cancel, eye] = enterMetadata(eye, suggestedEyeNumber, existingEyeNumbers, importPath, userName)
@@ -199,7 +193,7 @@ classdef Eye
         function eye = createDirectories(eye, toSubjectPath, projectPath)
             dirSubtitle = eye.eyeType.displayString;
             
-            eyeDirectory = createDirName(EyeNamingConventions.DIR_PREFIX, num2str(eye.eyeNumber), dirSubtitle);
+            eyeDirectory = createDirName(EyeNamingConventions.DIR_PREFIX, num2str(eye.eyeNumber), dirSubtitle, EyeNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toSubjectPath, eyeDirectory);
                         
@@ -326,6 +320,36 @@ classdef Eye
             
             eye = eye.updateQuarter(quarter);
         end
+        
+        function eye = importLegacyData(eye, toEyeProjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType)
+            filenameSection = createFilenameSection(EyeNamingConventions.DATA_FILENAME_LABEL, num2str(eye.eyeNumber));
+            dataFilename = [dataFilename, filenameSection];
+            
+            prompt = ['Select the quarter to which the data being imported from ', displayImportPath, ' belongs to.'];
+            title = 'Select Quarter';
+            choices = eye.getQuarterChoices();
+            
+            [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+            
+            if ~cancel
+                if createNew
+                    suggestedQuarterNumber = eye.nextQuarterNumber();
+                    
+                    quarter = Quarter(suggestedQuarterNumber, eye.getQuarterNumbers(), toEyeProjectPath, localProjectPath, displayImportPath, userName);
+                else
+                    quarter = eye.getQuarterFromChoice(choice);
+                end
+                
+                if ~isempty(quarter)
+                    toQuarterProjectPath = makePath(toEyeProjectPath, quarter.dirName);
+                    
+                    quarter = quarter.importLegacyData(toQuarterProjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType, eye.eyeType);
+                    
+                    eye = eye.updateQuarter(quarter);
+                end
+            end
+        end
+        
     end
     
 end

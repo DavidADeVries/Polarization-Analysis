@@ -26,7 +26,40 @@ classdef Session
         subfolderIndex = 0
     end
     
+    methods(Static)
+        
+        function session = createSession(sessionType, sessionNumber, dataCollectionSessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName)
+            
+            if sessionType == SessionTypes.Microscope
+                session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
+                
+            elseif sessionType == SessionTypes.CSLO
+                session = CLSOSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
+                
+            elseif sessionType == SessionTypes.LegacyRegistration
+                session = LegacyRegistrationSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
+                
+            elseif sessionType == SessionTypes.LegacySubsectionSelection
+                session = LegacySubsectionSelectionSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
+                
+            elseif sessionType == SessionTypes.FrameAveraging
+                session = FrameAveragingSession();
+                
+            elseif sessionType == SessionTypes.Registration
+                session = RegistrationSession();
+                
+            elseif sessionType == SessionTypes.PolarizationAnalysis
+                session = PolarizationAnalysisSession();
+                
+            else
+                error('Invalid Session type!');
+            end                
+        end
+        
+    end
+    
     methods
+        
         function session = wipeoutMetadataFields(session)
             session.dirName = '';
             session.fileSelectionEntries = [];
@@ -46,6 +79,10 @@ classdef Session
         
         function session = createFileSelectionEntries(session, toSessionPath)
             session.fileSelectionEntries = generateFileSelectionEntries({}, toSessionPath, session.dirName, 0);
+            
+            if ~isempty(session.fileSelectionEntries)
+                session.subfolderIndex = 1;
+            end
         end
         
         function subfolderSelections = getSubfolderSelections(session)

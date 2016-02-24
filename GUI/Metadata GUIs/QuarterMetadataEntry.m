@@ -72,8 +72,8 @@ handles.userName = varargin{4};
 handles.cancel = false;
 
 %Defining the default input variables, awaiting user input
-handles.stain = '';
-handles.slideMaterial = '';
+handles.stain = QuarterNamingConventions.DEFAULT_METADATA_GUI_STAIN;
+handles.slideMaterial = QuarterNamingConventions.DEFAULT_METADATA_GUI_SLIDE_MATERIAL;
 handles.quarterType = [];
 handles.quarterArbitrary = 0;
 handles.quarterNumber = str2double(handles.suggestedQuarterNumber);
@@ -103,6 +103,8 @@ set(handles.arbitraryLabelsButton, 'Value', 0);
 set(handles.trueLabelsButton, 'Value', 1);
 set(handles.OK, 'enable', 'off');
 set(handles.quarterNumberInput, 'String', handles.suggestedQuarterNumber);
+set(handles.quarterStainInput, 'String', QuarterNamingConventions.DEFAULT_METADATA_GUI_STAIN);
+set(handles.slideMaterialInput, 'String', QuarterNamingConventions.DEFAULT_METADATA_GUI_SLIDE_MATERIAL);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -479,6 +481,7 @@ function quarterMetadataEntry_CloseRequestFcn(hObject, eventdata, handles)
 if isequal(get(hObject, 'waitstatus'), 'waiting')
     % The GUI is still in UIWAIT, us UIRESUME
     %Clears variables in the case that they wish to exit the program
+    handles.cancel = true;
     handles.stain = '';
     handles.slideMaterial = '';
     handles.quarterType = [];
@@ -492,6 +495,7 @@ if isequal(get(hObject, 'waitstatus'), 'waiting')
 else
     % The GUI is no longer waiting, just close it
     %Clears variables in the case that they wish to exit the program
+    handles.cancel = true;
     handles.stain = '';
     handles.slideMaterial = '';
     handles.quarterType = [];

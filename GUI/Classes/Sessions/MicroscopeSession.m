@@ -40,7 +40,7 @@ classdef MicroscopeSession < DataCollectionSession
         function [cancel, session] = enterMetadata(session, importPath, userName)
             
             %Call to Microscope Session Metadata Entry GUI
-            [cancel, magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason] = MicroscopeSessionMetadataEntry(userName, importPath);
+            [cancel, magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason, rejectedBy] = MicroscopeSessionMetadataEntry(userName, importPath);
             
             if ~cancel
                 %Assigning values to Microscope Session Properties
@@ -55,6 +55,7 @@ classdef MicroscopeSession < DataCollectionSession
                 session.notes = notes;
                 session.rejected = rejected;
                 session.rejectedReason = rejectedReason;
+                session.rejectedBy = rejectedBy;
             end
         
         end
@@ -62,6 +63,8 @@ classdef MicroscopeSession < DataCollectionSession
         function session = importSession(session, sessionProjectPath, locationImportPath, projectPath, dataFilename)            
             filenameSection = createFilenameSection(SessionNamingConventions.DATA_FILENAME_LABEL, num2str(session.sessionNumber));
             dataFilename = strcat(dataFilename, filenameSection);
+            
+            filenameExtensions = {Constants.BMP_EXT, Constants.ND2_EXT}; %expect .bmps and .nd2s
             
             waitText = 'Importing session data. Please wait.';
             waitTitle = 'Importing Data';
@@ -74,43 +77,64 @@ classdef MicroscopeSession < DataCollectionSession
             for i=1:length(dirList)
                 dirName = dirList{i};
                 
-                if dirName == MicroscopeNamingConventions.FLUORO_DIR.import
-                    filenameSection = createFilenameSection(MicroscopeNamingConventions.FLUORO_FILENAME_LABEL, '');
+                 if MicroscopeNamingConventions.FLUORO_DIR.importMatches(dirName)
                     
-                    namingConventions = MicroscopeNamingConventions.FLUORO_IMAGES;
+                    suggestedDirectoryName = MicroscopeNamingConventions.FLUORO_DIR.getSingularProjectTag();
+                    suggestedDirectoryTag = MicroscopeNamingConventions.FLUORO_FILENAME_LABEL;
                     
-                    newDir = MicroscopeNamingConventions.FLUORO_DIR.project;
+                    namingConventions = MicroscopeNamingConventions.getFluoroNamingConventions();
                     
-                elseif dirName == MicroscopeNamingConventions.MM_DIR.import
-                    filenameSection = createFilenameSection(MicroscopeNamingConventions.MM_FILENAME_LABEL, '');
+                elseif MicroscopeNamingConventions.MM_DIR.importMatches(dirName)
+                    
+                    suggestedDirectoryName = MicroscopeNamingConventions.MM_DIR.getSingularProjectTag();
+                    suggestedDirectoryTag = MicroscopeNamingConventions.MM_FILENAME_LABEL;
                     
                     namingConventions = MicroscopeNamingConventions.getMMNamingConventions();
                     
-                    newDir = MicroscopeNamingConventions.MM_DIR.project;
+                elseif MicroscopeNamingConventions.TR_DIR.importMatches(dirName)
                     
-                elseif dirName == MicroscopeNamingConventions.TR_DIR.import
-                    filenameSection = createFilenameSection(MicroscopeNamingConventions.TR_FILENAME_LABEL, '');
+                    suggestedDirectoryName = MicroscopeNamingConventions.TR_DIR.getSingularProjectTag();
+                    suggestedDirectoryTag = MicroscopeNamingConventions.TR_FILENAME_LABEL;
                     
-                    namingConventions = MicroscopeNamingConventions.TR_IMAGES;
+                    namingConventions = MicroscopeNamingConventions.getTRNamingConventions();
                     
-                    newDir = MicroscopeNamingConventions.TR_DIR.project;
+                elseif MicroscopeNamingConventions.LPO_DIR.importMatches(dirName)
                     
-                elseif dirName == MicroscopeNamingConventions.LPO_DIR.import
-                    filenameSection = createFilenameSection(MicroscopeNamingConventions.LPO_FILENAME_LABEL, '');
+                    suggestedDirectoryName = MicroscopeNamingConventions.LPO_DIR.getSingularProjectTag();
+                    suggestedDirectoryTag = MicroscopeNamingConventions.LPO_FILENAME_LABEL;
                     
                     namingConventions = MicroscopeNamingConventions.getLPONamingConventions();
                     
-                    newDir = MicroscopeNamingConventions.LPO_DIR.project;
+                else % the folder name did not match one the expected                    
+                    suggestedDirectoryName = dirName;
+                    suggestedDirectoryTag = '';
                     
-                else
-                    error('Invalid folder found in import directory');
+                    namingConventions = NamingConvention.empty;
                 end
                 
-                % import the files
-                filename = strcat(dataFilename, filenameSection);
                 importPath = makePath(locationImportPath, dirName);
+                                    
+                extensionImportPaths = getExtensionImportPaths(importPath, filenameExtensions, dirName);
                 
-                importBmpNd2Files(sessionProjectPath, importPath, projectPath, filename, namingConventions, newDir);
+                [filenames, pathIndicesForFilenames] = getFilenamesForTagAssignment(extensionImportPaths);
+                
+                if isempty(namingConventions)
+                    suggestedFilenameTags = {};
+                else
+                    suggestedFilenameTags = createSuggestedFilenameTags(filenames, namingConventions);
+                end
+                
+                [cancel, newDir, directoryTag, filenameTags] = SelectProjectTags(importPath, filenames, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags);
+                
+                if ~cancel                    
+                    filenameSection = createFilenameSection(directoryTag, '');
+                    
+                    % import the files
+                    finalFilename = strcat(dataFilename, filenameSection);
+                    
+                    importFiles(sessionProjectPath, extensionImportPaths, projectPath, finalFilename, filenames, pathIndicesForFilenames, filenameExtensions, filenameTags, newDir);
+                end                
+               
             end      
 
             delete(waitHandle);     
@@ -139,57 +163,4 @@ classdef MicroscopeSession < DataCollectionSession
         
     end
     
-end
-
-function [] = importBmpNd2Files(sessionProjectPath, importPath, projectPath, dataFilename, namingConventions, newDir)
-
-
-
-% create folder to hold data to be imported
-createObjectDirectories(projectPath, sessionProjectPath, newDir);
-projectToPath = makePath(sessionProjectPath, newDir);
-
-% import files
-filenames = getAllFiles(importPath);
-
-bmpFilenames = getFilesByExtension(filenames, Constants.BMP_EXT);
-nd2Filenames = getFilesByExtension(filenames, Constants.ND2_EXT);
-
-numBmpFiles = length(bmpFilenames);
-numNd2Files = length(nd2Filenames);
-
-if numBmpFiles == numNd2Files && length(filenames) == numBmpFiles + numNd2Files    
-    counts = zeros(length(namingConventions), 1); % this will keep track of the number of each type of image we get (easy check for duplicate)
-    
-    for i=1:numBmpFiles
-        importFilenameBmp = bmpFilenames{i};
-        
-        [namingConvention, index] = getNamingConventionFromImportFilename(importFilenameBmp, namingConventions);
-        
-        filenameSection = createFilenameSection(namingConvention.project, '');
-        finalFilename = strcat(dataFilename, filenameSection); %just needs extension
-        
-        if counts(index) ~= 0 % in case there are multiple images of the same series
-            filenameSection = createFilenameSection('', num2str(counts(index)+1));
-            finalFilename = strcat(finalFilename, filenameSection);
-        end
-        
-        % import .bmp
-        projectFilename = strcat(finalFilename, Constants.BMP_EXT);
-        importFile(projectToPath, importPath, projectPath, importFilenameBmp, projectFilename);
-        
-        % import .nd2
-        projectFilename = strcat(finalFilename, Constants.ND2_EXT);
-        importFilenameNd2 = findSameFilenameWithDifferentExtension(nd2Filenames, importFilenameBmp);
-        
-        importFile(projectToPath, importPath, projectPath, importFilenameNd2, projectFilename);
-        
-        
-        counts(index) = counts(index) + 1;
-        
-    end
-else
-    error('Missing bmp/nd2 files!');
-end
-
 end

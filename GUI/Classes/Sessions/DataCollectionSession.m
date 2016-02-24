@@ -39,7 +39,7 @@ classdef DataCollectionSession < Session
         function session = createDirectories(session, toLocationPath, projectPath)
             dirSubtitle = session.getDirSubtitle(); % defined in each specific sessionsclass
             
-            sessionDirectory = createDirName(SessionNamingConventions.DATA_COLLECTION_DIR_PREFIX, num2str(session.dataCollectionSessionNumber), dirSubtitle);
+            sessionDirectory = createDirName(SessionNamingConventions.DATA_COLLECTION_DIR_PREFIX, num2str(session.dataCollectionSessionNumber), dirSubtitle, SessionNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toLocationPath, sessionDirectory);
                         

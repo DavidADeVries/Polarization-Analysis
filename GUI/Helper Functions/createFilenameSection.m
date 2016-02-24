@@ -5,7 +5,7 @@ function filenameSection = createFilenameSection(label, number)
 if isempty(label) || isempty(number)
     filenameSection = ['[', label, number, ']'];
 else
-    filenameSection = ['[', label, ' ', number, ']'];
+    filenameSection = ['[', label, number, ']'];
 end
 
 

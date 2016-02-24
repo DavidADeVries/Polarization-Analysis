@@ -80,26 +80,25 @@ classdef Project
             end
         end
         
-        function nextNumber = nextTrialNumber(project)
-            trials = project.trials;
-            
-            if isempty(trials)
-                nextNumber = 1;
-            else
-                lastNumber = trials{length(trials)}.trialNumber;
-                
-                nextNumber = lastNumber + 1;
-            end
-        end
-        
-        function existingTrialNumbers = existingTrialNumbers(project)
+        function trialNumbers = getTrialNumbers(project)
             trials = project.trials;
             numTrials = length(trials);
             
-            existingTrialNumbers = zeros(numTrials, 1);
+            trialNumbers = zeros(numTrials, 1); % want this to be an matrix, not cell array
             
             for i=1:numTrials
-                existingTrialNumbers(i) = trials{i}.trialNumber;
+                trialNumbers(i) = trials{i}.trialNumber;
+            end
+        end
+                
+        function nextNumber = nextTrialNumber(projects)
+            trialNumbers = projects.getTrialNumbers();
+            
+            if isempty(trialNumbers)
+                nextNumber = 1;
+            else
+                lastNumber = max(trialNumbers);
+                nextNumber = lastNumber + 1;
             end
         end
         
@@ -146,7 +145,7 @@ classdef Project
             
             if ~cancel
                 if createNew
-                    trial = Trial(project.nextTrialNumber, project.existingTrialNumbers, handles.userName, handles.localPath, importDir);
+                    trial = Trial(project.nextTrialNumber, project.getTrialNumbers(), handles.userName, handles.localPath, importDir);
                 else
                     trial = project.getTrialFromChoice(choice);
                 end
@@ -235,6 +234,28 @@ classdef Project
             trial = trial.incrementFileIndex(increment);
             
             project = project.updateTrial(trial);
+        end
+        
+        function project = importLegacyData(project, legacySubjectImportDir, localProjectPath, userName)
+            prompt = ['Select the trial to which the subject being imported belongs to. Import path: ', legacySubjectImportDir];
+            title = 'Select Trial';
+            choices = project.getTrialChoices();
+            
+            [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+            
+            if ~cancel
+                if createNew
+                    trial = Trial(project.nextTrialNumber, project.getTrialNumbers(), userName, localProjectPath, legacySubjectImportDir);
+                else
+                    trial = project.getTrialFromChoice(choice);
+                end
+                
+                if ~isempty(trial)
+                    trial = trial.importLegacyData(legacySubjectImportDir, localProjectPath, userName);
+                    
+                    project = project.updateTrial(trial);
+                end
+            end
         end
     end
     

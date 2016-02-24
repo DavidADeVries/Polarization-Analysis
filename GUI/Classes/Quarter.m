@@ -89,10 +89,10 @@ classdef Quarter
                         suggestedLocationNumber = getNumberFromFolderName(folderName);
                         
                         if isnan(suggestedLocationNumber)
-                            suggestedLocationNumber = quarter.getNextLocationNumber();
+                            suggestedLocationNumber = quarter.nextLocationNumber();
                         end
                         
-                        location = Location(suggestedLocationNumber, quarter.existingLocationNumbers(), toQuarterProjectPath, projectPath, locationImportPath, userName, subjectType, eyeType, quarter.quarterType); 
+                        location = Location(suggestedLocationNumber, quarter.getLocationNumbers(), toQuarterProjectPath, projectPath, locationImportPath, userName, subjectType, eyeType, quarter.quarterType); 
                     else
                         location = quarter.getLocationFromChoice(choice);
                     end
@@ -120,17 +120,6 @@ classdef Quarter
             
             for i=1:numLocations
                 locationChoices{i} = locations{i}.dirName;
-            end
-        end
-        
-        function locationNumbers = existingLocationNumbers(quarter)
-            locations = quarter.locations;
-            numLocations = length(locations);
-            
-            locationNumbers = zeros(numLocations, 1);
-            
-            for i=1:numLocations
-                locationNumbers(i) = locations{i}.locationNumber;
             end
         end
         
@@ -170,16 +159,25 @@ classdef Quarter
         end
         
         function locationNumbers = getLocationNumbers(quarter)
-            locationNumbers = zeros(length(quarter.locations), 1); % want this to be an matrix, not cell array
+            locations = quarter.locations;
+            numLocations = length(locations);
             
-            for i=1:length(quarter.locations)
-                locationNumbers(i) = quarter.locations{i}.locationNumber;                
+            locationNumbers = zeros(numLocations, 1); % want this to be an matrix, not cell array
+            
+            for i=1:numLocations
+                locationNumbers(i) = locations{i}.locationNumber;                
             end
-        end
+        end    
         
-        function nextLocationNumber = getNextLocationNumber(quarter)
-            lastLocationNumber = max(quarter.getLocationNumbers());
-            nextLocationNumber = lastLocationNumber + 1;
+        function nextNumber = nextLocationNumber(quarter)
+            locationNumbers = quarter.getLocationNumbers();
+            
+            if isempty(locationNumbers)
+                nextNumber = 1;
+            else
+                lastNumber = max(locationNumbers);
+                nextNumber = lastNumber + 1;
+            end
         end
         
         function [cancel, quarter] = enterMetadata(quarter, suggestedQuarterNumber, existingQuarterNumbers, importPath, userName)
@@ -203,7 +201,7 @@ classdef Quarter
         function quarter = createDirectories(quarter, toEyePath, projectPath)
             dirSubtitle = quarter.quarterType.displayString;
             
-            quarterDirectory = createDirName(QuarterNamingConventions.DIR_PREFIX, num2str(quarter.quarterNumber), dirSubtitle);
+            quarterDirectory = createDirName(QuarterNamingConventions.DIR_PREFIX, num2str(quarter.quarterNumber), dirSubtitle, QuarterNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toEyePath, quarterDirectory);
                         
@@ -318,6 +316,36 @@ classdef Quarter
             
             quarter = quarter.updateLocation(location);
         end
+        
+        function quarter = importLegacyData(quarter, toQuarterProjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType, eyeType)
+            filenameSection = createFilenameSection(QuarterNamingConventions.DATA_FILENAME_LABEL, num2str(quarter.quarterNumber));
+            dataFilename = [dataFilename, filenameSection];
+            
+            prompt = ['Select the location to which the data being imported from ', displayImportPath, ' belongs to.'];
+            title = 'Select Location';
+            choices = quarter.getLocationChoices();
+            
+            [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+            
+            if ~cancel
+                if createNew
+                    suggestedLocationNumber = quarter.nextLocationNumber();
+                    
+                    location = Location(suggestedLocationNumber, quarter.getLocationNumbers(), toQuarterProjectPath, localProjectPath, displayImportPath, userName, subjectType, eyeType, quarter.quarterType);
+                else
+                    location = quarter.getLocationFromChoice(choice);
+                end
+                
+                if ~isempty(location)
+                    toLocationProjectPath = makePath(toQuarterProjectPath, location.dirName);
+                    
+                    location = location.importLegacyData(toLocationProjectPath, legacyImportPaths, localProjectPath, dataFilename, userName);
+                    
+                    quarter = quarter.updateLocation(location);
+                end
+            end
+        end
+        
     end
     
 end

@@ -9,11 +9,12 @@ classdef CroppingTypes
         positiveArea  ('Positive Area')
         negativeArea  ('Negative Area')
         controlArea   ('Control Area')
-        Unknown     ('Unknown')
+        otherArea     ('Other Area')
+        Unknown       ('Unknown')
     end
     
     methods
-        function enum = DiagnosisTypes(string)
+        function enum = CroppingTypes(string)
             enum.displayString = string;
         end
     end

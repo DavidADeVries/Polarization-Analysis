@@ -22,7 +22,7 @@ function varargout = MicroscopeSessionMetadataEntry(varargin)
 
 % Edit the above text to modify the response to help MicroscopeSessionMetadataEntry
 
-% Last Modified by GUIDE v2.5 10-Feb-2016 17:03:36
+% Last Modified by GUIDE v2.5 19-Feb-2016 10:46:19
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -74,6 +74,7 @@ handles.sessionDoneBy = handles.userName;
 handles.sessionNotes = '';
 handles.rejected = 0;
 handles.rejectedReason = '';
+handles.rejectedBy = '';
 
 handles.cancel = false;
 
@@ -86,7 +87,7 @@ set(handles.yesRejectedButton, 'Value', 0);
 set(handles.noRejectedButton, 'Value', 1);
 set(handles.OK, 'enable', 'off');
 set(handles.reasonForRejectionInput, 'enable', 'off');
-
+set(handles.rejectedByInput, 'enable', 'off');
 
 % Update handles structure
 guidata(hObject, handles);
@@ -119,6 +120,7 @@ varargout{9} = handles.sessionDoneBy;
 varargout{10} = handles.sessionNotes;
 varargout{11} = handles.rejected;
 varargout{12} = handles.rejectedReason;
+varargout{13} = handles.rejectedBy;
 
 close(handles.MicroscopeSessionMetadataEntry);
 end
@@ -364,6 +366,7 @@ switch exit
         handles.sessionNotes = '';
         handles.rejected = [];
         handles.rejectedReason = '';
+        handles.rejectedBy = '';
         guidata(hObject, handles);
         uiresume(handles.MicroscopeSessionMetadataEntry);
     case 'No'
@@ -442,12 +445,15 @@ function yesRejectedButton_Callback(hObject, eventdata, handles)
 set(handles.yesRejectedButton, 'Value', 1);
 
 handles.rejected = true;
+handles.rejectedBy = handles.userName;
 
 set(handles.noRejectedButton, 'Value', 0);
 
-checkToEnableOkButton(handles);
-
 set(handles.reasonForRejectionInput, 'enable', 'on');
+set(handles.rejectedByInput, 'enable', 'on');
+set(handles.rejectedByInput, 'String', handles.userName);
+
+checkToEnableOkButton(handles);
 
 guidata(hObject, handles);
 
@@ -470,8 +476,11 @@ checkToEnableOkButton(handles);
 
 set(handles.reasonForRejectionInput, 'enable', 'off');
 set(handles.reasonForRejectionInput, 'String', '');
+set(handles.rejectedByInput, 'enable', 'off');
+set(handles.rejectedByInput, 'String', '');
 
 handles.rejectedReason = '';
+handles.rejectedBy = '';
 
 guidata(hObject, handles);
 
@@ -486,6 +495,7 @@ function MicroscopeSessionMetadataEntry_CloseRequestFcn(hObject, eventdata, hand
 % Hint: delete(hObject) closes the figure
 if isequal(get(hObject, 'waitstatus'), 'waiting')
     % The GUI is still in UIWAIT, us UIRESUME
+    handles.cancel = true;
     handles.magnification = [];
     handles.pixelSizeMicrons = [];
     handles.instrument = '';
@@ -497,10 +507,12 @@ if isequal(get(hObject, 'waitstatus'), 'waiting')
     handles.sessionNotes = '';
     handles.rejected = [];
     handles.rejectedReason = '';
+    handles.rejectedBy = '';
     guidata(hObject, handles);
     uiresume(hObject);
 else
     % The GUI is no longer waiting, just close it
+    handles.cancel = true;
     handles.magnification = [];
     handles.pixelSizeMicrons = [];
     handles.instrument = '';
@@ -512,9 +524,11 @@ else
     handles.sessionNotes = '';
     handles.rejected = [];
     handles.rejectedReason = '';
+    handles.rejectedBy = '';
     guidata(hObject, handles);
     delete(hObject);
 end
+
 end
 
 function importPathTitle_Callback(hObject, eventdata, handles)
@@ -561,6 +575,35 @@ guidata(hObject, handles);
 
 end
 
+function rejectedByInput_Callback(hObject, eventdata, handles)
+% hObject    handle to rejectedByInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of rejectedByInput as text
+%        str2double(get(hObject,'String')) returns contents of rejectedByInput as a double
+
+handles.rejectedBy = get(hObject, 'String');
+
+checkToEnableOkButton(handles);
+
+guidata(hObject, handles);
+
+
+end
+
+% --- Executes during object creation, after setting all properties.
+function rejectedByInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to rejectedByInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+end
 
 %% Local Functions
 
@@ -571,7 +614,7 @@ function checkToEnableOkButton(handles)
 
 if ~isempty(handles.magnification) && ~isempty(handles.pixelSizeMicrons) && ~isempty(handles.instrument) && ~isempty(handles.sessionDate) && ~isempty(handles.sessionDoneBy) && ~isempty(handles.rejected)
     if handles.rejected 
-        if ~isempty(handles.rejectedReason)
+        if ~isempty(handles.rejectedReason) && ~isempty(handles.rejectedBy)
             set(handles.OK, 'enable', 'on');
         else
             set(handles.OK, 'enable', 'off');
@@ -584,6 +627,5 @@ else
 end
 
 end
-
 
 
