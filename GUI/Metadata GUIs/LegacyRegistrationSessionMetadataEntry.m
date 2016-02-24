@@ -522,7 +522,7 @@ function checkToEnableOkButton(handles)
 %This function will check to see if any of the input variables are empty,
 %and if not it will enable the OK button
 
-if ~isempty(handles.sessionDate) && ~isempty(handles.sessionDoneBy) && ~isempty(handles.registrationType) && ~isempty(handles.registrationParams) && ~isempty(handles.rejected)
+if ~isempty(handles.sessionDate) && ~isempty(handles.sessionDoneBy) && ~isempty(handles.registrationType) && ~isempty(handles.rejected)
     if handles.rejected 
         if ~isempty(handles.rejectedReason) && ~isempty(handles.rejectedBy)
             set(handles.OK, 'enable', 'on');
