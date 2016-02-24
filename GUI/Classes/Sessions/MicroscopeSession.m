@@ -79,28 +79,28 @@ classdef MicroscopeSession < DataCollectionSession
                 
                  if MicroscopeNamingConventions.FLUORO_DIR.importMatches(dirName)
                     
-                    suggestedDirectoryName = MicroscopeNamingConventions.FLUORO_DIR.project;
+                    suggestedDirectoryName = MicroscopeNamingConventions.FLUORO_DIR.getSingularProjectTag();
                     suggestedDirectoryTag = MicroscopeNamingConventions.FLUORO_FILENAME_LABEL;
                     
                     namingConventions = MicroscopeNamingConventions.getFluoroNamingConventions();
                     
                 elseif MicroscopeNamingConventions.MM_DIR.importMatches(dirName)
                     
-                    suggestedDirectoryName = MicroscopeNamingConventions.MM_DIR.project;
+                    suggestedDirectoryName = MicroscopeNamingConventions.MM_DIR.getSingularProjectTag();
                     suggestedDirectoryTag = MicroscopeNamingConventions.MM_FILENAME_LABEL;
                     
                     namingConventions = MicroscopeNamingConventions.getMMNamingConventions();
                     
                 elseif MicroscopeNamingConventions.TR_DIR.importMatches(dirName)
                     
-                    suggestedDirectoryName = MicroscopeNamingConventions.TR_DIR.project;
+                    suggestedDirectoryName = MicroscopeNamingConventions.TR_DIR.getSingularProjectTag();
                     suggestedDirectoryTag = MicroscopeNamingConventions.TR_FILENAME_LABEL;
                     
                     namingConventions = MicroscopeNamingConventions.getTRNamingConventions();
                     
                 elseif MicroscopeNamingConventions.LPO_DIR.importMatches(dirName)
                     
-                    suggestedDirectoryName = MicroscopeNamingConventions.LPO_DIR.project;
+                    suggestedDirectoryName = MicroscopeNamingConventions.LPO_DIR.getSingularProjectTag();
                     suggestedDirectoryTag = MicroscopeNamingConventions.LPO_FILENAME_LABEL;
                     
                     namingConventions = MicroscopeNamingConventions.getLPONamingConventions();
@@ -109,7 +109,7 @@ classdef MicroscopeSession < DataCollectionSession
                     suggestedDirectoryName = dirName;
                     suggestedDirectoryTag = '';
                     
-                    namingConventions = NamingConventions.empty;
+                    namingConventions = NamingConvention.empty;
                 end
                 
                 importPath = makePath(locationImportPath, dirName);
@@ -130,9 +130,9 @@ classdef MicroscopeSession < DataCollectionSession
                     filenameSection = createFilenameSection(directoryTag, '');
                     
                     % import the files
-                    dataFilename = strcat(dataFilename, filenameSection);
+                    finalFilename = strcat(dataFilename, filenameSection);
                     
-                    importFiles(sessionProjectPath, extensionImportPaths, projectPath, dataFilename, filenames, pathIndicesForFilenames, filenameExtensions, filenameTags, newDir);
+                    importFiles(sessionProjectPath, extensionImportPaths, projectPath, finalFilename, filenames, pathIndicesForFilenames, filenameExtensions, filenameTags, newDir);
                 end                
                
             end      

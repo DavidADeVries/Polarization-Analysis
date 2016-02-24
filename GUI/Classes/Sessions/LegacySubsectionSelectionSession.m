@@ -66,7 +66,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
             waitHandle = popupMessage(waitText, waitTitle);
                         
             
-            suggestedDirectoryName = MicroscopeNamingConventions.MM_DIR.project;
+            suggestedDirectoryName = MicroscopeNamingConventions.MM_DIR.getSingularProjectTag();
             suggestedDirectoryTag = MicroscopeNamingConventions.MM_FILENAME_LABEL;
             
             namingConventions = MicroscopeNamingConventions.getMMNamingConventions();

@@ -58,7 +58,7 @@ classdef Location
                     [choice, ok] = listdlg('ListString', choiceStrings, 'SelectionMode', 'single', 'Name', 'Select Data Collection Type', 'PromptString', 'For the data being imported, please select how the data was collected:');
                     
                     if ok
-                        sessionType = choices(choice);
+                        sessionType = choices{choice};
                         
                         sessionNumber = location.nextSessionNumber();
                         dataCollectionSessionNumber = location.nextDataCollectionSessionNumber();
@@ -76,8 +76,6 @@ classdef Location
                     toSessionProjectPath = makePath(toLocationProjectPath, session.dirName);
                     
                     session = session.importSession(toSessionProjectPath, locationImportPath, projectPath, dataFilename);
-                        
-                    session = session.createFileSelectionEntries(makePath(projectPath, toLocationProjectPath));
                     
                     location = location.updateSession(session);
                 end
@@ -149,6 +147,10 @@ classdef Location
                 session.dirName = sessionDirs{i};
                 
                 session = session.createFileSelectionEntries(locationPath);
+                
+                if ~isempty(session.fileSelectionEntries)
+                    session.subfolderIndex = 1;
+                end
                 
                 sessions{i} = session;
             end
@@ -450,7 +452,7 @@ classdef Location
                         
                         session = session.importSession(toSessionProjectPath, importPath, localProjectPath, dataFilename);
                         
-                        session = session.createFileSelectionEntries(makePath(localProjectPath, toLocationProjectPath));
+                        session = session.
                         
                         location = location.updateSession(session);
                     end

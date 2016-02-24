@@ -79,6 +79,10 @@ classdef Session
         
         function session = createFileSelectionEntries(session, toSessionPath)
             session.fileSelectionEntries = generateFileSelectionEntries({}, toSessionPath, session.dirName, 0);
+            
+            if ~isempty(session.fileSelectionEntries)
+                session.subfolderIndex = 1;
+            end
         end
         
         function subfolderSelections = getSubfolderSelections(session)

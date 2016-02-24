@@ -26,7 +26,7 @@ classdef NamingConvention
         end
         
         
-        function tagString = generateProjectTagString(namingConvention)
+        function tagString = generateTagString(namingConvention)
             projectTags = namingConvention.project;
             
             tagString = '';
@@ -42,13 +42,8 @@ classdef NamingConvention
             end
         end
         
-        function projectTag = getSingularProjectTag(namingConvention)
-            
-            if length(namingConvention.project) ~= 1
-                error('NamingConvention does not have a singular project tag');
-            else
-                projectTag = namingConvention.project{1};
-            end
+        function projectTag = getProjectTag(namingConvention)
+            projectT
         end
         
     end

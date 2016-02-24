@@ -13,7 +13,7 @@ for i=1:numFiles
     if isempty(matchedNamingConventions)
         filenameTags{i} = '';
     else
-        filenameTags{i} = matchedNamingConventions{1}.project; %default to the first
+        filenameTags{i} = matchedNamingConventions{1}.generateProjectTagString(); %default to the first
     end
 end
 
