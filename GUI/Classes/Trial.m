@@ -55,7 +55,7 @@ classdef Trial
         function trial = createDirectories(trial, toProjectPath, projectPath)
             dirSubtitle = trial.subjectType.displayString;
             
-            trialDirectory = createDirName(TrialNamingConventions.DIR_PREFIX, num2str(trial.trialNumber), dirSubtitle);
+            trialDirectory = createDirName(TrialNamingConventions.DIR_PREFIX, num2str(trial.trialNumber), dirSubtitle, TrialNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toProjectPath, trialDirectory);
                         

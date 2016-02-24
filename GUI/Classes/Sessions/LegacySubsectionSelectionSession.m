@@ -78,7 +78,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
             suggestedFilenameTags = createSuggestedFilenameTags(filenames, namingConventions);
             
             
-            [cancel, newDir, directoryTag, filenameTags] = UnexpectedImportDirectory(importPath, filenames, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags);
+            [cancel, newDir, directoryTag, filenameTags] = SelectProjectTags(importPath, filenames, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags);
             
             
             if ~cancel

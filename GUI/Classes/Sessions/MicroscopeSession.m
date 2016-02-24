@@ -124,7 +124,7 @@ classdef MicroscopeSession < DataCollectionSession
                     suggestedFilenameTags = createSuggestedFilenameTags(filenames, namingConventions);
                 end
                 
-                [cancel, newDir, directoryTag, filenameTags] = UnexpectedImportDirectory(importPath, filenames, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags);
+                [cancel, newDir, directoryTag, filenameTags] = SelectProjectTags(importPath, filenames, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags);
                 
                 if ~cancel                    
                     filenameSection = createFilenameSection(directoryTag, '');

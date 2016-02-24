@@ -1,35 +1,35 @@
-function varargout = UnexpectedImportDirectory(varargin)
-% UNEXPECTEDIMPORTDIRECTORY MATLAB code for UnexpectedImportDirectory.fig
-%      UNEXPECTEDIMPORTDIRECTORY, by itself, creates a new UNEXPECTEDIMPORTDIRECTORY or raises the existing
+function varargout = SelectProjectTags(varargin)
+% SELECTPROJECTTAGS MATLAB code for SelectProjectTags.fig
+%      SELECTPROJECTTAGS, by itself, creates a new SELECTPROJECTTAGS or raises the existing
 %      singleton*.
 %
-%      H = UNEXPECTEDIMPORTDIRECTORY returns the handle to a new UNEXPECTEDIMPORTDIRECTORY or the handle to
+%      H = SELECTPROJECTTAGS returns the handle to a new SELECTPROJECTTAGS or the handle to
 %      the existing singleton*.
 %
-%      UNEXPECTEDIMPORTDIRECTORY('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in UNEXPECTEDIMPORTDIRECTORY.M with the given input arguments.
+%      SELECTPROJECTTAGS('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in SELECTPROJECTTAGS.M with the given input arguments.
 %
-%      UNEXPECTEDIMPORTDIRECTORY('Property','Value',...) creates a new UNEXPECTEDIMPORTDIRECTORY or raises the
+%      SELECTPROJECTTAGS('Property','Value',...) creates a new SELECTPROJECTTAGS or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before UnexpectedImportDirectory_OpeningFcn gets called.  An
+%      applied to the GUI before SelectProjectTags_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to UnexpectedImportDirectory_OpeningFcn via varargin.
+%      stop.  All inputs are passed to SelectProjectTags_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help UnexpectedImportDirectory
+% Edit the above text to modify the response to help SelectProjectTags
 
-% Last Modified by GUIDE v2.5 18-Feb-2016 16:08:54
+% Last Modified by GUIDE v2.5 24-Feb-2016 13:05:12
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @UnexpectedImportDirectory_OpeningFcn, ...
-                   'gui_OutputFcn',  @UnexpectedImportDirectory_OutputFcn, ...
+                   'gui_OpeningFcn', @SelectProjectTags_OpeningFcn, ...
+                   'gui_OutputFcn',  @SelectProjectTags_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,13 +44,13 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before UnexpectedImportDirectory is made visible.
-function UnexpectedImportDirectory_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before SelectProjectTags is made visible.
+function SelectProjectTags_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to UnexpectedImportDirectory (see VARARGIN)
+% varargin   command line arguments to SelectProjectTags (see VARARGIN)
 
 % ****************************************************************************************************
 % INPUT: (importPath, filenames, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags)
@@ -75,12 +75,12 @@ set(handles.filenameTagsInput, 'String', handles.filenameTags);
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes UnexpectedImportDirectory wait for user response (see UIRESUME)
-uiwait(handles.UnexpectedImportDirectory);
+% UIWAIT makes SelectProjectTags wait for user response (see UIRESUME)
+uiwait(handles.SelectProjectTags);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = UnexpectedImportDirectory_OutputFcn(hObject, eventdata, handles) 
+function varargout = SelectProjectTags_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -97,7 +97,7 @@ varargout{3} = handles.directoryTag;
 varargout{4} = handles.filenameTags;
 
 
-close(handles.UnexpectedImportDirectory);
+close(handles.SelectProjectTags);
 
 
 
@@ -157,6 +157,8 @@ function importFilenames_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of importFilenames as text
 %        str2double(get(hObject,'String')) returns contents of importFilenames as a double
 
+set(handles.importFilenames, 'String', handles.filenames);
+guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function importFilenames_CreateFcn(hObject, eventdata, handles)
@@ -169,6 +171,8 @@ function importFilenames_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+enableLineScrolling(hObject);
 
 
 
@@ -193,6 +197,8 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+enableLineScrolling(hObject);
+
 
 % --- Executes on button press in cancelButton.
 function cancelButton_Callback(hObject, eventdata, handles)
@@ -212,7 +218,7 @@ switch exit
         handles.filenameTags = {};
         
         guidata(hObject, handles);
-        uiresume(handles.UnexpectedImportDirectory);
+        uiresume(handles.SelectProjectTags);
     case 'No'
 end
 
@@ -228,11 +234,11 @@ handles.directoryTag = get(handles.tagInput, 'String');
 handles.filenameTags = get(handles.filenameTagsInput, 'String');
 
 guidata(hObject, handles);
-uiresume(handles.UnexpectedImportDirectory);
+uiresume(handles.SelectProjectTags);
 
-% --- Executes when user attempts to close UnexpectedImportDirectory.
-function UnexpectedImportDirectory_CloseRequestFcn(hObject, eventdata, handles)
-% hObject    handle to UnexpectedImportDirectory (see GCBO)
+% --- Executes when user attempts to close SelectProjectTags.
+function SelectProjectTags_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to SelectProjectTags (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 

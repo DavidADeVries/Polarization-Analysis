@@ -17,7 +17,7 @@ classdef Subject
         
         
         function subject = createDirectories(subject, toTrialPath, projectPath)
-            subjectDirectory = createDirName(SubjectNamingConventions.DIR_PREFIX, num2str(subject.subjectNumber), subject.subjectId);
+            subjectDirectory = createDirName(SubjectNamingConventions.DIR_PREFIX, num2str(subject.subjectNumber), subject.subjectId, SubjectNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toTrialPath, subjectDirectory);
                         

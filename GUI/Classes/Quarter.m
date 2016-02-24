@@ -201,7 +201,7 @@ classdef Quarter
         function quarter = createDirectories(quarter, toEyePath, projectPath)
             dirSubtitle = quarter.quarterType.displayString;
             
-            quarterDirectory = createDirName(QuarterNamingConventions.DIR_PREFIX, num2str(quarter.quarterNumber), dirSubtitle);
+            quarterDirectory = createDirName(QuarterNamingConventions.DIR_PREFIX, num2str(quarter.quarterNumber), dirSubtitle, QuarterNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toEyePath, quarterDirectory);
                         

@@ -282,7 +282,7 @@ classdef Location
         function location = createDirectories(location, toQuarterPath, projectPath)
             dirSubtitle = '';
             
-            locationDirectory = createDirName(LocationNamingConventions.DIR_PREFIX, num2str(location.locationNumber), dirSubtitle);
+            locationDirectory = createDirName(LocationNamingConventions.DIR_PREFIX, num2str(location.locationNumber), dirSubtitle, LocationNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toQuarterPath, locationDirectory);
                         

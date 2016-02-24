@@ -2,7 +2,8 @@ classdef QuarterNamingConventions
     %QuarterNamingConventions
     
     properties (Constant)
-        DIR_PREFIX = 'Quarter';
+        DIR_PREFIX = 'Quarter';        
+        DIR_NUM_DIGITS = 1;
         METADATA_FILENAME = 'quarter_metadata.mat';
         DATA_FILENAME_LABEL = 'Q';
         

@@ -20,7 +20,7 @@ classdef DataProcessingSession < Session
         function session = createDirectories(session, toLocationPath, projectPath)
             dirSubtitle = session.getDirSubtitle(); % defined in each specific sessionsclass
             
-            sessionDirectory = createDirName(SessionNamingConventions.DATA_PROCESSING_DIR_PREFIX, num2str(session.dataProcessingSessionNumber), dirSubtitle);
+            sessionDirectory = createDirName(SessionNamingConventions.DATA_PROCESSING_DIR_PREFIX, num2str(session.dataProcessingSessionNumber), dirSubtitle, SessionNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toLocationPath, sessionDirectory);
                         

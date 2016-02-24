@@ -84,7 +84,7 @@ classdef Eye
                 
                 if ~cancel
                     if createNew
-                        suggestedQuarterNumber = eye.getNextQuarterNumber();
+                        suggestedQuarterNumber = eye.nextQuarterNumber();
                         
                         quarter = Quarter(suggestedQuarterNumber, eye.getQuarterNumbers(), toEyeProjectPath, projectPath, quarterImportPath, userName);
                     else
@@ -193,7 +193,7 @@ classdef Eye
         function eye = createDirectories(eye, toSubjectPath, projectPath)
             dirSubtitle = eye.eyeType.displayString;
             
-            eyeDirectory = createDirName(EyeNamingConventions.DIR_PREFIX, num2str(eye.eyeNumber), dirSubtitle);
+            eyeDirectory = createDirName(EyeNamingConventions.DIR_PREFIX, num2str(eye.eyeNumber), dirSubtitle, EyeNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toSubjectPath, eyeDirectory);
                         
