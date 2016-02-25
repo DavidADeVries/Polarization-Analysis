@@ -57,9 +57,9 @@ classdef Trial
         end
         
         function trial = createDirectories(trial, toProjectPath, projectPath)
-            dirSubtitle = trial.title;
+            dirSubtitle = trial.subjectType.displayString;
             
-            trialDirectory = createDirName(TrialNamingConventions.DIR_PREFIX, trial.trialNumber, dirSubtitle, TrialNamingConventions.DIR_NUM_DIGITS);
+            trialDirectory = createDirName(TrialNamingConventions.DIR_PREFIX, num2str(trial.trialNumber), dirSubtitle, TrialNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toProjectPath, trialDirectory);
                         
@@ -206,7 +206,7 @@ classdef Trial
             subjectChoices = cell(numSubjects, 1);
             
             for i=1:numSubjects
-                subjectChoices{i} = subjects{i}.naviListboxLabel;
+                subjectChoices{i} = subjects{i}.dirName;
             end
         end
         
@@ -225,13 +225,13 @@ classdef Trial
         function handles = updateNavigationListboxes(trial, handles)
             numSubjects = length(trial.subjects);
             
+            subjectOptions = cell(numSubjects, 1);
+            
             if numSubjects == 0
                 disableNavigationListboxes(handles, handles.subjectSelect);
-            else            
-                subjectOptions = cell(numSubjects, 1);
-                
+            else
                 for i=1:numSubjects
-                    subjectOptions{i} = trial.subjects{i}.naviListboxLabel;
+                    subjectOptions{i} = trial.subjects{i}.dirName;
                 end
                 
                 set(handles.subjectSelect, 'String', subjectOptions, 'Value', trial.subjectIndex, 'Enable', 'on');

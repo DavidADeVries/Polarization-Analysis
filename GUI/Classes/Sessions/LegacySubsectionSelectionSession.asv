@@ -1,15 +1,16 @@
-classdef LegacyRegistrationSession < DataProcessingSession
-    % LegacyRegistrationSession
-    % holds metadata for registration session for which the results were
+classdef LegacySubsectionSelectionSession < DataProcessingSession
+    % LegacySubsectionSelectionSession
+    % holds metadata for cropping session for which the results were
     % directly imported into this application
     
     properties
-        registrationType % registrationType
-        registrationParams
+        croppingType
+        coords % [xTopLeftCorner, yTopLeftCorner, width, height]
     end
     
     methods
-        function session = LegacyRegistrationSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName)
+        
+        function session = LegacySubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName)
             [cancel, session] = session.enterMetadata(importDir, userName);
             
             if ~cancel
@@ -18,7 +19,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
                 session.dataProcessingSessionNumber = dataProcessingSessionNumber;
                 
                 % set navigation listbox label
-                session.naviListboxLabel = createNavigationListboxLabel(SessionNamingConventions.DATA_PROCESSING_NAVI_LISTBOX_PREFIX, session.dataProcessingSessionNumber, session.getDirSubtitle());
+                session.naviListboxLabel = createNavigationListboxLabel(SessionNamingConventions.DATA_PROCESSING_NAVI_LISTBOX_PREFIX, session.dataProcessingSessionNumber, LegacySubsectionSelectionNamingConventions.SESSION_DIR_SUBTITLE);
                 
                 % set metadata history
                 session.metadataHistory = {MetadataHistoryEntry(userName)};
@@ -30,19 +31,20 @@ classdef LegacyRegistrationSession < DataProcessingSession
                 saveToBackup = true;
                 session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
             else
-                session = LegacyRegistrationSession.empty;
+                session = LegacySubsectionSelectionSession.empty;
             end              
         end
         
+        
         function [cancel, session] = enterMetadata(session, importPath, userName)
             
-            %Call to Legacy Registration Session Metadata Entry GUI
-            [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy] = LegacyRegistrationSessionMetadataEntry(importPath, userName);
+            %Call to Legacy Subsection Selection Session Metadata Entry GUI
+            [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy] = LegacySubsectionSelectionSessionMetadataEntry(importPath, userName);
             
             if ~cancel
-                %Assigning values to Legacy Registration Session Properties
-                session.registrationType = registrationType;
-                session.registrationParams = registrationParams;
+                %Assigning values to Legacy Subsection Selection Session Properties
+                session.croppingType = croppingType;
+                session.coords = coords;
                 session.sessionDate = sessionDate;
                 session.sessionDoneBy = sessionDoneBy;
                 session.notes = notes;
@@ -54,8 +56,8 @@ classdef LegacyRegistrationSession < DataProcessingSession
         end
         
         
-        function session = importSession(session, sessionProjectPath, importPath, projectPath, dataFilename)
-                       
+        function session = importSession(session, sessionProjectPath, importPath, projectPath, dataFilename) 
+            
             filenameSection = createFilenameSection(SessionNamingConventions.DATA_FILENAME_LABEL, num2str(session.sessionNumber));
             dataFilename = strcat(dataFilename, filenameSection);
             
@@ -72,7 +74,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
             
             namingConventions = MicroscopeNamingConventions.getMMNamingConventions();
                                                         
-            extensionImportPaths = getExtensionImportPaths(importPath, filenameExtensions, 'Registration');
+            extensionImportPaths = getExtensionImportPaths(importPath, filenameExtensions, 'Subsection Selection');
                 
             [filenames, pathIndicesForFilenames] = getFilenamesForTagAssignment(extensionImportPaths);
             
@@ -91,13 +93,13 @@ classdef LegacyRegistrationSession < DataProcessingSession
                 importFiles(sessionProjectPath, extensionImportPaths, projectPath, dataFilename, filenames, pathIndicesForFilenames, filenameExtensions, filenameTags, newDir);
             end
 
-            delete(waitHandle);     
-            
+            delete(waitHandle);    
+              
         end
         
-        
+         
         function dirSubtitle = getDirSubtitle(session)
-            dirSubtitle = [LegacyRegistrationNamingConventions.SESSION_DIR_SUBTITLE];
+            dirSubtitle = [SessionNamingConventions.SELECTION_DIR_SUBTITLE, ' ', session.croppingType.displayString];
         end
         
                
@@ -105,14 +107,13 @@ classdef LegacyRegistrationSession < DataProcessingSession
             
             [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString] = getSessionMetadataString(session);
             
-            registrationTypeString = ['Registration Type: ', session.registrationType.displayString];
-            registrationParamsString = ['Registration Parameters: ' session.registrationParams];
+            croppingTypeString = ['Cropping Type: ', session.croppingType.displayString];
+            coordsString = ['Cropping Coords [x,y,w,h]: ' coordsToString(session.coords)];
             
             
-            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, registrationTypeString, registrationParamsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, croppingTypeString, coordsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             
         end        
-        
         
     end
     

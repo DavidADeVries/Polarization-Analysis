@@ -24,7 +24,7 @@ classdef MicroscopeSession < DataCollectionSession
                 session.dataCollectionSessionNumber = dataCollectionSessionNumber;
                 
                 % set navigation listbox label
-                session.naviListboxLabel = createNavigationListboxLabel(SessionNamingConventions.DATA_COLLECTION_NAVI_LISTBOX_PREFIX, session.dataCollectionSessionNumber, session.getDirSubtitle());
+                session.naviListboxLabel = createNavigationListboxLabel(SessionNamingConventions.DATA_COLLECTION_NAVI_LISTBOX_PREFIX, session.locationNumber, '');
                 
                 % set metadata history
                 session.metadataHistory = {MetadataHistoryEntry(userName)};
@@ -145,7 +145,7 @@ classdef MicroscopeSession < DataCollectionSession
         end
          
         function dirSubtitle = getDirSubtitle(session)
-            dirSubtitle = MicroscopeNamingConventions.SESSION_DIR_SUBTITLE;
+            dirSubtitle = SessionNamingConventions.MICROSCOPE_DIR_SUBTITLE;
         end
                
         function metadataString = getMetadataString(session)

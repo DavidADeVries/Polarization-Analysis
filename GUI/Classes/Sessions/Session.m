@@ -8,6 +8,7 @@ classdef Session
     properties
         % set at initialization
         dirName
+        naviListboxLabel
         metadataHistory
         
         % set by metadata entry

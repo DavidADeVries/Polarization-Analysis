@@ -4,6 +4,8 @@ classdef LegacyRegistrationNamingConventions
     
     properties (Constant)       
         % directories
+        SESSION_DIR_SUBTITLE = 'Legacy Registration';
+        
         MM_DIR = NamingConvention({''}, {'MM'}); % the import directory is not divided into subdirectory, but in the project database, let's subdivide it
         
         % image series

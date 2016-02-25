@@ -3,7 +3,7 @@ classdef Constants
     %holds constants for polarization anaylsis application
     
     properties (Constant)
-        BACKUP_DIR = 'Raw Data Backup [DO NOT ACCESS]';
+        BACKUP_DIR = 'Raw Data Backup';
         
         METADATA_VAR = 'metadata';
         

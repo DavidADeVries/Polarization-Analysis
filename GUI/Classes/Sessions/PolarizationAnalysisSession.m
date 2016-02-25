@@ -1,4 +1,4 @@
-classdef PolarizationAnalysisSession < ProcessingSession
+classdef PolarizationAnalysisSession < DataProcessingSession
     % PolarizationAnalysisSession
     % stores metadata for a polarization analysis sessios
     

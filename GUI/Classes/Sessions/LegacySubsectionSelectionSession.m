@@ -18,6 +18,9 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                 session.sessionNumber = sessionNumber;
                 session.dataProcessingSessionNumber = dataProcessingSessionNumber;
                 
+                % set navigation listbox label
+                session.naviListboxLabel = createNavigationListboxLabel(SessionNamingConventions.DATA_PROCESSING_NAVI_LISTBOX_PREFIX, session.dataProcessingSessionNumber, session.getDirSubtitle());
+                
                 % set metadata history
                 session.metadataHistory = {MetadataHistoryEntry(userName)};
                 
@@ -96,7 +99,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
         
          
         function dirSubtitle = getDirSubtitle(session)
-            dirSubtitle = [SessionNamingConventions.LEGACY_SUBSECTION_SELECTION_DIR_SUBTITLE, ' ', session.croppingType.displayString];
+            dirSubtitle = [LegacySubsectionSelectionNamingConventions.SESSION_DIR_SUBTITLE, ' ', session.croppingType.displayString];
         end
         
                
