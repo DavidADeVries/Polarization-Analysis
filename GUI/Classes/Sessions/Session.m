@@ -139,7 +139,7 @@ classdef Session
             session = session.updateCurrentSubfolderSelection(subfolderSelection);
         end
         
-        function [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString] = getSessionMetadataString(session)
+        function [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session)
             
             sessionDateString = ['Date: ', displayDate(session.sessionDate)];
             sessionDoneByString = ['Done By: ', session.sessionDoneBy];
@@ -148,6 +148,7 @@ classdef Session
             rejectedReasonString = ['Rejected Reason: ', session.rejectedReason];
             rejectedByString = ['Rejected By: ', session.rejectedBy];
             sessionNotesString = ['Notes: ', session.notes];
+            metadataHistoryStrings = generateMetadataHistoryStrings(session.metadataHistory);
         end
     end
     

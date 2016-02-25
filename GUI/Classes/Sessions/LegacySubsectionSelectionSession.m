@@ -105,14 +105,14 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                
         function metadataString = getMetadataString(session)
             
-            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString] = getSessionMetadataString(session);
+            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
             
             croppingTypeString = ['Cropping Type: ', session.croppingType.displayString];
             coordsString = ['Cropping Coords [x,y,w,h]: ' coordsToString(session.coords)];
             
             
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, croppingTypeString, coordsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
-            
+            metadataString = [metadataString, metadataHistoryStrings];
         end        
         
     end

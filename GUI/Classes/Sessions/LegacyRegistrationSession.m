@@ -103,14 +103,14 @@ classdef LegacyRegistrationSession < DataProcessingSession
                
         function metadataString = getMetadataString(session)
             
-            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString] = getSessionMetadataString(session);
+            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
             
             registrationTypeString = ['Registration Type: ', session.registrationType.displayString];
             registrationParamsString = ['Registration Parameters: ' session.registrationParams];
             
             
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, registrationTypeString, registrationParamsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
-            
+            metadataString = [metadataString, metadataHistoryStrings];
         end        
         
         

@@ -272,8 +272,10 @@ classdef Quarter
             quarterNumberString = ['Quarter number: ', num2str(quarter.quarterNumber)];
             quarterArbitraryString = ['Quarter Arbitrary: ', booleanToString(quarter.quarterArbitrary)];
             quarterNotesString = ['Notes: ', quarter.notes];
+            metadataHistoryStrings = generateMetadataHistoryStrings(quarter.metadataHistory);
             
             metadataString = {'Quarter:', fixingDateString, fixingDoneByString, stainString, slideMaterialString, quarterTypeString, quarterNumberString, quarterArbitraryString, quarterNotesString};
+            metadataString = [metadataString, metadataHistoryStrings];
         end
         
         function quarter = updateLocationIndex(quarter, index)

@@ -248,8 +248,10 @@ classdef NaturalSubject < Subject
             ADDiagnosisString = ['AD Diagnosis: ', subject.ADDiagnosis.displayString];
             causeOfDeathString = ['Cause of Death: ', subject.causeOfDeath];
             medicalHistoryString = ['Medical History: ', subject.medicalHistory];
+            metadataHistoryStrings = generateMetadataHistoryStrings(subject.metadataHistory);
             
             metadataString = {subjectIdString, subjectNumberString, ageString, genderString, ADDiagnosisString, causeOfDeathString, medicalHistoryString, subjectNotesString};
+            metadataString = [metadataString, metadataHistoryStrings];
             
         end
         

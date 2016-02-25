@@ -266,9 +266,11 @@ classdef Eye
             dissectionDateString = ['Dissection Date: ', displayDate(eye.dissectionDate)];
             dissectionDoneByString = ['Dissection Done By: ', eye.dissectionDoneBy];
             eyeNotesString = ['Notes: ', eye.notes];
+            metadataHistoryStrings = generateMetadataHistoryStrings(eye.metadataHistory);
             
             
             metadataString = {'Eye:', eyeIdString, eyeTypeString, eyeNumberString, dissectionDateString, dissectionDoneByString, eyeNotesString};
+            metadataString = [metadataString, metadataHistoryStrings];
             
         end
         
