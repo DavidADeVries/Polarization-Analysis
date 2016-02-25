@@ -1,4 +1,4 @@
-classdef FrameAveragingSession < ProcessingSession
+classdef FrameAveragingSession < DataProcessingSession
     %FrameAveragingSession
     %stores metadata for a frame averaging session, usually for CSLO data
     

@@ -5,6 +5,7 @@ classdef Quarter
     properties
         % set at initialization
         dirName
+        naviListboxLabel
         metadataHistory
         
         % set by metadata entry        
@@ -29,6 +30,10 @@ classdef Quarter
             if ~cancel
                 % set metadata history
                 quarter.metadataHistory = {MetadataHistoryEntry(userName)};
+                
+                % set navigation listbox label
+                subtitle = quarter.quarterType.displayString;
+                quarter.naviListboxLabel = createNavigationListboxLabel(QuarterNamingConventions.NAVI_LISTBOX_PREFIX, quarter.quarterNumber, subtitle);
                 
                 % make directory/metadata file
                 quarter = quarter.createDirectories(toEyePath, projectPath);
@@ -119,7 +124,7 @@ classdef Quarter
             locationChoices = cell(numLocations, 1);
             
             for i=1:numLocations
-                locationChoices{i} = locations{i}.dirName;
+                locationChoices{i} = locations{i}.naviListboxLabel;
             end
         end
         
@@ -201,7 +206,7 @@ classdef Quarter
         function quarter = createDirectories(quarter, toEyePath, projectPath)
             dirSubtitle = quarter.quarterType.displayString;
             
-            quarterDirectory = createDirName(QuarterNamingConventions.DIR_PREFIX, num2str(quarter.quarterNumber), dirSubtitle, QuarterNamingConventions.DIR_NUM_DIGITS);
+            quarterDirectory = createDirName(QuarterNamingConventions.DIR_PREFIX, quarter.quarterNumber, dirSubtitle, QuarterNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toEyePath, quarterDirectory);
                         
@@ -228,13 +233,13 @@ classdef Quarter
         function handles = updateNavigationListboxes(quarter, handles)
             numLocations = length(quarter.locations);
             
-            locationOptions = cell(numLocations, 1);
-            
             if numLocations == 0
                 disableNavigationListboxes(handles, handles.locationSelect);
-            else
+            else            
+                locationOptions = cell(numLocations, 1);
+                
                 for i=1:numLocations
-                    locationOptions{i} = quarter.locations{i}.dirName;
+                    locationOptions{i} = quarter.locations{i}.naviListboxLabel;
                 end
                 
                 set(handles.locationSelect, 'String', locationOptions, 'Value', quarter.locationIndex, 'Enable', 'on');
@@ -267,8 +272,10 @@ classdef Quarter
             quarterNumberString = ['Quarter number: ', num2str(quarter.quarterNumber)];
             quarterArbitraryString = ['Quarter Arbitrary: ', booleanToString(quarter.quarterArbitrary)];
             quarterNotesString = ['Notes: ', quarter.notes];
+            metadataHistoryStrings = generateMetadataHistoryStrings(quarter.metadataHistory);
             
             metadataString = {'Quarter:', fixingDateString, fixingDoneByString, stainString, slideMaterialString, quarterTypeString, quarterNumberString, quarterArbitraryString, quarterNotesString};
+            metadataString = [metadataString, metadataHistoryStrings];
         end
         
         function quarter = updateLocationIndex(quarter, index)

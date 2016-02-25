@@ -18,6 +18,9 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                 session.sessionNumber = sessionNumber;
                 session.dataProcessingSessionNumber = dataProcessingSessionNumber;
                 
+                % set navigation listbox label
+                session.naviListboxLabel = createNavigationListboxLabel(SessionNamingConventions.DATA_PROCESSING_NAVI_LISTBOX_PREFIX, session.dataProcessingSessionNumber, session.getDirSubtitle());
+                
                 % set metadata history
                 session.metadataHistory = {MetadataHistoryEntry(userName)};
                 
@@ -96,20 +99,20 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
         
          
         function dirSubtitle = getDirSubtitle(session)
-            dirSubtitle = [SessionNamingConventions.LEGACY_SUBSECTION_SELECTION_DIR_SUBTITLE, ' ', session.croppingType.displayString];
+            dirSubtitle = [LegacySubsectionSelectionNamingConventions.SESSION_DIR_SUBTITLE, ' ', session.croppingType.displayString];
         end
         
                
         function metadataString = getMetadataString(session)
             
-            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString] = getSessionMetadataString(session);
+            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
             
             croppingTypeString = ['Cropping Type: ', session.croppingType.displayString];
             coordsString = ['Cropping Coords [x,y,w,h]: ' coordsToString(session.coords)];
             
             
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, croppingTypeString, coordsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
-            
+            metadataString = [metadataString, metadataHistoryStrings];
         end        
         
     end

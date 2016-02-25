@@ -17,6 +17,9 @@ classdef LegacyRegistrationSession < DataProcessingSession
                 session.sessionNumber = sessionNumber;
                 session.dataProcessingSessionNumber = dataProcessingSessionNumber;
                 
+                % set navigation listbox label
+                session.naviListboxLabel = createNavigationListboxLabel(SessionNamingConventions.DATA_PROCESSING_NAVI_LISTBOX_PREFIX, session.dataProcessingSessionNumber, session.getDirSubtitle());
+                
                 % set metadata history
                 session.metadataHistory = {MetadataHistoryEntry(userName)};
                 
@@ -94,20 +97,20 @@ classdef LegacyRegistrationSession < DataProcessingSession
         
         
         function dirSubtitle = getDirSubtitle(session)
-            dirSubtitle = [SessionNamingConventions.LEGACY_REGISTRATION_DIR_SUBTITLE];
+            dirSubtitle = [LegacyRegistrationNamingConventions.SESSION_DIR_SUBTITLE];
         end
         
                
         function metadataString = getMetadataString(session)
             
-            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString] = getSessionMetadataString(session);
+            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
             
             registrationTypeString = ['Registration Type: ', session.registrationType.displayString];
             registrationParamsString = ['Registration Parameters: ' session.registrationParams];
             
             
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, registrationTypeString, registrationParamsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
-            
+            metadataString = [metadataString, metadataHistoryStrings];
         end        
         
         

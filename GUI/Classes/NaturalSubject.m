@@ -23,6 +23,9 @@ classdef NaturalSubject < Subject
                 % set metadata history
                 subject.metadataHistory = {MetadataHistoryEntry(userName)};
                 
+                % set navigation listbox label
+                subject.naviListboxLabel = createNavigationListboxLabel(SubjectNamingConventions.NAVI_LISTBOX_PREFIX, subject.subjectNumber, subject.subjectId);
+                
                 % make directory/metadata file
                 subject = subject.createDirectories(toTrialPath, projectPath);
                 
@@ -113,7 +116,7 @@ classdef NaturalSubject < Subject
             eyeChoices = cell(numEyes, 1);
             
             for i=1:numEyes
-                eyeChoices{i} = eyes{i}.dirName;
+                eyeChoices{i} = eyes{i}.naviListboxLabel;
             end
         end
         
@@ -209,13 +212,13 @@ classdef NaturalSubject < Subject
         function handles = updateNavigationListboxes(subject, handles)
             numEyes = length(subject.eyes);
             
-            eyeOptions = cell(numEyes, 1);
-            
             if numEyes == 0
                 disableNavigationListboxes(handles, handles.eyeSelect);
-            else
+            else            
+                eyeOptions = cell(numEyes, 1);
+                
                 for i=1:numEyes
-                    eyeOptions{i} = subject.eyes{i}.dirName;
+                    eyeOptions{i} = subject.eyes{i}.naviListboxLabel;
                 end
                 
                 set(handles.eyeSelect, 'String', eyeOptions, 'Value', subject.eyeIndex, 'Enable', 'on');
@@ -245,8 +248,10 @@ classdef NaturalSubject < Subject
             ADDiagnosisString = ['AD Diagnosis: ', subject.ADDiagnosis.displayString];
             causeOfDeathString = ['Cause of Death: ', subject.causeOfDeath];
             medicalHistoryString = ['Medical History: ', subject.medicalHistory];
+            metadataHistoryStrings = generateMetadataHistoryStrings(subject.metadataHistory);
             
             metadataString = {subjectIdString, subjectNumberString, ageString, genderString, ADDiagnosisString, causeOfDeathString, medicalHistoryString, subjectNotesString};
+            metadataString = [metadataString, metadataHistoryStrings];
             
         end
         

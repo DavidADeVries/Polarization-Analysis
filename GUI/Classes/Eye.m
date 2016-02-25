@@ -4,7 +4,8 @@ classdef Eye
         
     properties
         % set at initialization
-        dirName        
+        dirName
+        naviListboxLabel
         metadataHistory
         
         % set by metadata entry
@@ -27,6 +28,10 @@ classdef Eye
             if ~cancel
                 % set metadata history
                 eye.metadataHistory = {MetadataHistoryEntry(userName)};
+                
+                % set navigation listbox label                
+                subtitle = eye.eyeType.displayString;
+                eye.naviListboxLabel = createNavigationListboxLabel(EyeNamingConventions.NAVI_LISTBOX_PREFIX, eye.eyeNumber, subtitle);
                 
                 % make directory/metadata file
                 eye = eye.createDirectories(toSubjectPath, projectPath);
@@ -113,7 +118,7 @@ classdef Eye
             quarterChoices = cell(numQuarters, 1);
             
             for i=1:numQuarters
-                quarterChoices{i} = quarters{i}.dirName;
+                quarterChoices{i} = quarters{i}.naviListboxLabel;
             end
         end
         
@@ -193,7 +198,7 @@ classdef Eye
         function eye = createDirectories(eye, toSubjectPath, projectPath)
             dirSubtitle = eye.eyeType.displayString;
             
-            eyeDirectory = createDirName(EyeNamingConventions.DIR_PREFIX, num2str(eye.eyeNumber), dirSubtitle, EyeNamingConventions.DIR_NUM_DIGITS);
+            eyeDirectory = createDirName(EyeNamingConventions.DIR_PREFIX, eye.eyeNumber, dirSubtitle, EyeNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toSubjectPath, eyeDirectory);
                         
@@ -220,13 +225,13 @@ classdef Eye
         function handles = updateNavigationListboxes(eye, handles)
             numQuarters = length(eye.quarters);
             
-            quarterOptions = cell(numQuarters, 1);
-            
             if numQuarters == 0
                 disableNavigationListboxes(handles, handles.quarterSampleSelect);
-            else
+            else            
+                quarterOptions = cell(numQuarters, 1);
+                
                 for i=1:numQuarters
-                    quarterOptions{i} = eye.quarters{i}.dirName;
+                    quarterOptions{i} = eye.quarters{i}.naviListboxLabel;
                 end
                 
                 set(handles.quarterSampleSelect, 'String', quarterOptions, 'Value', eye.quarterIndex, 'Enable', 'on');
@@ -261,9 +266,11 @@ classdef Eye
             dissectionDateString = ['Dissection Date: ', displayDate(eye.dissectionDate)];
             dissectionDoneByString = ['Dissection Done By: ', eye.dissectionDoneBy];
             eyeNotesString = ['Notes: ', eye.notes];
+            metadataHistoryStrings = generateMetadataHistoryStrings(eye.metadataHistory);
             
             
             metadataString = {'Eye:', eyeIdString, eyeTypeString, eyeNumberString, dissectionDateString, dissectionDoneByString, eyeNotesString};
+            metadataString = [metadataString, metadataHistoryStrings];
             
         end
         

@@ -3,6 +3,8 @@ function [ directoryName ] = createDirName(dirPrefix, dirNumber, dirSubtitle, re
 % parses together these three pieces to give a directory name in a
 % specified format
 
+dirNumber = num2str(dirNumber);
+
 numDigits = length(dirNumber);
 
 if numDigits < requiredNumDigits

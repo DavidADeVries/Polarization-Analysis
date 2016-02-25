@@ -4,10 +4,12 @@ classdef MicroscopeNamingConventions
     
     properties (Constant)
         % directories
-        FLUORO_DIR = NamingConvention({'F', 'FL', 'Fluorescent', 'Fluoro'}, {'Fluorescent'});
+        SESSION_DIR_SUBTITLE = 'Microscope';
+        
+        FLUORO_DIR = NamingConvention({'F', 'FL', 'Fluorescent', 'Fluoro', 'Fluorescents'}, {'Fluorescent'});
         MM_DIR = NamingConvention({'MM', 'M M', 'Mueller', 'Mueller Matrix'}, {'MM'});
         TR_DIR = NamingConvention({'TR', 'T R', 'Top Row'}, {'Top Row'});
-        LPO_DIR = NamingConvention({'JP', 'J P', 'Polarizers', 'Just Polarizers', 'Polarizers Only'}, {'Linear Polarizers Only'});
+        LPO_DIR = NamingConvention({'JP', 'J P', 'Polarizers', 'Just Polarizers', 'Polarizers Only'}, {'Polarizers Only'});
         
         
         % image series
@@ -19,7 +21,7 @@ classdef MicroscopeNamingConventions
         TR_IMAGES = {NamingConvention({'45'}, {'45'}), NamingConvention({'00'}, {'00'}), NamingConvention({'30'}, {'30'}), NamingConvention({'60'}, {'60'})};
         
         LPO_IMAGES_ANGLES = {NamingConvention({'00'}, {'00'}), NamingConvention({'45'}, {'45'}), NamingConvention({'90'}, {'90'}), NamingConvention({'135'}, {'135'}), NamingConvention({'180'}, {'180'})};
-        LPO_IMAGES_CROSSED = {NamingConvention({'C'}, {'Crossed'}), NamingConvention({'P'}, {'Uncrossed'})}; %crossed, uncrossed
+        LPO_IMAGES_CROSSED = {NamingConvention({'C'}, {'x'}), NamingConvention({'P'}, {'='})}; %crossed, uncrossed
         
         
         % image filename suffixes

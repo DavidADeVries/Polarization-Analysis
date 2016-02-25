@@ -64,7 +64,7 @@ classdef Project
             trialChoices = cell(numTrials, 1);
             
             for i=1:numTrials
-                trialChoices{i} = ['Trial ', num2str(trials{i}.trialNumber), ' (', trials{i}.title, ')'];
+                trialChoices{i} = trials{i}.naviListboxLabel;
             end
         end
         
@@ -105,13 +105,13 @@ classdef Project
         function handles = updateNavigationListboxes(project, handles)
             numTrials = length(project.trials);
             
-            trialOptions = cell(numTrials, 1);
-            
             if numTrials == 0
                 disableNavigationListboxes(handles, handles.trialSelect);
-            else
+            else            
+                trialOptions = cell(numTrials, 1);
+                
                 for i=1:numTrials
-                    trialOptions{i} = project.trials{i}.dirName;
+                    trialOptions{i} = project.trials{i}.naviListboxLabel;
                 end
                 
                 set(handles.trialSelect, 'String', trialOptions, 'Value', project.trialIndex, 'Enable', 'on');

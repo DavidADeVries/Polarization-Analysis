@@ -1,4 +1,4 @@
-classdef RegistrationSession < ProcessingSession
+classdef RegistrationSession < DataProcessingSession
     % RegisrationSession
     % stores metadata for a registration procedure
     

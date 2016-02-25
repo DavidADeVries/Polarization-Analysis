@@ -23,6 +23,9 @@ classdef MicroscopeSession < DataCollectionSession
                 session.sessionNumber = sessionNumber;
                 session.dataCollectionSessionNumber = dataCollectionSessionNumber;
                 
+                % set navigation listbox label
+                session.naviListboxLabel = createNavigationListboxLabel(SessionNamingConventions.DATA_COLLECTION_NAVI_LISTBOX_PREFIX, session.dataCollectionSessionNumber, session.getDirSubtitle());
+                
                 % set metadata history
                 session.metadataHistory = {MetadataHistoryEntry(userName)};
                 
@@ -142,12 +145,12 @@ classdef MicroscopeSession < DataCollectionSession
         end
          
         function dirSubtitle = getDirSubtitle(session)
-            dirSubtitle = SessionNamingConventions.MICROSCOPE_DIR_SUBTITLE;
+            dirSubtitle = MicroscopeNamingConventions.SESSION_DIR_SUBTITLE;
         end
                
         function metadataString = getMetadataString(session)
             
-            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString] = getSessionMetadataString(session);
+            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
             
             magnificationString = ['Magnification: ', num2str(session.magnification)];
             pixelSizeMicronsString = ['Pixel Size (microns): ', num2str(session.pixelSizeMicrons)];
@@ -158,7 +161,7 @@ classdef MicroscopeSession < DataCollectionSession
             
             
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, magnificationString, pixelSizeMicronsString, instrumentString, fluoroSignatureString, crossedSignatureString, visualSignatureString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
-            
+            metadataString = [metadataString, metadataHistoryStrings];
         end
         
     end

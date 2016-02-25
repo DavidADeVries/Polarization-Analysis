@@ -3,7 +3,8 @@ classdef Subject
     
     properties
         % set at initialization
-        dirName        
+        dirName
+        naviListboxLabel
         metadataHistory
         
         % set by metadata entry        
@@ -17,7 +18,7 @@ classdef Subject
         
         
         function subject = createDirectories(subject, toTrialPath, projectPath)
-            subjectDirectory = createDirName(SubjectNamingConventions.DIR_PREFIX, num2str(subject.subjectNumber), subject.subjectId, SubjectNamingConventions.DIR_NUM_DIGITS);
+            subjectDirectory = createDirName(SubjectNamingConventions.DIR_PREFIX, subject.subjectNumber, subject.subjectId, SubjectNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toTrialPath, subjectDirectory);
                         

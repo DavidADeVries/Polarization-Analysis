@@ -4,7 +4,8 @@ classdef Trial
     
     properties
         % set at initialization
-        dirName        
+        dirName
+        naviListboxLabel
         metadataHistory
         
         % set by metadata entry
@@ -26,6 +27,9 @@ classdef Trial
             if ~cancel
                 % set metadata history
                 trial.metadataHistory = {MetadataHistoryEntry(userName)};
+                
+                % set navigation listbox label
+                trial.naviListboxLabel = createNavigationListboxLabel(TrialNamingConventions.NAVI_LISTBOX_PREFIX, trial.trialNumber, trial.title);
                 
                 % make directory/metadata file
                 toTrialPath = ''; %starts at project path
@@ -53,9 +57,9 @@ classdef Trial
         end
         
         function trial = createDirectories(trial, toProjectPath, projectPath)
-            dirSubtitle = trial.subjectType.displayString;
+            dirSubtitle = trial.title;
             
-            trialDirectory = createDirName(TrialNamingConventions.DIR_PREFIX, num2str(trial.trialNumber), dirSubtitle, TrialNamingConventions.DIR_NUM_DIGITS);
+            trialDirectory = createDirName(TrialNamingConventions.DIR_PREFIX, trial.trialNumber, dirSubtitle, TrialNamingConventions.DIR_NUM_DIGITS);
             
             createObjectDirectories(projectPath, toProjectPath, trialDirectory);
                         
@@ -202,7 +206,7 @@ classdef Trial
             subjectChoices = cell(numSubjects, 1);
             
             for i=1:numSubjects
-                subjectChoices{i} = subjects{i}.dirName;
+                subjectChoices{i} = subjects{i}.naviListboxLabel;
             end
         end
         
@@ -221,13 +225,13 @@ classdef Trial
         function handles = updateNavigationListboxes(trial, handles)
             numSubjects = length(trial.subjects);
             
-            subjectOptions = cell(numSubjects, 1);
-            
             if numSubjects == 0
                 disableNavigationListboxes(handles, handles.subjectSelect);
-            else
+            else            
+                subjectOptions = cell(numSubjects, 1);
+                
                 for i=1:numSubjects
-                    subjectOptions{i} = trial.subjects{i}.dirName;
+                    subjectOptions{i} = trial.subjects{i}.naviListboxLabel;
                 end
                 
                 set(handles.subjectSelect, 'String', subjectOptions, 'Value', trial.subjectIndex, 'Enable', 'on');
@@ -257,8 +261,10 @@ classdef Trial
             trialNumberString = ['Trial Number: ', num2str(trial.trialNumber)];
             trialSubjectTypeString = ['Subject Type: ', trial.subjectType.displayString];
             trialNotesString = ['Notes: ', trial.notes];
+            metadataHistoryStrings = generateMetadataHistoryStrings(trial.metadataHistory);
             
             metadataString = {trialTitleString, trialDescriptionString, trialNumberString, trialSubjectTypeString, trialNotesString};
+            metadataString = [metadataString, metadataHistoryStrings];
         end
         
         function trial = updateSubjectIndex(trial, index)            

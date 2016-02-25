@@ -5,6 +5,7 @@ classdef Location
     properties
         % set at initialization
         dirName
+        naviListboxLabel
         metadataHistory
         
         % set by metadata entry
@@ -26,6 +27,9 @@ classdef Location
             if ~cancel
                 % set metadata history
                 location.metadataHistory = {MetadataHistoryEntry(userName)};
+                
+                % set navigation listbox label
+                location.naviListboxLabel = createNavigationListboxLabel(LocationNamingConventions.NAVI_LISTBOX_PREFIX, location.locationNumber, '');
                 
                 % make directory/metadata file
                 location = location.createDirectories(toQuarterPath, projectPath);
@@ -119,7 +123,7 @@ classdef Location
             sessionChoices = cell(numSessions, 1);
             
             for i=1:numSessions
-                sessionChoices{i} = sessions{i}.dirName;
+                sessionChoices{i} = sessions{i}.naviListboxLabel;
             end            
         end
         
@@ -313,13 +317,13 @@ classdef Location
         function handles = updateNavigationListboxes(location, handles)
             numSessions = length(location.sessions);
             
-            sessionOptions = cell(numSessions, 1);
-            
             if numSessions == 0
                 disableNavigationListboxes(handles, handles.sessionSelect);
-            else
+            else            
+                sessionOptions = cell(numSessions, 1);
+                
                 for i=1:numSessions
-                    sessionOptions{i} = location.sessions{i}.dirName;
+                    sessionOptions{i} = location.sessions{i}.naviListboxLabel;
                 end
                 
                 set(handles.sessionSelect, 'String', sessionOptions, 'Value', location.sessionIndex, 'Enable', 'on');
@@ -346,14 +350,12 @@ classdef Location
             
             locationNumberString = ['Location Number: ', num2str(location.locationNumber)];
             depositString = ['Deposit: ', booleanToString(location.deposit)];
-            if ~isempty(location.locationCoords)
-                locationCoordsString = ['Location Coordinates: ', coordsToString(location.locationCoords)];
-            else
-                locationCoordsString = ['Location Coordinates: ', 'Unknown'];
-            end
+            locationCoordsString = ['Location Coordinates: ', coordsToString(location.locationCoords)];
             locationNotesString = ['Notes: ', location.notes];
+            metadataHistoryStrings = generateMetadataHistoryStrings(location.metadataHistory);
             
             metadataString = {locationNumberString, depositString, locationCoordsString, locationNotesString};
+            metadataString = [metadataString, metadataHistoryStrings];
             
         end
         
