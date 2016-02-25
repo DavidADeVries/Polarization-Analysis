@@ -22,7 +22,7 @@ function varargout = LegacySubsectionSelectionSessionMetadataEntry(varargin)
 
 % Edit the above text to modify the response to help LegacySubsectionSelectionSessionMetadataEntry
 
-% Last Modified by GUIDE v2.5 18-Feb-2016 12:02:59
+% Last Modified by GUIDE v2.5 25-Feb-2016 14:59:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -56,11 +56,12 @@ function LegacySubsectionSelectionSessionMetadataEntry_OpeningFcn(hObject, event
 handles.output = hObject;
 
 %*****************************
-%INPUT: (importPath, userName)
+%INPUT: (importPath, userName, sessionChoicesString)
 %*****************************
 
 handles.importPath = varargin{1}; %Param is importPath
 handles.userName = varargin{2}; %Param is userName
+handles.sessionChoicesString = varargin{3}; %Param is sessionChoices
 
 %Defining the different input variables, awaiting user input
 handles.cancel = false;
@@ -76,6 +77,7 @@ handles.coords = [handles.xCoord, handles.yCoord, handles.width, handles.height]
 handles.rejected = false;
 handles.rejectedReason = '';
 handles.rejectedBy = '';
+handles.sessionChoices = [];
 
 %Default Display Settings
 set(handles.OK, 'enable', 'off');
@@ -99,6 +101,10 @@ for i = 1:size(choiceStrings)
 end
 set(handles.croppingTypeMenu, 'String', choiceList);
 
+%Setting the list values for the session list box
+set(handles.sessionListBox, 'String', handles.sessionChoicesString);
+set(handles.sessionListBox, 'Value', []);
+
 % Update handles structure
 guidata(hObject, handles);
 
@@ -114,8 +120,11 @@ function varargout = LegacySubsectionSelectionSessionMetadataEntry_OutputFcn(hOb
 % handles    structure with handles and user data (see GUIDATA)
 
 %****************************************************************************************************************
-%OUTPUT:  [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy]
+%OUTPUT:  [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy, sessionChoices]
 %****************************************************************************************************************
+
+handles.sessionChoices = get(handles.sessionListBox, 'Value');
+guidata(hObject, handles);
 
 % Get default command line output from handles structure
 varargout{1} = handles.cancel;
@@ -127,6 +136,7 @@ varargout{6} = handles.coords;
 varargout{7} = handles.rejected;
 varargout{8} = handles.rejectedReason;
 varargout{9} = handles.rejectedBy;
+varargout{10} = handles.sessionChoices;
 
 close(handles.legacySubsectionSelectionSessionMetadataEntry);
 end
@@ -670,6 +680,34 @@ else
     delete(hObject);
 end
 end
+
+
+% --- Executes on selection change in sessionListBox.
+function sessionListBox_Callback(hObject, eventdata, handles)
+% hObject    handle to sessionListBox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns sessionListBox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from sessionListBox
+
+checkToEnableOkButton(handles);
+
+end
+
+% --- Executes during object creation, after setting all properties.
+function sessionListBox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sessionListBox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+end
+
 %% Local Functions
 
 function checkToEnableOkButton(handles)
@@ -677,7 +715,7 @@ function checkToEnableOkButton(handles)
 %This function will check to see if any of the input variables are empty,
 %and if not it will enable the OK button
 
-if ~isempty(handles.sessionDate) && ~isempty(handles.sessionDoneBy) && ~isempty(handles.croppingType) && ~isempty(handles.xCoord) && ~isempty(handles.yCoord) && ~isempty(handles.width) && ~isempty(handles.height) && ~isempty(handles.rejected)
+if ~isempty(handles.sessionDate) && ~isempty(handles.sessionDoneBy) && ~isempty(handles.croppingType) && ~isempty(handles.xCoord) && ~isempty(handles.yCoord) && ~isempty(handles.width) && ~isempty(handles.height) && ~isempty(handles.rejected) && ~isempty(get(handles.sessionListBox, 'Value'))
     if handles.rejected 
         if ~isempty(handles.rejectedReason) && ~isempty(handles.rejectedBy)
             set(handles.OK, 'enable', 'on');
@@ -692,5 +730,7 @@ else
 end
 
 end
+
+
 
 

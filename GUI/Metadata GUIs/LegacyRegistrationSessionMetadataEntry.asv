@@ -84,22 +84,18 @@ set(handles.yesRejected, 'Value', 0);
 set(handles.noRejected, 'Value', 1);
 set(handles.sessionDoneByInput, 'String', handles.userName);
 
-%Get choice strings from RegistrationTypes class
+%Get choice strings from CroppingTypes class
 [~, choiceStrings] = choicesFromEnum('RegistrationTypes');
 
 %Default choice list setting
 handles.choiceListDefault = 'Select a Registration Type';
 
-%Setting the list values for the Registration Type pop up menu
+%Setting the list values for the Cropping Type pop up menu
 choiceList = {handles.choiceListDefault};
 for i = 1:size(choiceStrings)
     choiceList{i+1} = choiceStrings{i};
 end
 set(handles.registrationTypeList, 'String', choiceList);
-
-%Setting the list values for the session list box
-set(handles.sessionListbox, 'String', handles.sessionChoicesString);
-set(handles.sessionListbox, 'Value', []);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -116,11 +112,9 @@ function varargout = LegacyRegistrationSessionMetadataEntry_OutputFcn(hObject, e
 % handles    structure with handles and user data (see GUIDATA)
 
 %*******************************************************************************************************************************
-%OUTPUT: [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy, sessionChoices]
+%OUTPUT: [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy]
 %*******************************************************************************************************************************
 
-handles.sessionChoices = get(handles.sessionListbox, 'Value');
-guidata(hObject, handles);
 
 % Get default command line output from handles structure
 varargout{1} = handles.cancel;
@@ -132,7 +126,6 @@ varargout{6} = handles.registrationParams;
 varargout{7} = handles.rejected;
 varargout{8} = handles.rejectedReason;
 varargout{9} = handles.rejectedBy;
-varargout{10} = handles.sessionChoices;
 
 close(handles.legacyRegistrationSessionMetadataEntry);
 end
