@@ -11,7 +11,9 @@ classdef SessionNamingConventions
         DATA_PROCESSING_NAVI_LISTBOX_PREFIX = 'Processing Session';
         
         METADATA_FILENAME = 'session_metadata.mat';
-        DATA_FILENAME_LABEL = 'S';
+        
+        DATA_COLLECTION_DATA_FILENAME_LABEL = 'CS';
+        DATA_PROCESSING_DATA_FILENAME_LABEL = 'PS';
     end
     
 end

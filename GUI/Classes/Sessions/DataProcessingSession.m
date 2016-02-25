@@ -30,6 +30,10 @@ classdef DataProcessingSession < Session
         function [] = saveMetadata(session, toSessionPath, projectPath, saveToBackup)
             saveObjectMetadata(session, projectPath, toSessionPath, SessionNamingConventions.METADATA_FILENAME, saveToBackup);            
         end
+        
+        function filenameSection = getFilenameSection(session)
+            filenameSection = createFilenameSection(SessionNamingConventions.DATA_PROCESSING_DATA_FILENAME_LABEL, num2str(session.dataProcessingSessionNumber));
+        end
     end
     
 end

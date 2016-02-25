@@ -57,9 +57,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
         
         
         function session = importSession(session, sessionProjectPath, importPath, projectPath, dataFilename) 
-            
-            filenameSection = createFilenameSection(SessionNamingConventions.DATA_FILENAME_LABEL, num2str(session.sessionNumber));
-            dataFilename = strcat(dataFilename, filenameSection);
+            dataFilename = strcat(dataFilename, session.getFilenameSection());
             
             filenameExtensions = {Constants.BMP_EXT};
             

@@ -14,7 +14,7 @@ classdef MetadataHistoryEntry
         end
         
         function dateString = getDateString(entry)
-            dateString = displayDate(entry.timestamp);
+            dateString = datestr(entry.timestamp, format);
         end
     end
     

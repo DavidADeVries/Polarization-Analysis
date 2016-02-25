@@ -15,26 +15,7 @@ classdef DataCollectionSession < Session
         end
         
     end
-    
-    methods(Static)
-        function choices = getDataCollectionSessionChoices()
-            choices = {'Microscope', 'CSLO', 'Unknown'};
-        end
-        
-        
-        function session = createSession(choice, sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName)
-            if choice == 1
-                session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
-            elseif choice == 2
-                session = CLSOSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
-            elseif choice == 3
-                session = DataCollectionSession;
-            else
-                error('Invalid Data Collection Session type!');
-            end                
-        end
-    end
-       
+           
     methods
         function session = createDirectories(session, toLocationPath, projectPath)
             dirSubtitle = session.getDirSubtitle(); % defined in each specific sessionsclass
@@ -48,6 +29,10 @@ classdef DataCollectionSession < Session
         
         function [] = saveMetadata(session, toSessionPath, projectPath, saveToBackup)
             saveObjectMetadata(session, projectPath, toSessionPath, SessionNamingConventions.METADATA_FILENAME, saveToBackup);            
+        end
+        
+        function filenameSection = getFilenameSection(session)
+            filenameSection = createFilenameSection(SessionNamingConventions.DATA_COLLECTION_DATA_FILENAME_LABEL, num2str(session.dataCollectionSessionNumber));
         end
     end
     
