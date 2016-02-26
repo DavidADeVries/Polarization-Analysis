@@ -9,8 +9,8 @@ classdef LegacyRegistrationSession < DataProcessingSession
     end
     
     methods
-        function session = LegacyRegistrationSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName)
-            [cancel, session] = session.enterMetadata(importDir, userName);
+        function session = LegacyRegistrationSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, sessionNumbers)
+            [cancel, session] = session.enterMetadata(importDir, userName, sessionChoices, sessionNumbers);
             
             if ~cancel
                 % set session numbers
@@ -34,10 +34,10 @@ classdef LegacyRegistrationSession < DataProcessingSession
             end              
         end
         
-        function [cancel, session] = enterMetadata(session, importPath, userName)
+        function [cancel, session] = enterMetadata(session, importPath, userName, sessionChoices, sessionNumbers)
             
             %Call to Legacy Registration Session Metadata Entry GUI
-            [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy] = LegacyRegistrationSessionMetadataEntry(importPath, userName);
+            [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy, selectedChoices] = LegacyRegistrationSessionMetadataEntry(importPath, userName, sessionChoices);
             
             if ~cancel
                 %Assigning values to Legacy Registration Session Properties
@@ -49,6 +49,8 @@ classdef LegacyRegistrationSession < DataProcessingSession
                 session.rejected = rejected;
                 session.rejectedReason = rejectedReason;
                 session.rejectedBy = rejectedBy;
+                                
+                session.linkedSessionNumbers = getSelectedSessionNumbers(sessionNumbers, selectedChoices);
             end
         
         end
@@ -102,12 +104,13 @@ classdef LegacyRegistrationSession < DataProcessingSession
         function metadataString = getMetadataString(session)
             
             [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
+            [dataProcessingSessionNumberString, linkedSessionsString] = session.getProcessingSessionMetadataString();
             
             registrationTypeString = ['Registration Type: ', session.registrationType.displayString];
             registrationParamsString = ['Registration Parameters: ' session.registrationParams];
             
             
-            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, registrationTypeString, registrationParamsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, registrationTypeString, registrationParamsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
         end        
         

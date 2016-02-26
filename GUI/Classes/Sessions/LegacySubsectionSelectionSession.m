@@ -10,8 +10,8 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
     
     methods
         
-        function session = LegacySubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName)
-            [cancel, session] = session.enterMetadata(importDir, userName);
+        function session = LegacySubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, sessionNumbers)
+            [cancel, session] = session.enterMetadata(importDir, userName, sessionChoices, sessionNumbers);
             
             if ~cancel
                 % set session numbers
@@ -36,10 +36,10 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
         end
         
         
-        function [cancel, session] = enterMetadata(session, importPath, userName)
+        function [cancel, session] = enterMetadata(session, importPath, userName, sessionChoices, sessionNumbers)
             
             %Call to Legacy Subsection Selection Session Metadata Entry GUI
-            [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy] = LegacySubsectionSelectionSessionMetadataEntry(importPath, userName);
+            [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy, selectedChoices] = LegacySubsectionSelectionSessionMetadataEntry(importPath, userName, sessionChoices);
             
             if ~cancel
                 %Assigning values to Legacy Subsection Selection Session Properties
@@ -51,6 +51,8 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                 session.rejected = rejected;
                 session.rejectedReason = rejectedReason;
                 session.rejectedBy = rejectedBy;
+                                
+                session.linkedSessionNumbers = getSelectedSessionNumbers(sessionNumbers, selectedChoices);
             end
         
         end
@@ -103,13 +105,14 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                
         function metadataString = getMetadataString(session)
             
-            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
+            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);            
+            [dataProcessingSessionNumberString, linkedSessionsString] = session.getProcessingSessionMetadataString();
             
             croppingTypeString = ['Cropping Type: ', session.croppingType.displayString];
             coordsString = ['Cropping Coords [x,y,w,h]: ' coordsToString(session.coords)];
             
             
-            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, croppingTypeString, coordsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, croppingTypeString, coordsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
         end        
         

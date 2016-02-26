@@ -34,6 +34,10 @@ classdef DataCollectionSession < Session
         function filenameSection = getFilenameSection(session)
             filenameSection = createFilenameSection(SessionNamingConventions.DATA_COLLECTION_DATA_FILENAME_LABEL, num2str(session.dataCollectionSessionNumber));
         end
+        
+        function [dataCollectionSessionNumberString] = getCollectionSessionMetadataString(session)
+            dataCollectionSessionNumberString = ['Data Collection Session Number: ', num2str(session.dataCollectionSessionNumber)];
+        end
     end
     
 end

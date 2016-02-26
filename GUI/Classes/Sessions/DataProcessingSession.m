@@ -6,7 +6,7 @@ classdef DataProcessingSession < Session
     properties
         % set by metadata entry
         dataProcessingSessionNumber
-        
+        linkedSessionNumbers %the session numbers of sessions from which data for the processing was drawn
     end
     
     methods
@@ -33,6 +33,25 @@ classdef DataProcessingSession < Session
         
         function filenameSection = getFilenameSection(session)
             filenameSection = createFilenameSection(SessionNamingConventions.DATA_PROCESSING_DATA_FILENAME_LABEL, num2str(session.dataProcessingSessionNumber));
+        end
+        
+        function [dataProcessingSessionNumberString, linkedSessionsString] = getProcessingSessionMetadataString(session)
+            dataProcessingSessionNumberString = ['Data Processing Session Number: ', num2str(session.dataProcessingSessionNumber)];
+            
+            sessionNumbersString = '';
+            
+            sessionNumbers = session.linkedSessionNumbers;
+            
+            for i=1:length(sessionNumbers)
+                if i ~= 1
+                    sessionNumbersString = [sessionNumbersString, ', '];
+                end
+                
+                sessionNumbersString = [sessionNumbersString, num2str(sessionNumbers(i))];
+            end
+            
+            linkedSessionsString = ['Linked Session Numbers: ', sessionNumbersString];
+            
         end
     end
     
