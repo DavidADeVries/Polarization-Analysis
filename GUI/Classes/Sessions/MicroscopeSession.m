@@ -64,8 +64,7 @@ classdef MicroscopeSession < DataCollectionSession
         end
         
         function session = importSession(session, sessionProjectPath, locationImportPath, projectPath, dataFilename)            
-            filenameSection = createFilenameSection(SessionNamingConventions.DATA_FILENAME_LABEL, num2str(session.sessionNumber));
-            dataFilename = strcat(dataFilename, filenameSection);
+            dataFilename = strcat(dataFilename, session.getFilenameSection());
             
             filenameExtensions = {Constants.BMP_EXT, Constants.ND2_EXT}; %expect .bmps and .nd2s
             
@@ -150,7 +149,8 @@ classdef MicroscopeSession < DataCollectionSession
                
         function metadataString = getMetadataString(session)
             
-            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
+            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = session.getSessionMetadataString();
+            [dataCollectionSessionNumberString] = session.getCollectionSessionMetadataString();
             
             magnificationString = ['Magnification: ', num2str(session.magnification)];
             pixelSizeMicronsString = ['Pixel Size (microns): ', num2str(session.pixelSizeMicrons)];
@@ -160,7 +160,7 @@ classdef MicroscopeSession < DataCollectionSession
             visualSignatureString = ['Visual Signature: ', booleanToString(session.visualSignature)];
             
             
-            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, magnificationString, pixelSizeMicronsString, instrumentString, fluoroSignatureString, crossedSignatureString, visualSignatureString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataCollectionSessionNumberString, magnificationString, pixelSizeMicronsString, instrumentString, fluoroSignatureString, crossedSignatureString, visualSignatureString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
         end
         

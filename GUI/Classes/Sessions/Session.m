@@ -29,7 +29,7 @@ classdef Session
     
     methods(Static)
         
-        function session = createSession(sessionType, sessionNumber, dataCollectionSessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName)
+        function session = createSession(sessionType, sessionNumber, dataCollectionSessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, sessionNumbers)
             
             if sessionType == SessionTypes.Microscope
                 session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
@@ -38,10 +38,10 @@ classdef Session
                 session = CLSOSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
                 
             elseif sessionType == SessionTypes.LegacyRegistration
-                session = LegacyRegistrationSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
+                session = LegacyRegistrationSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, sessionNumbers);
                 
             elseif sessionType == SessionTypes.LegacySubsectionSelection
-                session = LegacySubsectionSelectionSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
+                session = LegacySubsectionSelectionSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, sessionNumbers);
                 
             elseif sessionType == SessionTypes.FrameAveraging
                 session = FrameAveragingSession();

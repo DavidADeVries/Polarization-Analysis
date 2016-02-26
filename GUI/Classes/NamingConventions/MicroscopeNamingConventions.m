@@ -28,7 +28,7 @@ classdef MicroscopeNamingConventions
         FLUORO_FILENAME_LABEL = 'FL';
         MM_FILENAME_LABEL = 'MM';
         TR_FILENAME_LABEL = 'TR';
-        LPO_FILENAME_LABEL = 'LPO';
+        LPO_FILENAME_LABEL = 'PO';
         
         %MetdataGUI default input values
         DEFAULT_METADATA_GUI_MAGNIFICATION = 40;

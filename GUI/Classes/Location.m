@@ -68,7 +68,9 @@ classdef Location
                         dataCollectionSessionNumber = location.nextDataCollectionSessionNumber();
                         dataProcessingSessionNumber = location.nextDataProcessingSessionNumber();
                         
-                        session = Session.createSession(sessionType, sessionNumber, dataCollectionSessionNumber, dataProcessingSessionNumber, toLocationProjectPath, projectPath, locationImportPath, userName);
+                        sessionNumbers = location.getSessionNumbers();
+                        
+                        session = Session.createSession(sessionType, sessionNumber, dataCollectionSessionNumber, dataProcessingSessionNumber, toLocationProjectPath, projectPath, locationImportPath, userName, choices, sessionNumbers);
                     else
                         session = Session.empty;
                     end
@@ -442,7 +444,20 @@ classdef Location
                         dataCollectionSessionNumber = location.nextDataCollectionSessionNumber();
                         dataProcessingSessionNumber = location.nextDataProcessingSessionNumber();
                         
-                        session = Session.createSession(sessionType, sessionNumber, dataCollectionSessionNumber, dataProcessingSessionNumber, toLocationProjectPath, localProjectPath, importPath, userName);
+                        noSessionType = []; %don't select a certian session type
+                        sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessions
+                        sessionNumbers = location.getSessionNumbers();
+                        
+                        session = Session.createSession(sessionType,...
+                                                        sessionNumber,...
+                                                        dataCollectionSessionNumber,...
+                                                        dataProcessingSessionNumber,...
+                                                        toLocationProjectPath,...
+                                                        localProjectPath,...
+                                                        importPath,...
+                                                        userName,...
+                                                        sessionChoices,...
+                                                        sessionNumbers);
                     else
                         session = location.getSessionFromChoice(sessionType, choice);
                     end
