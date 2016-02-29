@@ -22,7 +22,7 @@ function varargout = SubsectionSelectionGui(varargin)
 
 % Edit the above text to modify the response to help SubsectionSelectionGui
 
-% Last Modified by GUIDE v2.5 29-Feb-2016 12:54:29
+% Last Modified by GUIDE v2.5 29-Feb-2016 14:12:28
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -52,14 +52,20 @@ function SubsectionSelectionGui_OpeningFcn(hObject, eventdata, handles, varargin
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to SubsectionSelectionGui (see VARARGIN)
 
-% Choose default command line output for SubsectionSelectionGui
-handles.output = hObject;
+% *****************************************
+% INPUT: (location, locationDescriptorText)
+% *****************************************
+
+
+
+handles.location = varargin{1};
+set(handles.locationDescriptorText, 'String', varargin{2});
 
 % Update handles structure
 guidata(hObject, handles);
 
 % UIWAIT makes SubsectionSelectionGui wait for user response (see UIRESUME)
-% uiwait(handles.subsectionSelectionGui);
+uiwait(handles.subsectionSelectionGui);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -73,19 +79,19 @@ function varargout = SubsectionSelectionGui_OutputFcn(hObject, eventdata, handle
 varargout{1} = handles.output;
 
 
-% --- Executes on selection change in listbox1.
-function listbox1_Callback(hObject, eventdata, handles)
-% hObject    handle to listbox1 (see GCBO)
+% --- Executes on selection change in sessionSelection.
+function sessionSelection_Callback(hObject, eventdata, handles)
+% hObject    handle to sessionSelection (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns listbox1 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from listbox1
+% Hints: contents = cellstr(get(hObject,'String')) returns sessionSelection contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from sessionSelection
 
 
 % --- Executes during object creation, after setting all properties.
-function listbox1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to listbox1 (see GCBO)
+function sessionSelection_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sessionSelection (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -96,19 +102,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in listbox2.
-function listbox2_Callback(hObject, eventdata, handles)
-% hObject    handle to listbox2 (see GCBO)
+% --- Executes on selection change in subfolderSelect.
+function subfolderSelect_Callback(hObject, eventdata, handles)
+% hObject    handle to subfolderSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns listbox2 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from listbox2
+% Hints: contents = cellstr(get(hObject,'String')) returns subfolderSelect contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from subfolderSelect
 
 
 % --- Executes during object creation, after setting all properties.
-function listbox2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to listbox2 (see GCBO)
+function subfolderSelect_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to subfolderSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -119,19 +125,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in listbox3.
-function listbox3_Callback(hObject, eventdata, handles)
-% hObject    handle to listbox3 (see GCBO)
+% --- Executes on selection change in fileSelect.
+function fileSelect_Callback(hObject, eventdata, handles)
+% hObject    handle to fileSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns listbox3 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from listbox3
+% Hints: contents = cellstr(get(hObject,'String')) returns fileSelect contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from fileSelect
 
 
 % --- Executes during object creation, after setting all properties.
-function listbox3_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to listbox3 (see GCBO)
+function fileSelect_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to fileSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -142,19 +148,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in listbox4.
-function listbox4_Callback(hObject, eventdata, handles)
-% hObject    handle to listbox4 (see GCBO)
+% --- Executes on selection change in subsectionSelect.
+function subsectionSelect_Callback(hObject, eventdata, handles)
+% hObject    handle to subsectionSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns listbox4 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from listbox4
+% Hints: contents = cellstr(get(hObject,'String')) returns subsectionSelect contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from subsectionSelect
 
 
 % --- Executes during object creation, after setting all properties.
-function listbox4_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to listbox4 (see GCBO)
+function subsectionSelect_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to subsectionSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -186,3 +192,63 @@ function edit1_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+
+function subsectionMetadata_Callback(hObject, eventdata, handles)
+% hObject    handle to subsectionMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of subsectionMetadata as text
+%        str2double(get(hObject,'String')) returns contents of subsectionMetadata as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function subsectionMetadata_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to subsectionMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function sessionMetadata_Callback(hObject, eventdata, handles)
+% hObject    handle to sessionMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of sessionMetadata as text
+%        str2double(get(hObject,'String')) returns contents of sessionMetadata as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function sessionMetadata_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sessionMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in doneButton.
+function doneButton_Callback(hObject, eventdata, handles)
+% hObject    handle to doneButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in cancelButton.
+function cancelButton_Callback(hObject, eventdata, handles)
+% hObject    handle to cancelButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
