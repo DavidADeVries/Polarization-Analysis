@@ -264,8 +264,8 @@ classdef Quarter
        
         function metadataString = getMetadataString(quarter)
             
-            fixingDateString = ['Fixing Date: ', displayDate(quarter.fixingDate)];
-            fixingDoneByString = ['Fixing Done By: ', quarter.fixingDoneBy];
+            mountingDateString = ['Mounting Date: ', displayDate(quarter.mountingDate)];
+            mountingDoneByString = ['Mounting Done By: ', quarter.mountingDoneBy];
             stainString = ['Stain: ', quarter.stain];
             slideMaterialString = ['Slide Material: ', quarter.slideMaterial];
             quarterTypeString = ['Quarter Type: ', quarter.quarterType.displayString];
@@ -274,7 +274,7 @@ classdef Quarter
             quarterNotesString = ['Notes: ', quarter.notes];
             metadataHistoryStrings = generateMetadataHistoryStrings(quarter.metadataHistory);
             
-            metadataString = {'Quarter:', fixingDateString, fixingDoneByString, stainString, slideMaterialString, quarterTypeString, quarterNumberString, quarterArbitraryString, quarterNotesString};
+            metadataString = {'Quarter:', mountingDateString, mountingDoneByString, stainString, slideMaterialString, quarterTypeString, quarterNumberString, quarterArbitraryString, quarterNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
         end
         
