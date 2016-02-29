@@ -13,7 +13,7 @@ if ~isempty(selectedFile)
         warning('off', Constants.FIGURE_INIT_SIZE_WARNING_ID);
         
         figure('name', getFilename(selectedFile.toPath));
-        imshow(imageData, []);
+        imshow(imageData);
         
         warning('on', Constants.FIGURE_INIT_SIZE_WARNING_ID);
     end
