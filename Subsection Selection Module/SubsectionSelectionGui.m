@@ -52,20 +52,8 @@ function SubsectionSelectionGui_OpeningFcn(hObject, eventdata, handles, varargin
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to SubsectionSelectionGui (see VARARGIN)
 
-% *****************************************
-% INPUT: (location, locationDescriptorText)
-% *****************************************
+guiInitialize(hObject, eventdata, handles, varargin);
 
-
-
-handles.location = varargin{1};
-set(handles.locationDescriptorText, 'String', varargin{2});
-
-% Update handles structure
-guidata(hObject, handles);
-
-% UIWAIT makes SubsectionSelectionGui wait for user response (see UIRESUME)
-uiwait(handles.subsectionSelectionGui);
 
 
 % --- Outputs from this function are returned to the command line.
