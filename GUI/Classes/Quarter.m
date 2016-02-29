@@ -8,8 +8,8 @@ classdef Quarter
         metadataHistory
         
         % set by metadata entry        
-        fixingDate
-        fixingDoneBy        
+        mountingDate
+        mountingDoneBy        
         stain
         slideMaterial        
         quarterType % one of [S,T,I,N] (superior, temporal, inferior, nasal, unknown]
@@ -184,7 +184,7 @@ classdef Quarter
         
         function [cancel, quarter] = enterMetadata(quarter, suggestedQuarterNumber, existingQuarterNumbers, importPath, userName)
             %Call to QuarterMetadataEntry GUI
-            [cancel, stain, slideMaterial, quarterType, quarterArbitrary, quarterNumber, fixingDate, fixingDoneBy, notes] = QuarterMetadataEntry(suggestedQuarterNumber, existingQuarterNumbers, importPath, userName);
+            [cancel, stain, slideMaterial, quarterType, quarterArbitrary, quarterNumber, mountingDate, mountingDoneBy, notes] = QuarterMetadataEntry(suggestedQuarterNumber, existingQuarterNumbers, importPath, userName);
             
             if ~cancel
                 %Assigning values to Quarter Properties
@@ -193,8 +193,8 @@ classdef Quarter
                 quarter.quarterType = quarterType;
                 quarter.quarterArbitrary = quarterArbitrary;
                 quarter.quarterNumber = quarterNumber;
-                quarter.fixingDate = fixingDate;
-                quarter.fixingDoneBy = fixingDoneBy;
+                quarter.mountingDate = mountingDate;
+                quarter.mountingDoneBy = mountingDoneBy;
                 quarter.notes = notes;
             end
             
