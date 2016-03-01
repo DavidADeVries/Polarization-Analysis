@@ -261,11 +261,9 @@ classdef Project
         function project = editSelectedSessionMetadata(project, projectPath, userName, updateBackupFiles)
             trial = project.getSelectedTrial();
             
-            if ~isempty(project)
-                trial = trial.editSelectedSessionMetadata(projectPath, userName, updateBackupFiles);
-                
-                project = project.updateTrial(trial);
-            end
+            trial = trial.editSelectedSessionMetadata(projectPath, userName, updateBackupFiles);
+            
+            project = project.
         end
         
         

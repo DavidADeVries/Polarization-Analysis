@@ -55,51 +55,89 @@ function LegacyRegistrationSessionMetadataEntry_OpeningFcn(hObject, eventdata, h
 % Choose default command line output for LegacyRegistrationSessionMetadataEntry
 handles.output = hObject;
 
-%*****************************
-%INPUT: (importPath, userName, sessionChoicesString)
-%*****************************
+%*************************************************************
+%INPUT: (importPath, userName, sessionChoicesString, session*)
+%        *may be empty)
+%*************************************************************
 
 handles.importPath = varargin{1}; %Param is importPath
 handles.userName = varargin{2}; %Param is userName
 handles.sessionChoicesString = varargin{3}; %Param is sessionChoices
 
-%Defining the different input variables, awaiting user input
-handles.cancel = false;
-handles.sessionDate = [];
-handles.sessionDoneBy = handles.userName;
-handles.sessionNotes = '';
-handles.registrationType = [];
-handles.registrationParams = '';
-handles.rejected = false;
-handles.rejectedReason = '';
-handles.rejectedBy = '';
-handles.sessionChoices = [];
-
-%Default Display Settings
-set(handles.OK, 'enable', 'off');
-set(handles.rejectedReasonInput, 'enable', 'off');
-set(handles.rejectedByInput, 'enable', 'off');
-set(handles.importPathDisplay, 'String', handles.importPath);
-set(handles.yesRejected, 'Value', 0);
-set(handles.noRejected, 'Value', 1);
-set(handles.sessionDoneByInput, 'String', handles.userName);
-
-%Get choice strings from RegistrationTypes class
-[~, choiceStrings] = choicesFromEnum('RegistrationTypes');
-
-%Default choice list setting
-handles.choiceListDefault = 'Select a Registration Type';
-
-%Setting the list values for the Registration Type pop up menu
-choiceList = {handles.choiceListDefault};
-for i = 1:size(choiceStrings)
-    choiceList{i+1} = choiceStrings{i};
+if length(varargin) > 3
+    session = varargin{4};
+    
+    handles.sessionDate = session.sessionDate;
+    handles.sessionDoneBy = session.sessionDoneBy;
+    handles.sessionNotes = session.notes;
+    handles.registrationType = session.registrationType;
+    handles.registrationParams = session.registrationParams;
+    handles.rejected = session.rejected;
+    handles.rejectedReason = session.rejectedReason;
+    handles.rejectedBy = session.rejectedBy;
+    handles.sessionChoices = session.linkedSessionChoices;
+    
+    %Default Display Settings
+    set(handles.OK, 'enable', 'on');
+    
+    if handles.rejected
+        set(handles.yesRejected, 'Value', 1);
+        set(handles.noRejected, 'Value', 0);
+    else
+        set(handles.yesRejected, 'Value', 0);
+        set(handles.noRejected, 'Value', 1); 
+        
+        set(handles.rejectedReasonInput, 'enable', 'off');
+        set(handles.rejectedByInput, 'enable', 'off');       
+    end
+    
+    
+    set(handles.importPathDisplay, 'String', 'None');
+    
+    set(handles.sessionDoneByInput, 'String', handles.userName);
+else
+    %Defining the different input variables, awaiting user input
+    handles.sessionDate = [];
+    handles.sessionDoneBy = handles.userName;
+    handles.sessionNotes = '';
+    handles.registrationType = [];
+    handles.registrationParams = '';
+    handles.rejected = false;
+    handles.rejectedReason = '';
+    handles.rejectedBy = '';
+    handles.sessionChoices = [];
+    
+    %Default Display Settings
+    set(handles.OK, 'enable', 'off');
+    set(handles.rejectedReasonInput, 'enable', 'off');
+    set(handles.rejectedByInput, 'enable', 'off');
+    set(handles.importPathDisplay, 'String', handles.importPath);
+    set(handles.yesRejected, 'Value', 0);
+    set(handles.noRejected, 'Value', 1);
+    set(handles.sessionDoneByInput, 'String', handles.userName);
+    
+    %Get choice strings from RegistrationTypes class
+    [~, choiceStrings] = choicesFromEnum('RegistrationTypes');
+    
+    %Default choice list setting
+    handles.choiceListDefault = 'Select a Registration Type';
+    
+    %Setting the list values for the Registration Type pop up menu
+    choiceList = {handles.choiceListDefault};
+    for i = 1:size(choiceStrings)
+        choiceList{i+1} = choiceStrings{i};
+    end
+    set(handles.registrationTypeList, 'String', choiceList);
+    
+    %Setting the list values for the session list box
+    set(handles.sessionListbox, 'String', handles.sessionChoicesString);
+    set(handles.sessionListbox, 'Value', []);
 end
-set(handles.registrationTypeList, 'String', choiceList);
 
-%Setting the list values for the session list box
-set(handles.sessionListbox, 'String', handles.sessionChoicesString);
-set(handles.sessionListbox, 'Value', []);
+
+handles.cancel = false;
+
+
 
 % Update handles structure
 guidata(hObject, handles);

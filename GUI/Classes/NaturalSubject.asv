@@ -351,9 +351,7 @@ classdef NaturalSubject < Subject
             eye = subject.getSelectedEye();
             
             if ~isempty(eye)
-                toSessionPath = makePath(toSessionPath, subject.dirName);
-                
-                eye = eye.editSelectedSessionMetadata(projectPath, toSessionPath, userName, updateBackupFiles);
+                eye = eye.editSelectedSessionMetadata(projectPath, userName, updateBackupFiles);
             
                 subject = subject.updateEye(eye);
             end

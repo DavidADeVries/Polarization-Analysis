@@ -1,0 +1,11 @@
+function [] = editSessionMetadata(hObject, eventdata, handles)
+% editSessionMetadata callback
+
+project = handles.localProject;
+
+userName = 
+
+project = project.editSelectedSessionMetadata(handles
+
+end
+

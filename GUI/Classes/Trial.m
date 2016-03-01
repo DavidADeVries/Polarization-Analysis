@@ -365,6 +365,18 @@ classdef Trial
             end            
         end
         
+        function trial = editSelectedSessionMetadata(trial, projectPath, userName, updateBackupFiles)
+            subject = trial.getSelectedSubject();
+            
+            if ~isempty(trial)
+                toSessionPath = trial.dirName;
+                
+                subject = subject.editSelectedSessionMetadata(projectPath, toSessionPath, userName, updateBackupFiles);
+            
+                trial = trial.updateSubject(subject);
+            end
+        end
+        
     end
     
 end

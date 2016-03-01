@@ -34,6 +34,31 @@ classdef LegacyRegistrationSession < DataProcessingSession
             end              
         end
         
+        
+        function session = editSessionMetadata(session, projectPath, toSessionPath, userName, updateBackupFiles, sessionChoices, sessionNumbers)
+            [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy, selectedChoices] = LegacyRegistrationSessionMetadataEntry(importPath, userName, sessionChoices, session);
+            
+            if ~cancel
+                %Assigning values to Legacy Registration Session Properties
+                session.registrationType = registrationType;
+                session.registrationParams = registrationParams;
+                session.sessionDate = sessionDate;
+                session.sessionDoneBy = sessionDoneBy;
+                session.notes = notes;
+                session.rejected = rejected;
+                session.rejectedReason = rejectedReason;
+                session.rejectedBy = rejectedBy;
+                                
+                session.linkedSessionNumbers = getSelectedSessionNumbers(sessionNumbers, selectedChoices);
+                
+                entry = MetadataHistoryEntry(userName);                
+                session.metadataHistory = [session.metadataHistory, entry];
+                
+                session.saveMetadata(toSessionPath, projectPath, updateBackupFiles);
+            end
+        end
+        
+        
         function [cancel, session] = enterMetadata(session, importPath, userName, sessionChoices, sessionNumbers)
             
             %Call to Legacy Registration Session Metadata Entry GUI

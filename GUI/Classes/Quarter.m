@@ -353,6 +353,18 @@ classdef Quarter
             end
         end
         
+        function quarter = editSelectedSessionMetadata(quarter, projectPath, toSessionPath, userName, updateBackupFiles)
+            location = quarter.getSelectedLocation();
+            
+            if ~isempty(location)
+                toSessionPath = makePath(toSessionPath, quarter.dirName);
+                
+                location = location.editSelectedSessionMetadata(projectPath, toSessionPath, userName, updateBackupFiles);
+            
+                quarter = quarter.updateLocation(location);
+            end
+        end
+        
     end
     
 end
