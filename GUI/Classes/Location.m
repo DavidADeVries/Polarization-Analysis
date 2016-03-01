@@ -476,11 +476,11 @@ classdef Location
         end
         
                 
-        function location = editSelectedSessionMetadata(location, projectPath, toSessionPath, userName, updateBackupFiles)
+        function location = editSelectedSessionMetadata(location, projectPath, toLocationPath, userName, updateBackupFiles)
             session = location.getSelectedSession();
             
             if ~isempty(session)
-                toSessionPath = makePath(toSessionPath, location.dirName);
+                toSessionPath = makePath(toLocationPath, session.dirName);
                 
                 noSessionType = []; %don't select a certian session type
                 sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessions

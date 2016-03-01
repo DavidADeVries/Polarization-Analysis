@@ -11,6 +11,8 @@ project = project.editSelectedSessionMetadata(projectPath, userName, updateBacku
 
 handles.localProject = project;
 
+handles = project.updateMetadataFields(handles);
+
 guidata(hObject, handles);
 
 end

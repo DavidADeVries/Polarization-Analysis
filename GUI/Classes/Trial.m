@@ -369,9 +369,9 @@ classdef Trial
             subject = trial.getSelectedSubject();
             
             if ~isempty(trial)
-                toSessionPath = trial.dirName;
+                toSubjectPath = makePath(trial.dirName, subject.dirName);
                 
-                subject = subject.editSelectedSessionMetadata(projectPath, toSessionPath, userName, updateBackupFiles);
+                subject = subject.editSelectedSessionMetadata(projectPath, toSubjectPath, userName, updateBackupFiles);
             
                 trial = trial.updateSubject(subject);
             end

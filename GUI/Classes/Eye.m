@@ -357,13 +357,13 @@ classdef Eye
             end
         end
         
-        function eye = editSelectedSessionMetadata(eye, projectPath, toSessionPath, userName, updateBackupFiles)
+        function eye = editSelectedSessionMetadata(eye, projectPath, toEyePath, userName, updateBackupFiles)
             quarter = eye.getSelectedQuarter();
             
             if ~isempty(quarter)
-                toSessionPath = makePath(toSessionPath, eye.dirName);
+                toQuarterPath = makePath(toEyePath, quarter.dirName);
                 
-                quarter = quarter.editSelectedSessionMetadata(projectPath, toSessionPath, userName, updateBackupFiles);
+                quarter = quarter.editSelectedSessionMetadata(projectPath, toQuarterPath, userName, updateBackupFiles);
             
                 eye = eye.updateQuarter(quarter);
             end

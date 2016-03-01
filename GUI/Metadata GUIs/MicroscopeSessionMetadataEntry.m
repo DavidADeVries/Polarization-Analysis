@@ -103,6 +103,9 @@ if length(varargin) > 2
         set(handles.reasonForRejectionInput, 'enable', 'off');
         set(handles.rejectedByInput, 'enable', 'off');
     end
+    
+    set(handles.reasonForRejectionInput, 'String', handles.rejectedReason);
+    set(handles.rejectedByInput, 'String', handles.rejectedBy);
         
     set(handles.OK, 'enable', 'on');
     

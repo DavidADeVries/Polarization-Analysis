@@ -347,13 +347,13 @@ classdef NaturalSubject < Subject
             end
         end
         
-        function subject = editSelectedSessionMetadata(subject, projectPath, toSessionPath, userName, updateBackupFiles)
+        function subject = editSelectedSessionMetadata(subject, projectPath, toSubjectPath, userName, updateBackupFiles)
             eye = subject.getSelectedEye();
             
             if ~isempty(eye)
-                toSessionPath = makePath(toSessionPath, subject.dirName);
+                toEyePath = makePath(toSubjectPath, eye.dirName);
                 
-                eye = eye.editSelectedSessionMetadata(projectPath, toSessionPath, userName, updateBackupFiles);
+                eye = eye.editSelectedSessionMetadata(projectPath, toEyePath, userName, updateBackupFiles);
             
                 subject = subject.updateEye(eye);
             end
