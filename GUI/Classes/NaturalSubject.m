@@ -256,7 +256,7 @@ classdef NaturalSubject < Subject
         end
         
         function subject = updateEyeIndex(subject, index)            
-            subject = subject.eyeIndex(index);
+            subject.eyeIndex = index;
         end
         
         function subject = updateQuarterSampleIndex(subject, index)
