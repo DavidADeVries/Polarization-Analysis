@@ -69,6 +69,8 @@ classdef Location
                 location.dirName = newDirName;
                 location.naviListboxLabel = location.generateListboxLabel();
                 
+                location = location.updateFileSelectionEntries(makePath(projectPath, toQuarterSamplePath)); %incase files renamed
+                
                 location.saveMetadata(makePath(toQuarterSamplePath, location.dirName), projectPath, updateBackupFiles);
             end
             
@@ -89,6 +91,17 @@ classdef Location
         
         function section = generateFilenameSection(location)
             section = createFilenameSection(LocationNamingConventions.DATA_FILENAME_LABEL, num2str(location.locationNumber));
+        end
+        
+        
+        function location = updateFileSelectionEntries(location, toPath)
+            sessions = location.sessions;
+            
+            toPath = makePath(toPath, location.dirName);
+            
+            for i=1:length(sessions)
+                location.sessions{i} = sessions{i}.updateFileSelectionEntries(toPath);
+            end
         end
         
         

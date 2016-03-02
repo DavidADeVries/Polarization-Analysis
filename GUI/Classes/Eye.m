@@ -71,6 +71,8 @@ classdef Eye
                 eye.dirName = newDirName;
                 eye.naviListboxLabel = eye.generateListboxLabel();
                 
+                eye = eye.updateFileSelectionEntries(makePath(projectPath, toSubjectPath)); %incase files renamed
+                
                 eye.saveMetadata(makePath(toSubjectPath, eye.dirName), projectPath, updateBackupFiles);
             end
         end
@@ -92,6 +94,17 @@ classdef Eye
         
         function section = generateFilenameSection(eye)
             section = createFilenameSection(EyeNamingConventions.DATA_FILENAME_LABEL, num2str(eye.eyeNumber));
+        end
+        
+        
+        function eye = updateFileSelectionEntries(eye, toPath)
+            quarters = eye.quarters;
+            
+            toPath = makePath(toPath, eye.dirName);
+            
+            for i=1:length(quarters)
+                eye.quarters{i} = quarters{i}.updateFileSelectionEntries(toPath);
+            end
         end
         
         

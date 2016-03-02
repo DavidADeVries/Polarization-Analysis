@@ -67,6 +67,8 @@ classdef LegacyRegistrationSession < DataProcessingSession
                 session.dirName = newDirName;
                 session.naviListboxLabel = session.generateListboxLabel();
                 
+                session = session.updateFileSelectionEntries(makePath(projectPath, toLocationPath)); %incase files renamed
+                
                 session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, updateBackupFiles);
             end
         end

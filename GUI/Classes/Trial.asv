@@ -62,13 +62,11 @@ classdef Trial
         end
         
         
-        function trial = updateFileSelectionEntries(trial, toPath)
-            subjects = trial.subjects;
+        function trial = updateFileSelectionEntries(trial)
+            eyes = trial.eyes;
             
-            toPath = makePath(toPath, trial.dirName);
-            
-            for i=1:length(subjects)
-                trial.subjects{i} = subjects{i}.updateFileSelectionEntries(toPath);
+            for i=1:length(eyes)
+                trial.eyes{i} = eyes{i}.update
             end
         end
                 
@@ -101,7 +99,7 @@ classdef Trial
                 trial.dirName = newDirName;
                 trial.naviListboxLabel = trial.generateListboxLabel();
                 
-                trial = trial.updateFileSelectionEntries(projectPath); %incase files renamed
+                trial = trial.updateFileSelectionEntries(); %incase files renamed
                 
                 trial.saveMetadata(trial.dirName, projectPath, updateBackupFiles);
             end

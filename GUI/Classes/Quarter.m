@@ -76,6 +76,8 @@ classdef Quarter
                 quarter.dirName = newDirName;
                 quarter.naviListboxLabel = quarter.generateListboxLabel();
                 
+                quarter = quarter.updateFileSelectionEntries(makePath(projectPath, toEyePath)); %incase files renamed
+                
                 quarter.saveMetadata(makePath(toEyePath, quarter.dirName), projectPath, updateBackupFiles);
             end
             
@@ -98,6 +100,17 @@ classdef Quarter
         
         function section = generateFilenameSection(quarter)
             section = createFilenameSection(QuarterNamingConventions.DATA_FILENAME_LABEL, num2str(quarter.quarterNumber));
+        end
+        
+        
+        function quarter = updateFileSelectionEntries(quarter, toPath)
+            locations = quarter.locations;
+            
+            toPath = makePath(toPath, quarter.dirName);
+            
+            for i=1:length(locations)
+                quarter.locations{i} = locations{i}.updateFileSelectionEntries(toPath);
+            end
         end
         
         

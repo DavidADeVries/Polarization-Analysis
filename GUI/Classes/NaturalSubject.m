@@ -68,9 +68,23 @@ classdef NaturalSubject < Subject
                 subject.dirName = newDirName;
                 subject.naviListboxLabel = subject.generateListboxLabel();
                 
+                subject = subject.updateFileSelectionEntries(makePath(projectPath, toTrialPath)); %incase files renamed
+                
                 subject.saveMetadata(makePath(toTrialPath, subject.dirName), projectPath, updateBackupFiles);
             end
         end
+        
+        
+        function subject = updateFileSelectionEntries(subject, toPath)
+            eyes = subject.eyes;
+            
+            toPath = makePath(toPath, subject.dirName);
+            
+            for i=1:length(eyes)
+                subject.eyes{i} = eyes{i}.updateFileSelectionEntries(toPath);
+            end
+        end
+        
         
         function subject = loadSubject(subject, toSubjectPath, subjectDir)
             subjectPath = makePath(toSubjectPath, subjectDir);

@@ -80,7 +80,9 @@ classdef Session
         
         
         function session = updateFileSelectionEntries(session, toPath)
-            session.fileSelectionEntries = generateFileSelectionEntries({}, toPath, session.dirName, 0);
+            toSessionPath = makePath(toPath, session.dirName);
+            
+            session = session.createFileSelectionEntries(toSessionPath);
         end
         
         
