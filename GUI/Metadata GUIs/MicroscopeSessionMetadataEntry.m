@@ -55,39 +55,90 @@ function MicroscopeSessionMetadataEntry_OpeningFcn(hObject, eventdata, handles, 
 % Choose default command line output for MicroscopeSessionMetadataEntry
 handles.output = hObject;
 
-% *****************************
-% INPUT: (userName, importPath)
-% *****************************
+% **************************************
+% INPUT: (userName, importPath, session*)
+%        *may be empty
+% **************************************
 
 handles.userName = varargin{1}; %Param is userName
 handles.importPath = varargin{2}; % Param is importPath
 
-%Defining the different input variables, awaiting user input
-handles.magnification = MicroscopeNamingConventions.DEFAULT_METADATA_GUI_MAGNIFICATION;
-handles.pixelSizeMicrons = MicroscopeNamingConventions.DEFAULT_METADATA_GUI_PIXEL_SIZE_MICRONS;
-handles.instrument = MicroscopeNamingConventions.DEFAULT_METADATA_GUI_INSTRUMENT;
-handles.fluoroSignature = 0;
-handles.crossedSignature = 0;
-handles.visualSignature = 0;
-handles.sessionDate = '';
-handles.sessionDoneBy = handles.userName;
-handles.sessionNotes = '';
-handles.rejected = 0;
-handles.rejectedReason = '';
-handles.rejectedBy = '';
+if length(varargin) > 2
+    session = varargin{3}; %may be empty
+
+    handles.magnification = session.magnification;
+    handles.pixelSizeMicrons = session.pixelSizeMicrons;
+    handles.instrument = session.instrument;
+    handles.fluoroSignature = session.fluoroSignature;
+    handles.crossedSignature = session.crossedSignature;
+    handles.visualSignature = session.visualSignature;
+    handles.sessionDate = session.sessionDate;
+    handles.sessionDoneBy = session.sessionDoneBy;
+    handles.sessionNotes = session.notes;
+    handles.rejected = session.rejected;
+    handles.rejectedReason = session.rejectedReason;
+    handles.rejectedBy = session.rejectedBy;
+    
+    set(handles.importPathTitle, 'String', 'None');
+    
+    set(handles.magnificationInput, 'String', num2str(handles.magnification));
+    set(handles.pixelSizeInput, 'String', num2str(handles.pixelSizeMicrons));
+    set(handles.instrumentInput, 'String', handles.instrument);
+    
+    set(handles.fluoroBox, 'Value', handles.fluoroSignature);
+    set(handles.crossedBox, 'Value', handles.crossedSignature);
+    set(handles.visualBox, 'Value', handles.visualSignature);
+    
+    set(handles.sessionDateDisplay, 'String', displayDate(handles.sessionDate));
+    set(handles.sessionDoneByInput, 'String', handles.sessionDoneBy);
+    set(handles.sessionNotesInput, 'String', handles.sessionNotes);
+    
+    if handles.rejected %is rejected
+        set(handles.yesRejectedButton, 'Value', 1);
+        set(handles.noRejectedButton, 'Value', 0);
+    else        
+        set(handles.yesRejectedButton, 'Value', 0);
+        set(handles.noRejectedButton, 'Value', 1);
+        
+        set(handles.reasonForRejectionInput, 'enable', 'off');
+        set(handles.rejectedByInput, 'enable', 'off');
+    end
+    
+    set(handles.reasonForRejectionInput, 'String', handles.rejectedReason);
+    set(handles.rejectedByInput, 'String', handles.rejectedBy);
+        
+    set(handles.OK, 'enable', 'on');
+    
+else
+    %Defining the different input variables, awaiting user input
+    handles.magnification = MicroscopeNamingConventions.DEFAULT_METADATA_GUI_MAGNIFICATION;
+    handles.pixelSizeMicrons = MicroscopeNamingConventions.DEFAULT_METADATA_GUI_PIXEL_SIZE_MICRONS;
+    handles.instrument = MicroscopeNamingConventions.DEFAULT_METADATA_GUI_INSTRUMENT;
+    handles.fluoroSignature = 0;
+    handles.crossedSignature = 0;
+    handles.visualSignature = 0;
+    handles.sessionDate = '';
+    handles.sessionDoneBy = handles.userName;
+    handles.sessionNotes = '';
+    handles.rejected = 0;
+    handles.rejectedReason = '';
+    handles.rejectedBy = '';
+    
+    set(handles.importPathTitle, 'String', handles.importPath);
+    set(handles.sessionDoneByInput, 'String', handles.userName);
+    set(handles.magnificationInput, 'String', num2str(MicroscopeNamingConventions.DEFAULT_METADATA_GUI_MAGNIFICATION));
+    set(handles.pixelSizeInput, 'String', num2str(MicroscopeNamingConventions.DEFAULT_METADATA_GUI_PIXEL_SIZE_MICRONS));
+    set(handles.instrumentInput, 'String', MicroscopeNamingConventions.DEFAULT_METADATA_GUI_INSTRUMENT);
+    set(handles.yesRejectedButton, 'Value', 0);
+    set(handles.noRejectedButton, 'Value', 1);
+    set(handles.OK, 'enable', 'off');
+    set(handles.reasonForRejectionInput, 'enable', 'off');
+    set(handles.rejectedByInput, 'enable', 'off');
+end
 
 handles.cancel = false;
 
-set(handles.importPathTitle, 'String', handles.importPath);
-set(handles.sessionDoneByInput, 'String', handles.userName);
-set(handles.magnificationInput, 'String', num2str(MicroscopeNamingConventions.DEFAULT_METADATA_GUI_MAGNIFICATION));
-set(handles.pixelSizeInput, 'String', num2str(MicroscopeNamingConventions.DEFAULT_METADATA_GUI_PIXEL_SIZE_MICRONS));
-set(handles.instrumentInput, 'String', MicroscopeNamingConventions.DEFAULT_METADATA_GUI_INSTRUMENT);
-set(handles.yesRejectedButton, 'Value', 0);
-set(handles.noRejectedButton, 'Value', 1);
-set(handles.OK, 'enable', 'off');
-set(handles.reasonForRejectionInput, 'enable', 'off');
-set(handles.rejectedByInput, 'enable', 'off');
+
 
 % Update handles structure
 guidata(hObject, handles);

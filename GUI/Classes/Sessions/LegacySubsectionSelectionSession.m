@@ -36,6 +36,29 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
         end
         
         
+        function session = editMetadata(session, projectPath, toLocationPath, userName, updateBackupFiles, sessionChoices, sessionNumbers)
+            [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy, selectedChoices] = LegacySubsectionSelectionSessionMetadataEntry('', userName, sessionChoices, session, sessionNumbers);
+            
+            if ~cancel
+                %Assigning values to Legacy Registration Session Properties
+                session.croppingType = croppingType;
+                session.coords = coords;
+                session.sessionDate = sessionDate;
+                session.sessionDoneBy = sessionDoneBy;
+                session.notes = notes;
+                session.rejected = rejected;
+                session.rejectedReason = rejectedReason;
+                session.rejectedBy = rejectedBy;
+                                
+                session.linkedSessionNumbers = getSelectedSessionNumbers(sessionNumbers, selectedChoices);
+                
+                session = session.updateMetadataHistory(userName);
+                
+                session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, updateBackupFiles);
+            end
+        end
+        
+        
         function [cancel, session] = enterMetadata(session, importPath, userName, sessionChoices, sessionNumbers)
             
             %Call to Legacy Subsection Selection Session Metadata Entry GUI

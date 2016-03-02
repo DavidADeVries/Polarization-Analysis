@@ -29,7 +29,7 @@ classdef Trial
                 trial.metadataHistory = {MetadataHistoryEntry(userName)};
                 
                 % set navigation listbox label
-                trial.naviListboxLabel = createNavigationListboxLabel(TrialNamingConventions.NAVI_LISTBOX_PREFIX, trial.trialNumber, trial.title);
+                trial.naviListboxLabel = trial.generateListboxLabel();
                 
                 % make directory/metadata file
                 toTrialPath = ''; %starts at project path
@@ -41,6 +41,43 @@ classdef Trial
             else
                 trial = Trial.empty;
             end            
+            
+        end
+        
+        function dirName = generateDirName(trial)            
+            dirSubtitle = trial.title;
+            
+            dirName = createDirName(TrialNamingConventions.DIR_PREFIX, trial.trialNumber, dirSubtitle, TrialNamingConventions.DIR_NUM_DIGITS);
+        end
+        
+        function label = generateListboxLabel(trial)
+            label = createNavigationListboxLabel(TrialNamingConventions.NAVI_LISTBOX_PREFIX, trial.trialNumber, trial.title);
+        end
+                
+        function trial = editMetadata(trial, projectPath, userName, existingTrialNumbers)
+            [cancel, title, description, trialNumber, subjectType, trialNotes] = TrialMetadataEntry([], existingTrialNumbers, '', trial);
+            
+            if ~cancel
+                trial.title = title;
+                trial.description = description;
+                trial.trialNumber = trialNumber;
+                trial.subjectType = subjectType;
+                trial.notes = trialNotes;
+                
+                trial = trial.updateMetadataHistory(userName);
+                
+                updateBackupFiles = updateBackupFilesQuestionGui();
+                
+                newDirName = trial.generateDirName();
+                oldDirName = trial.dirName;
+                
+                renameDirectory('', projectPath, oldDirName, newDirName, updateBackupFile);
+                
+                trial.dirName = newDirName;
+                trial.naviListboxLabel = trial.generateListboxLabel();
+                
+                trial.saveMetadata(trial.dirName, projectPath, updateBackupFiles);
+            end
             
         end
         
@@ -57,9 +94,7 @@ classdef Trial
         end
         
         function trial = createDirectories(trial, toProjectPath, projectPath)
-            dirSubtitle = trial.title;
-            
-            trialDirectory = createDirName(TrialNamingConventions.DIR_PREFIX, trial.trialNumber, dirSubtitle, TrialNamingConventions.DIR_NUM_DIGITS);
+            trialDirectory = trial.generateDirName();
             
             createObjectDirectories(projectPath, toProjectPath, trialDirectory);
                         
@@ -185,6 +220,10 @@ classdef Trial
                     trial.subjectIndex = 1;
                 end
             end            
+        end
+        
+        function trial = updateSelectedSubject(trial, subject)
+            trial.subjects{trial.subjectIndex} = subject;
         end
         
         function subjectIds = getSubjectIds(trial)
@@ -363,6 +402,68 @@ classdef Trial
                     trial = trial.updateSubject(subject);
                 end
             end            
+        end
+        
+        function trial = editSelectedSubjectMetadata(trial, projectPath, userName)
+            subject = trial.getSelectedSubject();
+            
+            if ~isempty(trial)
+                toTrialPath = trial.dirName;
+                
+                existingSubjectNumbers = trial.getSubjectNumbers();
+                
+                subject = subject.editMetadata(projectPath, toTrialPath, userName, existingSubjectNumbers);
+            
+                trial = trial.updateSelectedSubject(subject);
+            end
+        end
+        
+        function trial = editSelectedEyeMetadata(trial, projectPath, userName)
+            subject = trial.getSelectedSubject();
+            
+            if ~isempty(trial)
+                toSubjectPath = makePath(trial.dirName, subject.dirName);
+                
+                subject = subject.editSelectedEyeMetadata(projectPath, toSubjectPath, userName);
+            
+                trial = trial.updateSelectedSubject(subject);
+            end
+        end
+        
+        function trial = editSelectedQuarterMetadata(trial, projectPath, userName)
+            subject = trial.getSelectedSubject();
+            
+            if ~isempty(trial)
+                toSubjectPath = makePath(trial.dirName, subject.dirName);
+                
+                subject = subject.editSelectedQuarterMetadata(projectPath, toSubjectPath, userName);
+            
+                trial = trial.updateSelectedSubject(subject);
+            end
+        end
+        
+        function trial = editSelectedLocationMetadata(trial, projectPath, userName)
+            subject = trial.getSelectedSubject();
+            
+            if ~isempty(trial)
+                toSubjectPath = makePath(trial.dirName, subject.dirName);
+                
+                subject = subject.editSelectedLocationMetadata(projectPath, toSubjectPath, userName);
+            
+                trial = trial.updateSelectedSubject(subject);
+            end
+        end
+        
+        function trial = editSelectedSessionMetadata(trial, projectPath, userName)
+            subject = trial.getSelectedSubject();
+            
+            if ~isempty(trial)
+                toSubjectPath = makePath(trial.dirName, subject.dirName);
+                
+                subject = subject.editSelectedSessionMetadata(projectPath, toSubjectPath, userName);
+            
+                trial = trial.updateSelectedSubject(subject);
+            end
         end
         
     end

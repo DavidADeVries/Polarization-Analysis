@@ -22,7 +22,7 @@ function varargout = ProjectMetadataEntry(varargin)
 
 % Edit the above text to modify the response to help ProjectMetadataEntry
 
-% Last Modified by GUIDE v2.5 17-Feb-2016 10:36:22
+% Last Modified by GUIDE v2.5 01-Mar-2016 13:31:18
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -52,15 +52,33 @@ function ProjectMetadataEntry_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to ProjectMetadataEntry (see VARARGIN)
 
-% Choose default command line output for ProjectMetadataEntry
-handles.output = hObject;
+%********************
+%INPUT: (project*)
+%       *may be empty
+%********************
 
-handles.projectTitle = '';
-handles.projectDescription = '';
-handles.projectNotes = '';
+if length(varargin) > 0
+    project = varargin{1};
+    
+    handles.projectTitle = project.title;
+    handles.projectDescription = project.description;
+    handles.projectNotes = project.notes;
+    
+    set(handles.projectTitleInput, 'String', handles.projectTitle);
+    set(handles.projectDescriptionInput, 'String', handles.projectDescription);
+    set(handles.projectNotesInput, 'String', handles.projectNotes);
+    
+    set(handles.OK, 'enable', 'on');
+else
+    handles.projectTitle = '';
+    handles.projectDescription = '';
+    handles.projectNotesInput = '';
+    
+    set(handles.OK, 'enable', 'off');
+end
+
 handles.cancel = false;
 
-set(handles.OK, 'enable', 'off');
 
 % Update handles structure
 guidata(hObject, handles);
@@ -154,16 +172,16 @@ enableLineScrolling(hObject);
 end
 
 
-function projectNotes_Callback(hObject, eventdata, handles)
-% hObject    handle to projectNotes (see GCBO)
+function projectNotesInput_Callback(hObject, eventdata, handles)
+% hObject    handle to projectNotesInput (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of projectNotes as text
-%        str2double(get(hObject,'String')) returns contents of projectNotes as a double
+% Hints: get(hObject,'String') returns contents of projectNotesInput as text
+%        str2double(get(hObject,'String')) returns contents of projectNotesInput as a double
 
 %Get value from input box
-handles.projectNotes = strjoin(rot90(cellstr(get(hObject, 'String'))));
+handles.projectNotes = get(hObject, 'String');
 
 checkToEnableOkButton(handles);
 
@@ -172,8 +190,8 @@ guidata(hObject, handles);
 end
 
 % --- Executes during object creation, after setting all properties.
-function projectNotes_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to projectNotes (see GCBO)
+function projectNotesInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to projectNotesInput (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

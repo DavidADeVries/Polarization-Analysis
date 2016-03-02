@@ -52,8 +52,10 @@ function TrialMetadataEntry_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to TrialMetadataEntry (see VARARGIN)
 
-% Choose default command line output for TrialMetadataEntry
-handles.output = hObject;
+% **********************************************************************
+%INPUT: (suggestedTrialNumber, existingTrialNumbers, importPath, trial*)
+%       *may be empty
+% **********************************************************************
 
 if isa(varargin{1},'numeric');
     handles.suggestedTrialNumber = num2str(varargin{1}); %Parameter name is 'suggestedTrialNumber' from Quarter class function
@@ -64,9 +66,6 @@ end
 handles.existingTrialNumbers = varargin{2}; % the existing trial numbers
 handles.importPath = varargin{3}; %Parameter name is 'importPath'
 
-set(handles.importPathDisplay, 'String', handles.importPath);
-set(handles.trialNumberInput, 'String', handles.suggestedTrialNumber);
-
 %Get choice strings from EyeTypes class
 [~, choiceStrings] = choicesFromEnum('SubjectTypes');
 
@@ -75,22 +74,53 @@ handles.choiceListDefault = 'Select a Subject Type';
 
 %Setting the list values for the Eye Type pop up menu
 choiceList = {handles.choiceListDefault};
+
 for i = 1:size(choiceStrings)
     choiceList{i+1} = choiceStrings{i};
 end
+
 set(handles.subjectTypesMenu, 'String', choiceList);
+
+
+if length(varargin) > 3
+    handles.title = trial.title;
+    handles.description = trial.description;
+    handles.trialNumber = trial.trialNumber;
+    handles.subjectType = trial.subjectType;
+    handles.trialNotes = trial.notes;
+    
+    set(handles.importPathDisplay, 'String', 'None'); 
+    set(handles.titleInput, 'String', handles.title);
+    set(handles.descriptionInput, 'String', handles.description);
+    set(handles.trialNotesInput, 'String', handles.trialNotes);
+    set(handles.trialNumberInput, 'String', num2str(handles.trialNumber));
+    
+    matchString = handles.subjectType.displayString;
+    
+    for i=1:length(choiceStrings)
+        if strcmp(matchString, choiceStrings{i})
+            set(handles.subjectTypesMenu, 'Value', i+1);
+            break;
+        end
+    end
+    
+    set(handles.OK, 'enable', 'on');
+else
+    handles.title = '';
+    handles.description = '';
+    handles.trialNumber = str2double(handles.suggestedTrialNumber);
+    handles.subjectType = [];
+    handles.trialNotes = '';
+    
+    set(handles.importPathDisplay, 'String', handles.importPath);
+    set(handles.trialNumberInput, 'String', handles.suggestedTrialNumber);
+    
+    set(handles.OK, 'enable', 'off');
+end
 
 
 %Define default variables
 handles.cancel = false;
-
-handles.title = '';
-handles.description = '';
-handles.trialNumber = str2double(handles.suggestedTrialNumber);
-handles.subjectType = [];
-handles.trialNotes = '';
-
-set(handles.OK, 'enable', 'off');
 
 % Update handles structure
 guidata(hObject, handles);

@@ -29,9 +29,8 @@ classdef Eye
                 % set metadata history
                 eye.metadataHistory = {MetadataHistoryEntry(userName)};
                 
-                % set navigation listbox label                
-                subtitle = eye.eyeType.displayString;
-                eye.naviListboxLabel = createNavigationListboxLabel(EyeNamingConventions.NAVI_LISTBOX_PREFIX, eye.eyeNumber, subtitle);
+                % set navigation listbox label        
+                eye.naviListboxLabel = eye.generateListboxLabel();
                 
                 % make directory/metadata file
                 eye = eye.createDirectories(toSubjectPath, projectPath);
@@ -42,6 +41,46 @@ classdef Eye
             else
                 eye = Eye.empty;
             end              
+        end
+        
+        function eye = editMetadata(eye, projectPath, toSubjectPath, userName, existingEyeNumbers)
+            [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(eye, suggestedEyeNumber, existingEyeNumbers, userName, importPath);
+            
+            if ~cancel
+                %Assigning values to Eye Properties
+                eye.eyeId = eyeId;
+                eye.eyeType = eyeType;
+                eye.eyeNumber = eyeNumber;
+                eye.dissectionDate = dissectionDate;
+                eye.dissectionDoneBy = dissectionDoneBy;
+                eye.notes = notes;
+                
+                eye = eye.updateMetadataHistory(userName);
+                
+                updateBackupFiles = updateBackupFilesQuestionGui();
+                
+                newDirName = eye.generateDirName();
+                oldDirName = eye.dirName;
+                
+                renameDirectory(toSubjectPath, projectPath, oldDirName, newDirName, updateBackupFile);
+                
+                eye.dirName = newDirName;
+                eye.naviListboxLabel = eye.generateListboxLabel();
+                
+                eye.saveMetadata(makePath(toSubjectPath, eye.dirName), projectPath, updateBackupFiles);
+            end
+        end
+        
+        function dirName = generateDirName(eye)            
+            dirSubtitle = eye.eyeType.displayString;
+            
+            dirName = createDirName(EyeNamingConventions.DIR_PREFIX, eye.eyeNumber, dirSubtitle, EyeNamingConventions.DIR_NUM_DIGITS);
+        end
+        
+        function label = generateListboxLabel(eye)                    
+            subtitle = eye.eyeType.displayString;
+            
+            label = createNavigationListboxLabel(EyeNamingConventions.NAVI_LISTBOX_PREFIX, eye.eyeNumber, subtitle);
         end
         
         function eye = loadEye(eye, toEyePath, eyeDir)
@@ -144,6 +183,10 @@ classdef Eye
             end            
         end
         
+        function eye = updateSelectedQuarter(eye, quarter)
+            eye.quarters{eye.quarterIndex} = quarter;
+        end
+        
         function quarter = getQuarterByNumber(eye, number)
             quarters = eye.quarters;
             
@@ -182,7 +225,7 @@ classdef Eye
         function [cancel, eye] = enterMetadata(eye, suggestedEyeNumber, existingEyeNumbers, importPath, userName)
             
             %Call to EyeMetadataEntry GUI
-            [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(eye, suggestedEyeNumber, existingEyeNumbers, userName, importPath);
+            [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(suggestedEyeNumber, existingEyeNumbers, userName, importPath);
             
             if ~cancel
                 %Assigning values to Eye Properties
@@ -196,9 +239,7 @@ classdef Eye
         end
         
         function eye = createDirectories(eye, toSubjectPath, projectPath)
-            dirSubtitle = eye.eyeType.displayString;
-            
-            eyeDirectory = createDirName(EyeNamingConventions.DIR_PREFIX, eye.eyeNumber, dirSubtitle, EyeNamingConventions.DIR_NUM_DIGITS);
+            eyeDirectory = eye.generateDirName();
             
             createObjectDirectories(projectPath, toSubjectPath, eyeDirectory);
                         
@@ -354,6 +395,40 @@ classdef Eye
                     
                     eye = eye.updateQuarter(quarter);
                 end
+            end
+        end
+        
+        function eye = editSelectedQuarterMetadata(eye, projectPath, toEyePath, userName)
+            quarter = eye.getSelectedQuarter();
+            
+            if ~isempty(eye)                
+                quarter = quarter.editMetadata(projectPath, toEyePath, userName);
+            
+                eye = eye.updateSelectedQuarter(quarter);
+            end
+        end
+        
+        function eye = editSelectedLocationMetadata(eye, projectPath, toEyePath, userName)
+            quarter = eye.getSelectedEye();
+            
+            if ~isempty(eye)
+                toQuarterPath = makePath(toEyePath, quarter.dirName);
+                
+                quarter = quarter.editSelectedLocationMetadata(projectPath, toQuarterPath, userName);
+            
+                eye = eye.updateSelectedQuarter(quarter);
+            end
+        end
+        
+        function eye = editSelectedSessionMetadata(eye, projectPath, toEyePath, userName)
+            quarter = eye.getSelectedEye();
+            
+            if ~isempty(eye)
+                toQuarterPath = makePath(toEyePath, quarter.dirName);
+                
+                quarter = quarter.editSelectedSessionMetadata(projectPath, toQuarterPath, userName);
+            
+                eye = eye.updateSelectedQuarter(quarter);
             end
         end
         

@@ -52,29 +52,16 @@ function NaturalSubjectMetadataEntry_OpeningFcn(hObject, eventdata, handles, var
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to NaturalSubjectMetadataEntry (see VARARGIN)
 
-% Choose default command line output for NaturalSubjectMetadataEntry
-handles.output = hObject;
-
-% input: (subjectNumber, existingSubjectNumbers, userName, importPath)
+%******************************************************************************
+%INPUT: (subjectNumber, existingSubjectNumbers, userName, importPath, subject*)
+%       *may be empty
+%******************************************************************************
 
 handles.subjectNumber = varargin{1};
 handles.existingSubjectNumbers = varargin{2};
 handles.userName = varargin{3};
 handles.importPath = varargin{4};
 
-%Display the import path name
-set(handles.importPathTitle, 'String', handles.importPath);
-set(handles.subjectNumberInput, 'String', handles.subjectNumber);
-
-%Defining the different input variables as empty, awaiting user input
-handles.age = [];
-handles.gender = [];
-handles.ADDiagnosis = [];
-handles.causeOfDeath = '';
-handles.subjectNotes = '';
-handles.medicalHistory = '';
-handles.subjectId = '';
-handles.cancelValue = false;
 
 [~, genderChoiceStrings] = choicesFromEnum('GenderTypes');
 [~, diagnosisChoiceStrings] = choicesFromEnum('DiagnosisTypes');
@@ -99,7 +86,67 @@ for i = 1:size(diagnosisChoiceStrings)
 end
 set(handles.diagnosisInput, 'String', diagnosisChoiceList);
 
-set(handles.OK, 'enable', 'off');
+
+if length(varargin) > 4
+    subject = varargin{5};
+    
+    handles.subjectNumber = subject.subjectNumber;
+    handles.importPath = 'None';
+    
+    handles.age = subject.age;
+    handles.gender = subject.gender;
+    handles.ADDiagnosis = subject.ADDiagnosis;
+    handles.causeOfDeath = subject.causeOfDeath;
+    handles.subjectNotes = subject.subjectNotes;
+    handles.medicalHistory = subject.medicalHistory;
+    handles.subjectId = subject.subjectId;
+    
+    set(handles.ageInput, 'String', num2str(handles.age));
+    set(handles.deathInput, 'String', handles.subjectNotes);
+    set(handles.subjectNumberInput, 'String', num2str(handles.subjectNumber));
+    set(handles.subjectIdInput, 'String', handles.subjectId);
+    set(handles.medicalHistoryInput, 'String', handles.medicalHistory);
+    set(handles.sbjNotesInput, 'String', handles.subjectNotes);
+    
+    genderMatchString = handles.gender.displayString;
+    
+    for i=1:length(genderChoiceStrings)
+        if strcmp(genderMatchString, genderChoiceStrings{i})
+            set(handles.genderInput, 'Value', i+1);
+            break;
+        end
+    end
+    
+    diagnosisMatchString = handles.gender.displayString;
+    
+    for i=1:length(diagnosisChoiceStrings)
+        if strcmp(diagnosisMatchString, diagnosisChoiceStrings{i})
+            set(handles.diagnosisInput, 'Value', i+1);
+            break;
+        end
+    end
+    
+    set(handles.OK, 'enable', 'on');
+else
+    %Defining the different input variables as empty, awaiting user input
+    handles.age = [];
+    handles.gender = [];
+    handles.ADDiagnosis = [];
+    handles.causeOfDeath = '';
+    handles.subjectNotes = '';
+    handles.medicalHistory = '';
+    handles.subjectId = '';
+    
+    set(handles.subjectNumberInput, 'String', handles.subjectNumber);
+    
+    set(handles.OK, 'enable', 'off');
+end
+
+
+%Display the import path name
+set(handles.importPathTitle, 'String', handles.importPath);
+
+handles.cancelValue = false;
 
 % Update handles structure
 guidata(hObject, handles);

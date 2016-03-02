@@ -24,7 +24,7 @@ classdef NaturalSubject < Subject
                 subject.metadataHistory = {MetadataHistoryEntry(userName)};
                 
                 % set navigation listbox label
-                subject.naviListboxLabel = createNavigationListboxLabel(SubjectNamingConventions.NAVI_LISTBOX_PREFIX, subject.subjectNumber, subject.subjectId);
+                subject.naviListboxLabel = subject.generateListboxLabel();
                 
                 % make directory/metadata file
                 subject = subject.createDirectories(toTrialPath, projectPath);
@@ -36,6 +36,36 @@ classdef NaturalSubject < Subject
                 subject = NaturalSubject.empty;
             end  
             
+        end
+        
+        function subject = editMetadata(subject, projectPath, toTrialPath, userName, existingSubjectNumbers)
+            [cancel, subjectNumber, subjectId, age, gender, ADDiagnosis, causeOfDeath, medicalHistory, notes] = NaturalSubjectMetadataEntry([], existingSubjectNumbers, userName, '', subject);
+            
+            if ~cancel
+                %Assigning values to NaturalSubject Properties
+                subject.subjectNumber = subjectNumber;
+                subject.subjectId = subjectId;
+                subject.age = age;
+                subject.gender = gender;
+                subject.ADDiagnosis = ADDiagnosis;
+                subject.causeOfDeath = causeOfDeath;
+                subject.medicalHistory = medicalHistory;
+                subject.notes = notes;
+                
+                subject = subject.updateMetadataHistory(userName);
+                
+                updateBackupFiles = updateBackupFilesQuestionGui();
+                
+                newDirName = subject.generateDirName();
+                oldDirName = subject.dirName;
+                
+                renameDirectory(toTrialPath, projectPath, oldDirName, newDirName, updateBackupFile);
+                
+                subject.dirName = newDirName;
+                subject.naviListboxLabel = subject.generateListboxLabel();
+                
+                subject.saveMetadata(makePath(toTrialPath, subject.dirName), projectPath, updateBackupFiles);
+            end
         end
         
         function subject = loadSubject(subject, toSubjectPath, subjectDir)
@@ -140,6 +170,10 @@ classdef NaturalSubject < Subject
                     subject.eyeIndex = 1;
                 end
             end            
+        end
+        
+        function subject = updateSelectedEye(subject, eye)
+            subject.eyes{subject.eyeIndex} = eye;
         end
         
         function eye = getEyeByNumber(subject, number)
@@ -256,7 +290,7 @@ classdef NaturalSubject < Subject
         end
         
         function subject = updateEyeIndex(subject, index)            
-            subject = subject.eyeIndex(index);
+            subject.eyeIndex = index;
         end
         
         function subject = updateQuarterSampleIndex(subject, index)
@@ -344,6 +378,55 @@ classdef NaturalSubject < Subject
                     
                     subject = subject.updateEye(eye);
                 end
+            end
+        end
+        
+        
+        function subject = editSelectedEyeMetadata(subject, projectPath, toSubjectPath, userName)
+            eye = subject.getSelectedEye();
+            
+            if ~isempty(eye)
+                existingEyeNumbers = subject.getEyeNumbers();
+                
+                eye = eye.editMetadata(projectPath, toSubjectPath, userName, existingEyeNumbers);
+            
+                subject = subject.updateSelectedEye(eye);
+            end
+        end
+        
+        function subject = editSelectedQuarterMetadata(subject, projectPath, toSubjectPath, userName)
+            eye = subject.getSelectedEye();
+            
+            if ~isempty(subject)
+                toEyePath = makePath(toSubjectPath, eye.dirName);
+                
+                eye = eye.editSelectedQuarterMetadata(projectPath, toEyePath, userName);
+            
+                subject = subject.updateSelectedEye(eye);
+            end
+        end
+        
+        function subject = editSelectedLocationMetadata(subject, projectPath, toSubjectPath, userName)
+            eye = subject.getSelectedEye();
+            
+            if ~isempty(subject)
+                toEyePath = makePath(toSubjectPath, eye.dirName);
+                
+                eye = eye.editSelectedLocationMetadata(projectPath, toEyePath, userName);
+            
+                subject = subject.updateSelectedEye(eye);
+            end
+        end
+        
+        function subject = editSelectedSessionMetadata(subject, projectPath, toSubjectPath, userName)
+            eye = subject.getSelectedEye();
+            
+            if ~isempty(subject)
+                toEyePath = makePath(toSubjectPath, eye.dirName);
+                
+                eye = eye.editSelectedSessionMetadata(projectPath, toEyePath, userName);
+            
+                subject = subject.updateSelectedEye(eye);
             end
         end
         
