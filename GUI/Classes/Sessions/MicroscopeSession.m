@@ -40,7 +40,7 @@ classdef MicroscopeSession < DataCollectionSession
             end              
         end
         
-        function session = editSessionMetadata(session, projectPath, toSessionPath, userName, updateBackupFiles, ~, ~) %last two params are sessionChoices, sessionNumbers
+        function session = editMetadata(session, projectPath, toLocationPath, userName, ~, ~) %last two params are sessionChoices, sessionNumbers
             [cancel, magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason, rejectedBy] = MicroscopeSessionMetadataEntry(userName, '', session);
             
             if ~cancel
@@ -56,11 +56,13 @@ classdef MicroscopeSession < DataCollectionSession
                 session.notes = notes;
                 session.rejected = rejected;
                 session.rejectedReason = rejectedReason;
-                session.rejectedBy = rejectedBy;                
+                session.rejectedBy = rejectedBy;
                 
                 session = session.updateMetadataHistory(userName);
                 
-                session.saveMetadata(toSessionPath, projectPath, updateBackupFiles);
+                updateBackupFiles = updateBackupFilesQuestionGui();
+                
+                session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, updateBackupFiles);
             end
         end
         

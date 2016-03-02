@@ -189,8 +189,8 @@ classdef Location
             end   
         end
         
-        function location = updateSelectedSession(location, session)
-            location.sessions{location.sessionIndex} = session;
+        function project = updateSelectedSessi(project, trial)
+            project.trials{project.trialIndex} = trial;
         end
         
         
@@ -480,18 +480,19 @@ classdef Location
         end
         
                 
-        function location = editSelectedSessionMetadata(location, projectPath, toLocationPath, userName)
+        function location = editSelectedSessionMetadata(location, projectPath, toLocationPath, userName, updateBackupFiles)
             session = location.getSelectedSession();
             
             if ~isempty(session)
+                toSessionPath = makePath(toLocationPath, session.dirName);
                 
                 noSessionType = []; %don't select a certian session type
                 sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessions
                 sessionNumbers = location.getSessionNumbers();
                 
-                session = session.editMetadata(projectPath, toLocationPath, userName, updateBackupFiles, sessionChoices, sessionNumbers);
+                session = session.editSessionMetadata(projectPath, toSessionPath, userName, updateBackupFiles, sessionChoices, sessionNumbers);
             
-                location = location.updateSelectedSession(session);
+                location = location.updateSession(session);
             end
         end
         

@@ -35,7 +35,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
         end
         
         
-        function session = editSessionMetadata(session, projectPath, toSessionPath, userName, updateBackupFiles, sessionChoices, sessionNumbers)
+        function session = editMetadata(session, projectPath, toLocationPath, userName, updateBackupFiles, sessionChoices, sessionNumbers)
             [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy, selectedChoices] = LegacyRegistrationSessionMetadataEntry('', userName, sessionChoices, session, sessionNumbers);
             
             if ~cancel
@@ -53,7 +53,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
                 
                 session = session.updateMetadataHistory(userName);
                 
-                session.saveMetadata(toSessionPath, projectPath, updateBackupFiles);
+                session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, updateBackupFiles);
             end
         end
         

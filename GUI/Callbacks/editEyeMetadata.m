@@ -1,12 +1,12 @@
-function [] = editSessionMetadata(hObject, eventdata, handles)
-% editSessionMetadata callback
+function [] = editEyeMetadata(hObject, eventdata, handles)
+% editEyeMetadata callback
 
 project = handles.localProject;
 
 userName = handles.userName;
 projectPath = handles.localPath;
 
-project = project.editSelectedSessionMetadata(projectPath, userName);
+project = project.editSelectedEyeMetadata(projectPath, userName);
 
 handles.localProject = project;
 

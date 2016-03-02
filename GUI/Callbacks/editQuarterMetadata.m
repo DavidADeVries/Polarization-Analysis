@@ -1,12 +1,12 @@
-function [] = editSessionMetadata(hObject, eventdata, handles)
-% editSessionMetadata callback
+function [] = editQuarterMetadata(hObject, eventdata, handles)
+% editQuarterMetadata callback
 
 project = handles.localProject;
 
 userName = handles.userName;
 projectPath = handles.localPath;
 
-project = project.editSelectedSessionMetadata(projectPath, userName);
+project = project.editSelectedQuarterMetadata(projectPath, userName);
 
 handles.localProject = project;
 

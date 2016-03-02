@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 29-Feb-2016 15:03:37
+% Last Modified by GUIDE v2.5 01-Mar-2016 13:12:33
 
 % Begin initialization code - DO NOT EDIT
 
@@ -586,3 +586,19 @@ function editProjectMetadata_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 editProjectMetadata(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function quarterMenu_Callback(hObject, eventdata, handles)
+% hObject    handle to quarterMenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function editQuarterMetadata_Callback(hObject, eventdata, handles)
+% hObject    handle to editQuarterMetadata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+editQuarterMetadata(hObject, eventdata, handles);
