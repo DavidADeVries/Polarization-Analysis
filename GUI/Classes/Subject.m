@@ -16,9 +16,16 @@ classdef Subject
     
     methods
         
+        function dirName = generateDirName(subject)
+            dirName = createDirName(SubjectNamingConventions.DIR_PREFIX, subject.subjectNumber, subject.subjectId, SubjectNamingConventions.DIR_NUM_DIGITS);
+        end
+        
+        function label = generateListboxLabel(subject)
+            label = createNavigationListboxLabel(SubjectNamingConventions.NAVI_LISTBOX_PREFIX, subject.subjectNumber, subject.subjectId);            
+        end
         
         function subject = createDirectories(subject, toTrialPath, projectPath)
-            subjectDirectory = createDirName(SubjectNamingConventions.DIR_PREFIX, subject.subjectNumber, subject.subjectId, SubjectNamingConventions.DIR_NUM_DIGITS);
+            subjectDirectory = subject.generateDirName();
             
             createObjectDirectories(projectPath, toTrialPath, subjectDirectory);
                         

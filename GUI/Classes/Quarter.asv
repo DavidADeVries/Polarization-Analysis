@@ -150,10 +150,6 @@ classdef Quarter
             end   
         end
         
-        function quarter = updateSelectedLocation(quarter, location)
-            quarter.locations{quarter.locationIndex} = location;
-        end
-        
         function location = getLocationByNumber(quarter, number)
             locations = quarter.locations;
             
@@ -358,25 +354,27 @@ classdef Quarter
         end
         
         
-        function quarter = editSelectedLocationMetadata(quarter, projectPath, toQuarterPath, userName)
-            location = quarter.getSelectedLocation();
+        function quarter = editSelectedLocationMetadata(quarter, projectPath, toEyePath, userName)
+            location = quarter.getSelectedEye();
             
-            if ~isempty(quarter)                
+            if ~isempty(quarter)
+                toQuarterPath = makePath(toEyePath, location.dirName);
+                
                 location = location.editMetadata(projectPath, toQuarterPath, userName);
             
-                quarter = quarter.updateSelectedLocation(location);
+                quarter = quarter.updateLocation(location);
             end
         end
         
-        function quarter = editSelectedSessionMetadata(quarter, projectPath, toQuarterPath, userName)
-            location = quarter.getSelectedLocation();
+        function eye = editSelectedSessionMetadata(eye, projectPath, toEyePath, userName)
+            quarter = eye.getSelectedEye();
             
-            if ~isempty(quarter)
-                toLocationPath = makePath(toQuarterPath, location.dirName);
+            if ~isempty(eye)
+                toQuarterPath = makePath(toEyePath, quarter.dirName);
                 
-                location = location.editSelectedSessionMetadata(projectPath, toLocationPath, userName);
+                quarter = quarter.editSelectedSessionMetadata(projectPath, toQuarterPath, userName);
             
-                quarter = quarter.updateSelectedLocation(location);
+                eye = eye.updateQuarter(quarter);
             end
         end
         

@@ -55,9 +55,10 @@ function QuarterMetadataEntry_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for QuarterMetadataEntry
 handles.output = hObject;
 
-% *****************************************************************************
-% INPUT: (suggestedQuarterNumber, existingQuarterNumbers, importPath, userName)
-% *****************************************************************************
+% ***************************************************************************************
+% INPUT: (suggestedQuarterNumber, existingQuarterNumbers, importPath, userName, quarter*)
+%        *may be empty
+% ***************************************************************************************
 
 if isa(varargin{1},'numeric');
     handles.suggestedQuarterNumber = num2str(varargin{1}); %Parameter name is 'suggestedQuarterNumber' from Quarter class function
@@ -69,17 +70,6 @@ handles.existingQuarterNumbers = varargin{2};
 handles.importPath = varargin{3};
 handles.userName = varargin{4};
 
-handles.cancel = false;
-
-%Defining the default input variables, awaiting user input
-handles.stain = QuarterNamingConventions.DEFAULT_METADATA_GUI_STAIN;
-handles.slideMaterial = QuarterNamingConventions.DEFAULT_METADATA_GUI_SLIDE_MATERIAL;
-handles.quarterType = [];
-handles.quarterArbitrary = 0;
-handles.quarterNumber = str2double(handles.suggestedQuarterNumber);
-handles.fixingDate = '';
-handles.fixingDoneBy = handles.userName;
-handles.quarterNotes = '';
 
 %Get choice strings from EyeTypes class
 [~, choiceStrings] = choicesFromEnum('QuarterTypes');
@@ -96,21 +86,82 @@ end
 set(handles.quarterTypeMenu, 'String', choiceList);
 
 
-%Setting default values for input boxes and radio buttons on GUI
-set(handles.importPathDisplay, 'String', handles.importPath);
-set(handles.fixingDoneByInput, 'String', handles.userName);
-set(handles.arbitraryLabelsButton, 'Value', 0);
-set(handles.trueLabelsButton, 'Value', 1);
-set(handles.OK, 'enable', 'off');
-set(handles.quarterNumberInput, 'String', handles.suggestedQuarterNumber);
-set(handles.quarterStainInput, 'String', QuarterNamingConventions.DEFAULT_METADATA_GUI_STAIN);
-set(handles.slideMaterialInput, 'String', QuarterNamingConventions.DEFAULT_METADATA_GUI_SLIDE_MATERIAL);
+if length(varargin) > 4
+    quarter = varargin{5};
+    
+    set(handles.importPathDisplay, 'String', 'None');
+    
+    handles.stain = quarter.stain;
+    handles.slideMaterial = quarter.slideMaterial;
+    handles.quarterType = quarter.quarterType;
+    handles.quarterArbitrary = quarter.quarterArbitrary;
+    handles.quarterNumber = quarter.quarterNumber;
+    handles.fixingDate = quarter.mountingDate;
+    handles.fixingDoneBy = quarter.mountingDoneBy;
+    handles.quarterNotes = quarter.notes;
+    
+    set(handles.quarterStainInput, 'String', handles.stain);
+    set(handles.slideMaterialInput, 'String', handles.slideMaterial);
+    
+    set(handles.quarterNumberInput, 'String', num2str(handles.quarterNumber));
+    set(handles.fixingDateInput, 'String', displayDate(handles.fixingDate));
+    set(handles.fixingDoneByInput, 'String', handles.fixingDoneBy);
+    set(handles.quarterNotesInput, 'String', handles.quarterNotes);
+    
+    if handles.quarterArbitrary
+        set(handles.trueLabelsButton, 'Value', 0);
+        set(handles.arbitraryLabelsButton, 'Value', 1);
+    else
+        set(handles.trueLabelsButton, 'Value', 1);
+        set(handles.arbitraryLabelsButton, 'Value', 0);        
+    end
+    
+    matchString = handles.quarterTypeChoice.displayString;
+    
+    for i=1:length(choiceStrings)
+        if strcmp(matchString, choiceStrings{i})
+            set(handles.quarterTypeMenu, 'Value', i+1);
+            break;
+        end
+    end
+    
+    set(handles.OK, 'enable', 'on');
+else
+    
+    %Defining the default input variables, awaiting user input
+    handles.stain = QuarterNamingConventions.DEFAULT_METADATA_GUI_STAIN;
+    handles.slideMaterial = QuarterNamingConventions.DEFAULT_METADATA_GUI_SLIDE_MATERIAL;
+    handles.quarterType = [];
+    handles.quarterArbitrary = 0;
+    handles.quarterNumber = str2double(handles.suggestedQuarterNumber);
+    handles.fixingDate = '';
+    handles.fixingDoneBy = handles.userName;
+    handles.quarterNotes = '';
+    
+    
+    %Setting default values for input boxes and radio buttons on GUI
+    set(handles.importPathDisplay, 'String', handles.importPath);
+    set(handles.fixingDoneByInput, 'String', handles.userName);
+    set(handles.arbitraryLabelsButton, 'Value', 0);
+    set(handles.trueLabelsButton, 'Value', 1);
+    set(handles.quarterNumberInput, 'String', handles.suggestedQuarterNumber);
+    set(handles.quarterStainInput, 'String', QuarterNamingConventions.DEFAULT_METADATA_GUI_STAIN);
+    set(handles.slideMaterialInput, 'String', QuarterNamingConventions.DEFAULT_METADATA_GUI_SLIDE_MATERIAL);
+    
+    
+    set(handles.OK, 'enable', 'off');
+end
+
+
+handles.cancel = false;
+
 
 % Update handles structure
 guidata(hObject, handles);
 
 % UIWAIT makes QuarterMetadataEntry wait for user response (see UIRESUME)
 uiwait(handles.quarterMetadataEntry);
+
 end
 
 % --- Outputs from this function are returned to the command line.

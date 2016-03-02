@@ -55,38 +55,15 @@ function LegacySubsectionSelectionSessionMetadataEntry_OpeningFcn(hObject, event
 % Choose default command line output for LegacySubsectionSelectionSessionMetadataEntry
 handles.output = hObject;
 
-%*****************************
-%INPUT: (importPath, userName, sessionChoicesString)
-%*****************************
+%******************************************************************************
+%INPUT: (importPath, userName, sessionChoicesString, session*, sessionNumbers*)
+%        *may be empty)
+%******************************************************************************
 
 handles.importPath = varargin{1}; %Param is importPath
 handles.userName = varargin{2}; %Param is userName
 handles.sessionChoicesString = varargin{3}; %Param is sessionChoices
 
-%Defining the different input variables, awaiting user input
-handles.cancel = false;
-handles.sessionDate = [];
-handles.sessionDoneBy = handles.userName;
-handles.sessionNotes = '';
-handles.croppingType = [];
-handles.xCoord = [];
-handles.yCoord = [];
-handles.width = [];
-handles.height = [];
-handles.coords = [handles.xCoord, handles.yCoord, handles.width, handles.height];
-handles.rejected = false;
-handles.rejectedReason = '';
-handles.rejectedBy = '';
-handles.sessionChoices = [];
-
-%Default Display Settings
-set(handles.OK, 'enable', 'off');
-set(handles.rejectedReasonInput, 'enable', 'off');
-set(handles.rejectedByInput, 'enable', 'off');
-set(handles.importPathDisplay, 'String', handles.importPath);
-set(handles.yesRejected, 'Value', 0);
-set(handles.noRejected, 'Value', 1);
-set(handles.sessionDoneByInput, 'String', handles.userName);
 
 %Get choice strings from CroppingTypes class
 [~, choiceStrings] = choicesFromEnum('CroppingTypes');
@@ -96,14 +73,108 @@ handles.choiceListDefault = 'Select a Cropping Type';
 
 %Setting the list values for the Cropping Type pop up menu
 choiceList = {handles.choiceListDefault};
+
 for i = 1:size(choiceStrings)
     choiceList{i+1} = choiceStrings{i};
 end
+
 set(handles.croppingTypeMenu, 'String', choiceList);
 
 %Setting the list values for the session list box
 set(handles.sessionListBox, 'String', handles.sessionChoicesString);
-set(handles.sessionListBox, 'Value', []);
+
+
+if length(varargin) > 3
+    session = varargin{4};
+    sessionNumbers = varargin{5};
+    
+    handles.sessionDate = session.sessionDate;
+    handles.sessionDoneBy = session.sessionDoneBy;
+    handles.sessionNotes = session.notes;
+    handles.rejected = session.rejected;
+    handles.rejectedReason = session.rejectedReason;
+    handles.rejectedBy = session.rejectedBy;
+    handles.sessionChoices = session.linkedSessionChoices;
+    
+    handles.xCoord = session.coords(1);
+    handles.yCoord = session.coords(2);
+    handles.width = session.coords(3);
+    handles.height = session.coords(4);
+    
+    handles.croppingType = session.croppingType;
+    
+    %Default Display Settings
+    set(handles.OK, 'enable', 'on');
+    
+    if handles.rejected
+        set(handles.yesRejected, 'Value', 1);
+        set(handles.noRejected, 'Value', 0);
+    else
+        set(handles.yesRejected, 'Value', 0);
+        set(handles.noRejected, 'Value', 1); 
+        
+        set(handles.rejectedReasonInput, 'enable', 'off');
+        set(handles.rejectedByInput, 'enable', 'off');       
+    end
+    
+    set(handles.rejectedReasonInput, 'String', handles.rejectedReason);
+    set(handles.rejectedByInput, 'String', handles.rejectedBy);
+    
+    
+    set(handles.importPathDisplay, 'String', 'None');
+    
+    set(handles.sessionDateDisplay, 'String', displayDate(handles.sessionDate));
+    set(handles.sessionDoneByInput, 'String', handles.sessionDoneBy);
+    
+    set(handles.sessionListBox, 'Value', getSelectionChoicesFromSessionNumbers(sessionNumbers, handles.sessionChoices));
+    
+    set(handles.sessionNotesInput, 'String', handles.sessionNotes);
+    
+    matchString = handles.croppingType.displayString;
+    
+    for i=1:length(choiceStrings)
+        if strcmp(matchString, choiceStrings{i})
+            set(handles.croppingTypeMenu, 'Value', i+1);
+            break;
+        end
+    end
+    
+    set(handles.xCoordInput, 'String', num2str(handles.xCoord));
+    set(handles.yCoordInput, 'String', num2str(handles.yCoord));
+    set(handles.widthInput, 'String', num2str(handles.width));
+    set(handles.heightInput, 'String', num2str(handles.height));
+else    
+    %Defining the different input variables, awaiting user input
+    handles.sessionDate = [];
+    handles.sessionDoneBy = handles.userName;
+    handles.sessionNotes = '';
+    handles.croppingType = [];
+    handles.xCoord = [];
+    handles.yCoord = [];
+    handles.width = [];
+    handles.height = [];
+    
+    handles.rejected = false;
+    handles.rejectedReason = '';
+    handles.rejectedBy = '';
+    handles.sessionChoices = [];
+    
+    %Default Display Settings
+    set(handles.OK, 'enable', 'off');
+    set(handles.rejectedReasonInput, 'enable', 'off');
+    set(handles.rejectedByInput, 'enable', 'off');
+    set(handles.importPathDisplay, 'String', handles.importPath);
+    set(handles.yesRejected, 'Value', 0);
+    set(handles.noRejected, 'Value', 1);
+    set(handles.sessionDoneByInput, 'String', handles.userName);
+    
+    set(handles.sessionListBox, 'Value', []);
+end
+
+
+handles.coords = [handles.xCoord, handles.yCoord, handles.width, handles.height];
+
+handles.cancel = false;
 
 % Update handles structure
 guidata(hObject, handles);

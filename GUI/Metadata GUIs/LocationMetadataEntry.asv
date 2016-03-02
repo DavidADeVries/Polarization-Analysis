@@ -204,7 +204,6 @@ handles.MarkerSize = 10;
 handles.MarkerEdgeColor = 'b';
 handles.MarkerFaceColor = 'b';
 
-set(handles.DisplayQuarter,'String',handles.selectedQuarterDisplay);
 
 if length(varargin) > 6
     location = varargin{6};
@@ -233,18 +232,6 @@ if length(varargin) > 6
     handles.deposit = location.deposit;
     handles.locationNotes = location.notes;
     
-    set(handles.DisplayQuarter,'String',handles.selectedQuarterDisplay);
-    set(handles.importPathDisplay, 'String', 'None');
-    set(handles.locationNumberInput, 'String', num2str(handles.locationNumber));
-    
-    if handles.deposit
-        set(handles.depositFieldButton, 'Value', 1);
-        set(handles.controlFieldButton, 'Value', 0);
-    else
-        set(handles.depositFieldButton, 'Value', 0);
-        set(handles.controlFieldButton, 'Value', 1);        
-    end
-    
     set(handles.OK,'enable','on');
 else
     %Defining the coordinate variables, and other input variables
@@ -256,7 +243,11 @@ else
     handles.coordsUnknown = false;
     handles.marker = plot(handles.xCoords, handles.yCoords, handles.MarkerStyle, 'MarkerSize', handles.MarkerSize, 'MarkerEdgeColor', handles.MarkerEdgeColor, 'MarkerFaceColor', handles.MarkerFaceColor, 'Visible', 'off');
     
+    
+    
+    
     %Assigning default display values
+    set(handles.DisplayQuarter,'String',handles.selectedQuarterDisplay);
     set(handles.importPathDisplay, 'String', handles.importPath);
     set(handles.locationNumberInput, 'String', handles.suggestedLocationNumber);
     set(handles.depositFieldButton, 'Value', 1);
@@ -271,7 +262,6 @@ guidata(hObject, handles);
 
 %Await user input
 uiwait(handles.LocationMetadataEntry);
-
 end
 
 

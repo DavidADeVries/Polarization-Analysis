@@ -55,33 +55,19 @@ function EyeMetadataEntry_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for EyeMetadataEntry
 handles.output = hObject;
 
-% **************************************************************************
-% INPUT: (eye, suggestedEyeNumber, existingEyeNumbers, userName, importPath)
-% **************************************************************************
+% ***************************************************************************
+% INPUT: (suggestedEyeNumber, existingEyeNumbers, userName, importPath, eye*)
+%        *may be empty
+% ***************************************************************************
 
-%Input arguments from function call in Eye class function
-handles.eye = varargin{1}; % Parameter name is 'eye' from Eye class function
-
-if isa(varargin{2},'numeric');
-    handles.suggestedEyeNumber = num2str(varargin{2}); %Parameter name is 'suggestedEyeNumber' from Eye class function
+if isa(varargin{1},'numeric');
+    handles.suggestedEyeNumber = num2str(varargin{1}); %Parameter name is 'suggestedEyeNumber' from Eye class function
 else
     handles.suggestedEyeNumber = '';
 end
 
-handles.existingEyeNumbers = varargin{3};
-handles.userName = varargin{4};% Parameter name is 'userName' 
-handles.importPath = varargin{5};% Parameter name is 'importPath' 
-
-handles.cancel = false;
-
-set(handles.importPathTitle, 'String', handles.importPath);
-set(handles.dissectionDoneByInput, 'String', handles.userName);
-
-%Set default Eye number based on input to function
-set(handles.eyeNumberInput, 'String', handles.suggestedEyeNumber); 
-
-% Update handles structure
-guidata(hObject, handles);
+handles.existingEyeNumbers = varargin{2};
+handles.userName = varargin{3};% Parameter name is 'userName'
 
 %Get choice strings from EyeTypes class
 [~, choiceStrings] = choicesFromEnum('EyeTypes');
@@ -91,25 +77,71 @@ handles.choiceListDefault = 'Select an Eye Type';
 
 %Setting the list values for the Eye Type pop up menu
 choiceList = {handles.choiceListDefault};
+
 for i = 1:size(choiceStrings)
     choiceList{i+1} = choiceStrings{i};
 end
+
 set(handles.eyeTypeList, 'String', choiceList);
 
-%Defining the different input variables as empty, awaiting user input
-handles.eyeId = ''; 
-handles.eyeTypeChoice = [];
-handles.eyeNumber = str2double(handles.suggestedEyeNumber);
-handles.dissectionDate = '';
-handles.dissectionDoneBy = handles.userName;
-handles.eyeNotes = '';
 
-set(handles.OK, 'enable', 'off');
+if length(varargin) > 4
+    eye = varargin{5};
+    
+    handles.importPath = varargin{4};% Parameter name is 'importPath'
+    
+    handles.eyeId = eye.eyeId;
+    handles.eyeTypeChoice = eye.eyeTypeChoice;
+    handles.eyeNumber = eye.eyeNumber;
+    handles.dissectionDate = eye.dissectionDate;
+    handles.dissectionDoneBy = eye.dissectionDoneBy;
+    handles.eyeNotes = eye.notes;
+    
+    set(handles.eyeIdInput, 'String', handles.eyeId);
+    set(handles.eyeNumberInput, 'String', num2str(handles.eyeNumber));
+    set(handles.dissectionDateInput, 'String', displayDate(handles.dissectionDate));
+    set(handles.dissectionDateByInput, 'String', handles.dissectionDoneBy);
+    set(handles.eyeNotesInput, 'String', handles.eyeNotes);
+    
+    set(handles.dissectionDoneByInput, 'String', handles.dissectionDoneBy);
+    
+    matchString = handles.eyeTypeChoice.displayString;
+    
+    for i=1:length(choiceStrings)
+        if strcmp(matchString, choiceStrings{i})
+            set(handles.eyeTypeList, 'Value', i+1);
+            break;
+        end
+    end
+    
+    set(handles.OK, 'enable', 'on');
+else
+    handles.importPath = 'None';% Parameter name is 'importPath'
+    
+    set(handles.dissectionDoneByInput, 'String', handles.userName);
+    %Set default Eye number based on input to function
+    set(handles.eyeNumberInput, 'String', handles.suggestedEyeNumber);
+    
+    %Defining the different input variables as empty, awaiting user input
+    handles.eyeId = '';
+    handles.eyeTypeChoice = [];
+    handles.eyeNumber = str2double(handles.suggestedEyeNumber);
+    handles.dissectionDate = '';
+    handles.dissectionDoneBy = handles.userName;
+    handles.eyeNotes = '';
+    
+    set(handles.OK, 'enable', 'off');
+end
+
+handles.cancel = false;
+
+set(handles.importPathTitle, 'String', handles.importPath);
 
 guidata(hObject, handles);
 
 % UIWAIT makes EyeMetadataEntry wait for user response (see UIRESUME)
 uiwait(handles.EyeMetadataEntry);
+
 end
 
 % --- Outputs from this function are returned to the command line.

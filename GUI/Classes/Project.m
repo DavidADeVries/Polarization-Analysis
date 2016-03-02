@@ -35,6 +35,21 @@ classdef Project
             end
         end
         
+        function project = editProjectMetadata(project, projectPath)
+            [cancel, title, description, notes] = ProjectMetadataEntry(project);
+            
+            if ~cancel
+                %Assigning values to Microscope Session Properties
+                project.title = title;
+                project.description = description;
+                project.ntoes = notes;
+                
+                project = project.updateMetadataHistory(userName);
+                
+                project.saveMetadata(projectPath, projectPath, updateBackupFiles);
+            end
+        end
+        
         function project = updateTrial(project, trial)
             trials = project.trials;
             numTrials = length(trials);
@@ -55,6 +70,10 @@ classdef Project
                     project.trialIndex = 1;
                 end
             end            
+        end
+        
+        function project = updateSelectedTrial(project, trial)
+            project.trials{project.trialIndex} = trial;
         end
         
         function trialChoices = getTrialChoices(project)
@@ -257,6 +276,69 @@ classdef Project
                 end
             end
         end
+        
+        
+        function project = editSelectedTrialMetadata(project, projectPath, userName)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.editMetadata(projectPath, userName, project.getTrialNumbers());
+                
+                project = project.updateSelectedTrial(trial);
+            end
+        end
+        
+        function project = editSelectedSubjectMetadata(project, projectPath, userName)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.editSelectedSubjectMetadata(projectPath, userName);
+                
+                project = project.updateSelectedTrial(trial);
+            end
+        end
+        
+        function project = editSelectedEyeMetadata(project, projectPath, userName)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.editSelectedEyeMetadata(projectPath, userName);
+                
+                project = project.updateSelectedTrial(trial);
+            end
+        end
+        
+        function project = editSelectedQuarterMetadata(project, projectPath, userName)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.editSelectedQuarterMetadata(projectPath, userName);
+                
+                project = project.updateSelectedTrial(trial);
+            end
+        end
+        
+        function project = editSelectedLocationMetadata(project, projectPath, userName)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.editSelectedLocationMetadata(projectPath, userName);
+                
+                project = project.updateSelectedTrial(trial);
+            end
+        end
+        
+        function project = editSelectedSessionMetadata(project, projectPath, userName)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.editSelectedSessionMetadata(projectPath, userName);
+                
+                project = project.updateSelectedTrial(trial);
+            end
+        end
+        
+        
     end
     
 end
