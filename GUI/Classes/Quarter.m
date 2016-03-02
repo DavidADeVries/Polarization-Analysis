@@ -32,8 +32,7 @@ classdef Quarter
                 quarter.metadataHistory = {MetadataHistoryEntry(userName)};
                 
                 % set navigation listbox label
-                subtitle = quarter.quarterType.displayString;
-                quarter.naviListboxLabel = createNavigationListboxLabel(QuarterNamingConventions.NAVI_LISTBOX_PREFIX, quarter.quarterNumber, subtitle);
+                quarter.naviListboxLabel = quarter.generateListboxLabel();
                 
                 % make directory/metadata file
                 quarter = quarter.createDirectories(toEyePath, projectPath);
@@ -45,6 +44,62 @@ classdef Quarter
                 quarter = Quarter.empty;
             end              
         end
+        
+        
+        function quarter = editMetadata(quarter, projectPath, toEyePath, userName, dataFilename, existingQuarterNumbers)
+            [cancel, stain, slideMaterial, quarterType, quarterArbitrary, quarterNumber, mountingDate, mountingDoneBy, notes] = QuarterMetadataEntry([], existingQuarterNumbers, '', userName, quarter);
+            
+            if ~cancel
+                oldDirName = quarter.dirName;
+                oldFilenameSection = quarter.generateFilenameSection();                
+                
+                %Assigning values to Quarter Properties
+                quarter.stain = stain;
+                quarter.slideMaterial = slideMaterial;
+                quarter.quarterType = quarterType;
+                quarter.quarterArbitrary = quarterArbitrary;
+                quarter.quarterNumber = quarterNumber;
+                quarter.mountingDate = mountingDate;
+                quarter.mountingDoneBy = mountingDoneBy;
+                quarter.notes = notes;
+                
+                quarter = updateMetadataHistory(quarter, userName);
+                
+                updateBackupFiles = updateBackupFilesQuestionGui();
+                
+                newDirName = quarter.generateDirName();
+                newFilenameSection = quarter.generateFilenameSection();  
+                
+                renameDirectory(toEyePath, projectPath, oldDirName, newDirName, updateBackupFiles);
+                renameFiles(toEyePath, projectPath, dataFilename, oldFilenameSection, newFilenameSection, updateBackupFiles);
+                
+                quarter.dirName = newDirName;
+                quarter.naviListboxLabel = quarter.generateListboxLabel();
+                
+                quarter.saveMetadata(makePath(toEyePath, quarter.dirName), projectPath, updateBackupFiles);
+            end
+            
+        end
+        
+        
+        function dirName = generateDirName(quarter)
+            dirSubtitle = quarter.quarterType.displayString;
+            
+            dirName = createDirName(QuarterNamingConventions.DIR_PREFIX, quarter.quarterNumber, dirSubtitle, QuarterNamingConventions.DIR_NUM_DIGITS);
+        end
+        
+        
+        function label = generateListboxLabel(quarter) 
+            subtitle = quarter.quarterType.displayString;
+            
+            label = createNavigationListboxLabel(QuarterNamingConventions.NAVI_LISTBOX_PREFIX, quarter.quarterNumber, subtitle);
+        end
+        
+        
+        function section = generateFilenameSection(quarter)
+            section = createFilenameSection(QuarterNamingConventions.DATA_FILENAME_LABEL, num2str(quarter.quarterNumber));
+        end
+        
         
         function quarter = loadQuarter(quarter, toQuarterPath, quarterDir)
             quarterPath = makePath(toQuarterPath, quarterDir);
@@ -75,7 +130,7 @@ classdef Quarter
         function quarter = importQuarter(quarter, toQuarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType, eyeType)
             dirList = getAllFolders(quarterImportPath);
             
-            filenameSection = createFilenameSection(QuarterNamingConventions.DATA_FILENAME_LABEL, num2str(quarter.quarterNumber));
+            filenameSection = quarter.generateFilenameSection();
             dataFilename = [dataFilename, filenameSection];
             
             for i=1:length(dirList)
@@ -208,9 +263,8 @@ classdef Quarter
         end
         
         function quarter = createDirectories(quarter, toEyePath, projectPath)
-            dirSubtitle = quarter.quarterType.displayString;
-            
-            quarterDirectory = createDirName(QuarterNamingConventions.DIR_PREFIX, quarter.quarterNumber, dirSubtitle, QuarterNamingConventions.DIR_NUM_DIGITS);
+             
+            quarterDirectory = quarter.generateDirName();
             
             createObjectDirectories(projectPath, toEyePath, quarterDirectory);
                         
@@ -329,7 +383,7 @@ classdef Quarter
         end
         
         function quarter = importLegacyData(quarter, toQuarterProjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType, eyeType)
-            filenameSection = createFilenameSection(QuarterNamingConventions.DATA_FILENAME_LABEL, num2str(quarter.quarterNumber));
+            filenameSection = quarter.generateFilenameSection();
             dataFilename = [dataFilename, filenameSection];
             
             prompt = ['Select the location to which the data being imported from ', displayImportPath, ' belongs to.'];
@@ -358,23 +412,29 @@ classdef Quarter
         end
         
         
-        function quarter = editSelectedLocationMetadata(quarter, projectPath, toQuarterPath, userName)
+        function quarter = editSelectedLocationMetadata(quarter, projectPath, toQuarterPath, userName, dataFilename, eyeType, subjectType)
             location = quarter.getSelectedLocation();
             
-            if ~isempty(quarter)                
-                location = location.editMetadata(projectPath, toQuarterPath, userName);
+            if ~isempty(location)
+                existingLocationNumbers = quarter.getLocationNumbers();
+                filenameSection = quarter.generateFilenameSection();
+                dataFilename = [dataFilename, filenameSection];
+                
+                location = location.editMetadata(projectPath, toQuarterPath, userName, dataFilename, existingLocationNumbers, eyeType, subjectType, quarter.quarterType);
             
                 quarter = quarter.updateSelectedLocation(location);
             end
         end
         
-        function quarter = editSelectedSessionMetadata(quarter, projectPath, toQuarterPath, userName)
+        function quarter = editSelectedSessionMetadata(quarter, projectPath, toQuarterPath, userName, dataFilename)
             location = quarter.getSelectedLocation();
             
-            if ~isempty(quarter)
+            if ~isempty(location)
                 toLocationPath = makePath(toQuarterPath, location.dirName);
+                filenameSection = quarter.generateFilenameSection();
+                dataFilename = [dataFilename, filenameSection];
                 
-                location = location.editSelectedSessionMetadata(projectPath, toLocationPath, userName);
+                location = location.editSelectedSessionMetadata(projectPath, toLocationPath, userName, dataFilename);
             
                 quarter = quarter.updateSelectedLocation(location);
             end

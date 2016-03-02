@@ -116,7 +116,7 @@ if length(varargin) > 4
         set(handles.arbitraryLabelsButton, 'Value', 0);        
     end
     
-    matchString = handles.quarterTypeChoice.displayString;
+    matchString = handles.quarterType.displayString;
     
     for i=1:length(choiceStrings)
         if strcmp(matchString, choiceStrings{i})

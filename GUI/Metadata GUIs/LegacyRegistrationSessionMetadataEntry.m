@@ -32,7 +32,7 @@ gui_State = struct('gui_Name',       mfilename, ...
                    'gui_OutputFcn',  @LegacyRegistrationSessionMetadataEntry_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
-if nargin && ischar(varargin{1})
+if nargin && ischar(varargin{1}) && ~isempty(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
 
@@ -95,7 +95,7 @@ if length(varargin) > 3
     handles.rejected = session.rejected;
     handles.rejectedReason = session.rejectedReason;
     handles.rejectedBy = session.rejectedBy;
-    handles.sessionChoices = session.linkedSessionChoices;
+    handles.sessionChoices = session.linkedSessionNumbers;
     
     
     %Default Display Settings

@@ -97,12 +97,12 @@ if length(varargin) > 4
     handles.gender = subject.gender;
     handles.ADDiagnosis = subject.ADDiagnosis;
     handles.causeOfDeath = subject.causeOfDeath;
-    handles.subjectNotes = subject.subjectNotes;
+    handles.subjectNotes = subject.notes;
     handles.medicalHistory = subject.medicalHistory;
     handles.subjectId = subject.subjectId;
     
     set(handles.ageInput, 'String', num2str(handles.age));
-    set(handles.deathInput, 'String', handles.subjectNotes);
+    set(handles.deathInput, 'String', handles.causeOfDeath);
     set(handles.subjectNumberInput, 'String', num2str(handles.subjectNumber));
     set(handles.subjectIdInput, 'String', handles.subjectId);
     set(handles.medicalHistoryInput, 'String', handles.medicalHistory);
@@ -117,7 +117,7 @@ if length(varargin) > 4
         end
     end
     
-    diagnosisMatchString = handles.gender.displayString;
+    diagnosisMatchString = handles.ADDiagnosis.displayString;
     
     for i=1:length(diagnosisChoiceStrings)
         if strcmp(diagnosisMatchString, diagnosisChoiceStrings{i})

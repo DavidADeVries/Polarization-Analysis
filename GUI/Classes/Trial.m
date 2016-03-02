@@ -44,34 +44,48 @@ classdef Trial
             
         end
         
+        
         function dirName = generateDirName(trial)            
             dirSubtitle = trial.title;
             
             dirName = createDirName(TrialNamingConventions.DIR_PREFIX, trial.trialNumber, dirSubtitle, TrialNamingConventions.DIR_NUM_DIGITS);
         end
         
+        
         function label = generateListboxLabel(trial)
             label = createNavigationListboxLabel(TrialNamingConventions.NAVI_LISTBOX_PREFIX, trial.trialNumber, trial.title);
+        end
+                
+        
+        function section = generateFilenameSection(trial)
+            section = createFilenameSection(TrialNamingConventions.DATA_FILENAME_LABEL, num2str(trial.trialNumber));
         end
                 
         function trial = editMetadata(trial, projectPath, userName, existingTrialNumbers)
             [cancel, title, description, trialNumber, subjectType, trialNotes] = TrialMetadataEntry([], existingTrialNumbers, '', trial);
             
             if ~cancel
+                oldDirName = trial.dirName;
+                oldFilenameSection = trial.generateFilenameSection();
+                
                 trial.title = title;
                 trial.description = description;
                 trial.trialNumber = trialNumber;
                 trial.subjectType = subjectType;
                 trial.notes = trialNotes;
                 
-                trial = trial.updateMetadataHistory(userName);
+                trial = updateMetadataHistory(trial, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 
-                newDirName = trial.generateDirName();
-                oldDirName = trial.dirName;
+                newDirName = trial.generateDirName();                
+                newFilenameSection = trial.generateFilenameSection();
                 
-                renameDirectory('', projectPath, oldDirName, newDirName, updateBackupFile);
+                toPath = '';
+                dataFilename = '';
+                
+                renameDirectory(toPath, projectPath, oldDirName, newDirName, updateBackupFiles);
+                renameFiles(toPath, projectPath, dataFilename, oldFilenameSection, newFilenameSection, updateBackupFiles);
                 
                 trial.dirName = newDirName;
                 trial.naviListboxLabel = trial.generateListboxLabel();
@@ -128,7 +142,7 @@ classdef Trial
                 end
                 
                 if ~isempty(subject)
-                    dataFilename = createFilenameSection(TrialNamingConventions.DATA_FILENAME_LABEL, num2str(trial.trialNumber));
+                    dataFilename = trial.generateFilenameSection();
                     subject = subject.importSubject(makePath(trial.dirName, subject.dirName), importDir, handles.localPath, dataFilename, handles.userName, trial.subjectType);
                 
                     trial = trial.updateSubject(subject);
@@ -395,7 +409,7 @@ classdef Trial
                 end
                 
                 if ~isempty(subject)
-                    dataFilename = createFilenameSection(TrialNamingConventions.DATA_FILENAME_LABEL, num2str(trial.trialNumber));
+                    dataFilename = trial.generateFilenameSection();
                     
                     subject = subject.importLegacyData(makePath(trial.dirName, subject.dirName), legacySubjectImportDir, localProjectPath, dataFilename, userName, trial.subjectType);
                 
@@ -407,12 +421,13 @@ classdef Trial
         function trial = editSelectedSubjectMetadata(trial, projectPath, userName)
             subject = trial.getSelectedSubject();
             
-            if ~isempty(trial)
+            if ~isempty(subject)
                 toTrialPath = trial.dirName;
+                dataFilename = trial.generateFilenameSection();
                 
                 existingSubjectNumbers = trial.getSubjectNumbers();
                 
-                subject = subject.editMetadata(projectPath, toTrialPath, userName, existingSubjectNumbers);
+                subject = subject.editMetadata(projectPath, toTrialPath, userName, dataFilename, existingSubjectNumbers);
             
                 trial = trial.updateSelectedSubject(subject);
             end
@@ -421,10 +436,11 @@ classdef Trial
         function trial = editSelectedEyeMetadata(trial, projectPath, userName)
             subject = trial.getSelectedSubject();
             
-            if ~isempty(trial)
+            if ~isempty(subject)
                 toSubjectPath = makePath(trial.dirName, subject.dirName);
+                dataFilename = trial.generateFilenameSection();
                 
-                subject = subject.editSelectedEyeMetadata(projectPath, toSubjectPath, userName);
+                subject = subject.editSelectedEyeMetadata(projectPath, toSubjectPath, userName, dataFilename);
             
                 trial = trial.updateSelectedSubject(subject);
             end
@@ -433,10 +449,11 @@ classdef Trial
         function trial = editSelectedQuarterMetadata(trial, projectPath, userName)
             subject = trial.getSelectedSubject();
             
-            if ~isempty(trial)
+            if ~isempty(subject)
                 toSubjectPath = makePath(trial.dirName, subject.dirName);
+                dataFilename = trial.generateFilenameSection();
                 
-                subject = subject.editSelectedQuarterMetadata(projectPath, toSubjectPath, userName);
+                subject = subject.editSelectedQuarterMetadata(projectPath, toSubjectPath, userName, dataFilename);
             
                 trial = trial.updateSelectedSubject(subject);
             end
@@ -445,10 +462,11 @@ classdef Trial
         function trial = editSelectedLocationMetadata(trial, projectPath, userName)
             subject = trial.getSelectedSubject();
             
-            if ~isempty(trial)
+            if ~isempty(subject)
                 toSubjectPath = makePath(trial.dirName, subject.dirName);
+                dataFilename = trial.generateFilenameSection();
                 
-                subject = subject.editSelectedLocationMetadata(projectPath, toSubjectPath, userName);
+                subject = subject.editSelectedLocationMetadata(projectPath, toSubjectPath, userName, dataFilename, trial.subjectType);
             
                 trial = trial.updateSelectedSubject(subject);
             end
@@ -457,10 +475,11 @@ classdef Trial
         function trial = editSelectedSessionMetadata(trial, projectPath, userName)
             subject = trial.getSelectedSubject();
             
-            if ~isempty(trial)
+            if ~isempty(subject)
                 toSubjectPath = makePath(trial.dirName, subject.dirName);
+                dataFilename = trial.generateFilenameSection();
                 
-                subject = subject.editSelectedSessionMetadata(projectPath, toSubjectPath, userName);
+                subject = subject.editSelectedSessionMetadata(projectPath, toSubjectPath, userName, dataFilename);
             
                 trial = trial.updateSelectedSubject(subject);
             end

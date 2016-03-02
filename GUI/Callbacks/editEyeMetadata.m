@@ -11,6 +11,7 @@ project = project.editSelectedEyeMetadata(projectPath, userName);
 handles.localProject = project;
 
 handles = project.updateMetadataFields(handles);
+handles = project.updateNavigationListboxes(handles);
 
 guidata(hObject, handles);
 

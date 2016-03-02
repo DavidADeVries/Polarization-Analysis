@@ -83,6 +83,8 @@ set(handles.subjectTypesMenu, 'String', choiceList);
 
 
 if length(varargin) > 3
+    trial = varargin{4};
+    
     handles.title = trial.title;
     handles.description = trial.description;
     handles.trialNumber = trial.trialNumber;

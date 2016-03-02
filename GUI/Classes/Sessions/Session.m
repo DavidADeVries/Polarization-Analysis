@@ -150,11 +150,6 @@ classdef Session
             sessionNotesString = ['Notes: ', session.notes];
             metadataHistoryStrings = generateMetadataHistoryStrings(session.metadataHistory);
         end
-        
-        function session = updateMetadataHistory(session, userName)
-            entry = MetadataHistoryEntry(userName);
-            session.metadataHistory = [session.metadataHistory, {entry}];
-        end
     end
     
 end

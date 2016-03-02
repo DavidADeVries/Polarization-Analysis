@@ -35,18 +35,18 @@ classdef Project
             end
         end
         
-        function project = editProjectMetadata(project, projectPath)
+        function project = editProjectMetadata(project, projectPath, userName)
             [cancel, title, description, notes] = ProjectMetadataEntry(project);
             
             if ~cancel
                 %Assigning values to Microscope Session Properties
                 project.title = title;
                 project.description = description;
-                project.ntoes = notes;
+                project.notes = notes;
                 
-                project = project.updateMetadataHistory(userName);
+                project = updateMetadataHistory(project, userName);
                 
-                project.saveMetadata(projectPath, projectPath, updateBackupFiles);
+                project.saveMetadata(projectPath);
             end
         end
         
@@ -338,6 +338,16 @@ classdef Project
             end
         end
         
+        function [] = saveMetadata(project, projectPath)
+            toPath = '';
+            saveToBackup = false;
+            
+            saveObjectMetadata(project, projectPath, toPath, ProjectNamingConventions.METADATA_FILENAME, saveToBackup);            
+        end
+        
+        function project = wipeoutMetadataFields(project)
+            project.trials = [];
+        end  
         
     end
     
