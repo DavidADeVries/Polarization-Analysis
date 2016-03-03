@@ -20,9 +20,16 @@ classdef Subject
             dirName = createDirName(SubjectNamingConventions.DIR_PREFIX, subject.subjectNumber, subject.subjectId, SubjectNamingConventions.DIR_NUM_DIGITS);
         end
         
+        
         function label = generateListboxLabel(subject)
             label = createNavigationListboxLabel(SubjectNamingConventions.NAVI_LISTBOX_PREFIX, subject.subjectNumber, subject.subjectId);            
         end
+        
+        
+        function section = generateFilenameSection(subject)
+            section = createFilenameSection(SubjectNamingConventions.DATA_FILENAME_LABEL, num2str(subject.subjectNumber));
+        end
+        
         
         function subject = createDirectories(subject, toTrialPath, projectPath)
             subjectDirectory = subject.generateDirName();

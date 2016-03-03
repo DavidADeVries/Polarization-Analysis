@@ -43,10 +43,13 @@ classdef Eye
             end              
         end
         
-        function eye = editMetadata(eye, projectPath, toSubjectPath, userName, existingEyeNumbers)
-            [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(eye, suggestedEyeNumber, existingEyeNumbers, userName, importPath);
+        function eye = editMetadata(eye, projectPath, toSubjectPath, userName, dataFilename, existingEyeNumbers)
+            [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry([], existingEyeNumbers, userName, '', eye);
             
             if ~cancel
+                oldDirName = eye.dirName;
+                oldFilenameSection = eye.generateFilenameSection();                
+                
                 %Assigning values to Eye Properties
                 eye.eyeId = eyeId;
                 eye.eyeType = eyeType;
@@ -55,21 +58,25 @@ classdef Eye
                 eye.dissectionDoneBy = dissectionDoneBy;
                 eye.notes = notes;
                 
-                eye = eye.updateMetadataHistory(userName);
+                eye = updateMetadataHistory(eye, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 
                 newDirName = eye.generateDirName();
-                oldDirName = eye.dirName;
+                newFilenameSection = eye.generateFilenameSection(); 
                 
-                renameDirectory(toSubjectPath, projectPath, oldDirName, newDirName, updateBackupFile);
+                renameDirectory(toSubjectPath, projectPath, oldDirName, newDirName, updateBackupFiles);
+                renameFiles(toSubjectPath, projectPath, dataFilename, oldFilenameSection, newFilenameSection, updateBackupFiles);
                 
                 eye.dirName = newDirName;
                 eye.naviListboxLabel = eye.generateListboxLabel();
                 
+                eye = eye.updateFileSelectionEntries(makePath(projectPath, toSubjectPath)); %incase files renamed
+                
                 eye.saveMetadata(makePath(toSubjectPath, eye.dirName), projectPath, updateBackupFiles);
             end
         end
+        
         
         function dirName = generateDirName(eye)            
             dirSubtitle = eye.eyeType.displayString;
@@ -77,11 +84,29 @@ classdef Eye
             dirName = createDirName(EyeNamingConventions.DIR_PREFIX, eye.eyeNumber, dirSubtitle, EyeNamingConventions.DIR_NUM_DIGITS);
         end
         
+        
         function label = generateListboxLabel(eye)                    
             subtitle = eye.eyeType.displayString;
             
             label = createNavigationListboxLabel(EyeNamingConventions.NAVI_LISTBOX_PREFIX, eye.eyeNumber, subtitle);
         end
+        
+        
+        function section = generateFilenameSection(eye)
+            section = createFilenameSection(EyeNamingConventions.DATA_FILENAME_LABEL, num2str(eye.eyeNumber));
+        end
+        
+        
+        function eye = updateFileSelectionEntries(eye, toPath)
+            quarters = eye.quarters;
+            
+            toPath = makePath(toPath, eye.dirName);
+            
+            for i=1:length(quarters)
+                eye.quarters{i} = quarters{i}.updateFileSelectionEntries(toPath);
+            end
+        end
+        
         
         function eye = loadEye(eye, toEyePath, eyeDir)
             eyePath = makePath(toEyePath, eyeDir);
@@ -112,7 +137,7 @@ classdef Eye
         function eye = importEye(eye, toEyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType)  
             dirList = getAllFolders(eyeImportPath);
             
-            filenameSection = createFilenameSection(EyeNamingConventions.DATA_FILENAME_LABEL, num2str(eye.eyeNumber));
+            filenameSection = eye.generateFilenameSection();
             dataFilename = [dataFilename, filenameSection];
             
             for i=1:length(dirList)
@@ -370,7 +395,7 @@ classdef Eye
         end
         
         function eye = importLegacyData(eye, toEyeProjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType)
-            filenameSection = createFilenameSection(EyeNamingConventions.DATA_FILENAME_LABEL, num2str(eye.eyeNumber));
+            filenameSection = eye.generateFilenameSection();
             dataFilename = [dataFilename, filenameSection];
             
             prompt = ['Select the quarter to which the data being imported from ', displayImportPath, ' belongs to.'];
@@ -398,35 +423,43 @@ classdef Eye
             end
         end
         
-        function eye = editSelectedQuarterMetadata(eye, projectPath, toEyePath, userName)
+        function eye = editSelectedQuarterMetadata(eye, projectPath, toEyePath, userName, dataFilename)
             quarter = eye.getSelectedQuarter();
             
-            if ~isempty(eye)                
-                quarter = quarter.editMetadata(projectPath, toEyePath, userName);
+            if ~isempty(quarter)
+                existingQuarterNumbers = eye.getQuarterNumbers();
+                filenameSection = eye.generateFilenameSection();
+                dataFilename = [dataFilename, filenameSection];
+                
+                quarter = quarter.editMetadata(projectPath, toEyePath, userName, dataFilename, existingQuarterNumbers);
             
                 eye = eye.updateSelectedQuarter(quarter);
             end
         end
         
-        function eye = editSelectedLocationMetadata(eye, projectPath, toEyePath, userName)
-            quarter = eye.getSelectedEye();
+        function eye = editSelectedLocationMetadata(eye, projectPath, toEyePath, userName, dataFilename, subjectType)
+            quarter = eye.getSelectedQuarter();
             
-            if ~isempty(eye)
+            if ~isempty(quarter)
                 toQuarterPath = makePath(toEyePath, quarter.dirName);
+                filenameSection = eye.generateFilenameSection();
+                dataFilename = [dataFilename, filenameSection];
                 
-                quarter = quarter.editSelectedLocationMetadata(projectPath, toQuarterPath, userName);
+                quarter = quarter.editSelectedLocationMetadata(projectPath, toQuarterPath, userName, dataFilename, eye.eyeType, subjectType);
             
                 eye = eye.updateSelectedQuarter(quarter);
             end
         end
         
-        function eye = editSelectedSessionMetadata(eye, projectPath, toEyePath, userName)
-            quarter = eye.getSelectedEye();
+        function eye = editSelectedSessionMetadata(eye, projectPath, toEyePath, userName, dataFilename)
+            quarter = eye.getSelectedQuarter();
             
-            if ~isempty(eye)
+            if ~isempty(quarter)
                 toQuarterPath = makePath(toEyePath, quarter.dirName);
+                filenameSection = eye.generateFilenameSection();
+                dataFilename = [dataFilename, filenameSection];
                 
-                quarter = quarter.editSelectedSessionMetadata(projectPath, toQuarterPath, userName);
+                quarter = quarter.editSelectedSessionMetadata(projectPath, toQuarterPath, userName, dataFilename);
             
                 eye = eye.updateSelectedQuarter(quarter);
             end

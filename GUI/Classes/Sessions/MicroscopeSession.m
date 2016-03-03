@@ -24,7 +24,7 @@ classdef MicroscopeSession < DataCollectionSession
                 session.dataCollectionSessionNumber = dataCollectionSessionNumber;
                 
                 % set navigation listbox label
-                session.naviListboxLabel = createNavigationListboxLabel(SessionNamingConventions.DATA_COLLECTION_NAVI_LISTBOX_PREFIX, session.dataCollectionSessionNumber, session.getDirSubtitle());
+                session.naviListboxLabel = session.generateListboxLabel();
                 
                 % set metadata history
                 session.metadataHistory = {MetadataHistoryEntry(userName)};
@@ -40,10 +40,13 @@ classdef MicroscopeSession < DataCollectionSession
             end              
         end
         
-        function session = editMetadata(session, projectPath, toLocationPath, userName, ~, ~) %last two params are sessionChoices, sessionNumbers
+        function session = editMetadata(session, projectPath, toLocationPath, userName, dataFilename, ~, ~) %last two params are sessionChoices, sessionNumbers
             [cancel, magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason, rejectedBy] = MicroscopeSessionMetadataEntry(userName, '', session);
             
             if ~cancel
+                oldDirName = session.dirName;
+                oldFilenameSection = session.generateFilenameSection();  
+                
                 %Assigning values to Microscope Session Properties
                 session.magnification = magnification;
                 session.pixelSizeMicrons = pixelSizeMicrons;
@@ -58,9 +61,20 @@ classdef MicroscopeSession < DataCollectionSession
                 session.rejectedReason = rejectedReason;
                 session.rejectedBy = rejectedBy;
                 
-                session = session.updateMetadataHistory(userName);
+                session = updateMetadataHistory(session, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
+                
+                newDirName = session.generateDirName();
+                newFilenameSection = session.generateFilenameSection();  
+                
+                renameDirectory(toLocationPath, projectPath, oldDirName, newDirName, updateBackupFiles);
+                renameFiles(toLocationPath, projectPath, dataFilename, oldFilenameSection, newFilenameSection, updateBackupFiles);
+                
+                session.dirName = newDirName;
+                session.naviListboxLabel = session.generateListboxLabel();
+                
+                session = session.updateFileSelectionEntries(makePath(projectPath, toLocationPath)); %incase files renamed
                 
                 session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, updateBackupFiles);
             end
@@ -90,7 +104,7 @@ classdef MicroscopeSession < DataCollectionSession
         end
         
         function session = importSession(session, sessionProjectPath, locationImportPath, projectPath, dataFilename)            
-            dataFilename = strcat(dataFilename, session.getFilenameSection());
+            dataFilename = strcat(dataFilename, session.generateFilenameSection());
             
             filenameExtensions = {Constants.BMP_EXT, Constants.ND2_EXT}; %expect .bmps and .nd2s
             

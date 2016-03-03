@@ -207,9 +207,9 @@ handles.MarkerFaceColor = 'b';
 set(handles.DisplayQuarter,'String',handles.selectedQuarterDisplay);
 
 if length(varargin) > 6
-    location = varargin{6};
+    location = varargin{7};
     
-    if isempty(location.coords)
+    if isempty(location.locationCoords)
         handles.xCoords = [];
         handles.yCoords = [];
         handles.coordsUnknown = true;
@@ -218,8 +218,8 @@ if length(varargin) > 6
         
         handles.marker = plot(handles.xCoords, handles.yCoords, handles.MarkerStyle, 'MarkerSize', handles.MarkerSize, 'MarkerEdgeColor', handles.MarkerEdgeColor, 'MarkerFaceColor', handles.MarkerFaceColor, 'Visible', 'off');
     else
-        handles.xCoords = location.coords(1);
-        handles.yCoords = location.coords(2);
+        handles.xCoords = location.locationCoords(1);
+        handles.yCoords = location.locationCoords(2);
         handles.coordsUnknown = false;
         
         pointDisplay = ['x: ',  num2str(handles.xCoords),  ' y: ',  num2str(handles.yCoords)];
@@ -236,6 +236,7 @@ if length(varargin) > 6
     set(handles.DisplayQuarter,'String',handles.selectedQuarterDisplay);
     set(handles.importPathDisplay, 'String', 'None');
     set(handles.locationNumberInput, 'String', num2str(handles.locationNumber));
+    set(handles.locationNotesInput, 'String', handles.locationNotes);
     
     if handles.deposit
         set(handles.depositFieldButton, 'Value', 1);

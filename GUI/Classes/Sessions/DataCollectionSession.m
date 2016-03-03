@@ -17,10 +17,26 @@ classdef DataCollectionSession < Session
     end
            
     methods
-        function session = createDirectories(session, toLocationPath, projectPath)
+        
+        function dirName = generateDirName(session)
             dirSubtitle = session.getDirSubtitle(); % defined in each specific sessionsclass
             
-            sessionDirectory = createDirName(SessionNamingConventions.DATA_COLLECTION_DIR_PREFIX, session.dataCollectionSessionNumber, dirSubtitle, SessionNamingConventions.DIR_NUM_DIGITS);
+            dirName = createDirName(SessionNamingConventions.DATA_COLLECTION_DIR_PREFIX, session.dataCollectionSessionNumber, dirSubtitle, SessionNamingConventions.DIR_NUM_DIGITS);
+        end
+           
+        
+        function label = generateListboxLabel(session)             
+            label = createNavigationListboxLabel(SessionNamingConventions.DATA_COLLECTION_NAVI_LISTBOX_PREFIX, session.dataCollectionSessionNumber, session.getDirSubtitle());
+        end
+        
+        
+        function section = generateFilenameSection(session)
+            section = createFilenameSection(SessionNamingConventions.DATA_COLLECTION_DATA_FILENAME_LABEL, num2str(session.dataCollectionSessionNumber));
+        end
+        
+        
+        function session = createDirectories(session, toLocationPath, projectPath)
+            sessionDirectory = session.generateDirName();
             
             createObjectDirectories(projectPath, toLocationPath, sessionDirectory);
                         
@@ -29,10 +45,6 @@ classdef DataCollectionSession < Session
         
         function [] = saveMetadata(session, toSessionPath, projectPath, saveToBackup)
             saveObjectMetadata(session, projectPath, toSessionPath, SessionNamingConventions.METADATA_FILENAME, saveToBackup);            
-        end
-        
-        function filenameSection = getFilenameSection(session)
-            filenameSection = createFilenameSection(SessionNamingConventions.DATA_COLLECTION_DATA_FILENAME_LABEL, num2str(session.dataCollectionSessionNumber));
         end
         
         function [dataCollectionSessionNumberString] = getCollectionSessionMetadataString(session)

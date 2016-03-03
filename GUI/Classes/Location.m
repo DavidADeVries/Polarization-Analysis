@@ -29,7 +29,7 @@ classdef Location
                 location.metadataHistory = {MetadataHistoryEntry(userName)};
                 
                 % set navigation listbox label
-                location.naviListboxLabel = createNavigationListboxLabel(LocationNamingConventions.NAVI_LISTBOX_PREFIX, location.locationNumber, '');
+                location.naviListboxLabel = location.generateListboxLabel();
                 
                 % make directory/metadata file
                 location = location.createDirectories(toQuarterPath, projectPath);
@@ -43,8 +43,70 @@ classdef Location
         end
         
         
+        function location = editMetadata(location, projectPath, toQuarterSamplePath, userName, dataFilename, existingLocationNumbers, eyeType, subjectType, quarterType)
+            [cancel, coords, locationNumber, deposit, notes] = LocationMetadataEntry(eyeType, subjectType, quarterType, [], existingLocationNumbers, '', location);
+            
+            if ~cancel
+                oldDirName = location.dirName;
+                oldFilenameSection = location.generateFilenameSection();   
+                
+                %Assigning values to the location class properties
+                location.locationNumber = locationNumber;
+                location.deposit = deposit;
+                location.locationCoords = coords;
+                location.notes = notes;
+                
+                location = updateMetadataHistory(location, userName);
+                
+                updateBackupFiles = updateBackupFilesQuestionGui();
+                
+                newDirName = location.generateDirName();
+                newFilenameSection = location.generateFilenameSection();
+                                
+                renameDirectory(toQuarterSamplePath, projectPath, oldDirName, newDirName, updateBackupFiles);
+                renameFiles(toQuarterSamplePath, projectPath, dataFilename, oldFilenameSection, newFilenameSection, updateBackupFiles);
+                                
+                location.dirName = newDirName;
+                location.naviListboxLabel = location.generateListboxLabel();
+                
+                location = location.updateFileSelectionEntries(makePath(projectPath, toQuarterSamplePath)); %incase files renamed
+                
+                location.saveMetadata(makePath(toQuarterSamplePath, location.dirName), projectPath, updateBackupFiles);
+            end
+            
+        end
+        
+        
+        function dirName = generateDirName(location)
+            dirSubtitle = '';
+            
+            dirName = createDirName(LocationNamingConventions.DIR_PREFIX, num2str(location.locationNumber), dirSubtitle, LocationNamingConventions.DIR_NUM_DIGITS);
+        end
+        
+        
+        function label = generateListboxLabel(location)             
+            label = createNavigationListboxLabel(LocationNamingConventions.NAVI_LISTBOX_PREFIX, location.locationNumber, '');
+        end
+        
+        
+        function section = generateFilenameSection(location)
+            section = createFilenameSection(LocationNamingConventions.DATA_FILENAME_LABEL, num2str(location.locationNumber));
+        end
+        
+        
+        function location = updateFileSelectionEntries(location, toPath)
+            sessions = location.sessions;
+            
+            toPath = makePath(toPath, location.dirName);
+            
+            for i=1:length(sessions)
+                location.sessions{i} = sessions{i}.updateFileSelectionEntries(toPath);
+            end
+        end
+        
+        
         function location = importLocation(location, toLocationProjectPath, locationImportPath, projectPath, dataFilename, userName)
-            filenameSection = createFilenameSection(LocationNamingConventions.DATA_FILENAME_LABEL, num2str(location.locationNumber));
+            filenameSection = location.generateFilenameSection();
             dataFilename = strcat(dataFilename, filenameSection);
             
             prompt = ['Select the session to which the data being imported from ', locationImportPath, ' belongs to.'];
@@ -290,9 +352,7 @@ classdef Location
         
         
         function location = createDirectories(location, toQuarterPath, projectPath)
-            dirSubtitle = '';
-            
-            locationDirectory = createDirName(LocationNamingConventions.DIR_PREFIX, num2str(location.locationNumber), dirSubtitle, LocationNamingConventions.DIR_NUM_DIGITS);
+            locationDirectory = location.generateDirName();
             
             createObjectDirectories(projectPath, toQuarterPath, locationDirectory);
                         
@@ -409,7 +469,7 @@ classdef Location
         end
         
         function location = importLegacyData(location, toLocationProjectPath, legacyImportPaths, localProjectPath, dataFilename, userName)
-            filenameSection = createFilenameSection(LocationNamingConventions.DATA_FILENAME_LABEL, num2str(location.locationNumber));
+            filenameSection = location.generateFilenameSection();
             dataFilename = strcat(dataFilename, filenameSection);
             
             % import raw data
@@ -480,7 +540,7 @@ classdef Location
         end
         
                 
-        function location = editSelectedSessionMetadata(location, projectPath, toLocationPath, userName)
+        function location = editSelectedSessionMetadata(location, projectPath, toLocationPath, userName, dataFilename)
             session = location.getSelectedSession();
             
             if ~isempty(session)
@@ -488,8 +548,11 @@ classdef Location
                 noSessionType = []; %don't select a certian session type
                 sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessions
                 sessionNumbers = location.getSessionNumbers();
+                                
+                filenameSection = location.generateFilenameSection();
+                dataFilename = [dataFilename, filenameSection];
                 
-                session = session.editMetadata(projectPath, toLocationPath, userName, updateBackupFiles, sessionChoices, sessionNumbers);
+                session = session.editMetadata(projectPath, toLocationPath, userName, dataFilename, sessionChoices, sessionNumbers);
             
                 location = location.updateSelectedSession(session);
             end

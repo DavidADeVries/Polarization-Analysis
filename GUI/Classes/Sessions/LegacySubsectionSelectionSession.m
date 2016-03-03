@@ -19,7 +19,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                 session.dataProcessingSessionNumber = dataProcessingSessionNumber;
                 
                 % set navigation listbox label
-                session.naviListboxLabel = createNavigationListboxLabel(SessionNamingConventions.DATA_PROCESSING_NAVI_LISTBOX_PREFIX, session.dataProcessingSessionNumber, session.getDirSubtitle());
+                session.naviListboxLabel = session.generateListboxLabel();
                 
                 % set metadata history
                 session.metadataHistory = {MetadataHistoryEntry(userName)};
@@ -36,10 +36,13 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
         end
         
         
-        function session = editMetadata(session, projectPath, toLocationPath, userName, updateBackupFiles, sessionChoices, sessionNumbers)
+        function session = editMetadata(session, projectPath, toLocationPath, userName, dataFilename, sessionChoices, sessionNumbers)
             [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy, selectedChoices] = LegacySubsectionSelectionSessionMetadataEntry('', userName, sessionChoices, session, sessionNumbers);
             
             if ~cancel
+                oldDirName = session.dirName;
+                oldFilenameSection = session.generateFilenameSection();  
+                
                 %Assigning values to Legacy Registration Session Properties
                 session.croppingType = croppingType;
                 session.coords = coords;
@@ -52,7 +55,20 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                                 
                 session.linkedSessionNumbers = getSelectedSessionNumbers(sessionNumbers, selectedChoices);
                 
-                session = session.updateMetadataHistory(userName);
+                session = updateMetadataHistory(session, userName);
+                
+                updateBackupFiles = updateBackupFilesQuestionGui();
+                
+                newDirName = session.generateDirName();
+                newFilenameSection = session.generateFilenameSection(); 
+                
+                renameDirectory(toLocationPath, projectPath, oldDirName, newDirName, updateBackupFiles);
+                renameFiles(toLocationPath, projectPath, dataFilename, oldFilenameSection, newFilenameSection, updateBackupFiles);
+                
+                session.dirName = newDirName;
+                session.naviListboxLabel = session.generateListboxLabel();
+                
+                session = session.updateFileSelectionEntries(makePath(projectPath, toLocationPath)); %incase files renamed
                 
                 session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, updateBackupFiles);
             end
@@ -82,7 +98,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
         
         
         function session = importSession(session, sessionProjectPath, importPath, projectPath, dataFilename) 
-            dataFilename = strcat(dataFilename, session.getFilenameSection());
+            dataFilename = strcat(dataFilename, session.generateFilenameSection());
             
             filenameExtensions = {Constants.BMP_EXT};
             

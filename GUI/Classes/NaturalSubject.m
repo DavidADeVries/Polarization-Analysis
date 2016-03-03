@@ -38,10 +38,13 @@ classdef NaturalSubject < Subject
             
         end
         
-        function subject = editMetadata(subject, projectPath, toTrialPath, userName, existingSubjectNumbers)
+        function subject = editMetadata(subject, projectPath, toTrialPath, userName, dataFilename, existingSubjectNumbers)
             [cancel, subjectNumber, subjectId, age, gender, ADDiagnosis, causeOfDeath, medicalHistory, notes] = NaturalSubjectMetadataEntry([], existingSubjectNumbers, userName, '', subject);
             
             if ~cancel
+                oldDirName = subject.dirName;
+                oldFilenameSection = subject.generateFilenameSection();
+                
                 %Assigning values to NaturalSubject Properties
                 subject.subjectNumber = subjectNumber;
                 subject.subjectId = subjectId;
@@ -52,21 +55,36 @@ classdef NaturalSubject < Subject
                 subject.medicalHistory = medicalHistory;
                 subject.notes = notes;
                 
-                subject = subject.updateMetadataHistory(userName);
+                subject = updateMetadataHistory(subject, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 
                 newDirName = subject.generateDirName();
-                oldDirName = subject.dirName;
+                newFilenameSection = subject.generateFilenameSection();
                 
-                renameDirectory(toTrialPath, projectPath, oldDirName, newDirName, updateBackupFile);
+                renameDirectory(toTrialPath, projectPath, oldDirName, newDirName, updateBackupFiles);
+                renameFiles(toTrialPath, projectPath, dataFilename, oldFilenameSection, newFilenameSection, updateBackupFiles);
                 
                 subject.dirName = newDirName;
                 subject.naviListboxLabel = subject.generateListboxLabel();
                 
+                subject = subject.updateFileSelectionEntries(makePath(projectPath, toTrialPath)); %incase files renamed
+                
                 subject.saveMetadata(makePath(toTrialPath, subject.dirName), projectPath, updateBackupFiles);
             end
         end
+        
+        
+        function subject = updateFileSelectionEntries(subject, toPath)
+            eyes = subject.eyes;
+            
+            toPath = makePath(toPath, subject.dirName);
+            
+            for i=1:length(eyes)
+                subject.eyes{i} = eyes{i}.updateFileSelectionEntries(toPath);
+            end
+        end
+        
         
         function subject = loadSubject(subject, toSubjectPath, subjectDir)
             subjectPath = makePath(toSubjectPath, subjectDir);
@@ -97,7 +115,7 @@ classdef NaturalSubject < Subject
         function subject = importSubject(subject, toSubjectProjectPath, subjectImportPath, projectPath, dataFilename, userName, subjectType)
             dirList = getAllFolders(subjectImportPath);
             
-            filenameSection = createFilenameSection(SubjectNamingConventions.DATA_FILENAME_LABEL, num2str(subject.subjectNumber));
+            filenameSection = subject.generateFilenameSection();
             dataFilename = [dataFilename, filenameSection]; 
             
             for i=1:length(dirList)
@@ -353,7 +371,7 @@ classdef NaturalSubject < Subject
         
         
         function subject = importLegacyDataTypeSpecific(subject, toSubjectProjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType)
-            filenameSection = createFilenameSection(SubjectNamingConventions.DATA_FILENAME_LABEL, num2str(subject.subjectNumber));
+            filenameSection = subject.generateFilenameSection();
             dataFilename = [dataFilename, filenameSection];
             
             prompt = ['Select the eye to which the data being imported from ', displayImportPath, ' belongs to.'];
@@ -382,49 +400,57 @@ classdef NaturalSubject < Subject
         end
         
         
-        function subject = editSelectedEyeMetadata(subject, projectPath, toSubjectPath, userName)
+        function subject = editSelectedEyeMetadata(subject, projectPath, toSubjectPath, userName, dataFilename)
             eye = subject.getSelectedEye();
             
             if ~isempty(eye)
                 existingEyeNumbers = subject.getEyeNumbers();
+                filenameSection = subject.generateFilenameSection();
+                dataFilename = [dataFilename, filenameSection];
                 
-                eye = eye.editMetadata(projectPath, toSubjectPath, userName, existingEyeNumbers);
+                eye = eye.editMetadata(projectPath, toSubjectPath, userName, dataFilename, existingEyeNumbers);
             
                 subject = subject.updateSelectedEye(eye);
             end
         end
         
-        function subject = editSelectedQuarterMetadata(subject, projectPath, toSubjectPath, userName)
+        function subject = editSelectedQuarterMetadata(subject, projectPath, toSubjectPath, userName, dataFilename)
             eye = subject.getSelectedEye();
             
-            if ~isempty(subject)
+            if ~isempty(eye)
                 toEyePath = makePath(toSubjectPath, eye.dirName);
+                filenameSection = subject.generateFilenameSection();
+                dataFilename = [dataFilename, filenameSection];
                 
-                eye = eye.editSelectedQuarterMetadata(projectPath, toEyePath, userName);
+                eye = eye.editSelectedQuarterMetadata(projectPath, toEyePath, userName, dataFilename);
             
                 subject = subject.updateSelectedEye(eye);
             end
         end
         
-        function subject = editSelectedLocationMetadata(subject, projectPath, toSubjectPath, userName)
+        function subject = editSelectedLocationMetadata(subject, projectPath, toSubjectPath, userName, dataFilename, subjectType)
             eye = subject.getSelectedEye();
             
-            if ~isempty(subject)
+            if ~isempty(eye)
                 toEyePath = makePath(toSubjectPath, eye.dirName);
+                filenameSection = subject.generateFilenameSection();
+                dataFilename = [dataFilename, filenameSection];
                 
-                eye = eye.editSelectedLocationMetadata(projectPath, toEyePath, userName);
+                eye = eye.editSelectedLocationMetadata(projectPath, toEyePath, userName, dataFilename, subjectType);
             
                 subject = subject.updateSelectedEye(eye);
             end
         end
         
-        function subject = editSelectedSessionMetadata(subject, projectPath, toSubjectPath, userName)
+        function subject = editSelectedSessionMetadata(subject, projectPath, toSubjectPath, userName, dataFilename)
             eye = subject.getSelectedEye();
             
-            if ~isempty(subject)
+            if ~isempty(eye)
                 toEyePath = makePath(toSubjectPath, eye.dirName);
+                filenameSection = subject.generateFilenameSection();
+                dataFilename = [dataFilename, filenameSection];
                 
-                eye = eye.editSelectedSessionMetadata(projectPath, toEyePath, userName);
+                eye = eye.editSelectedSessionMetadata(projectPath, toEyePath, userName, dataFilename);
             
                 subject = subject.updateSelectedEye(eye);
             end

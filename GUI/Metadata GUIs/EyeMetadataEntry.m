@@ -88,10 +88,10 @@ set(handles.eyeTypeList, 'String', choiceList);
 if length(varargin) > 4
     eye = varargin{5};
     
-    handles.importPath = varargin{4};% Parameter name is 'importPath'
+    handles.importPath = 'None';% Parameter name is 'importPath'
     
     handles.eyeId = eye.eyeId;
-    handles.eyeTypeChoice = eye.eyeTypeChoice;
+    handles.eyeTypeChoice = eye.eyeType;
     handles.eyeNumber = eye.eyeNumber;
     handles.dissectionDate = eye.dissectionDate;
     handles.dissectionDoneBy = eye.dissectionDoneBy;
@@ -100,7 +100,7 @@ if length(varargin) > 4
     set(handles.eyeIdInput, 'String', handles.eyeId);
     set(handles.eyeNumberInput, 'String', num2str(handles.eyeNumber));
     set(handles.dissectionDateInput, 'String', displayDate(handles.dissectionDate));
-    set(handles.dissectionDateByInput, 'String', handles.dissectionDoneBy);
+    set(handles.dissectionDoneByInput, 'String', handles.dissectionDoneBy);
     set(handles.eyeNotesInput, 'String', handles.eyeNotes);
     
     set(handles.dissectionDoneByInput, 'String', handles.dissectionDoneBy);
@@ -116,7 +116,7 @@ if length(varargin) > 4
     
     set(handles.OK, 'enable', 'on');
 else
-    handles.importPath = 'None';% Parameter name is 'importPath'
+    handles.importPath = varargin{4};% Parameter name is 'importPath'
     
     set(handles.dissectionDoneByInput, 'String', handles.userName);
     %Set default Eye number based on input to function
