@@ -99,6 +99,9 @@ function rawDataPath_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of rawDataPath as text
 %        str2double(get(hObject,'String')) returns contents of rawDataPath as a double
 
+set(handles.rawDataPath, 'String', handles.rawDataPathOutput); %prevent deleting
+
+guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function rawDataPath_CreateFcn(hObject, eventdata, handles)
@@ -138,6 +141,10 @@ function alignedDataPath_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of alignedDataPath as text
 %        str2double(get(hObject,'String')) returns contents of alignedDataPath as a double
+
+set(handles.alignedDataPath, 'String', handles.alignedDataPathOutput); %prevent deleting
+
+guidata(hObject, handles);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -180,6 +187,10 @@ function positiveAreaPath_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of positiveAreaPath as text
 %        str2double(get(hObject,'String')) returns contents of positiveAreaPath as a double
 
+set(handles.positiveAreaPath, 'String', handles.positiveAreaPathOutput); %prevent deleting
+
+guidata(hObject, handles);
+
 
 % --- Executes during object creation, after setting all properties.
 function positiveAreaPath_CreateFcn(hObject, eventdata, handles)
@@ -220,6 +231,10 @@ function negativeAreaPath_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of negativeAreaPath as text
 %        str2double(get(hObject,'String')) returns contents of negativeAreaPath as a double
+
+set(handles.negativeAreaPath, 'String', handles.negativeAreaPathOutput); %prevent deleting
+
+guidata(hObject, handles);
 
 
 % --- Executes during object creation, after setting all properties.

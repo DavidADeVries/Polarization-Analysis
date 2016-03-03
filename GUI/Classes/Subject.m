@@ -84,15 +84,16 @@ classdef Subject
                     for i=1:length(paths)
                         if ~isempty(paths{i})
                             displayImportPath = paths{i};
+                            break;
                         end
                     end
                     
                     legacyImportPaths = struct('rawDataPath', rawDataPath, 'registeredDataPath', registeredDataPath, 'positiveAreaPath', positiveAreaPath, 'negativeAreaPath', negativeAreaPath);
                     
                     subject = subject.importLegacyDataTypeSpecific(toSubjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType);
-                    
-                    counter = counter + 1;
                 end
+                    
+                counter = counter + 1;
             end
         end
         
