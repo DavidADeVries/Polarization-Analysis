@@ -690,6 +690,6 @@ function plotPreviousLocations(handles, locationCoordsWithLabels)
         label = locationCoordsWithLabels{i}.label;
         
         plot(coords(1), coords(2), handles.MarkerStyle, 'MarkerSize', handles.MarkerSize, 'MarkerEdgeColor', colour, 'MarkerFaceColor', colour);
-        text(coords(1)+0.03, coords(2)-0.03, label, 'Color', colour);
+        plot(coords(1), coords(2), label, 'Color', colour);
     end
 end

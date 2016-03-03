@@ -43,8 +43,8 @@ classdef Location
         end
         
         
-        function location = editMetadata(location, projectPath, toQuarterSamplePath, userName, dataFilename, existingLocationNumbers, locationCoordsWithLabels, eyeType, subjectType, quarterType)
-            [cancel, coords, locationNumber, deposit, notes] = LocationMetadataEntry(eyeType, subjectType, quarterType, [], existingLocationNumbers, locationCoordsWithLabels, '', location);
+        function location = editMetadata(location, projectPath, toQuarterSamplePath, userName, dataFilename, existingLocationNumbers, eyeType, subjectType, quarterType)
+            [cancel, coords, locationNumber, deposit, notes] = LocationMetadataEntry(eyeType, subjectType, quarterType, [], existingLocationNumbers, '', location);
             
             if ~cancel
                 oldDirName = location.dirName;
@@ -256,10 +256,10 @@ classdef Location
         end
         
         
-        function [cancel, location] = enterMetadata(location, suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, subjectType, eyeType, quarterType, importPath)
+        function [cancel, location] = enterMetadata(location, suggestedLocationNumber, existingLocationNumbers, subjectType, eyeType, quarterType, importPath)
             
             %Call to LocationMetadataEntry Function
-            [cancel, coords, locationNumber, deposit, notes] = LocationMetadataEntry(eyeType, subjectType, quarterType, suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, importPath);
+            [cancel, coords, locationNumber, deposit, notes] = LocationMetadataEntry(eyeType, subjectType, quarterType, suggestedLocationNumber, existingLocationNumbers, importPath);
             
             if ~cancel
                 %Assigning values to the location class properties
