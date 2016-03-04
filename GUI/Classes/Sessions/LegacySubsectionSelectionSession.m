@@ -4,35 +4,37 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
     % directly imported into this application
     
     properties
-        croppingType
-        coords % [xTopLeftCorner, yTopLeftCorner, width, height]
+        croppingType = [];
+        coords = []; % [xTopLeftCorner, yTopLeftCorner, width, height]
     end
     
     methods
         
-        function session = LegacySubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, sessionNumbers)
-            [cancel, session] = session.enterMetadata(importDir, userName, sessionChoices, sessionNumbers);
-            
-            if ~cancel
-                % set session numbers
-                session.sessionNumber = sessionNumber;
-                session.dataProcessingSessionNumber = dataProcessingSessionNumber;
+        function session = LegacySubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, sessionNumbers, lastSession)
+            if nargin > 0
+                [cancel, session] = session.enterMetadata(importDir, userName, sessionChoices, sessionNumbers, lastSession);
                 
-                % set navigation listbox label
-                session.naviListboxLabel = session.generateListboxLabel();
-                
-                % set metadata history
-                session.metadataHistory = {MetadataHistoryEntry(userName)};
-                
-                % make directory/metadata file
-                session = session.createDirectories(toLocationPath, projectPath);
-                
-                % save metadata
-                saveToBackup = true;
-                session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
-            else
-                session = LegacySubsectionSelectionSession.empty;
-            end              
+                if ~cancel
+                    % set session numbers
+                    session.sessionNumber = sessionNumber;
+                    session.dataProcessingSessionNumber = dataProcessingSessionNumber;
+                    
+                    % set navigation listbox label
+                    session.naviListboxLabel = session.generateListboxLabel();
+                    
+                    % set metadata history
+                    session.metadataHistory = {MetadataHistoryEntry(userName)};
+                    
+                    % make directory/metadata file
+                    session = session.createDirectories(toLocationPath, projectPath);
+                    
+                    % save metadata
+                    saveToBackup = true;
+                    session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
+                else
+                    session = LegacySubsectionSelectionSession.empty;
+                end
+            end
         end
         
         
@@ -153,7 +155,17 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
             
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, croppingTypeString, coordsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
-        end        
+        end
+        
+        
+        function preppedSession = prepForAutofill(session)
+            preppedSession = LegacySubsectionSelectionSession;
+            
+            % these are the values to carry over
+            preppedSession.sessionDate = session.sessionDate;
+            preppedSession.sessionDoneBy = session.sessionDoneBy;
+            preppedSession.linkedSessionNumbers = session.linkedSessionNumbers;
+        end     
         
     end
     

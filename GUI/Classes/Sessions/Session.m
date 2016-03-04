@@ -7,41 +7,41 @@ classdef Session
     
     properties
         % set at initialization
-        dirName
-        naviListboxLabel
-        metadataHistory
+        dirName = '';
+        naviListboxLabel = '';
+        metadataHistory = {};
         
         % set by metadata entry
-        sessionDate
-        sessionDoneBy           
-        sessionNumber        
+        sessionDate = 0;
+        sessionDoneBy = '';    
+        sessionNumber
         isDataCollectionSession
-        notes
+        notes = '';
         
-        rejected % T/F, will exclude data from being included in analysis
-        rejectedReason % reason that this data was rejected (suspected poor imaging, out of focus
-        rejectedBy
+        rejected = false; % T/F, will exclude data from being included in analysis
+        rejectedReason = ''; % reason that this data was rejected (suspected poor imaging, out of focus
+        rejectedBy = '';
         
         % list of files for the session and the index   
-        fileSelectionEntries     
-        subfolderIndex = 0
+        fileSelectionEntries = {};
+        subfolderIndex = 0;
     end
     
     methods(Static)
         
-        function session = createSession(sessionType, sessionNumber, dataCollectionSessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, sessionNumbers)
+        function session = createSession(sessionType, sessionNumber, dataCollectionSessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, sessionNumbers, lastSession)
             
             if sessionType == SessionTypes.Microscope
-                session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
+                session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, lastSession);
                 
             elseif sessionType == SessionTypes.CSLO
-                session = CLSOSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName);
+                session = CLSOSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, lastSession);
                 
             elseif sessionType == SessionTypes.LegacyRegistration
-                session = LegacyRegistrationSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, sessionNumbers);
+                session = LegacyRegistrationSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, sessionNumbers, lastSession);
                 
             elseif sessionType == SessionTypes.LegacySubsectionSelection
-                session = LegacySubsectionSelectionSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, sessionNumbers);
+                session = LegacySubsectionSelectionSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, sessionNumbers, lastSession);
                 
             elseif sessionType == SessionTypes.FrameAveraging
                 session = FrameAveragingSession();
@@ -156,6 +156,8 @@ classdef Session
             sessionNotesString = ['Notes: ', session.notes];
             metadataHistoryStrings = generateMetadataHistoryStrings(session.metadataHistory);
         end
+        
+        
     end
     
 end

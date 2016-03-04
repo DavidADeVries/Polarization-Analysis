@@ -4,34 +4,36 @@ classdef LegacyRegistrationSession < DataProcessingSession
     % directly imported into this application
     
     properties
-        registrationType % registrationType
-        registrationParams
+        registrationType = []; % registrationType
+        registrationParams = '';
     end
     
     methods
-        function session = LegacyRegistrationSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, sessionNumbers)
-            [cancel, session] = session.enterMetadata(importDir, userName, sessionChoices, sessionNumbers);
-            
-            if ~cancel
-                % set session numbers
-                session.sessionNumber = sessionNumber;
-                session.dataProcessingSessionNumber = dataProcessingSessionNumber;
+        function session = LegacyRegistrationSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, sessionNumbers, lastSession)
+            if nargin > 0
+                [cancel, session] = session.enterMetadata(importDir, userName, sessionChoices, sessionNumbers, lastSession);
                 
-                % set navigation listbox label
-                session.naviListboxLabel = session.generateListboxLabel();
-                
-                % set metadata history
-                session.metadataHistory = {MetadataHistoryEntry(userName)};
-                
-                % make directory/metadata file
-                session = session.createDirectories(toLocationPath, projectPath);
-                
-                % save metadata
-                saveToBackup = true;
-                session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
-            else
-                session = LegacyRegistrationSession.empty;
-            end              
+                if ~cancel
+                    % set session numbers
+                    session.sessionNumber = sessionNumber;
+                    session.dataProcessingSessionNumber = dataProcessingSessionNumber;
+                    
+                    % set navigation listbox label
+                    session.naviListboxLabel = session.generateListboxLabel();
+                    
+                    % set metadata history
+                    session.metadataHistory = {MetadataHistoryEntry(userName)};
+                    
+                    % make directory/metadata file
+                    session = session.createDirectories(toLocationPath, projectPath);
+                    
+                    % save metadata
+                    saveToBackup = true;
+                    session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
+                else
+                    session = LegacyRegistrationSession.empty;
+                end
+            end
         end
         
         
@@ -74,10 +76,20 @@ classdef LegacyRegistrationSession < DataProcessingSession
         end
         
         
-        function [cancel, session] = enterMetadata(session, importPath, userName, sessionChoices, sessionNumbers)
+        function [cancel, session] = enterMetadata(session, importPath, userName, sessionChoices, sessionNumbers, lastSession)
             
             %Call to Legacy Registration Session Metadata Entry GUI
-            [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy, selectedChoices] = LegacyRegistrationSessionMetadataEntry(importPath, userName, sessionChoices);
+            [cancel,...
+             sessionDate,...
+             sessionDoneBy,...
+             notes,...
+             registrationType,...
+             registrationParams,...
+             rejected,...
+             rejectedReason,...
+             rejectedBy,...
+             selectedChoices]...
+             = LegacyRegistrationSessionMetadataEntry(importPath, userName, sessionChoices, lastSession);
             
             if ~cancel
                 %Assigning values to Legacy Registration Session Properties
@@ -154,6 +166,16 @@ classdef LegacyRegistrationSession < DataProcessingSession
             metadataString = [metadataString, metadataHistoryStrings];
         end        
         
+        
+        function preppedSession = prepForAutofill(session)
+            preppedSession = LegacyRegistrationSession;
+            
+            % these are the values to carry over
+            preppedSession.sessionDate = session.sessionDate;
+            preppedSession.sessionDoneBy = session.sessionDoneBy;
+            preppedSession.registrationType = session.registrationType;
+            preppedSession.linkedSessionNumbers = session.linkedSessionNumbers;
+        end
         
     end
     

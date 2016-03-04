@@ -12,7 +12,7 @@ classdef Constants
         BMP_EXT = '.bmp';
         ND2_EXT = '.nd2';
         MATLAB_EXT = '.mat';
-        
+                
         FIGURE_INIT_SIZE_WARNING_ID = 'images:initSize:adjustingMag';
         
         DEFAULT_EYE_TYPE = EyeTypes.Right;

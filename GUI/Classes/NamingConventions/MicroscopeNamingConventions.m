@@ -30,11 +30,6 @@ classdef MicroscopeNamingConventions
         TR_FILENAME_LABEL = 'TR';
         LPO_FILENAME_LABEL = 'PO';
         
-        %MetdataGUI default input values
-        DEFAULT_METADATA_GUI_MAGNIFICATION = 40;
-        DEFAULT_METADATA_GUI_PIXEL_SIZE_MICRONS = 1.13;
-        DEFAULT_METADATA_GUI_INSTRUMENT = 'Nikon Eclipse Ti-U';
-        
     end
     
     methods (Static)

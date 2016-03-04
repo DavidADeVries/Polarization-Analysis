@@ -443,8 +443,8 @@ classdef Quarter
                 
                 if ~isempty(location)
                     toLocationProjectPath = makePath(toQuarterProjectPath, location.dirName);
-                    
-                    location = location.importLegacyData(toLocationProjectPath, legacyImportPaths, localProjectPath, dataFilename, userName);
+                                        
+                    location = location.importLegacyData(toLocationProjectPath, legacyImportPaths, localProjectPath, dataFilename, userName, quarter.locations);
                     
                     quarter = quarter.updateLocation(location);
                 end
