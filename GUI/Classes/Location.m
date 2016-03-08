@@ -105,7 +105,7 @@ classdef Location
         end
         
         
-        function location = importLocation(location, toLocationProjectPath, locationImportPath, projectPath, dataFilename, userName)
+        function location = importLocation(location, toLocationProjectPath, locationImportPath, projectPath, dataFilename, userName, locations)
             filenameSection = location.generateFilenameSection();
             dataFilename = strcat(dataFilename, filenameSection);
             
@@ -113,9 +113,9 @@ classdef Location
             title = 'Select Session';
             
             noSessionType = []; %don't select a certian session type
-            choices = location.getSessionChoices(noSessionType);
+            choiceStrings = location.getSessionChoiceStrings(noSessionType);
             
-            [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+            [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choiceStrings);
             
             if ~cancel
                 if createNew
@@ -130,9 +130,21 @@ classdef Location
                         dataCollectionSessionNumber = location.nextDataCollectionSessionNumber();
                         dataProcessingSessionNumber = location.nextDataProcessingSessionNumber();
                         
-                        sessionNumbers = location.getSessionNumbers();
+                        noSessionType = []; %don't select a certian session type
+                        sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessionsnoSessionType = []; %don't select a certian session type
                         
-                        session = Session.createSession(sessionType, sessionNumber, dataCollectionSessionNumber, dataProcessingSessionNumber, toLocationProjectPath, projectPath, locationImportPath, userName, choices, sessionNumbers);
+                        lastSession = getLastSessionByType(locations, sessionType);
+                        
+                        session = Session.createSession(sessionType,...
+                                                        sessionNumber,...
+                                                        dataCollectionSessionNumber,...
+                                                        dataProcessingSessionNumber,...
+                                                        toLocationProjectPath,...
+                                                        projectPath,...
+                                                        locationImportPath,...
+                                                        userName,...
+                                                        sessionChoices,...
+                                                        lastSession);
                     else
                         session = Session.empty;
                     end
@@ -187,8 +199,20 @@ classdef Location
             sessionChoices = cell(numSessions, 1);
             
             for i=1:numSessions
-                sessionChoices{i} = sessions{i}.naviListboxLabel;
+                sessionChoices{i} = sessions{i};
             end            
+        end
+        
+        function choiceStrings = getSessionChoiceStrings(location, sessionType)
+            sessions = location.getSessionChoices(sessionType);
+            
+            numSessions = length(sessions);
+            
+            choiceStrings = cell(numSessions, 1);
+            
+            for i=1:numSessions
+                choiceStrings{i}  = sessions{i}.naviListboxLabel;
+            end
         end
         
         
@@ -468,39 +492,60 @@ classdef Location
             location = location.updateSession(session);
         end
         
-        function location = importLegacyData(location, toLocationProjectPath, legacyImportPaths, localProjectPath, dataFilename, userName)
+        
+        function lastSession = getLastSessionByType(location, sessionType)
+            sessions = location.sessions;
+            
+            numSessions = length(sessions);
+            
+            compareClass = class(sessionType.sessionClass);
+            
+            lastSession = sessionType.sessionClass;
+            
+            for i=numSessions:-1:1
+                session = sessions{i};
+                
+                if strcmp(class(session), compareClass)
+                    lastSession = session;
+                    break;
+                end
+            end
+        end
+        
+        
+        function location = importLegacyData(location, toLocationProjectPath, legacyImportPaths, localProjectPath, dataFilename, userName, locations)
             filenameSection = location.generateFilenameSection();
             dataFilename = strcat(dataFilename, filenameSection);
             
             % import raw data
             importPath = legacyImportPaths.rawDataPath;
             sessionType = SessionTypes.Microscope;
-            location = location.importLegacyDataSession(toLocationProjectPath, importPath, localProjectPath, dataFilename, userName, sessionType);
+            location = location.importLegacyDataSession(toLocationProjectPath, importPath, localProjectPath, dataFilename, userName, sessionType, locations);
             
             % import registered data
             importPath = legacyImportPaths.registeredDataPath;
             sessionType = SessionTypes.LegacyRegistration;
-            location = location.importLegacyDataSession(toLocationProjectPath, importPath, localProjectPath, dataFilename, userName, sessionType);  
+            location = location.importLegacyDataSession(toLocationProjectPath, importPath, localProjectPath, dataFilename, userName, sessionType, locations);  
             
             % import positive area
             importPath = legacyImportPaths.positiveAreaPath;
             sessionType = SessionTypes.LegacySubsectionSelection;
-            location = location.importLegacyDataSession(toLocationProjectPath, importPath, localProjectPath, dataFilename, userName, sessionType);  
+            location = location.importLegacyDataSession(toLocationProjectPath, importPath, localProjectPath, dataFilename, userName, sessionType, locations);  
                         
             % import negative area
             importPath = legacyImportPaths.negativeAreaPath;
             sessionType = SessionTypes.LegacySubsectionSelection;
-            location = location.importLegacyDataSession(toLocationProjectPath, importPath, localProjectPath, dataFilename, userName, sessionType); 
+            location = location.importLegacyDataSession(toLocationProjectPath, importPath, localProjectPath, dataFilename, userName, sessionType, locations); 
             
         end
         
-        function location = importLegacyDataSession(location, toLocationProjectPath, importPath, localProjectPath, dataFilename, userName, sessionType)
+        function location = importLegacyDataSession(location, toLocationProjectPath, importPath, localProjectPath, dataFilename, userName, sessionType, locations)
             if ~isempty(importPath)                
                 prompt = ['Select the session to which the ', sessionType.displayString, ' being imported from ', importPath, ' belongs to.'];
                 title = [sessionType.displayString, ' Session'];
-                choices = location.getSessionChoices(sessionType);
+                choiceStrings = location.getSessionChoiceStrings(sessionType);
                 
-                [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+                [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choiceStrings);
                 
                 if ~cancel
                     if createNew
@@ -510,7 +555,8 @@ classdef Location
                         
                         noSessionType = []; %don't select a certian session type
                         sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessions
-                        sessionNumbers = location.getSessionNumbers();
+                        
+                        lastSession = getLastSessionByType(locations, sessionType);
                         
                         session = Session.createSession(sessionType,...
                                                         sessionNumber,...
@@ -521,7 +567,7 @@ classdef Location
                                                         importPath,...
                                                         userName,...
                                                         sessionChoices,...
-                                                        sessionNumbers);
+                                                        lastSession);
                     else
                         session = location.getSessionFromChoice(sessionType, choice);
                     end
@@ -547,12 +593,11 @@ classdef Location
                 
                 noSessionType = []; %don't select a certian session type
                 sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessions
-                sessionNumbers = location.getSessionNumbers();
                                 
                 filenameSection = location.generateFilenameSection();
                 dataFilename = [dataFilename, filenameSection];
                 
-                session = session.editMetadata(projectPath, toLocationPath, userName, dataFilename, sessionChoices, sessionNumbers);
+                session = session.editMetadata(projectPath, toLocationPath, userName, dataFilename, sessionChoices);
             
                 location = location.updateSelectedSession(session);
             end

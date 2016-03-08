@@ -1,3 +1,6 @@
+%% DOCUMENT TITLE
+% INTRODUCTORY TEXT
+%%
 function varargout = MicroscopeSessionMetadataEntry(varargin)
 % MICROSCOPESESSIONMETADATAENTRY MATLAB code for MicroscopeSessionMetadataEntry.fig
 %      MICROSCOPESESSIONMETADATAENTRY, by itself, creates a new MICROSCOPESESSIONMETADATAENTRY or raises the existing
@@ -22,7 +25,7 @@ function varargout = MicroscopeSessionMetadataEntry(varargin)
 
 % Edit the above text to modify the response to help MicroscopeSessionMetadataEntry
 
-% Last Modified by GUIDE v2.5 19-Feb-2016 10:46:19
+% Last Modified by GUIDE v2.5 04-Mar-2016 10:54:05
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -52,92 +55,98 @@ function MicroscopeSessionMetadataEntry_OpeningFcn(hObject, eventdata, handles, 
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to MicroscopeSessionMetadataEntry (see VARARGIN)
 
-% Choose default command line output for MicroscopeSessionMetadataEntry
-handles.output = hObject;
-
-% **************************************
-% INPUT: (userName, importPath, session*)
+% ***********************************************
+% INPUT: (userName, importPath, isEdit, session*)
 %        *may be empty
-% **************************************
+% ***********************************************
 
 handles.userName = varargin{1}; %Param is userName
 handles.importPath = varargin{2}; % Param is importPath
 
-if length(varargin) > 2
-    session = varargin{3}; %may be empty
+isEdit = varargin{3};
 
-    handles.magnification = session.magnification;
-    handles.pixelSizeMicrons = session.pixelSizeMicrons;
-    handles.instrument = session.instrument;
-    handles.fluoroSignature = session.fluoroSignature;
-    handles.crossedSignature = session.crossedSignature;
-    handles.visualSignature = session.visualSignature;
-    handles.sessionDate = session.sessionDate;
-    handles.sessionDoneBy = session.sessionDoneBy;
-    handles.sessionNotes = session.notes;
-    handles.rejected = session.rejected;
-    handles.rejectedReason = session.rejectedReason;
-    handles.rejectedBy = session.rejectedBy;
-    
-    set(handles.importPathTitle, 'String', 'None');
-    
-    set(handles.magnificationInput, 'String', num2str(handles.magnification));
-    set(handles.pixelSizeInput, 'String', num2str(handles.pixelSizeMicrons));
-    set(handles.instrumentInput, 'String', handles.instrument);
-    
-    set(handles.fluoroBox, 'Value', handles.fluoroSignature);
-    set(handles.crossedBox, 'Value', handles.crossedSignature);
-    set(handles.visualBox, 'Value', handles.visualSignature);
-    
-    set(handles.sessionDateDisplay, 'String', displayDate(handles.sessionDate));
-    set(handles.sessionDoneByInput, 'String', handles.sessionDoneBy);
-    set(handles.sessionNotesInput, 'String', handles.sessionNotes);
-    
-    if handles.rejected %is rejected
-        set(handles.yesRejectedButton, 'Value', 1);
-        set(handles.noRejectedButton, 'Value', 0);
-    else        
-        set(handles.yesRejectedButton, 'Value', 0);
-        set(handles.noRejectedButton, 'Value', 1);
-        
-        set(handles.reasonForRejectionInput, 'enable', 'off');
-        set(handles.rejectedByInput, 'enable', 'off');
-    end
-    
-    set(handles.reasonForRejectionInput, 'String', handles.rejectedReason);
-    set(handles.rejectedByInput, 'String', handles.rejectedBy);
-        
-    set(handles.OK, 'enable', 'on');
-    
-else
-    %Defining the different input variables, awaiting user input
-    handles.magnification = MicroscopeNamingConventions.DEFAULT_METADATA_GUI_MAGNIFICATION;
-    handles.pixelSizeMicrons = MicroscopeNamingConventions.DEFAULT_METADATA_GUI_PIXEL_SIZE_MICRONS;
-    handles.instrument = MicroscopeNamingConventions.DEFAULT_METADATA_GUI_INSTRUMENT;
-    handles.fluoroSignature = 0;
-    handles.crossedSignature = 0;
-    handles.visualSignature = 0;
-    handles.sessionDate = '';
-    handles.sessionDoneBy = handles.userName;
-    handles.sessionNotes = '';
-    handles.rejected = 0;
-    handles.rejectedReason = '';
-    handles.rejectedBy = '';
-    
-    set(handles.importPathTitle, 'String', handles.importPath);
-    set(handles.sessionDoneByInput, 'String', handles.userName);
-    set(handles.magnificationInput, 'String', num2str(MicroscopeNamingConventions.DEFAULT_METADATA_GUI_MAGNIFICATION));
-    set(handles.pixelSizeInput, 'String', num2str(MicroscopeNamingConventions.DEFAULT_METADATA_GUI_PIXEL_SIZE_MICRONS));
-    set(handles.instrumentInput, 'String', MicroscopeNamingConventions.DEFAULT_METADATA_GUI_INSTRUMENT);
-    set(handles.yesRejectedButton, 'Value', 0);
-    set(handles.noRejectedButton, 'Value', 1);
-    set(handles.OK, 'enable', 'off');
-    set(handles.reasonForRejectionInput, 'enable', 'off');
-    set(handles.rejectedByInput, 'enable', 'off');
+session = [];
+
+if length(varargin) > 3
+    session = varargin{4}; %may be empty    
+end
+
+if isempty(session)
+    session = MicroscopeSession; % default fields
 end
 
 handles.cancel = false;
 
+if isEdit
+    set(handles.OK, 'enable', 'on');
+    
+    set(handles.pathTitle, 'Visible', 'off');
+    set(handles.importPathTitle, 'Visible', 'off');
+        
+    handles.magnification = session.magnification;
+    handles.pixelSizeMicrons = session.pixelSizeMicrons;
+    handles.instrument = session.instrument;
+    handles.sessionDate = session.sessionDate;
+    handles.sessionDoneBy = session.sessionDoneBy;    
+    handles.sessionNotes = session.notes;
+    handles.fluoroSignature = session.fluoroSignature;
+    handles.crossedSignature = session.crossedSignature;
+    handles.visualSignature = session.visualSignature;
+    handles.rejected = session.rejected;
+    handles.rejectedReason = session.rejectedReason;
+    handles.rejectedBy = session.rejectedBy;
+else
+    defaultSession = MicroscopeSession;
+    
+    set(handles.OK, 'enable', 'off');
+    
+    set(handles.importPathTitle, 'String', handles.importPath);
+    
+    handles.magnification = session.magnification;
+    handles.pixelSizeMicrons = session.pixelSizeMicrons;
+    handles.instrument = session.instrument;    
+    handles.sessionDate = session.sessionDate;
+    
+    if isempty(session.sessionDoneBy)
+        handles.sessionDoneBy = handles.userName;
+    else    
+        handles.sessionDoneBy = session.sessionDoneBy;    
+    end
+        
+    handles.sessionNotes = defaultSession.notes;
+    handles.fluoroSignature = defaultSession.fluoroSignature;
+    handles.crossedSignature = defaultSession.crossedSignature;
+    handles.visualSignature = defaultSession.visualSignature;
+    handles.rejected = defaultSession.rejected;
+    handles.rejectedReason = defaultSession.rejectedReason;
+    handles.rejectedBy = handles.userName;
+end
+
+
+% ** SET TEXT FIELDS **
+
+set(handles.magnificationInput, 'String', num2str(handles.magnification));
+set(handles.pixelSizeInput, 'String', num2str(handles.pixelSizeMicrons));
+set(handles.instrumentInput, 'String', handles.instrument);
+
+if isempty(handles.sessionDate) || handles.sessionDate == 0
+    set(handles.sessionDateDisplay, 'String', '');
+else    
+    set(handles.sessionDateDisplay, 'String', displayDate(handles.sessionDate));
+end
+
+set(handles.sessionDoneByInput, 'String', handles.sessionDoneBy);
+set(handles.sessionNotesInput, 'String', handles.sessionNotes);
+
+% ** SET CHECKBOXES **
+
+set(handles.fluoroBox, 'Value', handles.fluoroSignature);
+set(handles.crossedBox, 'Value', handles.crossedSignature);
+set(handles.visualBox, 'Value', handles.visualSignature);
+
+% ** SET REJECTED INPUTS **
+
+handles = setRejectedInputFields(handles);
 
 
 % Update handles structure
@@ -145,6 +154,7 @@ guidata(hObject, handles);
 
 % UIWAIT makes MicroscopeSessionMetadataEntry wait for user response (see UIRESUME)
 uiwait(handles.MicroscopeSessionMetadataEntry);
+
 end
 
 % --- Outputs from this function are returned to the command line.
@@ -362,13 +372,13 @@ enableLineScrolling(hObject);
 end
 
 
-function reasonForRejectionInput_Callback(hObject, eventdata, handles)
-% hObject    handle to reasonForRejectionInput (see GCBO)
+function rejectedReasonInput_Callback(hObject, eventdata, handles)
+% hObject    handle to rejectedReasonInput (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of reasonForRejectionInput as text
-%        str2double(get(hObject,'String')) returns contents of reasonForRejectionInput as a double
+% Hints: get(hObject,'String') returns contents of rejectedReasonInput as text
+%        str2double(get(hObject,'String')) returns contents of rejectedReasonInput as a double
 
 handles.rejectedReason = strjoin(rot90(cellstr(get(hObject, 'String'))));
 
@@ -379,8 +389,8 @@ guidata(hObject, handles);
 end
 
 % --- Executes during object creation, after setting all properties.
-function reasonForRejectionInput_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to reasonForRejectionInput (see GCBO)
+function rejectedReasonInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to rejectedReasonInput (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -500,7 +510,7 @@ handles.rejectedBy = handles.userName;
 
 set(handles.noRejectedButton, 'Value', 0);
 
-set(handles.reasonForRejectionInput, 'enable', 'on');
+set(handles.rejectedReasonInput, 'enable', 'on');
 set(handles.rejectedByInput, 'enable', 'on');
 set(handles.rejectedByInput, 'String', handles.userName);
 
@@ -525,8 +535,8 @@ set(handles.yesRejectedButton, 'Value', 0);
 
 checkToEnableOkButton(handles);
 
-set(handles.reasonForRejectionInput, 'enable', 'off');
-set(handles.reasonForRejectionInput, 'String', '');
+set(handles.rejectedReasonInput, 'enable', 'off');
+set(handles.rejectedReasonInput, 'String', '');
 set(handles.rejectedByInput, 'enable', 'off');
 set(handles.rejectedByInput, 'String', '');
 

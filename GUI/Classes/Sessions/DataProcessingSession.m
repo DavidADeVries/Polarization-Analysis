@@ -6,7 +6,7 @@ classdef DataProcessingSession < Session
     properties
         % set by metadata entry
         dataProcessingSessionNumber
-        linkedSessionNumbers %the session numbers of sessions from which data for the processing was drawn
+        linkedSessionNumbers = []; %the session numbers of sessions from which data for the processing was drawn
     end
     
     methods

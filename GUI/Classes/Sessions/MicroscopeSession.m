@@ -4,44 +4,61 @@ classdef MicroscopeSession < DataCollectionSession
     
     properties
         % set by metadata entry
-        magnification
-        pixelSizeMicrons % size of pixel in microns (used for generating scale bars)
-        instrument
+        magnification = 40;
+        pixelSizeMicrons = 1.13; % size of pixel in microns (used for generating scale bars)
+        instrument = 'Nikon Eclipse Ti-U';
         
         % these three describe how the deposit was found
-        fluoroSignature % T/F
-        crossedSignature % T/F
-        visualSignature % T/F
+        fluoroSignature = false; % T/F
+        crossedSignature = false; % T/F
+        visualSignature = false; % T/F
     end
     
     methods
-        function session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, toLocationPath, projectPath, importDir, userName)
-            [cancel, session] = session.enterMetadata(importDir, userName);
-            
-            if ~cancel
-                % set session numbers
-                session.sessionNumber = sessionNumber;
-                session.dataCollectionSessionNumber = dataCollectionSessionNumber;
+        function session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, toLocationPath, projectPath, importDir, userName, lastSession)
+            if nargin > 0
+                [cancel, session] = session.enterMetadata(importDir, userName, lastSession);
                 
-                % set navigation listbox label
-                session.naviListboxLabel = session.generateListboxLabel();
-                
-                % set metadata history
-                session.metadataHistory = {MetadataHistoryEntry(userName)};
-                
-                % make directory/metadata file
-                session = session.createDirectories(toLocationPath, projectPath);
-                
-                % save metadata
-                saveToBackup = true;
-                session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
-            else
-                session = MicroscopeSession.empty;
-            end              
+                if ~cancel
+                    % set session numbers
+                    session.sessionNumber = sessionNumber;
+                    session.dataCollectionSessionNumber = dataCollectionSessionNumber;
+                    
+                    % set navigation listbox label
+                    session.naviListboxLabel = session.generateListboxLabel();
+                    
+                    % set metadata history
+                    session.metadataHistory = {MetadataHistoryEntry(userName)};
+                    
+                    % make directory/metadata file
+                    session = session.createDirectories(toLocationPath, projectPath);
+                    
+                    % save metadata
+                    saveToBackup = true;
+                    session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
+                else
+                    session = MicroscopeSession.empty;
+                end
+            end
         end
         
         function session = editMetadata(session, projectPath, toLocationPath, userName, dataFilename, ~, ~) %last two params are sessionChoices, sessionNumbers
-            [cancel, magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason, rejectedBy] = MicroscopeSessionMetadataEntry(userName, '', session);
+            isEdit = true;
+            
+            [cancel,...
+             magnification,...
+             pixelSizeMicrons,...
+             instrument,...
+             fluoroSignature,...
+             crossedSignature,...
+             visualSignature,...
+             sessionDate,...
+             sessionDoneBy,...
+             notes,...
+             rejected,...
+             rejectedReason,...
+             rejectedBy]...
+             = MicroscopeSessionMetadataEntry(userName, '', isEdit, session);
             
             if ~cancel
                 oldDirName = session.dirName;
@@ -80,10 +97,24 @@ classdef MicroscopeSession < DataCollectionSession
             end
         end
         
-        function [cancel, session] = enterMetadata(session, importPath, userName)
-            
+        function [cancel, session] = enterMetadata(session, importPath, userName, lastSession)
             %Call to Microscope Session Metadata Entry GUI
-            [cancel, magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason, rejectedBy] = MicroscopeSessionMetadataEntry(userName, importPath);
+            isEdit = false;
+            
+            [cancel,...
+             magnification,...
+             pixelSizeMicrons,...
+             instrument,...
+             fluoroSignature,...
+             crossedSignature,...
+             visualSignature,...
+             sessionDate,...
+             sessionDoneBy,...
+             notes,...
+             rejected,...
+             rejectedReason,...
+             rejectedBy]...
+             = MicroscopeSessionMetadataEntry(userName, importPath, isEdit, lastSession);
             
             if ~cancel
                 %Assigning values to Microscope Session Properties
@@ -203,6 +234,7 @@ classdef MicroscopeSession < DataCollectionSession
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataCollectionSessionNumberString, magnificationString, pixelSizeMicronsString, instrumentString, fluoroSignatureString, crossedSignatureString, visualSignatureString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
         end
+                
         
     end
     

@@ -4,40 +4,44 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
     % directly imported into this application
     
     properties
-        croppingType
-        coords % [xTopLeftCorner, yTopLeftCorner, width, height]
+        croppingType = [];
+        coords = []; % [xTopLeftCorner, yTopLeftCorner, width, height]
     end
     
     methods
         
-        function session = LegacySubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, sessionNumbers)
-            [cancel, session] = session.enterMetadata(importDir, userName, sessionChoices, sessionNumbers);
-            
-            if ~cancel
-                % set session numbers
-                session.sessionNumber = sessionNumber;
-                session.dataProcessingSessionNumber = dataProcessingSessionNumber;
+        function session = LegacySubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, lastSession)
+            if nargin > 0
+                [cancel, session] = session.enterMetadata(importDir, userName, sessionChoices, lastSession);
                 
-                % set navigation listbox label
-                session.naviListboxLabel = session.generateListboxLabel();
-                
-                % set metadata history
-                session.metadataHistory = {MetadataHistoryEntry(userName)};
-                
-                % make directory/metadata file
-                session = session.createDirectories(toLocationPath, projectPath);
-                
-                % save metadata
-                saveToBackup = true;
-                session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
-            else
-                session = LegacySubsectionSelectionSession.empty;
-            end              
+                if ~cancel
+                    % set session numbers
+                    session.sessionNumber = sessionNumber;
+                    session.dataProcessingSessionNumber = dataProcessingSessionNumber;
+                    
+                    % set navigation listbox label
+                    session.naviListboxLabel = session.generateListboxLabel();
+                    
+                    % set metadata history
+                    session.metadataHistory = {MetadataHistoryEntry(userName)};
+                    
+                    % make directory/metadata file
+                    session = session.createDirectories(toLocationPath, projectPath);
+                    
+                    % save metadata
+                    saveToBackup = true;
+                    session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
+                else
+                    session = LegacySubsectionSelectionSession.empty;
+                end
+            end
         end
         
         
-        function session = editMetadata(session, projectPath, toLocationPath, userName, dataFilename, sessionChoices, sessionNumbers)
-            [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy, selectedChoices] = LegacySubsectionSelectionSessionMetadataEntry('', userName, sessionChoices, session, sessionNumbers);
+        function session = editMetadata(session, projectPath, toLocationPath, userName, dataFilename, sessionChoices)
+            isEdit = true;
+            
+            [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy, selectedChoices] = LegacySubsectionSelectionSessionMetadataEntry('', userName, sessionChoices, isEdit, session);
             
             if ~cancel
                 oldDirName = session.dirName;
@@ -53,7 +57,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                 session.rejectedReason = rejectedReason;
                 session.rejectedBy = rejectedBy;
                                 
-                session.linkedSessionNumbers = getSelectedSessionNumbers(sessionNumbers, selectedChoices);
+                session.linkedSessionNumbers = getSelectedSessionNumbers(sessionChoices, selectedChoices);
                 
                 session = updateMetadataHistory(session, userName);
                 
@@ -75,10 +79,21 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
         end
         
         
-        function [cancel, session] = enterMetadata(session, importPath, userName, sessionChoices, sessionNumbers)
+        function [cancel, session] = enterMetadata(session, importPath, userName, sessionChoices, lastSession)
+            isEdit = false;
             
             %Call to Legacy Subsection Selection Session Metadata Entry GUI
-            [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy, selectedChoices] = LegacySubsectionSelectionSessionMetadataEntry(importPath, userName, sessionChoices);
+            [cancel,...
+             sessionDate,...
+             sessionDoneBy,...
+             notes,...
+             croppingType,...
+             coords,...
+             rejected,...
+             rejectedReason,...
+             rejectedBy,...
+             selectedChoices]...
+             = LegacySubsectionSelectionSessionMetadataEntry(importPath, userName, sessionChoices, isEdit, lastSession);
             
             if ~cancel
                 %Assigning values to Legacy Subsection Selection Session Properties
@@ -91,7 +106,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                 session.rejectedReason = rejectedReason;
                 session.rejectedBy = rejectedBy;
                                 
-                session.linkedSessionNumbers = getSelectedSessionNumbers(sessionNumbers, selectedChoices);
+                session.linkedSessionNumbers = getSelectedSessionNumbers(sessionChoices, selectedChoices);
             end
         
         end
@@ -153,7 +168,17 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
             
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, croppingTypeString, coordsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
-        end        
+        end
+        
+        
+        function preppedSession = prepForAutofill(session)
+            preppedSession = LegacySubsectionSelectionSession;
+            
+            % these are the values to carry over
+            preppedSession.sessionDate = session.sessionDate;
+            preppedSession.sessionDoneBy = session.sessionDoneBy;
+            preppedSession.linkedSessionNumbers = session.linkedSessionNumbers;
+        end     
         
     end
     
