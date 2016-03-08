@@ -3,6 +3,8 @@ classdef Project
     % contains project metadata
     
     properties
+        uuid
+        
         title
         description
         

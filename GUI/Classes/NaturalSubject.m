@@ -17,25 +17,26 @@ classdef NaturalSubject < Subject
     
     methods
         function subject = NaturalSubject(subjectNumber, existingSubjectNumbers, toTrialPath, projectPath, importDir, userName)
-            [cancel, subject] = subject.enterMetadata(subjectNumber, existingSubjectNumbers, importDir, userName);
-            
-            if ~cancel
-                % set metadata history
-                subject.metadataHistory = {MetadataHistoryEntry(userName)};
+            if nargin > 0
+                [cancel, subject] = subject.enterMetadata(subjectNumber, existingSubjectNumbers, importDir, userName);
                 
-                % set navigation listbox label
-                subject.naviListboxLabel = subject.generateListboxLabel();
-                
-                % make directory/metadata file
-                subject = subject.createDirectories(toTrialPath, projectPath);
-                
-                % save metadata
-                saveToBackup = true;
-                subject.saveMetadata(makePath(toTrialPath, subject.dirName), projectPath, saveToBackup);
-            else
-                subject = NaturalSubject.empty;
-            end  
-            
+                if ~cancel
+                    % set metadata history
+                    subject.metadataHistory = {MetadataHistoryEntry(userName)};
+                    
+                    % set navigation listbox label
+                    subject.naviListboxLabel = subject.generateListboxLabel();
+                    
+                    % make directory/metadata file
+                    subject = subject.createDirectories(toTrialPath, projectPath);
+                    
+                    % save metadata
+                    saveToBackup = true;
+                    subject.saveMetadata(makePath(toTrialPath, subject.dirName), projectPath, saveToBackup);
+                else
+                    subject = NaturalSubject.empty;
+                end
+            end
         end
         
         function subject = editMetadata(subject, projectPath, toTrialPath, userName, dataFilename, existingSubjectNumbers)

@@ -3,6 +3,7 @@ classdef Sample
     % metadata for a sample coming from an ArtificalSubject
     
     properties        
+        uuid
         sampleId
         
         stain

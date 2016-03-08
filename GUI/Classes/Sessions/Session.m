@@ -7,6 +7,7 @@ classdef Session
     
     properties
         % set at initialization
+        uuid
         dirName = '';
         naviListboxLabel = '';
         metadataHistory = {};
@@ -60,6 +61,11 @@ classdef Session
     end
     
     methods
+        
+        function session = Session()
+            % set UUID
+            session.uuid = generateUUID();
+        end
         
         function session = wipeoutMetadataFields(session)
             session.dirName = '';

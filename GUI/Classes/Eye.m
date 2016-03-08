@@ -4,6 +4,7 @@ classdef Eye
         
     properties
         % set at initialization
+        uuid
         dirName
         naviListboxLabel
         metadataHistory
@@ -26,6 +27,9 @@ classdef Eye
             [cancel, eye] = eye.enterMetadata(eyeNumber, existingEyeNumbers, importPath, userName);
             
             if ~cancel
+                % set UUID
+                eye.uuid = generateUUID();
+                
                 % set metadata history
                 eye.metadataHistory = {MetadataHistoryEntry(userName)};
                 

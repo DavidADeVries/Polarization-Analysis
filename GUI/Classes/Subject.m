@@ -3,6 +3,7 @@ classdef Subject
     
     properties
         % set at initialization
+        uuid
         dirName
         naviListboxLabel
         metadataHistory
@@ -15,6 +16,11 @@ classdef Subject
     
     
     methods
+        
+        function subject = Subject()
+            % set UUID
+            subject.uuid = generateUUID();
+        end
         
         function dirName = generateDirName(subject)
             dirName = createDirName(SubjectNamingConventions.DIR_PREFIX, subject.subjectNumber, subject.subjectId, SubjectNamingConventions.DIR_NUM_DIGITS);

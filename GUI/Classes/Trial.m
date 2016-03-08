@@ -4,6 +4,7 @@ classdef Trial
     
     properties
         % set at initialization
+        uuid        
         dirName
         naviListboxLabel
         metadataHistory
@@ -25,6 +26,9 @@ classdef Trial
             [cancel, trial] = trial.enterMetadata(trialNumber, existingTrialNumbers, importPath);
             
             if ~cancel
+                % set UUID
+                trial.uuid = generateUUID();
+                
                 % set metadata history
                 trial.metadataHistory = {MetadataHistoryEntry(userName)};
                 

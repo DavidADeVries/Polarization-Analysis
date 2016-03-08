@@ -4,6 +4,7 @@ classdef Location
     
     properties
         % set at initialization
+        uuid
         dirName
         naviListboxLabel
         metadataHistory
@@ -25,6 +26,9 @@ classdef Location
             [cancel, location] = location.enterMetadata(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, subjectType, eyeType, quarterType, importDir);
             
             if ~cancel
+                % set UUID
+                location.uuid = generateUUID();
+                
                 % set metadata history
                 location.metadataHistory = {MetadataHistoryEntry(userName)};
                 

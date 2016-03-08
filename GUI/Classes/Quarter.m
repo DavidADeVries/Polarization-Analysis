@@ -4,6 +4,7 @@ classdef Quarter
     
     properties
         % set at initialization
+        uuid
         dirName
         naviListboxLabel
         metadataHistory
@@ -28,6 +29,9 @@ classdef Quarter
             [cancel, quarter] = quarter.enterMetadata(suggestedQuarterNumber, existingQuarterNumbers, importDir, userName);
             
             if ~cancel
+                % set UUID
+                quarter.uuid = generateUUID();
+                
                 % set metadata history
                 quarter.metadataHistory = {MetadataHistoryEntry(userName)};
                 
