@@ -22,7 +22,7 @@ function varargout = LegacySubsectionSelectionSessionMetadataEntry(varargin)
 
 % Edit the above text to modify the response to help LegacySubsectionSelectionSessionMetadataEntry
 
-% Last Modified by GUIDE v2.5 25-Feb-2016 14:59:24
+% Last Modified by GUIDE v2.5 08-Mar-2016 11:18:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -55,126 +55,127 @@ function LegacySubsectionSelectionSessionMetadataEntry_OpeningFcn(hObject, event
 % Choose default command line output for LegacySubsectionSelectionSessionMetadataEntry
 handles.output = hObject;
 
-%******************************************************************************
-%INPUT: (importPath, userName, sessionChoicesString, session*, sessionNumbers*)
+%***************************************************************
+%INPUT: (importPath, userName, sessionChoices, isEdit, session*)
 %        *may be empty)
-%******************************************************************************
+%***************************************************************
 
 handles.importPath = varargin{1}; %Param is importPath
 handles.userName = varargin{2}; %Param is userName
-handles.sessionChoicesString = varargin{3}; %Param is sessionChoices
+sessionChoices = varargin{3}; %Param is sessionChoices
 
+isEdit = varargin{4};
 
-%Get choice strings from CroppingTypes class
-[~, choiceStrings] = choicesFromEnum('CroppingTypes');
+session = [];
 
-%Default choice list setting
-handles.choiceListDefault = 'Select a Cropping Type';
-
-%Setting the list values for the Cropping Type pop up menu
-choiceList = {handles.choiceListDefault};
-
-for i = 1:size(choiceStrings)
-    choiceList{i+1} = choiceStrings{i};
+if length(varargin) > 4
+    session = varargin{5};
 end
 
-set(handles.croppingTypeMenu, 'String', choiceList);
-
-%Setting the list values for the session list box
-set(handles.sessionListBox, 'String', handles.sessionChoicesString);
-
-
-if length(varargin) > 3
-    session = varargin{4};
-    sessionNumbers = varargin{5};
+if isempty(session)
+    session = LegacySubsectionSelectionSession;
+end
     
-    handles.sessionDate = session.sessionDate;
+handles.cancel = false;
+
+if isEdit
+    set(handles.OK, 'enable', 'on');
+    
+    set(handles.importPathTitle, 'Visible', 'off');
+    set(handles.importPathDisplay, 'Visible', 'off');
+    
+    handles.sessionDate = session.sessionDate;    
     handles.sessionDoneBy = session.sessionDoneBy;
-    handles.sessionNotes = session.notes;
+    handles.linkedSessionNumbers = session.linkedSessionNumbers;
+    handles.croppingType = session.croppingType;
+    
+    handles.coords = session.coords;
+    
     handles.rejected = session.rejected;
     handles.rejectedReason = session.rejectedReason;
     handles.rejectedBy = session.rejectedBy;
-    handles.sessionChoices = session.linkedSessionNumbers;
+    handles.sessionNotes = session.notes;
     
-    handles.xCoord = session.coords(1);
-    handles.yCoord = session.coords(2);
-    handles.width = session.coords(3);
-    handles.height = session.coords(4);
+else
+    defaultSession = LegacySubsectionSelectionSession;
     
-    handles.croppingType = session.croppingType;
+    set(handles.OK, 'enable', 'off');
     
-    %Default Display Settings
-    set(handles.OK, 'enable', 'on');
-    
-    if handles.rejected
-        set(handles.yesRejected, 'Value', 1);
-        set(handles.noRejected, 'Value', 0);
-    else
-        set(handles.yesRejected, 'Value', 0);
-        set(handles.noRejected, 'Value', 1); 
+    set(handles.importPathDisplay, 'String', handles.importPath);
         
-        set(handles.rejectedReasonInput, 'enable', 'off');
-        set(handles.rejectedByInput, 'enable', 'off');       
+    handles.sessionDate = session.sessionDate;
+    
+    if isempty(session.sessionDoneBy)
+        handles.sessionDoneBy = handles.userName;
+    else    
+        handles.sessionDoneBy = session.sessionDoneBy;    
     end
     
-    set(handles.rejectedReasonInput, 'String', handles.rejectedReason);
-    set(handles.rejectedByInput, 'String', handles.rejectedBy);
+    handles.linkedSessionNumbers = session.linkedSessionNumbers;
+    handles.croppingType = defaultSession.croppingType;
     
+    handles.coords = defaultSession.coords;
     
-    set(handles.importPathDisplay, 'String', 'None');
-    
-    set(handles.sessionDateDisplay, 'String', displayDate(handles.sessionDate));
-    set(handles.sessionDoneByInput, 'String', handles.sessionDoneBy);
-    
-    set(handles.sessionListBox, 'Value', getSelectionChoicesFromSessionNumbers(sessionNumbers, handles.sessionChoices));
-    
-    set(handles.sessionNotesInput, 'String', handles.sessionNotes);
-    
-    matchString = handles.croppingType.displayString;
-    
-    for i=1:length(choiceStrings)
-        if strcmp(matchString, choiceStrings{i})
-            set(handles.croppingTypeMenu, 'Value', i+1);
-            break;
-        end
-    end
-    
-    set(handles.xCoordInput, 'String', num2str(handles.xCoord));
-    set(handles.yCoordInput, 'String', num2str(handles.yCoord));
-    set(handles.widthInput, 'String', num2str(handles.width));
-    set(handles.heightInput, 'String', num2str(handles.height));
-else    
-    %Defining the different input variables, awaiting user input
-    handles.sessionDate = [];
-    handles.sessionDoneBy = handles.userName;
-    handles.sessionNotes = '';
-    handles.croppingType = [];
+    handles.rejected = defaultSession.rejected;
+    handles.rejectedReason = defaultSession.rejectedReason;
+    handles.rejectedBy = handles.userName;
+    handles.sessionNotes = defaultSession.notes;
+end
+
+if isempty(handles.coords)
     handles.xCoord = [];
     handles.yCoord = [];
     handles.width = [];
     handles.height = [];
-    
-    handles.rejected = false;
-    handles.rejectedReason = '';
-    handles.rejectedBy = '';
-    handles.sessionChoices = [];
-    
-    %Default Display Settings
-    set(handles.OK, 'enable', 'off');
-    set(handles.rejectedReasonInput, 'enable', 'off');
-    set(handles.rejectedByInput, 'enable', 'off');
-    set(handles.importPathDisplay, 'String', handles.importPath);
-    set(handles.yesRejected, 'Value', 0);
-    set(handles.noRejected, 'Value', 1);
-    set(handles.sessionDoneByInput, 'String', handles.userName);
-    
-    set(handles.sessionListBox, 'Value', []);
+else
+    handles.xCoord = handles.coords(1);
+    handles.yCoord = handles.coords(2);
+    handles.width = handles.coords(3);
+    handles.height = handles.coords(4);
 end
 
+% ** SET TEXT FIELDS **
 
-handles.coords = [handles.xCoord, handles.yCoord, handles.width, handles.height];
+if isempty(handles.sessionDate) || handles.sessionDate == 0
+    set(handles.sessionDateDisplay, 'String', '');
+else    
+    set(handles.sessionDateDisplay, 'String', displayDate(handles.sessionDate));
+end
 
-handles.cancel = false;
+set(handles.sessionDoneByInput, 'String', handles.sessionDoneBy);
+set(handles.sessionNotesInput, 'String', handles.sessionNotes);
+
+set(handles.xCoordInput, 'String', num2str(handles.xCoord));
+set(handles.yCoordInput, 'String', num2str(handles.yCoord));
+set(handles.widthInput, 'String', num2str(handles.width));
+set(handles.heightInput, 'String', num2str(handles.height));
+
+
+% ** SET POP UP MENUS **
+
+[~, choiceStrings] = choicesFromEnum('CroppingTypes');
+defaultChoiceString = 'Select a Cropping Type';
+
+if isempty(handles.croppingType)
+    selectedString = '';
+else
+    selectedString = handles.croppingType.displayString;
+end
+
+setPopUpMenu(handles.croppingTypeMenu, defaultChoiceString, choiceStrings, selectedString);
+
+
+% ** SET LISTBOXES **
+
+listBoxHandle = handles.sessionListBox;
+
+setSessionListBox(listBoxHandle, sessionChoices, handles.linkedSessionNumbers);
+
+
+% ** SET REJECTED INPUTS **
+
+handles = setRejectedInputFields(handles); 
+
 
 % Update handles structure
 guidata(hObject, handles);
@@ -190,9 +191,9 @@ function varargout = LegacySubsectionSelectionSessionMetadataEntry_OutputFcn(hOb
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-%****************************************************************************************************************
+%********************************************************************************************************************************
 %OUTPUT:  [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy, sessionChoices]
-%****************************************************************************************************************
+%********************************************************************************************************************************
 
 handles.sessionChoices = get(handles.sessionListBox, 'Value');
 guidata(hObject, handles);
@@ -654,19 +655,19 @@ uiresume(handles.legacySubsectionSelectionSessionMetadataEntry);
 
 end
 
-% --- Executes on button press in yesRejected.
-function yesRejected_Callback(hObject, eventdata, handles)
-% hObject    handle to yesRejected (see GCBO)
+% --- Executes on button press in yesRejectedButton.
+function yesRejectedButton_Callback(hObject, eventdata, handles)
+% hObject    handle to yesRejectedButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of yesRejected
+% Hint: get(hObject,'Value') returns toggle state of yesRejectedButton
 
-set(handles.noRejected, 'Value', 0);
+set(handles.noRejectedButton, 'Value', 0);
 
 handles.rejected = true;
 
-set(handles.yesRejected, 'Value', 1);
+set(handles.yesRejectedButton, 'Value', 1);
 
 set(handles.rejectedReasonInput, 'enable', 'on');
 set(handles.rejectedByInput, 'enable', 'on');
@@ -680,19 +681,19 @@ guidata(hObject, handles);
 
 end
 
-% --- Executes on button press in noRejected.
-function noRejected_Callback(hObject, eventdata, handles)
-% hObject    handle to noRejected (see GCBO)
+% --- Executes on button press in noRejectedButton.
+function noRejectedButton_Callback(hObject, eventdata, handles)
+% hObject    handle to noRejectedButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of noRejected
+% Hint: get(hObject,'Value') returns toggle state of noRejectedButton
 
-set(handles.noRejected, 'Value', 1);
+set(handles.noRejectedButton, 'Value', 1);
 
 handles.rejected = false;
 
-set(handles.yesRejected, 'Value', 0);
+set(handles.yesRejectedButton, 'Value', 0);
 
 set(handles.rejectedReasonInput, 'enable', 'off');
 set(handles.rejectedByInput, 'enable', 'off');

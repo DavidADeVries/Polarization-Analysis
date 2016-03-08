@@ -9,9 +9,9 @@ classdef LegacyRegistrationSession < DataProcessingSession
     end
     
     methods
-        function session = LegacyRegistrationSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, sessionNumbers, lastSession)
+        function session = LegacyRegistrationSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, lastSession)
             if nargin > 0
-                [cancel, session] = session.enterMetadata(importDir, userName, sessionChoices, sessionNumbers, lastSession);
+                [cancel, session] = session.enterMetadata(importDir, userName, sessionChoices, lastSession);
                 
                 if ~cancel
                     % set session numbers
@@ -37,8 +37,20 @@ classdef LegacyRegistrationSession < DataProcessingSession
         end
         
         
-        function session = editMetadata(session, projectPath, toLocationPath, userName, dataFilename, sessionChoices, sessionNumbers)
-            [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy, selectedChoices] = LegacyRegistrationSessionMetadataEntry('', userName, sessionChoices, session, sessionNumbers);
+        function session = editMetadata(session, projectPath, toLocationPath, userName, dataFilename, sessionChoices)
+            isEdit = true;
+            
+            [cancel,...
+             sessionDate,...
+             sessionDoneBy,...
+             notes,...
+             registrationType,...
+             registrationParams,...
+             rejected,...
+             rejectedReason,...
+             rejectedBy,...
+             selectedChoices]...
+             = LegacyRegistrationSessionMetadataEntry('', userName, sessionChoices, isEdit, session);
             
             if ~cancel
                 oldDirName = session.dirName;
@@ -54,7 +66,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
                 session.rejectedReason = rejectedReason;
                 session.rejectedBy = rejectedBy;
                                 
-                session.linkedSessionNumbers = getSelectedSessionNumbers(sessionNumbers, selectedChoices);
+                session.linkedSessionNumbers = getSelectedSessionNumbers(sessionChoices, selectedChoices);
                 
                 session = updateMetadataHistory(session, userName);
                 
@@ -76,7 +88,8 @@ classdef LegacyRegistrationSession < DataProcessingSession
         end
         
         
-        function [cancel, session] = enterMetadata(session, importPath, userName, sessionChoices, sessionNumbers, lastSession)
+        function [cancel, session] = enterMetadata(session, importPath, userName, sessionChoices, lastSession)
+            isEdit = false;
             
             %Call to Legacy Registration Session Metadata Entry GUI
             [cancel,...
@@ -89,7 +102,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
              rejectedReason,...
              rejectedBy,...
              selectedChoices]...
-             = LegacyRegistrationSessionMetadataEntry(importPath, userName, sessionChoices, lastSession);
+             = LegacyRegistrationSessionMetadataEntry(importPath, userName, sessionChoices, isEdit, lastSession);
             
             if ~cancel
                 %Assigning values to Legacy Registration Session Properties
@@ -102,7 +115,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
                 session.rejectedReason = rejectedReason;
                 session.rejectedBy = rejectedBy;
                                 
-                session.linkedSessionNumbers = getSelectedSessionNumbers(sessionNumbers, selectedChoices);
+                session.linkedSessionNumbers = getSelectedSessionNumbers(sessionChoices, selectedChoices);
             end
         
         end

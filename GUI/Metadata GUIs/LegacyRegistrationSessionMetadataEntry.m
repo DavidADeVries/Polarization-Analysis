@@ -22,7 +22,7 @@ function varargout = LegacyRegistrationSessionMetadataEntry(varargin)
 
 % Edit the above text to modify the response to help LegacyRegistrationSessionMetadataEntry
 
-% Last Modified by GUIDE v2.5 25-Feb-2016 15:42:03
+% Last Modified by GUIDE v2.5 07-Mar-2016 11:32:00
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -55,23 +55,21 @@ function LegacyRegistrationSessionMetadataEntry_OpeningFcn(hObject, eventdata, h
 % Choose default command line output for LegacyRegistrationSessionMetadataEntry
 handles.output = hObject;
 
-%**************************************************************************************
-%INPUT: (importPath, userName, sessionChoicesString, isEdit, session*, sessionNumbers*)
+%***************************************************************
+%INPUT: (importPath, userName, sessionChoices, isEdit, session*)
 %        *may be empty)
-%**************************************************************************************
+%***************************************************************
 
 handles.importPath = varargin{1}; %Param is importPath
 handles.userName = varargin{2}; %Param is userName
-handles.sessionChoicesString = varargin{3}; %Param is sessionChoices
+sessionChoices = varargin{3}; %Param is sessionChoices
 
 isEdit = varargin{4};
 
 session = [];
-sessionNumbers = [];
 
 if length(varargin) > 4
     session = varargin{5};
-    sessionNumbers = varargin{6};
 end
 
 if isempty(session)
@@ -83,8 +81,18 @@ handles.cancel = false;
 if isEdit
     set(handles.OK, 'enable', 'on');
     
-    set(handles.pathTitle, 'Visible', 'off');
+    set(handles.importPathTitle, 'Visible', 'off');
     set(handles.importPathDisplay, 'Visible', 'off');
+    
+    handles.sessionDate = session.sessionDate;    
+    handles.sessionDoneBy = session.sessionDoneBy;
+    handles.linkedSessionNumbers = session.linkedSessionNumbers;
+    handles.registrationType = session.registrationType;
+    handles.registrationParams = session.registrationParams;
+    handles.rejected = session.rejected;
+    handles.rejectedReason = session.rejectedReason;
+    handles.rejectedBy = session.rejectedBy;
+    handles.sessionNotes = session.notes;
     
 else
     defaultSession = LegacyRegistrationSession;
@@ -92,122 +100,62 @@ else
     set(handles.OK, 'enable', 'off');
     
     set(handles.importPathDisplay, 'String', handles.importPath);
-    
-end
-
-
-handles.sessionDate = session.sessionDate;
-handles.sessionDoneBy = session.sessionDoneBy;
-handles.sessionNotes = session.notes;
-handles.registrationType = session.registrationType;
-handles.registrationParams = session.registrationParams;
-handles.rejected = session.rejected;
-handles.rejectedReason = session.rejectedReason;
-handles.rejectedBy = session.rejectedBy;
-handles.sessionChoices = session.linkedSessionNumbers;
-
-
-
-
-set(handles.sessionListbox, 'String', handles.sessionChoicesString);
-
-%Get choice strings from RegistrationTypes class
-[~, choiceStrings] = choicesFromEnum('RegistrationTypes');
-
-%Default choice list setting
-handles.choiceListDefault = 'Select a Registration Type';
-
-%Setting the list values for the Registration Type pop up menu
-choiceList = {handles.choiceListDefault};
-
-for i = 1:size(choiceStrings)
-    choiceList{i+1} = choiceStrings{i};
-end
-
-set(handles.registrationTypeList, 'String', choiceList);
-
-
-    
-    
-    
-    
+        
     handles.sessionDate = session.sessionDate;
-    handles.sessionDoneBy = session.sessionDoneBy;
-    handles.sessionNotes = session.notes;
+    
+    if isempty(session.sessionDoneBy)
+        handles.sessionDoneBy = handles.userName;
+    else    
+        handles.sessionDoneBy = session.sessionDoneBy;    
+    end
+    
+    handles.linkedSessionNumbers = session.linkedSessionNumbers;
     handles.registrationType = session.registrationType;
     handles.registrationParams = session.registrationParams;
-    handles.rejected = session.rejected;
-    handles.rejectedReason = session.rejectedReason;
-    handles.rejectedBy = session.rejectedBy;
-    handles.sessionChoices = session.linkedSessionNumbers;
-    
-    
-    %Default Display Settings
-    set(handles.OK, 'enable', 'on');
-    
-    if handles.rejected
-        set(handles.yesRejected, 'Value', 1);
-        set(handles.noRejected, 'Value', 0);
-    else
-        set(handles.yesRejected, 'Value', 0);
-        set(handles.noRejected, 'Value', 1); 
-        
-        set(handles.rejectedReasonInput, 'enable', 'off');
-        set(handles.rejectedByInput, 'enable', 'off');       
-    end
-    
-    set(handles.rejectedReasonInput, 'String', handles.rejectedReason);
-    set(handles.rejectedByInput, 'String', handles.rejectedBy);
-    
-    
-    set(handles.importPathDisplay, 'String', 'None');
-    
-    set(handles.sessionDateDisplay, 'String', displayDate(handles.sessionDate));
-    set(handles.sessionDoneByInput, 'String', handles.sessionDoneBy);
-    
-    set(handles.sessionListbox, 'Value', getSelectionChoicesFromSessionNumbers(sessionNumbers, handles.sessionChoices));
-    
-    set(handles.sessionNotesInput, 'String', handles.sessionNotes);
-    
-    matchString = handles.registrationType.displayString;
-    
-    for i=1:length(choiceStrings)
-        if strcmp(matchString, choiceStrings{i})
-            set(handles.registrationTypeList, 'Value', i+1);
-            break;
-        end
-    end
-    
-    set(handles.registrationParamsInput, 'String', handles.registrationParams);
-else
-    %Defining the different input variables, awaiting user input
-    handles.sessionDate = [];
-    handles.sessionDoneBy = handles.userName;
-    handles.sessionNotes = '';
-    handles.registrationType = [];
-    handles.registrationParams = '';
-    handles.rejected = false;
-    handles.rejectedReason = '';
-    handles.rejectedBy = '';
-    handles.sessionChoices = [];
-    
-    %Default Display Settings
-    set(handles.OK, 'enable', 'off');
-    set(handles.rejectedReasonInput, 'enable', 'off');
-    set(handles.rejectedByInput, 'enable', 'off');
-    set(handles.importPathDisplay, 'String', handles.importPath);
-    set(handles.yesRejected, 'Value', 0);
-    set(handles.noRejected, 'Value', 1);
-    set(handles.sessionDoneByInput, 'String', handles.userName);
-    
-    
-    
-    %Setting the list values for the session list box
-    set(handles.sessionListbox, 'Value', []);
+    handles.rejected = defaultSession.rejected;
+    handles.rejectedReason = defaultSession.rejectedReason;
+    handles.rejectedBy = handles.userName;
+    handles.sessionNotes = defaultSession.notes;
 end
 
 
-handles.cancel = false;
+% ** SET TEXT FIELDS **
+
+if isempty(handles.sessionDate) || handles.sessionDate == 0
+    set(handles.sessionDateDisplay, 'String', '');
+else    
+    set(handles.sessionDateDisplay, 'String', displayDate(handles.sessionDate));
+end
+
+set(handles.sessionDoneByInput, 'String', handles.sessionDoneBy);
+set(handles.registrationParamsInput, 'String', handles.registrationParams);
+set(handles.sessionNotesInput, 'String', handles.sessionNotes);
+
+
+% ** SET POP UP MENUS **
+
+[~, choiceStrings] = choicesFromEnum('RegistrationTypes');
+defaultChoiceString = 'Select a Registration Type';
+
+if isempty(handles.registrationType)
+    selectedString = '';
+else
+    selectedString = handles.registrationType.displayString;
+end
+
+setPopUpMenu(handles.registrationTypeList, defaultChoiceString, choiceStrings, selectedString);
+
+
+% ** SET LISTBOXES **
+
+listBoxHandle = handles.sessionListbox;
+
+setSessionListBox(listBoxHandle, sessionChoices, handles.linkedSessionNumbers);
+
+
+% ** SET REJECTED INPUTS **
+
+handles = setRejectedInputFields(handles);
 
 
 
@@ -229,7 +177,7 @@ function varargout = LegacyRegistrationSessionMetadataEntry_OutputFcn(hObject, e
 %OUTPUT: [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy, sessionChoices]
 %*******************************************************************************************************************************
 
-handles.sessionChoices = get(handles.sessionListbox, 'Value');
+handles.linkedSessionNumbers = get(handles.sessionListbox, 'Value');
 guidata(hObject, handles);
 
 % Get default command line output from handles structure
@@ -242,7 +190,7 @@ varargout{6} = handles.registrationParams;
 varargout{7} = handles.rejected;
 varargout{8} = handles.rejectedReason;
 varargout{9} = handles.rejectedBy;
-varargout{10} = handles.sessionChoices;
+varargout{10} = handles.linkedSessionNumbers;
 
 close(handles.legacyRegistrationSessionMetadataEntry);
 end
@@ -545,19 +493,19 @@ uiresume(handles.legacyRegistrationSessionMetadataEntry);
 
 end
 
-% --- Executes on button press in yesRejected.
-function yesRejected_Callback(hObject, eventdata, handles)
-% hObject    handle to yesRejected (see GCBO)
+% --- Executes on button press in yesRejectedButton.
+function yesRejectedButton_Callback(hObject, eventdata, handles)
+% hObject    handle to yesRejectedButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of yesRejected
+% Hint: get(hObject,'Value') returns toggle state of yesRejectedButton
 
-set(handles.noRejected, 'Value', 0);
+set(handles.noRejectedButton, 'Value', 0);
 
 handles.rejected = true;
 
-set(handles.yesRejected, 'Value', 1);
+set(handles.yesRejectedButton, 'Value', 1);
 
 set(handles.rejectedReasonInput, 'enable', 'on');
 set(handles.rejectedByInput, 'enable', 'on');
@@ -571,19 +519,19 @@ guidata(hObject, handles);
 
 end
 
-% --- Executes on button press in noRejected.
-function noRejected_Callback(hObject, eventdata, handles)
-% hObject    handle to noRejected (see GCBO)
+% --- Executes on button press in noRejectedButton.
+function noRejectedButton_Callback(hObject, eventdata, handles)
+% hObject    handle to noRejectedButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of noRejected
+% Hint: get(hObject,'Value') returns toggle state of noRejectedButton
 
-set(handles.noRejected, 'Value', 1);
+set(handles.noRejectedButton, 'Value', 1);
 
 handles.rejected = false;
 
-set(handles.yesRejected, 'Value', 0);
+set(handles.yesRejectedButton, 'Value', 0);
 
 set(handles.rejectedReasonInput, 'enable', 'off');
 set(handles.rejectedByInput, 'enable', 'off');

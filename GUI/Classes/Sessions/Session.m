@@ -29,7 +29,7 @@ classdef Session
     
     methods(Static)
         
-        function session = createSession(sessionType, sessionNumber, dataCollectionSessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, sessionNumbers, lastSession)
+        function session = createSession(sessionType, sessionNumber, dataCollectionSessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, lastSession)
             
             if sessionType == SessionTypes.Microscope
                 session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, lastSession);
@@ -38,10 +38,10 @@ classdef Session
                 session = CLSOSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, lastSession);
                 
             elseif sessionType == SessionTypes.LegacyRegistration
-                session = LegacyRegistrationSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, sessionNumbers, lastSession);
+                session = LegacyRegistrationSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, lastSession);
                 
             elseif sessionType == SessionTypes.LegacySubsectionSelection
-                session = LegacySubsectionSelectionSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, sessionNumbers, lastSession);
+                session = LegacySubsectionSelectionSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, lastSession);
                 
             elseif sessionType == SessionTypes.FrameAveraging
                 session = FrameAveragingSession();

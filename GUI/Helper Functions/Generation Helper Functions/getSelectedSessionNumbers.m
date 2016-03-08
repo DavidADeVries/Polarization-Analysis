@@ -1,4 +1,4 @@
-function selectedSessionNumbers = getSelectedSessionNumbers(sessionNumbers, selectedChoices)
+function selectedSessionNumbers = getSelectedSessionNumbers(sessionChoices, selectedChoices)
 % getSelectedSessionNumbers
 
 numChoices = length(selectedChoices);
@@ -6,7 +6,7 @@ numChoices = length(selectedChoices);
 selectedSessionNumbers = zeros(numChoices, 1);
 
 for i=1:numChoices
-    selectedSessionNumbers(i) = sessionNumbers(selectedChoices(i));
+    selectedSessionNumbers(i) = sessionChoices{selectedChoices(i)}.sessionNumber;
 end
 
 

@@ -130,9 +130,10 @@ classdef Location
                         dataCollectionSessionNumber = location.nextDataCollectionSessionNumber();
                         dataProcessingSessionNumber = location.nextDataProcessingSessionNumber();
                         
-                        sessionNumbers = location.getSessionNumbers();
+                        noSessionType = []; %don't select a certian session type
+                        sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessions
                         
-                        session = Session.createSession(sessionType, sessionNumber, dataCollectionSessionNumber, dataProcessingSessionNumber, toLocationProjectPath, projectPath, locationImportPath, userName, choices, sessionNumbers);
+                        session = Session.createSession(sessionType, sessionNumber, dataCollectionSessionNumber, dataProcessingSessionNumber, toLocationProjectPath, projectPath, locationImportPath, userName, sessionChoices);
                     else
                         session = Session.empty;
                     end
@@ -187,7 +188,7 @@ classdef Location
             sessionChoices = cell(numSessions, 1);
             
             for i=1:numSessions
-                sessionChoices{i} = sessions{i}.naviListboxLabel;
+                sessionChoices{i} = sessions{i};
             end            
         end
         
@@ -531,7 +532,6 @@ classdef Location
                         
                         noSessionType = []; %don't select a certian session type
                         sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessions
-                        sessionNumbers = location.getSessionNumbers();
                         
                         lastSession = getLastSessionByType(locations, sessionType);
                         
@@ -544,7 +544,6 @@ classdef Location
                                                         importPath,...
                                                         userName,...
                                                         sessionChoices,...
-                                                        sessionNumbers,...
                                                         lastSession);
                     else
                         session = location.getSessionFromChoice(sessionType, choice);
@@ -571,12 +570,11 @@ classdef Location
                 
                 noSessionType = []; %don't select a certian session type
                 sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessions
-                sessionNumbers = location.getSessionNumbers();
                                 
                 filenameSection = location.generateFilenameSection();
                 dataFilename = [dataFilename, filenameSection];
                 
-                session = session.editMetadata(projectPath, toLocationPath, userName, dataFilename, sessionChoices, sessionNumbers);
+                session = session.editMetadata(projectPath, toLocationPath, userName, dataFilename, sessionChoices);
             
                 location = location.updateSelectedSession(session);
             end
