@@ -40,13 +40,13 @@ classdef Project
         function project = editProjectMetadata(project, projectPath, userName)
             [cancel, title, description, notes] = ProjectMetadataEntry(project);
             
-            if ~cancel
+            if ~cancel                
+                project = updateMetadataHistory(project, userName);
+                
                 %Assigning values to Microscope Session Properties
                 project.title = title;
                 project.description = description;
                 project.notes = notes;
-                
-                project = updateMetadataHistory(project, userName);
                 
                 project.saveMetadata(projectPath);
             end

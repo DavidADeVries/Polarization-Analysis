@@ -51,6 +51,8 @@ classdef Location
             [cancel, coords, locationNumber, deposit, notes] = LocationMetadataEntry(eyeType, subjectType, quarterType, [], existingLocationNumbers, locationCoordsWithLabels, '', location);
             
             if ~cancel
+                location = updateMetadataHistory(location, userName);
+                
                 oldDirName = location.dirName;
                 oldFilenameSection = location.generateFilenameSection();   
                 
@@ -59,8 +61,6 @@ classdef Location
                 location.deposit = deposit;
                 location.locationCoords = coords;
                 location.notes = notes;
-                
-                location = updateMetadataHistory(location, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 
@@ -317,7 +317,7 @@ classdef Location
             counter = 1;
             
             for i=1:length(sessions)
-                if sessions{i}.isDataCollectionSession
+                if isa(sessions{i}, 'DataCollectionSession')
                     dataCollectionSessionNumbers(counter) = sessions{i}.dataCollectionSessionNumber;
                     
                     counter = counter + 1;
@@ -334,7 +334,7 @@ classdef Location
             counter = 1;
             
             for i=1:length(sessions)
-                if ~(sessions{i}.isDataCollectionSession)
+                if isa(sessions{i}, 'DataProcessingSession')
                     dataProcessingSessionNumbers(counter) = sessions{i}.dataProcessingSessionNumber;
                     
                     counter = counter + 1;

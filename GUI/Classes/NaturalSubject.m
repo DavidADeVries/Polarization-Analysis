@@ -43,6 +43,8 @@ classdef NaturalSubject < Subject
             [cancel, subjectNumber, subjectId, age, gender, ADDiagnosis, causeOfDeath, medicalHistory, notes] = NaturalSubjectMetadataEntry([], existingSubjectNumbers, userName, '', subject);
             
             if ~cancel
+                subject = updateMetadataHistory(subject, userName);
+                                
                 oldDirName = subject.dirName;
                 oldFilenameSection = subject.generateFilenameSection();
                 
@@ -55,8 +57,6 @@ classdef NaturalSubject < Subject
                 subject.causeOfDeath = causeOfDeath;
                 subject.medicalHistory = medicalHistory;
                 subject.notes = notes;
-                
-                subject = updateMetadataHistory(subject, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 

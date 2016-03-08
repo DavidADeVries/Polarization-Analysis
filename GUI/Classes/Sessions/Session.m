@@ -16,7 +16,6 @@ classdef Session
         sessionDate = 0;
         sessionDoneBy = '';    
         sessionNumber
-        isDataCollectionSession
         notes = '';
         
         rejected = false; % T/F, will exclude data from being included in analysis

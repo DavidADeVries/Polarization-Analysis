@@ -53,6 +53,8 @@ classdef LegacyRegistrationSession < DataProcessingSession
              = LegacyRegistrationSessionMetadataEntry('', userName, sessionChoices, isEdit, session);
             
             if ~cancel
+                session = updateMetadataHistory(session, userName);
+                
                 oldDirName = session.dirName;
                 oldFilenameSection = session.generateFilenameSection();  
                 
@@ -67,8 +69,6 @@ classdef LegacyRegistrationSession < DataProcessingSession
                 session.rejectedBy = rejectedBy;
                                 
                 session.linkedSessionNumbers = getSelectedSessionNumbers(sessionChoices, selectedChoices);
-                
-                session = updateMetadataHistory(session, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 

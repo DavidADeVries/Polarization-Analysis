@@ -79,7 +79,9 @@ classdef Trial
         function trial = editMetadata(trial, projectPath, userName, existingTrialNumbers)
             [cancel, title, description, trialNumber, subjectType, trialNotes] = TrialMetadataEntry([], existingTrialNumbers, '', trial);
             
-            if ~cancel
+            if ~cancel                
+                trial = updateMetadataHistory(trial, userName);
+                
                 oldDirName = trial.dirName;
                 oldFilenameSection = trial.generateFilenameSection();
                 
@@ -88,8 +90,6 @@ classdef Trial
                 trial.trialNumber = trialNumber;
                 trial.subjectType = subjectType;
                 trial.notes = trialNotes;
-                
-                trial = updateMetadataHistory(trial, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 

@@ -8,14 +8,7 @@ classdef DataCollectionSession < Session
         dataCollectionSessionNumber
         
     end
-    
-    methods
-        function session = DataCollectionSession()
-            session.isDataCollectionSession = true;
-        end
-        
-    end
-           
+               
     methods
         
         function dirName = generateDirName(session)

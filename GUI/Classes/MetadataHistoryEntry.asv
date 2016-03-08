@@ -6,15 +6,13 @@ classdef MetadataHistoryEntry
         userName
         timestamp % stored in matlab serial time (# seconds since Jan 0, 0000)
         
-        cachedObject % a version of the metadata object, with some fields wiped to preserve memory (e.g. for project object cached, trials would be cleaned out)
+        cachedObject % a version of the metadata object, with some fields wiped to preserve
     end
     
     methods
-        function entry = MetadataHistoryEntry(userName, cachedObject)
+        function entry = MetadataHistoryEntry(userName)
             entry.userName = userName;
             entry.timestamp = now; % current serial date stamp
-            
-            entry.cachedObject = cachedObject;
         end
         
         function dateString = getDateString(entry)

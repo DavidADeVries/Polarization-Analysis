@@ -54,6 +54,8 @@ classdef Quarter
             [cancel, stain, slideMaterial, quarterType, quarterArbitrary, quarterNumber, mountingDate, mountingDoneBy, notes] = QuarterMetadataEntry([], existingQuarterNumbers, '', userName, quarter);
             
             if ~cancel
+                quarter = updateMetadataHistory(quarter, userName);
+                
                 oldDirName = quarter.dirName;
                 oldFilenameSection = quarter.generateFilenameSection();                
                 
@@ -66,8 +68,6 @@ classdef Quarter
                 quarter.mountingDate = mountingDate;
                 quarter.mountingDoneBy = mountingDoneBy;
                 quarter.notes = notes;
-                
-                quarter = updateMetadataHistory(quarter, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 

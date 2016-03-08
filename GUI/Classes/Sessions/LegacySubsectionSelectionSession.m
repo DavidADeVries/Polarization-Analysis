@@ -44,6 +44,8 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
             [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy, selectedChoices] = LegacySubsectionSelectionSessionMetadataEntry('', userName, sessionChoices, isEdit, session);
             
             if ~cancel
+                session = updateMetadataHistory(session, userName);
+                
                 oldDirName = session.dirName;
                 oldFilenameSection = session.generateFilenameSection();  
                 
@@ -58,8 +60,6 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                 session.rejectedBy = rejectedBy;
                                 
                 session.linkedSessionNumbers = getSelectedSessionNumbers(sessionChoices, selectedChoices);
-                
-                session = updateMetadataHistory(session, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 

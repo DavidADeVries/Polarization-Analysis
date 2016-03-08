@@ -51,6 +51,8 @@ classdef Eye
             [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry([], existingEyeNumbers, userName, '', eye);
             
             if ~cancel
+                eye = updateMetadataHistory(eye, userName);
+                                
                 oldDirName = eye.dirName;
                 oldFilenameSection = eye.generateFilenameSection();                
                 
@@ -61,8 +63,6 @@ classdef Eye
                 eye.dissectionDate = dissectionDate;
                 eye.dissectionDoneBy = dissectionDoneBy;
                 eye.notes = notes;
-                
-                eye = updateMetadataHistory(eye, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 
