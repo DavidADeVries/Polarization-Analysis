@@ -177,7 +177,7 @@ classdef Quarter
                     if ~isempty(location)
                         locationProjectPath = makePath(toQuarterProjectPath, location.dirName);
                         
-                        location = location.importLocation(locationProjectPath, locationImportPath, projectPath, dataFilename, userName);
+                        location = location.importLocation(locationProjectPath, locationImportPath, projectPath, dataFilename, userName, quarter.locations);
                         
                         quarter = quarter.updateLocation(location);
                     end

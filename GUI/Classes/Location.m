@@ -105,7 +105,7 @@ classdef Location
         end
         
         
-        function location = importLocation(location, toLocationProjectPath, locationImportPath, projectPath, dataFilename, userName)
+        function location = importLocation(location, toLocationProjectPath, locationImportPath, projectPath, dataFilename, userName, locations)
             filenameSection = location.generateFilenameSection();
             dataFilename = strcat(dataFilename, filenameSection);
             
@@ -113,9 +113,9 @@ classdef Location
             title = 'Select Session';
             
             noSessionType = []; %don't select a certian session type
-            choices = location.getSessionChoices(noSessionType);
+            choiceStrings = location.getSessionChoiceStrings(noSessionType);
             
-            [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+            [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choiceStrings);
             
             if ~cancel
                 if createNew
@@ -131,9 +131,20 @@ classdef Location
                         dataProcessingSessionNumber = location.nextDataProcessingSessionNumber();
                         
                         noSessionType = []; %don't select a certian session type
-                        sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessions
+                        sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessionsnoSessionType = []; %don't select a certian session type
                         
-                        session = Session.createSession(sessionType, sessionNumber, dataCollectionSessionNumber, dataProcessingSessionNumber, toLocationProjectPath, projectPath, locationImportPath, userName, sessionChoices);
+                        lastSession = getLastSessionByType(locations, sessionType);
+                        
+                        session = Session.createSession(sessionType,...
+                                                        sessionNumber,...
+                                                        dataCollectionSessionNumber,...
+                                                        dataProcessingSessionNumber,...
+                                                        toLocationProjectPath,...
+                                                        projectPath,...
+                                                        locationImportPath,...
+                                                        userName,...
+                                                        sessionChoices,...
+                                                        lastSession);
                     else
                         session = Session.empty;
                     end
@@ -190,6 +201,18 @@ classdef Location
             for i=1:numSessions
                 sessionChoices{i} = sessions{i};
             end            
+        end
+        
+        function choiceStrings = getSessionChoiceStrings(location, sessionType)
+            sessions = location.getSessionChoices(sessionType);
+            
+            numSessions = length(sessions);
+            
+            choiceStrings = cell(numSessions, 1);
+            
+            for i=1:numSessions
+                choiceStrings{i}  = sessions{i}.naviListboxLabel;
+            end
         end
         
         
@@ -520,9 +543,9 @@ classdef Location
             if ~isempty(importPath)                
                 prompt = ['Select the session to which the ', sessionType.displayString, ' being imported from ', importPath, ' belongs to.'];
                 title = [sessionType.displayString, ' Session'];
-                choices = location.getSessionChoices(sessionType);
+                choiceStrings = location.getSessionChoiceStrings(sessionType);
                 
-                [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
+                [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choiceStrings);
                 
                 if ~cancel
                     if createNew
