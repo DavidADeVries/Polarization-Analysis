@@ -78,8 +78,6 @@ end
 handles.cancel = false;
 
 if isEdit
-    set(handles.OK, 'enable', 'on');
-    
     set(handles.pathTitle, 'Visible', 'off');
     set(handles.importPathTitle, 'Visible', 'off');
         
@@ -97,8 +95,6 @@ if isEdit
     handles.rejectedBy = session.rejectedBy;
 else
     defaultSession = MicroscopeSession;
-    
-    set(handles.OK, 'enable', 'off');
     
     set(handles.importPathTitle, 'String', handles.importPath);
     
@@ -148,6 +144,9 @@ set(handles.visualBox, 'Value', handles.visualSignature);
 
 handles = setRejectedInputFields(handles);
 
+% ** SET DONE BUTTON **
+
+checkToEnableOkButton(handles)
 
 % Update handles structure
 guidata(hObject, handles);

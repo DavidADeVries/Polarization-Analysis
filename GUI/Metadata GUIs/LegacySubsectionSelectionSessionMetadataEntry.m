@@ -78,9 +78,7 @@ end
     
 handles.cancel = false;
 
-if isEdit
-    set(handles.OK, 'enable', 'on');
-    
+if isEdit    
     set(handles.importPathTitle, 'Visible', 'off');
     set(handles.importPathDisplay, 'Visible', 'off');
     
@@ -98,8 +96,6 @@ if isEdit
     
 else
     defaultSession = LegacySubsectionSelectionSession;
-    
-    set(handles.OK, 'enable', 'off');
     
     set(handles.importPathDisplay, 'String', handles.importPath);
         
@@ -176,6 +172,9 @@ setSessionListBox(listBoxHandle, sessionChoices, handles.linkedSessionNumbers);
 
 handles = setRejectedInputFields(handles); 
 
+% ** SET DONE BUTTON **
+
+checkToEnableOkButton(handles)
 
 % Update handles structure
 guidata(hObject, handles);
