@@ -1,9 +1,8 @@
-classdef Sample
-    % Sample
+classdef ArtificalSample < Sample
+    % ArtificalSample
     % metadata for a sample coming from an ArtificalSubject
     
-    properties        
-        uuid
+    properties 
         sampleId
         
         stain
@@ -11,8 +10,6 @@ classdef Sample
         
         preppedDate
         preppedBy
-        
-        notes
     end
     
     methods

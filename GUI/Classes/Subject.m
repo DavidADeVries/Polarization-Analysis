@@ -12,6 +12,10 @@ classdef Subject
         subjectId % person ID, dog name        
         subjectNumber                
         notes
+        
+        % list of eyes and index
+        samples
+        sampleIndex = 0
     end
     
     
@@ -100,6 +104,32 @@ classdef Subject
                 end
                     
                 counter = counter + 1;
+            end
+        end
+        
+        function subject = createNewSample(subject, toPath, projectPath, userName, sampleType)
+            suggestedSampleNumber = subject.nextSampleNumber();
+            suggestedSubSampleNumber = subject.nextSubSampleNumber(sampleType);
+            
+            existingSampleNumbers = subject.getSampleNumbers();
+            existingSubSampleNumbers = subject.getSubSampleNumbers(sampleType);
+            
+            toPath = makePath(toPath, subject.dirName);
+            importPath = '';
+            
+            sample = Sample.createSample(...
+                sampleType,...
+                suggestedSampleNumber,...
+                existingSampleNumbers,...
+                suggestedSubSampleNumber,...
+                existingSubSampleNumbers,...
+                toPath,...
+                projectPath,...
+                importPath,...
+                userName);
+            
+            if ~isempty(sample)
+                subject = subject.updateSample(sample);
             end
         end
         

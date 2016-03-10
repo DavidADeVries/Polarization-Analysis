@@ -191,10 +191,10 @@ classdef Project
             project = project.updateTrial(trial);
         end
         
-        function project = updateEyeIndex(project, index)
+        function project = updateSampleIndex(project, index)
             trial = project.getSelectedTrial();
             
-            trial = trial.updateEyeIndex(index);
+            trial = trial.updateSampleIndex(index);
             
             project = project.updateTrial(trial);
         end
@@ -349,7 +349,17 @@ classdef Project
         
         function project = wipeoutMetadataFields(project)
             project.trials = [];
-        end  
+        end
+        
+        function project = createNewSample(project, projectPath, userName, sampleType)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.createNewSample(projectPath, userName, sampleType);
+                
+                project = project.updateTrial(trial);
+            end
+        end
         
     end
     

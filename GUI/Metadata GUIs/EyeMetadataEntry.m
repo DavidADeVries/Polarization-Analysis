@@ -55,19 +55,27 @@ function EyeMetadataEntry_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for EyeMetadataEntry
 handles.output = hObject;
 
-% ***************************************************************************
-% INPUT: (suggestedEyeNumber, existingEyeNumbers, userName, importPath, eye*)
+% *************************************************************************************************************************
+% INPUT: (suggestedSampleNumber, existingSampleNumbers, suggestedEyeNumber, existingEyeNumbers, userName, importPath, eye*)
 %        *may be empty
-% ***************************************************************************
+% *************************************************************************************************************************
 
 if isa(varargin{1},'numeric');
-    handles.suggestedEyeNumber = num2str(varargin{1}); %Parameter name is 'suggestedEyeNumber' from Eye class function
+    handles.suggestedSampleNumber = num2str(varargin{1}); %Parameter name is 'suggestedSampleNumber' from Eye class function
+else
+    handles.suggestedSampleNumber = '';
+end
+
+handles.existingEyeNumbers = varargin{2};
+
+if isa(varargin{3},'numeric');
+    handles.suggestedEyeNumber = num2str(varargin{3}); %Parameter name is 'suggestedEyeNumber' from Eye class function
 else
     handles.suggestedEyeNumber = '';
 end
 
-handles.existingEyeNumbers = varargin{2};
-handles.userName = varargin{3};% Parameter name is 'userName'
+handles.existingEyeNumbers = varargin{4};
+handles.userName = varargin{5};% Parameter name is 'userName'
 
 %Get choice strings from EyeTypes class
 [~, choiceStrings] = choicesFromEnum('EyeTypes');
@@ -85,8 +93,8 @@ end
 set(handles.eyeTypeList, 'String', choiceList);
 
 
-if length(varargin) > 4
-    eye = varargin{5};
+if length(varargin) > 6
+    eye = varargin{7};
     
     handles.importPath = 'None';% Parameter name is 'importPath'
     
@@ -116,7 +124,7 @@ if length(varargin) > 4
     
     set(handles.OK, 'enable', 'on');
 else
-    handles.importPath = varargin{4};% Parameter name is 'importPath'
+    handles.importPath = varargin{6};% Parameter name is 'importPath'
     
     set(handles.dissectionDoneByInput, 'String', handles.userName);
     %Set default Eye number based on input to function
@@ -151,17 +159,18 @@ function varargout = EyeMetadataEntry_OutputFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% ************************************************************************************
-% OUTPUT: [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes]
-% ************************************************************************************
+% **************************************************************************************************
+% OUTPUT: [cancel, eyeId, eyeType, sampleNumber, eyeNumber, dissectionDate, dissectionDoneBy, notes]
+% **************************************************************************************************
 
 varargout{1} = handles.cancel;
 varargout{2} = handles.eyeId; %Output eyeId variable
 varargout{3} = handles.eyeTypeChoice;  %Output eyeTypeChoice variable
-varargout{4} = handles.eyeNumber;  %Output eyeNumber variable
-varargout{5} = handles.dissectionDate; %Output dissectionDate variable
-varargout{6} = handles.dissectionDoneBy; %Output dissectionDoneBy variable
-varargout{7} = handles.eyeNotes; %Output eyeNotes variable
+varargout{4} = handles.sampleNumber;
+varargout{5} = handles.eyeNumber;  %Output eyeNumber variable
+varargout{6} = handles.dissectionDate; %Output dissectionDate variable
+varargout{7} = handles.dissectionDoneBy; %Output dissectionDoneBy variable
+varargout{8} = handles.eyeNotes; %Output eyeNotes variable
 
 close(handles.EyeMetadataEntry);
 end

@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 02-Mar-2016 13:40:23
+% Last Modified by GUIDE v2.5 10-Mar-2016 10:51:15
 
 % Begin initialization code - DO NOT EDIT
 
@@ -181,20 +181,20 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in eyeSelect.
-function eyeSelect_Callback(hObject, eventdata, handles)
-% hObject    handle to eyeSelect (see GCBO)
+% --- Executes on selection change in sampleSelect.
+function sampleSelect_Callback(hObject, eventdata, handles)
+% hObject    handle to sampleSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns eyeSelect contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from eyeSelect
+% Hints: contents = cellstr(get(hObject,'String')) returns sampleSelect contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from sampleSelect
 
-eyeSelect(hObject, eventdata, handles);
+sampleSelect(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
-function eyeSelect_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to eyeSelect (see GCBO)
+function sampleSelect_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sampleSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -478,8 +478,8 @@ function trialMenu_Callback(hObject, eventdata, handles)
 
 
 % --------------------------------------------------------------------
-function eyeMenu_Callback(hObject, eventdata, handles)
-% hObject    handle to eyeMenu (see GCBO)
+function sampleMenu_Callback(hObject, eventdata, handles)
+% hObject    handle to sampleMenu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -618,3 +618,28 @@ function editSubjectMetadata_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 editSubjectMetadata(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function newEye_Callback(hObject, eventdata, handles)
+% hObject    handle to newEye (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newEye(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newBrainSection_Callback(hObject, eventdata, handles)
+% hObject    handle to newBrainSection (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newBrainSection(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newCsfSample_Callback(hObject, eventdata, handles)
+% hObject    handle to newCsfSample (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newCsfSample(hObject, eventdata, handles);

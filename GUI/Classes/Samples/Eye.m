@@ -1,21 +1,14 @@
-classdef Eye
+classdef Eye < FixedSample
     % Eye
     % metadata about an eye
         
-    properties
-        % set at initialization
-        uuid
-        dirName
-        naviListboxLabel
-        metadataHistory
-        
+    properties        
         % set by metadata entry
         eyeId
         eyeType % EyeTypes        
         eyeNumber        
         dissectionDate
         dissectionDoneBy
-        notes
         
         % list of quarters and index
         quarters
@@ -23,21 +16,21 @@ classdef Eye
     end
     
     methods
-        function eye = Eye(eyeNumber, existingEyeNumbers, toSubjectPath, projectPath, importPath, userName)
-            [cancel, eye] = eye.enterMetadata(eyeNumber, existingEyeNumbers, importPath, userName);
+        function eye = Eye(sampleNumber, existingSampleNumbers, eyeNumber, existingEyeNumbers, toSubjectPath, projectPath, importPath, userName)
+            [cancel, eye] = eye.enterMetadata(sampleNumber, existingSampleNumbers, eyeNumber, existingEyeNumbers, importPath, userName);
             
             if ~cancel
                 % set UUID
                 eye.uuid = generateUUID();
-                
-                % set metadata history
-                eye.metadataHistory = {MetadataHistoryEntry(userName)};
                 
                 % set navigation listbox label        
                 eye.naviListboxLabel = eye.generateListboxLabel();
                 
                 % make directory/metadata file
                 eye = eye.createDirectories(toSubjectPath, projectPath);
+                
+                % set metadata history
+                eye.metadataHistory = {MetadataHistoryEntry(userName, eye)};
                 
                 % save metadata
                 saveToBackup = true;
@@ -47,8 +40,8 @@ classdef Eye
             end              
         end
         
-        function eye = editMetadata(eye, projectPath, toSubjectPath, userName, dataFilename, existingEyeNumbers)
-            [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry([], existingEyeNumbers, userName, '', eye);
+        function eye = editMetadata(eye, projectPath, toSubjectPath, userName, dataFilename, existingSampleNumbers, existingEyeNumbers)
+            [cancel, eyeId, eyeType, sampleNumber, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry([], existingSampleNumbers, [], existingEyeNumbers, userName, '', eye);
             
             if ~cancel
                 eye = updateMetadataHistory(eye, userName);
@@ -59,6 +52,7 @@ classdef Eye
                 %Assigning values to Eye Properties
                 eye.eyeId = eyeId;
                 eye.eyeType = eyeType;
+                eye.sampleNumber = sampleNumber;
                 eye.eyeNumber = eyeNumber;
                 eye.dissectionDate = dissectionDate;
                 eye.dissectionDoneBy = dissectionDoneBy;
@@ -112,16 +106,7 @@ classdef Eye
         end
         
         
-        function eye = loadEye(eye, toEyePath, eyeDir)
-            eyePath = makePath(toEyePath, eyeDir);
-
-            % load metadata
-            vars = load(makePath(eyePath, EyeNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
-            eye = vars.metadata;
-
-            % load dir name
-            eye.dirName = eyeDir;
-            
+        function eye = loadObject(eye, eyePath)            
             % load quarters
             quarterDirs = getMetadataFolders(eyePath, QuarterNamingConventions.METADATA_FILENAME);
             
@@ -251,15 +236,16 @@ classdef Eye
             end
         end
                 
-        function [cancel, eye] = enterMetadata(eye, suggestedEyeNumber, existingEyeNumbers, importPath, userName)
+        function [cancel, eye] = enterMetadata(eye, suggestedSampleNumber, existingSampleNumbers, suggestedEyeNumber, existingEyeNumbers, importPath, userName)
             
             %Call to EyeMetadataEntry GUI
-            [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(suggestedEyeNumber, existingEyeNumbers, userName, importPath);
+            [cancel, eyeId, eyeType, sampleNumber, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(suggestedSampleNumber, existingSampleNumbers, suggestedEyeNumber, existingEyeNumbers, userName, importPath);
             
             if ~cancel
                 %Assigning values to Eye Properties
                 eye.eyeId = eyeId;
                 eye.eyeType = eyeType;
+                eye.sampleNumber = sampleNumber;
                 eye.eyeNumber = eyeNumber;
                 eye.dissectionDate = dissectionDate;
                 eye.dissectionDoneBy = dissectionDoneBy;

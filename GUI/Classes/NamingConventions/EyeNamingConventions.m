@@ -7,7 +7,6 @@ classdef EyeNamingConventions
         
         NAVI_LISTBOX_PREFIX = 'Eye';
         
-        METADATA_FILENAME = 'eye_metadata.mat';
         DATA_FILENAME_LABEL = 'E';
     end
     

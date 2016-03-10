@@ -341,10 +341,10 @@ classdef Trial
             trial.subjectIndex = index;
         end
         
-        function trial = updateEyeIndex(trial, index)
+        function trial = updateSampleIndex(trial, index)
             subject = trial.getSelectedSubject();
             
-            subject = subject.updateEyeIndex(index);
+            subject = subject.updateSampleIndex(index);
             
             trial = trial.updateSubject(subject);
         end
@@ -499,6 +499,19 @@ classdef Trial
                 subject = subject.editSelectedSessionMetadata(projectPath, toSubjectPath, userName, dataFilename);
             
                 trial = trial.updateSelectedSubject(subject);
+            end
+        end
+               
+        
+        function trial = createNewSample(trial, projectPath, userName, sampleType)
+            subject = trial.getSelectedTrial();
+            
+            if ~isempty(subject)
+                toPath = trial.dirName;
+                
+                subject = subject.createNewSample(projectPath, toPath, userName, sampleType);
+                
+                trial = trial.updateSubject(subject);
             end
         end
         

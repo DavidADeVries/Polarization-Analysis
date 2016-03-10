@@ -1,12 +1,12 @@
-function [] = eyeSelect(hObject, eventdata, handles)
-% eyeSelect
-% performs updates on naviagation listboxes after a eye is selected
+function [] = sampleSelect(hObject, eventdata, handles)
+% sampleSelect
+% performs updates on naviagation listboxes after a sample is selected
 
 index = get(hObject, 'Value');
 
 project = handles.localProject;
 
-project = project.updateEyeIndex(index);
+project = project.updateSampleIndex(index);
 
 handles = project.updateNavigationListboxes(handles);
 
