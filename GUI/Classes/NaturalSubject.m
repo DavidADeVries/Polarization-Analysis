@@ -18,7 +18,7 @@ classdef NaturalSubject < Subject
                 
                 if ~cancel
                     % set metadata history
-                    subject.metadataHistory = {MetadataHistoryEntry(userName)};
+                    subject.metadataHistory = {MetadataHistoryEntry(userName, NaturalSubject.empty)};
                     
                     % set navigation listbox label
                     subject.naviListboxLabel = subject.generateListboxLabel();

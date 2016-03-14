@@ -19,18 +19,18 @@ classdef Eye < FixedSample
         function eye = Eye(sampleNumber, existingSampleNumbers, eyeNumber, existingEyeNumbers, toSubjectPath, projectPath, importPath, userName)
             [cancel, eye] = eye.enterMetadata(sampleNumber, existingSampleNumbers, eyeNumber, existingEyeNumbers, importPath, userName);
             
-            if ~cancel
+            if ~cancel                                
                 % set UUID
                 eye.uuid = generateUUID();
+                
+                % set metadata history
+                eye.metadataHistory = {MetadataHistoryEntry(userName, Eye.empty)};
                 
                 % set navigation listbox label        
                 eye.naviListboxLabel = eye.generateListboxLabel();
                 
                 % make directory/metadata file
                 eye = eye.createDirectories(toSubjectPath, projectPath);
-                
-                % set metadata history
-                eye.metadataHistory = {MetadataHistoryEntry(userName, eye)};
                 
                 % save metadata
                 saveToBackup = true;

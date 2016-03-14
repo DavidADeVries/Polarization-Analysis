@@ -30,7 +30,7 @@ classdef Trial
                 trial.uuid = generateUUID();
                 
                 % set metadata history
-                trial.metadataHistory = {MetadataHistoryEntry(userName)};
+                trial.metadataHistory = {MetadataHistoryEntry(userName, Trial.empty)};
                 
                 % set navigation listbox label
                 trial.naviListboxLabel = trial.generateListboxLabel();
