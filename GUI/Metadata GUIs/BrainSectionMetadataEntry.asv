@@ -159,18 +159,22 @@ setDateInput(handles.secondaryFixingTimeInput, handles.secondaryFixingTime, ~jus
 % ** SET POP UP MENUS **
 
 defaultString = 'Select a Sample Source';
-[~, sourceChoiceStrings] = choicesFromEnum('TissueSampleSourceTypes');
+[~, choiceStrings] = choicesFromEnum('TissueSampleSourceTypes');
 selectedString = handles.source.displayString;
-setPopUpMenu(handles.sourceSelect, defaultString, sourceChoiceStrings, selectedString)
+setPopUpMenu(handles.sourceSelect, defaultChoiceString, choiceStrings, selectedString)
 
-defaultString = 'Select a Fixative';
-[~, fixativeChoiceStrings] = choicesFromEnum('FixativeTypes');
 
-selectedString = handles.initialFixative.displayString;
-setPopUpMenu(handles.sourceSelect, defaultString, fixativeChoiceStrings, selectedString)
 
-selectedString = handles.secondaryFixative.displayString;
-setPopUpMenu(handles.sourceSelect, defaultString, fixativeChoiceStrings, selectedString)
+
+
+
+% Set Sample Source select
+
+defaultString = 'Select a Sample Source';
+[~, choiceStrings] = choicesFromEnum('TissueSampleSourceTypes');
+selectedString = handles.
+setPopUpMenu(handles.sourceSelect, defaultChoiceString, choiceStrings, selectedString)
+
 
 
 guidata(hObject, handles);
@@ -200,7 +204,7 @@ varargout{5} = handles.timeOfRemoval;
 varargout{6} = handles.timeOfProcessing;
 varargout{7} = handles.dateReceived;
 varargout{8} = handles.storageLocation;
-varargout{9} = handles.sectionAnatomy;
+varargout{9} = handles.anatomy;
 varargout{10} = handles.initialFixative;
 varargout{11} = handles.initialFixativePercent;
 varargout{12} = handles.initialFixingTime;
