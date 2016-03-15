@@ -128,7 +128,7 @@ else
     handles.eyeTypeChoice = defaultEye.eyeType;
     handles.eyeNumber = handles.suggestedEyeNumber;
     handles.dissectionDate = defaultEye.dissectionDate;
-    handles.dissectionDoneBy = handles.userName;
+    handles.dissectionDoneBy = defaultEye.dissectionDoneBy;
     handles.eyeNotes = defaultEye.notes;
     handles.sampleNumber = handles.suggestedSampleNumber;
     handles.source = defaultEye.source;
@@ -167,23 +167,23 @@ justDate = true;
 % ** SET POP UP MENUS **
 
 defaultString = 'Select an Eye Type';
-[eyeTypeChoices, ~] = choicesFromEnum('EyeTypes');
-selectedChoice = handles.eyeTypeChoice;
-setPopUpMenu(handles.eyeTypeList, defaultString, eyeTypeChoices, selectedChoice);
+[~, eyeTypeChoiceStrings] = choicesFromEnum('EyeTypes');
+selectedString = handles.eyeTypeChoice.displayString;
+setPopUpMenu(handles.eyeTypeList, defaultString, eyeTypeChoiceStrings, selectedString);
 
 defaultString = 'Select a Sample Source';
-[sourceChoices, ~] = choicesFromEnum('TissueSampleSourceTypes');
-selectedChoice = handles.source;
-setPopUpMenu(handles.tissueSampleSourceList, defaultString, sourceChoices, selectedChoice)
+[~, sourceChoiceStrings] = choicesFromEnum('TissueSampleSourceTypes');
+selectedString = handles.source.displayString;
+setPopUpMenu(handles.tissueSampleSourceList, defaultString, sourceChoiceStrings, selectedString)
 
 defaultString = 'Select a Fixative';
-[fixativeChoices, ~] = choicesFromEnum('FixativeTypes');
+[~, fixativeChoiceStrings] = choicesFromEnum('FixativeTypes');
 
-selectedChoice = handles.initialFixative;
-setPopUpMenu(handles.initialFixativeList, defaultString, fixativeChoices, selectedChoice)
+selectedString = handles.initialFixative.displayString;
+setPopUpMenu(handles.initialFixativeList, defaultString, fixativeChoiceStrings, selectedString)
 
-selectedChoice = handles.secondaryFixative;
-setPopUpMenu(handles.secondaryFixativeList, defaultString, fixativeChoices, selectedChoice)
+selectedString = handles.secondaryFixative.displayString;
+setPopUpMenu(handles.secondaryFixativeList, defaultString, fixativeChoiceStrings, selectedString)
 
 
 guidata(hObject, handles);

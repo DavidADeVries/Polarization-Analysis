@@ -1,4 +1,4 @@
-classdef TissueSample
+classdef TissueSample < Sample
     %TissueSample
     
     properties
