@@ -95,7 +95,7 @@ handles.cancel = false;
 if isEdit
     set(handles.doneButton, 'enable', 'on');
     
-    set(handles.pathTitle, 'Visible', 'off');
+    set(handles.importPathTitle, 'Visible', 'off');
     set(handles.importPathDisplay, 'Visible', 'off');
     
     handles.sampleNumber = brainSection.sampleNumber;
@@ -329,13 +329,13 @@ function timeOfRemovalButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = false;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.timeOfRemoval = serialDate;
 
-justDate = true;
-
-setDateInput(handles.timeOfRemovalInput, serialDate, ~justDate);
+setDateInput(handles.timeOfRemovalInput, serialDate, justDate);
 
 checkToEnableDoneButton(handles);
 
@@ -370,13 +370,13 @@ function timeOfProcessingButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = false;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.timeOfProcessing = serialDate;
 
-justDate = true;
-
-setDateInput(handles.timeOfProcessingInput, serialDate, ~justDate);
+setDateInput(handles.timeOfProcessingInput, serialDate, justDate);
 
 checkToEnableDoneButton(handles);
 
@@ -412,11 +412,11 @@ function dateReceivedButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = true;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.dateReceived = serialDate;
-
-justDate = true;
 
 setDateInput(handles.dateReceivedInput, serialDate, justDate);
 
@@ -645,11 +645,11 @@ function initialFixingTimeButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = true;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.initialFixingTime = serialDate;
-
-justDate = true;
 
 setDateInput(handles.initialFixingTimeInput, serialDate, justDate);
 
@@ -746,11 +746,11 @@ function secondaryFixingTimeButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = true;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.secondaryFixingTime = serialDate;
-
-justDate = true;
 
 setDateInput(handles.secondaryFixingTimeInput, serialDate, justDate);
 

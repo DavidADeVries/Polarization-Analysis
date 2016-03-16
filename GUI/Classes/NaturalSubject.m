@@ -226,32 +226,7 @@ classdef NaturalSubject < Subject
             end            
         end
         
-        function subject = updateSample(subject, sample)
-            samples = subject.samples;
-            numSamples = length(samples);
-            updated = false;
-            
-            for i=1:numSamples
-                if samples{i}.sampleNumber == sample.sampleNumber
-                    subject.samples{i} = sample;
-                    updated = true;
-                    break;
-                end
-            end
-            
-            if ~updated % add new sample
-                subject.samples{numSamples + 1} = sample;
-                
-                if subject.sampleIndex == 0
-                    subject.sampleIndex = 1;
-                end
-            end            
-        end
-        
-        function subject = updateSelectedEye(subject, eye)
-            subject.eyes{subject.eyeIndex} = eye;
-        end
-        
+               
         function eye = getEyeByNumber(subject, number)
             eyes = subject.eyes;
             
@@ -341,7 +316,7 @@ classdef NaturalSubject < Subject
             sample = subject.getSelectedSample();
                         
             if isempty(sample)
-                disableMetadataFields(handles, handles.eyeQuarterSampleMetadata);
+                disableMetadataFields(handles, handles.sampleMetadata);
             else
                 sampleMetadataString = sample.getMetadataString();
                                 
@@ -369,10 +344,10 @@ classdef NaturalSubject < Subject
             subject.sampleIndex = index;
         end
         
-        function subject = updateQuarterSampleIndex(subject, index)
+        function subject = updateSubSampleIndex(subject, index)
             sample = subject.getSelectedSample();
             
-            sample = sample.updateQuarterSampleIndex(index);
+            sample = sample.updateSubSampleIndex(index);
             
             subject = subject.updateSample(sample);
         end
@@ -463,12 +438,17 @@ classdef NaturalSubject < Subject
             
             if ~isempty(sample)
                 existingSampleNumbers = subject.getSampleNumbers();
-                filenameSection = subject.generateFilenameSection(); % ********* NEED SUBSAMPLE NUMBERS!!!!!!!!!!!!
+                
+                sampleType = sample.getSampleType();
+                
+                existingSubSampleNumbers = subject.getSubSampleNumbers(sampleType);
+                
+                filenameSection = subject.generateFilenameSection();
                 dataFilename = [dataFilename, filenameSection];
                 
-                sample = sample.editMetadata(projectPath, toSubjectPath, userName, dataFilename, existingSampleNumbers);
+                sample = sample.editMetadata(projectPath, toSubjectPath, userName, dataFilename, existingSampleNumbers, existingSubSampleNumbers);
             
-                subject = subject.updateSelectedEye(sample);
+                subject = subject.updateSelectedSample(sample);
             end
         end
         

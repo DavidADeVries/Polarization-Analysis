@@ -1,12 +1,12 @@
-function [] = quarterSampleSelect(hObject, eventdata, handles)
-% quarterSampleSelect
-% performs updates on naviagation listboxes after a quarter/sample is selected
+function [] = subSampleSelect(hObject, eventdata, handles)
+% subSampleSelect
+% performs updates on naviagation listboxes after a subsample is selected
 
 index = get(hObject, 'Value');
 
 project = handles.localProject;
 
-project = project.updateQuarterSampleIndex(index);
+project = project.updateSubSampleIndex(index);
 
 handles = project.updateNavigationListboxes(handles);
 

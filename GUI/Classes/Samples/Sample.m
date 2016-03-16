@@ -90,6 +90,20 @@ classdef Sample
             notesString = ['Notes: ', sample.notes];
         end
         
+        function sampleType = getSampleType(sample)
+            classString = class(sample);
+            
+            if isa(SampleTypes.Eye.sessionClass, classString)
+                sampleType = SampleTypes.Eye;
+            elseif isa(SampleTypes.CsfSample.sessionClass, classString)
+                sampleType = SampleTypes.CsfSample;
+            elseif isa(SampleTypes.BrainSection.sessionClass, classString)
+                sampleType = SampleTypes.BrainSection;
+            else
+                error('Unknown Sample Type');
+            end
+        end
+        
     end
     
 end

@@ -55,10 +55,10 @@ function EyeMetadataEntry_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for EyeMetadataEntry
 handles.output = hObject;
 
-% *************************************************************************************************************************
+% *********************************************************************************************************************************
 % INPUT: (suggestedSampleNumber, existingSampleNumbers, suggestedEyeNumber, existingEyeNumbers, userName, importPath, isEdit, eye*)
 %        *may be empty
-% *************************************************************************************************************************
+% *********************************************************************************************************************************
 
 if isa(varargin{1},'numeric');
     handles.suggestedSampleNumber = num2str(varargin{1}); %Parameter name is 'suggestedSampleNumber' from Eye class function
@@ -157,12 +157,12 @@ set(handles.secondaryFixativePercentInput, 'String', num2str(handles.secondaryFi
 
 justDate = true;
 
-% setDateInput(handles.timeOfRemovalDisplay, handles.timeOfRemoval, ~justDate);
-% setDateInput(handles.timeOfProcessingDisplay, handles.timeOfProcessing, ~justDate);
-% setDateInput(handles.dateReceivedDisplay, handles.dateReceived, justDate);
-% setDateInput(handles.dissectionDateInput, handles.dissectionDate, justDate);
-% setDateInput(handles.initialFixingTimeDisplay, handles.initialFixingTime, ~justDate);
-% setDateInput(handles.secondaryFixingTimeDisplay, handles.secondaryFixingTime, ~justDate);
+setDateInput(handles.timeOfRemovalDisplay, handles.timeOfRemoval, ~justDate);
+setDateInput(handles.timeOfProcessingDisplay, handles.timeOfProcessing, ~justDate);
+setDateInput(handles.dateReceivedDisplay, handles.dateReceived, justDate);
+setDateInput(handles.dissectionDateInput, handles.dissectionDate, justDate);
+setDateInput(handles.initialFixingTimeDisplay, handles.initialFixingTime, ~justDate);
+setDateInput(handles.secondaryFixingTimeDisplay, handles.secondaryFixingTime, ~justDate);
 
 % ** SET POP UP MENUS **
 
@@ -200,9 +200,9 @@ function varargout = EyeMetadataEntry_OutputFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% **************************************************************************************************
-% OUTPUT: [cancel, eyeId, eyeType, sampleNumber, eyeNumber, dissectionDate, dissectionDoneBy, notes, source, timeOfRemoval, timeOfProcessing, dateRecieved, storingLocation, initialFixative, initialFixativePercent, initialFixingTime, secondaryFixative, secondaryFixativePercent, secondaryFixingTime]
-% **************************************************************************************************
+% ********************************************************************************************************************************************************************************************************************************************************************************************************
+% OUTPUT: [cancel, eyeId, eyeType, sampleNumber, eyeNumber, dissectionDate, dissectionDoneBy, notes, source, timeOfRemoval, timeOfProcessing, dateReceived, storingLocation, initialFixative, initialFixativePercent, initialFixingTime, secondaryFixative, secondaryFixativePercent, secondaryFixingTime]
+% ********************************************************************************************************************************************************************************************************************************************************************************************************
 
 varargout{1} = handles.cancel;
 varargout{2} = handles.eyeId; %Output eyeId variable
@@ -529,10 +529,13 @@ function pickDissectionDate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = true;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.dissectionDate = serialDate;
-set(handles.dissectionDateInput, 'String', displayDate(serialDate));
+
+setDateInput(handles.dissectionDateInput, serialDate, justDate);
 
 checkToEnableOkButton(handles);
 

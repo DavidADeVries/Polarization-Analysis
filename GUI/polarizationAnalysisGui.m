@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 15-Mar-2016 16:26:37
+% Last Modified by GUIDE v2.5 16-Mar-2016 10:12:11
 
 % Begin initialization code - DO NOT EDIT
 
@@ -205,20 +205,20 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in quarterSampleSelect.
-function quarterSampleSelect_Callback(hObject, eventdata, handles)
-% hObject    handle to quarterSampleSelect (see GCBO)
+% --- Executes on selection change in subSampleSelect.
+function subSampleSelect_Callback(hObject, eventdata, handles)
+% hObject    handle to subSampleSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns quarterSampleSelect contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from quarterSampleSelect
+% Hints: contents = cellstr(get(hObject,'String')) returns subSampleSelect contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from subSampleSelect
 
-quarterSampleSelect(hObject, eventdata, handles);
+subSampleSelect(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
-function quarterSampleSelect_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to quarterSampleSelect (see GCBO)
+function subSampleSelect_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to subSampleSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -372,18 +372,18 @@ end
 
 
 
-function eyeQuarterSampleMetadata_Callback(hObject, eventdata, handles)
-% hObject    handle to eyeQuarterSampleMetadata (see GCBO)
+function sampleMetadata_Callback(hObject, eventdata, handles)
+% hObject    handle to sampleMetadata (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of eyeQuarterSampleMetadata as text
-%        str2double(get(hObject,'String')) returns contents of eyeQuarterSampleMetadata as a double
+% Hints: get(hObject,'String') returns contents of sampleMetadata as text
+%        str2double(get(hObject,'String')) returns contents of sampleMetadata as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function eyeQuarterSampleMetadata_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to eyeQuarterSampleMetadata (see GCBO)
+function sampleMetadata_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sampleMetadata (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

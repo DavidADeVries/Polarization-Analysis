@@ -158,6 +158,35 @@ classdef Subject
             end
         end
         
+        
+        function subject = updateSample(subject, sample)
+            samples = subject.samples;
+            numSamples = length(samples);
+            updated = false;
+            
+            for i=1:numSamples
+                if samples{i}.sampleNumber == sample.sampleNumber
+                    subject.samples{i} = sample;
+                    updated = true;
+                    break;
+                end
+            end
+            
+            if ~updated % add new sample
+                subject.samples{numSamples + 1} = sample;
+                
+                if subject.sampleIndex == 0
+                    subject.sampleIndex = 1;
+                end
+            end            
+        end
+        
+        
+        function subject = updateSelectedSample(subject, sample)
+            subject.samples{subject.sampleIndex} = sample;
+        end
+        
+        
         function subject = createNewSample(subject, projectPath, toPath, userName, sampleType)
             suggestedSampleNumber = subject.nextSampleNumber();
             suggestedSubSampleNumber = subject.nextSubSampleNumber(sampleType);

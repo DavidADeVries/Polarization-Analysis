@@ -25,7 +25,7 @@ classdef Eye < FixedSample
                     eye.uuid = generateUUID();
                     
                     % set metadata history
-                    eye.metadataHistory = {MetadataHistoryEntry(userName, Eye.empty)};
+                    eye.metadataHistory = MetadataHistoryEntry(userName, Eye.empty);
                     
                     % set navigation listbox label
                     eye.naviListboxLabel = eye.generateListboxLabel();
@@ -43,7 +43,9 @@ classdef Eye < FixedSample
         end
         
         function eye = editMetadata(eye, projectPath, toSubjectPath, userName, dataFilename, existingSampleNumbers, existingEyeNumbers)
-            [cancel, eyeId, eyeType, sampleNumber, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry([], existingSampleNumbers, [], existingEyeNumbers, userName, '', eye);
+            isEdit = true;
+            
+            [cancel, eyeId, eyeType, sampleNumber, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry([], existingSampleNumbers, [], existingEyeNumbers, userName, '', isEdit, eye);
             
             if ~cancel
                 eye = updateMetadataHistory(eye, userName);
@@ -245,7 +247,28 @@ classdef Eye < FixedSample
         function [cancel, eye] = enterMetadata(eye, suggestedSampleNumber, existingSampleNumbers, suggestedEyeNumber, existingEyeNumbers, importPath, userName)
             
             %Call to EyeMetadataEntry GUI
-            [cancel, eyeId, eyeType, sampleNumber, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(suggestedSampleNumber, existingSampleNumbers, suggestedEyeNumber, existingEyeNumbers, userName, importPath);
+            isEdit = false;
+            
+            [cancel,...
+                eyeId,...
+                eyeType,...
+                sampleNumber,...
+                eyeNumber,...
+                dissectionDate,...
+                dissectionDoneBy,...
+                notes,...
+                source,...
+                timeOfRemoval,...
+                timeOfProcessing,...
+                dateReceived,...
+                storingLocation,...
+                initialFixative,...
+                initialFixativePercent,...
+                initialFixingTime,...
+                secondaryFixative,...
+                secondaryFixativePercent,...
+                secondaryFixingTime] =...
+            EyeMetadataEntry(suggestedSampleNumber, existingSampleNumbers, suggestedEyeNumber, existingEyeNumbers, userName, importPath, isEdit);
             
             if ~cancel
                 %Assigning values to Eye Properties
@@ -256,6 +279,17 @@ classdef Eye < FixedSample
                 eye.dissectionDate = dissectionDate;
                 eye.dissectionDoneBy = dissectionDoneBy;
                 eye.notes = notes;
+                eye.source = source;
+                eye.timeOfRemoval = timeOfRemoval;
+                eye.timeOfProcessing = timeOfProcessing;
+                eye.dateReceived = dateReceived;
+                eye.storageLocation = storingLocation;
+                eye.initialFixative = initialFixative;
+                eye.initialFixativePercent = initialFixativePercent;
+                eye.initialFixingTime = initialFixingTime;
+                eye.secondaryFixative = secondaryFixative;
+                eye.secondaryFixativePercent = secondaryFixativePercent;
+                eye.secondaryFixingTime = secondaryFixingTime;
             end
         end
         
@@ -276,7 +310,7 @@ classdef Eye < FixedSample
             numQuarters = length(eye.quarters);
             
             if numQuarters == 0
-                disableNavigationListboxes(handles, handles.quarterSampleSelect);
+                disableNavigationListboxes(handles, handles.subSampleSelect);
             else            
                 quarterOptions = cell(numQuarters, 1);
                 
@@ -305,26 +339,49 @@ classdef Eye < FixedSample
                 handles = quarter.updateMetadataFields(handles);
             end
             
-            set(handles.eyeQuarterSampleMetadata, 'String', metadataString);
-        end        
+            set(handles.sampleMetadata, 'String', metadataString);
+        end 
+        
         
         function metadataString = getMetadataString(eye)
+            
+            [sampleNumberString, notesString] = eye.getSampleMetadataString();
+            [sourceString, timeOfRemovalString, timeOfProcessingString, dateReceivedString, storageLocationString] = eye.getTissueSampleMetadataString();
+            [initFixativeString, initFixPercentString, initFixTimeString, secondFixativeString, secondFixPercentString, secondFixTimeString] = eye.getFixedSampleMetadataString();
             
             eyeIdString = ['Eye ID: ', eye.eyeId];
             eyeTypeString = ['Eye Type: ', eye.eyeType.displayString];
             eyeNumberString = ['Eye Number: ', num2str(eye.eyeNumber)];
             dissectionDateString = ['Dissection Date: ', displayDate(eye.dissectionDate)];
             dissectionDoneByString = ['Dissection Done By: ', eye.dissectionDoneBy];
-            eyeNotesString = ['Notes: ', eye.notes];
             metadataHistoryStrings = generateMetadataHistoryStrings(eye.metadataHistory);
             
             
-            metadataString = {'Eye:', eyeIdString, eyeTypeString, eyeNumberString, dissectionDateString, dissectionDoneByString, eyeNotesString};
+            metadataString = ...
+                {'Eye:',...
+                sampleNumberString,...
+                eyeNumberString,...
+                eyeIdString,...
+                eyeTypeString,...
+                dissectionDateString,...
+                dissectionDoneByString,...
+                sourceString,...
+                timeOfRemovalString,...
+                timeOfProcessingString,...
+                dateReceivedString,...
+                storageLocationString,...
+                initFixativeString,...
+                initFixPercentString,...
+                initFixTimeString,...
+                secondFixativeString,...
+                secondFixPercentString,...
+                secondFixTimeString,...
+                notesString};
             metadataString = [metadataString, metadataHistoryStrings];
             
         end
         
-        function eye = updateQuarterSampleIndex(eye, index)
+        function eye = updateSubSampleIndex(eye, index)
             eye.quarterIndex = index;
         end
         

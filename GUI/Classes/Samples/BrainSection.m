@@ -77,14 +77,77 @@ classdef BrainSection < FixedSample
             end
         end
         
-         function dirName = generateDirName(section)            
+        function section = editMetadata(section, projectPath, toSubjectPath, userName, dataFilename, existingSampleNumbers, existingBrainSectionNumbers)
+            isEdit = true;
+            importPath = '';
+            
+            [...
+                cancel,...
+                sampleNumber,...
+                brainSectionNumber,...
+                source,...
+                timeOfRemoval,...
+                timeOfProcessing,...
+                dateReceived,...
+                storageLocation,...
+                anatomy,...
+                initFixative,...
+                initPercent,...
+                initTime,...
+                secondFixative,...
+                secondPercent,...
+                secondTime,...
+                notes]...
+                = BrainSectionMetadataEntry([], existingSampleNumbers, [], existingBrainSectionNumbers, userName, importPath, isEdit, section);
+            
+            if ~cancel
+                section = updateMetadataHistory(section, userName);
+                
+                oldDirName = section.dirName;
+                oldFilenameSection = section.generateFilenameSection();
+                
+                %Assigning values to Brain Section Properties
+                section.sampleNumber = sampleNumber;
+                section.brainSectionNumber = brainSectionNumber;
+                section.source = source;
+                section.timeOfRemoval = timeOfRemoval;
+                section.timeOfProcessing = timeOfProcessing;
+                section.dateReceived = dateReceived;
+                section.storageLocation = storageLocation;
+                section.sectionAnatomy = anatomy;
+                section.initialFixative = initFixative;
+                section.initialFixativePercent = initPercent;
+                section.initialFixingTime = initTime;
+                section.secondaryFixative = secondFixative;
+                section.secondaryFixativePercent = secondPercent;
+                section.secondaryFixingTime = secondTime;
+                section.notes = notes;
+                
+                updateBackupFiles = updateBackupFilesQuestionGui();
+                
+                newDirName = section.generateDirName();
+                newFilenameSection = section.generateFilenameSection();
+                
+                renameDirectory(toSubjectPath, projectPath, oldDirName, newDirName, updateBackupFiles);
+                renameFiles(toSubjectPath, projectPath, dataFilename, oldFilenameSection, newFilenameSection, updateBackupFiles);
+                
+                section.dirName = newDirName;
+                section.naviListboxLabel = section.generateListboxLabel();
+                
+                %section = section.updateFileSelectionEntries(makePath(projectPath, toSubjectPath)); %incase files renamed - NOT NEEDED AT THIS TIME
+                
+                section.saveMetadata(makePath(toSubjectPath, section.dirName), projectPath, updateBackupFiles);
+            end
+        end
+        
+        function dirName = generateDirName(section)
             dirSubtitle = section.sectionAnatomy;
             
             dirName = createDirName(BrainSectionNamingConventions.DIR_PREFIX, section.brainSectionNumber, dirSubtitle, BrainSectionNamingConventions.DIR_NUM_DIGITS);
         end
         
         
-        function label = generateListboxLabel(section)                    
+        function label = generateListboxLabel(section)
             subtitle = section.sectionAnatomy;
             
             label = createNavigationListboxLabel(BrainSectionNamingConventions.NAVI_LISTBOX_PREFIX, section.brainSectionNumber, subtitle);
@@ -94,10 +157,10 @@ classdef BrainSection < FixedSample
         function section = generateFilenameSection(section)
             section = createFilenameSection(BrainSectionNamingConventions.DATA_FILENAME_LABEL, num2str(section.brainSectionNumber));
         end
-                
+        
         function section = loadObject(section, sectionPath)
         end
-               
+        
         function subSampleNumber = getSubSampleNumber(section)
             subSampleNumber = section.brainSectionNumber;
         end
@@ -137,20 +200,24 @@ classdef BrainSection < FixedSample
             metadataString = [metadataString, metadataHistoryStrings];
             
         end
-               
         
-        function handles = updateNavigationListboxes(section, handles)
-            disableNavigationListboxes(handles, handles.quarterSampleSelect);
-        end
-        
+                
         function handles = updateMetadataFields(section, handles, sectionMetadataString)
-                        
+            
             metadataString = sectionMetadataString;
             
             disableMetadataFields(handles, handles.locationMetadata);
             
-            set(handles.eyeQuarterSampleMetadata, 'String', metadataString);
-        end 
+            set(handles.sampleMetadata, 'String', metadataString);
+        end
+        
+        
+        function section = updateSubSampleIndex(section, index)
+        end
+        
+        function handles = updateNavigationListboxes(section, handles)
+        	disableNavigationListboxes(handles, handles.subSampleSelect);
+        end
         
     end
     

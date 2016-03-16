@@ -238,10 +238,10 @@ classdef Project
             project = project.updateTrial(trial);
         end
         
-        function project = updateQuarterSampleIndex(project, index)
+        function project = updateSubSampleIndex(project, index)
             trial = project.getSelectedTrial();
             
-            trial = trial.updateQuarterSampleIndex(index);
+            trial = trial.updateSubSampleIndex(index);
             
             project = project.updateTrial(trial);
         end

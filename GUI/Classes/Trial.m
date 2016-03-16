@@ -349,10 +349,10 @@ classdef Trial
             trial = trial.updateSubject(subject);
         end
         
-        function trial = updateQuarterSampleIndex(trial, index)
+        function trial = updateSubSampleIndex(trial, index)
             subject = trial.getSelectedSubject();
             
-            subject = subject.updateQuarterSampleIndex(index);
+            subject = subject.updateSubSampleIndex(index);
             
             trial = trial.updateSubject(subject);
         end
