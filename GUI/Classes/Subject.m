@@ -107,7 +107,58 @@ classdef Subject
             end
         end
         
-        function subject = createNewSample(subject, toPath, projectPath, userName, sampleType)
+        function sampleNumbers = getSampleNumbers(subject)
+            samples = subject.samples;
+            numSamples = length(samples);
+            
+            sampleNumbers = zeros(numSamples, 1); % want this to be an matrix, not cell array
+            
+            for i=1:numSamples
+                sampleNumbers(i) = samples{i}.sampleNumber;                
+            end
+        end
+        
+        function nextSampleNumber = nextSampleNumber(subject)
+            sampleNumbers = subject.getSampleNumbers();
+            
+            if isempty(sampleNumbers)
+                nextSampleNumber = 1;
+            else
+                lastSampleNumber = max(sampleNumbers);
+                nextSampleNumber = lastSampleNumber + 1;
+            end
+        end
+        
+        function subSampleNumbers = getSubSampleNumbers(subject, sampleType)
+            subSampleNumbers = [];
+            
+            samples = subject.samples;
+            
+            counter = 1;
+            
+            classString = class(sampleType.sessionClass);
+            
+            for i=1:length(samples)
+                if isa(samples{i}, classString)
+                    subSampleNumbers(counter) = samples{i}.getSubSampleNumber();
+                    
+                    counter = counter + 1;
+                end
+            end
+        end
+        
+        function nextSubSampleNumber = nextSubSampleNumber(subject, sampleType)
+            subSampleNumbers = subject.getSubSampleNumbers(sampleType);
+            
+            if isempty(subSampleNumbers)
+                nextSubSampleNumber = 1;
+            else
+                lastSubSampleNumber = max(subSampleNumbers);
+                nextSubSampleNumber = lastSubSampleNumber + 1;
+            end
+        end
+        
+        function subject = createNewSample(subject, projectPath, toPath, userName, sampleType)
             suggestedSampleNumber = subject.nextSampleNumber();
             suggestedSubSampleNumber = subject.nextSubSampleNumber(sampleType);
             

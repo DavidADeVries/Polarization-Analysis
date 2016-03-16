@@ -33,7 +33,7 @@ classdef Quarter
                 quarter.uuid = generateUUID();
                 
                 % set metadata history
-                quarter.metadataHistory = {MetadataHistoryEntry(userName, Quarter.empty)};
+                quarter.metadataHistory = MetadataHistoryEntry(userName, Quarter.empty);
                 
                 % set navigation listbox label
                 quarter.naviListboxLabel = quarter.generateListboxLabel();

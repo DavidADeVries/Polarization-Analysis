@@ -23,28 +23,30 @@ classdef Trial
     
     methods
         function trial = Trial(trialNumber, existingTrialNumbers, userName, projectPath, importPath)
-            [cancel, trial] = trial.enterMetadata(trialNumber, existingTrialNumbers, importPath);
-            
-            if ~cancel
-                % set UUID
-                trial.uuid = generateUUID();
+            if nargin > 0
+                [cancel, trial] = trial.enterMetadata(trialNumber, existingTrialNumbers, importPath);
                 
-                % set metadata history
-                trial.metadataHistory = {MetadataHistoryEntry(userName, Trial.empty)};
-                
-                % set navigation listbox label
-                trial.naviListboxLabel = trial.generateListboxLabel();
-                
-                % make directory/metadata file
-                toTrialPath = ''; %starts at project path
-                trial = trial.createDirectories(toTrialPath, projectPath);
-                
-                % save metadata
-                saveToBackup = true;
-                trial.saveMetadata(trial.dirName, projectPath, saveToBackup);
-            else
-                trial = Trial.empty;
-            end            
+                if ~cancel
+                    % set UUID
+                    trial.uuid = generateUUID();
+                    
+                    % set metadata history
+                    trial.metadataHistory = MetadataHistoryEntry(userName, Trial.empty);
+                    
+                    % set navigation listbox label
+                    trial.naviListboxLabel = trial.generateListboxLabel();
+                    
+                    % make directory/metadata file
+                    toTrialPath = ''; %starts at project path
+                    trial = trial.createDirectories(toTrialPath, projectPath);
+                    
+                    % save metadata
+                    saveToBackup = true;
+                    trial.saveMetadata(trial.dirName, projectPath, saveToBackup);
+                else
+                    trial = Trial.empty;
+                end
+            end
             
         end
         
@@ -153,7 +155,7 @@ classdef Trial
                         suggestedSubjectNumber = trial.nextSubjectNumber();
                     end
                         
-                    subject = trial.createNewSubject(suggestedSubjectNumber, trial.getSubjectNumbers(), trial.dirName, handles.localPath, importDir, handles.userName);
+                    subject = trial.createSubject(suggestedSubjectNumber, trial.getSubjectNumbers(), trial.dirName, handles.localPath, importDir, handles.userName);
                 else
                     subject = trial.getSubjectFromChoice(choice);
                 end
@@ -199,7 +201,7 @@ classdef Trial
             trial.subjects = [];
         end        
         
-        function subject = createNewSubject(trial, nextSubjectNumber, existingSubjectNumbers, toTrialPath, localPath, importDir, userName)
+        function subject = createSubject(trial, nextSubjectNumber, existingSubjectNumbers, toTrialPath, localPath, importDir, userName)
             if trial.subjectType.subjectClassType == SubjectClassTypes.Natural
                 subject = NaturalSubject(nextSubjectNumber, existingSubjectNumbers, toTrialPath, localPath, importDir, userName);
             elseif trial.subjectType.subjectClassType == SubjectClassTypes.Artifical
@@ -247,9 +249,7 @@ classdef Trial
             if ~updated % add new subject
                 trial.subjects{numSubjects + 1} = subject;
                 
-                if trial.subjectIndex == 0
-                    trial.subjectIndex = 1;
-                end
+                trial.subjectIndex = numSubjects + 1;
             end            
         end
         
@@ -420,7 +420,7 @@ classdef Trial
                 if createNew
                     suggestedSubjectNumber = trial.nextSubjectNumber();
                         
-                    subject = trial.createNewSubject(suggestedSubjectNumber, trial.getSubjectNumbers(), trial.dirName, localProjectPath, legacySubjectImportDir, userName);
+                    subject = trial.createSubject(suggestedSubjectNumber, trial.getSubjectNumbers(), trial.dirName, localProjectPath, legacySubjectImportDir, userName);
                 else
                     subject = trial.getSubjectFromChoice(choice);
                 end
@@ -450,14 +450,14 @@ classdef Trial
             end
         end
         
-        function trial = editSelectedEyeMetadata(trial, projectPath, userName)
+        function trial = editSelectedSampleMetadata(trial, projectPath, userName)
             subject = trial.getSelectedSubject();
             
             if ~isempty(subject)
                 toSubjectPath = makePath(trial.dirName, subject.dirName);
                 dataFilename = trial.generateFilenameSection();
                 
-                subject = subject.editSelectedEyeMetadata(projectPath, toSubjectPath, userName, dataFilename);
+                subject = subject.editSelectedSampleMetadata(projectPath, toSubjectPath, userName, dataFilename);
             
                 trial = trial.updateSelectedSubject(subject);
             end
@@ -501,10 +501,22 @@ classdef Trial
                 trial = trial.updateSelectedSubject(subject);
             end
         end
-               
+        
+        function trial = createNewSubject(trial, projectPath, userName)
+            suggestedSubjectNumber = trial.nextSubjectNumber;
+            existingSubjectNumbers = trial.getSubjectNumbers;
+            toTrialPath = trial.dirName;
+            importPath = '';
+            
+            subject = trial.createSubject(suggestedSubjectNumber, existingSubjectNumbers, toTrialPath, projectPath, importPath, userName);
+            
+            if ~isempty(subject)
+                trial = trial.updateSubject(subject);
+            end
+        end
         
         function trial = createNewSample(trial, projectPath, userName, sampleType)
-            subject = trial.getSelectedTrial();
+            subject = trial.getSelectedSubject();
             
             if ~isempty(subject)
                 toPath = trial.dirName;

@@ -6,6 +6,6 @@ function object = updateMetadataHistory(object, userName)
 cachedObject = object.wipeoutMetadataFields();
 
 entry = MetadataHistoryEntry(userName, cachedObject);
-object.metadataHistory = [object.metadataHistory, {entry}];
+object.metadataHistory = entry;
 
 end

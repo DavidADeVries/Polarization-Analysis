@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 10-Mar-2016 10:51:15
+% Last Modified by GUIDE v2.5 15-Mar-2016 16:26:37
 
 % Begin initialization code - DO NOT EDIT
 
@@ -564,12 +564,12 @@ function editLocationMetadata_Callback(hObject, eventdata, handles)
 editLocationMetadata(hObject, eventdata, handles);
 
 % --------------------------------------------------------------------
-function editEyeMetadata_Callback(hObject, eventdata, handles)
-% hObject    handle to editEyeMetadata (see GCBO)
+function editSampleMetadata_Callback(hObject, eventdata, handles)
+% hObject    handle to editSampleMetadata (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-editEyeMetadata(hObject, eventdata, handles);
+editSampleMetadata(hObject, eventdata, handles);
 
 % --------------------------------------------------------------------
 function editTrialMetadata_Callback(hObject, eventdata, handles)
@@ -643,3 +643,76 @@ function newCsfSample_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 newCsfSample(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function newProject_Callback(hObject, eventdata, handles)
+% hObject    handle to newProject (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newProject(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newTrial_Callback(hObject, eventdata, handles)
+% hObject    handle to newTrial (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newTrial(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newSubject_Callback(hObject, eventdata, handles)
+% hObject    handle to newSubject (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newSubject(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newQuarter_Callback(hObject, eventdata, handles)
+% hObject    handle to newQuarter (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newQuarter(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newLocation_Callback(hObject, eventdata, handles)
+% hObject    handle to newLocation (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newLocation(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newMicroscopeSession_Callback(hObject, eventdata, handles)
+% hObject    handle to newMicroscopeSession (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newMicroscopeSession(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newCsloSession_Callback(hObject, eventdata, handles)
+% hObject    handle to newCsloSession (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newCsloSession(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newLegacyRegistrationSession_Callback(hObject, eventdata, handles)
+% hObject    handle to newLegacyRegistrationSession (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newLegacyRegistrationSession(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newLegacySubsectionSelectionSession_Callback(hObject, eventdata, handles)
+% hObject    handle to newLegacySubsectionSelectionSession (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newLegacySubsectionSelectionSession(hObject, eventdata, handles);

@@ -23,7 +23,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                     session.naviListboxLabel = session.generateListboxLabel();
                     
                     % set metadata history
-                    session.metadataHistory = {MetadataHistoryEntry(userName, LegacySubsectionSelectionSession.empty)};
+                    session.metadataHistory = MetadataHistoryEntry(userName, LegacySubsectionSelectionSession.empty);
                     
                     % make directory/metadata file
                     session = session.createDirectories(toLocationPath, projectPath);

@@ -18,7 +18,7 @@ classdef NaturalSubject < Subject
                 
                 if ~cancel
                     % set metadata history
-                    subject.metadataHistory = {MetadataHistoryEntry(userName, NaturalSubject.empty)};
+                    subject.metadataHistory = MetadataHistoryEntry(userName, NaturalSubject.empty);
                     
                     % set navigation listbox label
                     subject.naviListboxLabel = subject.generateListboxLabel();
@@ -73,12 +73,12 @@ classdef NaturalSubject < Subject
         
         
         function subject = updateFileSelectionEntries(subject, toPath)
-            eyes = subject.eyes;
+            samples = subject.samples;
             
             toPath = makePath(toPath, subject.dirName);
             
-            for i=1:length(eyes)
-                subject.eyes{i} = eyes{i}.updateFileSelectionEntries(toPath);
+            for i=1:length(samples)
+                subject.samples{i} = samples{i}.updateFileSelectionEntries(toPath);
             end
         end
         
@@ -458,17 +458,17 @@ classdef NaturalSubject < Subject
         end
         
         
-        function subject = editSelectedEyeMetadata(subject, projectPath, toSubjectPath, userName, dataFilename)
-            eye = subject.getSelectedEye();
+        function subject = editSelectedSampleMetadata(subject, projectPath, toSubjectPath, userName, dataFilename)
+            sample = subject.getSelectedSample();
             
-            if ~isempty(eye)
-                existingEyeNumbers = subject.getEyeNumbers();
-                filenameSection = subject.generateFilenameSection();
+            if ~isempty(sample)
+                existingSampleNumbers = subject.getSampleNumbers();
+                filenameSection = subject.generateFilenameSection(); % ********* NEED SUBSAMPLE NUMBERS!!!!!!!!!!!!
                 dataFilename = [dataFilename, filenameSection];
                 
-                eye = eye.editMetadata(projectPath, toSubjectPath, userName, dataFilename, existingEyeNumbers);
+                sample = sample.editMetadata(projectPath, toSubjectPath, userName, dataFilename, existingSampleNumbers);
             
-                subject = subject.updateSelectedEye(eye);
+                subject = subject.updateSelectedEye(sample);
             end
         end
         

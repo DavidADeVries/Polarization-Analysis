@@ -17,6 +17,47 @@ classdef Project
     end
     
     methods
+        
+        function project = Project(projectPath, userName)
+            if nargin > 0
+                [cancel, project] = project.enterMetadata();
+                
+                if ~cancel
+                    % set UUID
+                    project.uuid = generateUUID();
+                    
+                    % set metadata history
+                    project.metadataHistory = MetadataHistoryEntry(userName, Project.empty);
+                                                            
+                    % save metadata
+                    project.saveMetadata(projectPath);
+                else
+                    project = Project.empty;
+                end
+            end
+            
+        end
+        
+        
+        function [cancel, project] = enterMetadata(project)
+            [cancel, title, description, notes] = ProjectMetadataEntry();
+            
+            if ~cancel
+                project.title = title;
+                project.description = description;
+                project.notes = notes;
+            end
+        end
+                
+        
+        function [] = saveMetadata(project, projectPath)
+            toPath = '';
+            saveToBackup = false; %no backup for project metadata
+            
+            saveObjectMetadata(project, projectPath, toPath, ProjectNamingConventions.METADATA_FILENAME, saveToBackup);            
+        end
+        
+        
         function project = loadProject(project, projectDir)
             % load metadata
             vars = load(makePath(projectDir, ProjectNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
@@ -68,9 +109,7 @@ classdef Project
             if ~updated % add new trial
                 project.trials{numTrials + 1} = trial;
                 
-                if project.trialIndex == 0
-                    project.trialIndex = 1;
-                end
+                project.trialIndex = numTrials + 1;
             end            
         end
         
@@ -300,11 +339,11 @@ classdef Project
             end
         end
         
-        function project = editSelectedEyeMetadata(project, projectPath, userName)
+        function project = editSelectedSampleMetadata(project, projectPath, userName)
             trial = project.getSelectedTrial();
             
             if ~isempty(trial)
-                trial = trial.editSelectedEyeMetadata(projectPath, userName);
+                trial = trial.editSelectedSampleMetadata(projectPath, userName);
                 
                 project = project.updateSelectedTrial(trial);
             end
@@ -340,15 +379,30 @@ classdef Project
             end
         end
         
-        function [] = saveMetadata(project, projectPath)
-            toPath = '';
-            saveToBackup = false;
-            
-            saveObjectMetadata(project, projectPath, toPath, ProjectNamingConventions.METADATA_FILENAME, saveToBackup);            
-        end
-        
         function project = wipeoutMetadataFields(project)
             project.trials = [];
+        end
+        
+        function project = createNewTrial(project, projectPath, userName)
+            suggestedTrialNumber = project.nextTrialNumber;
+            existingTrialNumbers = project.getTrialNumbers;
+            importPath = '';
+            
+            trial = Trial(suggestedTrialNumber, existingTrialNumbers, userName, projectPath, importPath);
+            
+            if ~isempty(trial)
+                project = project.updateTrial(trial);
+            end
+        end
+        
+        function project = createNewSubject(project, projectPath, userName)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.createNewSubject(projectPath, userName);
+                
+                project = project.updateTrial(trial);
+            end
         end
         
         function project = createNewSample(project, projectPath, userName, sampleType)

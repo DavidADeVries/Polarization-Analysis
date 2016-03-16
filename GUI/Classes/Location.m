@@ -30,7 +30,7 @@ classdef Location
                 location.uuid = generateUUID();
                 
                 % set metadata history
-                location.metadataHistory = {MetadataHistoryEntry(userName, Location.empty)};
+                location.metadataHistory = MetadataHistoryEntry(userName, Location.empty);
                 
                 % set navigation listbox label
                 location.naviListboxLabel = location.generateListboxLabel();

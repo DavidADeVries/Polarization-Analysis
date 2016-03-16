@@ -1,4 +1,4 @@
-function [] = setPopUpMenu(popUpMenuHandle, defaultChoiceString, choiceStrings, selectedString)
+function [] = setPopUpMenu(popUpMenuHandle, defaultChoiceString, choices, selectedChoice)
 % setPopUpMenu
 
 
@@ -7,10 +7,10 @@ choiceList = {defaultChoiceString};
 
 defaultValue = 1;
 
-for i = 1:size(choiceStrings)
-    choiceList{i+1} = choiceStrings{i};
+for i = 1:size(choices)
+    choiceList{i+1} = choices(i).displayString;
     
-    if strcmp(choiceStrings{i}, selectedString)
+    if choices(i) == selectedChoice
         defaultValue = i+1;
     end
 end

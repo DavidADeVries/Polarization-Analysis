@@ -1,22 +1,27 @@
-function strings = generateMetadataHistoryStrings(metadataHistoryEntries)
+function strings = generateMetadataHistoryStrings(metadataHistory)
 % generateMetadataHistoryStrings
 % generates cell array of strings for the metadata fields
 
-strings = {'Metadata Edit History:'};
+strings = 'Metadata Edit History:';
 
-if isempty(metadataHistoryEntries)
+metadataStrings = generateMetadataStringsRecursive(metadataHistory, {});
+
+if isempty(metadataStrings)
     strings{2} = 'No Entries';
 else
-    numEntries = length(metadataHistoryEntries);
+    strings = [strings, metadataStrings];
+end
     
-    for i=1:numEntries
-        entry = metadataHistoryEntries{i};
-        strings{i+1} = [entry.getDateString(), ': ', entry.userName];
+end
+
+function strings = generateMetadataStringsRecursive(metadataHistory, strings)
+    newString = [displayDate(metadataHistory.timestamp), ': ', metadataHistory.userName];
+    
+    strings = [strings, newString];
+
+    cachedObject = metadataHistory.cachedObject;
+
+    if ~isempty(cachedObject)
+        strings = generateMetadataStringsRecursive(cachedObject.metadataHistory, strings);
     end
 end
-    
-    
-
-
-end
-

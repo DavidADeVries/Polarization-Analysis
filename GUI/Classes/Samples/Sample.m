@@ -10,7 +10,7 @@ classdef Sample
         
         
         sampleNumber
-        notes
+        notes = '';
         
     end
     
@@ -71,6 +71,23 @@ classdef Sample
             sample.dirName = sampleDir;
             
             sample = sample.loadObject(samplePath);
+        end
+        
+        function sample = createDirectories(sample, toSubjectPath, projectPath)
+            sampleDirectory = sample.generateDirName();
+            
+            createObjectDirectories(projectPath, toSubjectPath, sampleDirectory);
+                        
+            sample.dirName = sampleDirectory;
+        end
+        
+        function [] = saveMetadata(sample, toSamplePath, projectPath, saveToBackup)
+            saveObjectMetadata(sample, projectPath, toSamplePath, SampleNamingConventions.METADATA_FILENAME, saveToBackup);            
+        end
+        
+        function [sampleNumberString, notesString] = getSampleMetadataString(sample)
+            sampleNumberString = ['Sample Number: ', num2str(sample.sampleNumber)];
+            notesString = ['Notes: ', sample.notes];
         end
         
     end

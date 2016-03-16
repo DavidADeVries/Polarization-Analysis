@@ -1,4 +1,4 @@
-classdef TissueSample
+classdef TissueSample < Sample
     %TissueSample
     
     properties
@@ -10,6 +10,13 @@ classdef TissueSample
     end
     
     methods
+        function [sourceString, timeOfRemovalString, timeOfProcessingString, dateReceivedString, storageLocationString] = getTissueSampleMetadataString(sample)
+            sourceString = ['Sample Source: ', sample.source.displayString];
+            timeOfRemovalString = ['Time of Removal: ', displayDateAndTime(sample.timeOfRemoval)];
+            timeOfProcessingString = ['Time of Processing: ', displayDateAndTime(sample.timeOfProcessing)];
+            dateReceivedString = ['Date Received: ', displayDate(sample.dateReceived)];
+            storageLocationString = ['Storage Location: ', sample.storageLocation];
+        end
     end
     
 end

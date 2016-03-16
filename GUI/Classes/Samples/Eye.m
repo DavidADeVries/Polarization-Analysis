@@ -24,7 +24,7 @@ classdef Eye < FixedSample
                 eye.uuid = generateUUID();
                 
                 % set metadata history
-                eye.metadataHistory = {MetadataHistoryEntry(userName, Eye.empty)};
+                eye.metadataHistory = MetadataHistoryEntry(userName, Eye.empty);
                 
                 % set navigation listbox label        
                 eye.naviListboxLabel = eye.generateListboxLabel();
@@ -235,6 +235,10 @@ classdef Eye < FixedSample
                 nextNumber = lastNumber + 1;
             end
         end
+        
+        function subSampleNumber = getSubSampleNumber(eye)
+            subSampleNumber = eye.eyeNumber;
+        end
                 
         function [cancel, eye] = enterMetadata(eye, suggestedSampleNumber, existingSampleNumbers, suggestedEyeNumber, existingEyeNumbers, importPath, userName)
             
@@ -251,18 +255,6 @@ classdef Eye < FixedSample
                 eye.dissectionDoneBy = dissectionDoneBy;
                 eye.notes = notes;
             end
-        end
-        
-        function eye = createDirectories(eye, toSubjectPath, projectPath)
-            eyeDirectory = eye.generateDirName();
-            
-            createObjectDirectories(projectPath, toSubjectPath, eyeDirectory);
-                        
-            eye.dirName = eyeDirectory;
-        end
-        
-        function [] = saveMetadata(eye, toEyePath, projectPath, saveToBackup)
-            saveObjectMetadata(eye, projectPath, toEyePath, EyeNamingConventions.METADATA_FILENAME, saveToBackup);            
         end
         
         function eye = wipeoutMetadataFields(eye)

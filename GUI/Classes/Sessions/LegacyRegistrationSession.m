@@ -22,7 +22,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
                     session.naviListboxLabel = session.generateListboxLabel();
                     
                     % set metadata history
-                    session.metadataHistory = {MetadataHistoryEntry(userName, LegacyRegistrationSession.empty)};
+                    session.metadataHistory = MetadataHistoryEntry(userName, LegacyRegistrationSession.empty);
                     
                     % make directory/metadata file
                     session = session.createDirectories(toLocationPath, projectPath);

@@ -28,7 +28,7 @@ classdef MicroscopeSession < DataCollectionSession
                     session.naviListboxLabel = session.generateListboxLabel();
                     
                     % set metadata history
-                    session.metadataHistory = {MetadataHistoryEntry(userName, MicroscopeSession.empty)};
+                    session.metadataHistory = MetadataHistoryEntry(userName, MicroscopeSession.empty);
                     
                     % make directory/metadata file
                     session = session.createDirectories(toLocationPath, projectPath);
