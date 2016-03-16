@@ -1,4 +1,4 @@
-function [] = setPopUpMenu(popUpMenuHandle, defaultChoiceString, choices, selectedChoice)
+function [] = setPopUpMenu(popUpMenuHandle, defaultChoiceString, choicesFromEnum, selectedChoice)
 % setPopUpMenu
 
 
@@ -7,10 +7,11 @@ choiceList = {defaultChoiceString};
 
 defaultValue = 1;
 
-for i = 1:size(choices)
-    choiceList{i+1} = choices(i).displayString;
+
+for i = 1:size(choicesFromEnum)
+    choiceList{i+1} = choicesFromEnum(i).displayString;
     
-    if choices(i) == selectedChoice
+    if choicesFromEnum(i) == selectedChoice
         defaultValue = i+1;
     end
 end

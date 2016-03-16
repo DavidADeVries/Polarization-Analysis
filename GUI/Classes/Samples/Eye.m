@@ -17,27 +17,29 @@ classdef Eye < FixedSample
     
     methods
         function eye = Eye(sampleNumber, existingSampleNumbers, eyeNumber, existingEyeNumbers, toSubjectPath, projectPath, importPath, userName)
-            [cancel, eye] = eye.enterMetadata(sampleNumber, existingSampleNumbers, eyeNumber, existingEyeNumbers, importPath, userName);
-            
-            if ~cancel                                
-                % set UUID
-                eye.uuid = generateUUID();
+            if nargin > 0
+                [cancel, eye] = eye.enterMetadata(sampleNumber, existingSampleNumbers, eyeNumber, existingEyeNumbers, importPath, userName);
                 
-                % set metadata history
-                eye.metadataHistory = MetadataHistoryEntry(userName, Eye.empty);
-                
-                % set navigation listbox label        
-                eye.naviListboxLabel = eye.generateListboxLabel();
-                
-                % make directory/metadata file
-                eye = eye.createDirectories(toSubjectPath, projectPath);
-                
-                % save metadata
-                saveToBackup = true;
-                eye.saveMetadata(makePath(toSubjectPath, eye.dirName), projectPath, saveToBackup);
-            else
-                eye = Eye.empty;
-            end              
+                if ~cancel
+                    % set UUID
+                    eye.uuid = generateUUID();
+                    
+                    % set metadata history
+                    eye.metadataHistory = {MetadataHistoryEntry(userName, Eye.empty)};
+                    
+                    % set navigation listbox label
+                    eye.naviListboxLabel = eye.generateListboxLabel();
+                    
+                    % make directory/metadata file
+                    eye = eye.createDirectories(toSubjectPath, projectPath);
+                    
+                    % save metadata
+                    saveToBackup = true;
+                    eye.saveMetadata(makePath(toSubjectPath, eye.dirName), projectPath, saveToBackup);
+                else
+                    eye = Eye.empty;
+                end
+            end
         end
         
         function eye = editMetadata(eye, projectPath, toSubjectPath, userName, dataFilename, existingSampleNumbers, existingEyeNumbers)
