@@ -487,6 +487,39 @@ classdef Quarter
             end
         end
         
+        function quarter = createNewLocation(quarter, projectPath, toPath, userName, subjectType, eyeType)
+            suggestedLocationNumber = quarter.nextLocationNumber();
+            existingLocationNumbers = quarter.getLocationNumbers();
+            
+            rejectSelectedLocation = false;
+            locationCoordsWithLabels = quarter.generateLocationCoordsWithLabels(rejectSelectedLocation);
+            
+            toQuarterPath = makePath(toPath, quarter.dirName);
+            quarterType = quarter.quarterType;
+            
+            importDir = '';
+            
+            location = Location(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, toQuarterPath, projectPath, importDir, userName, subjectType, eyeType, quarterType);
+            
+            if ~isempty(location)
+                quarter = quarter.updateLocation(location);
+            end
+        end
+                        
+        function quarter = createNewSession(quarter, projectPath, toPath, userName, sessionType)
+            location = quarter.getSelectedLocation();
+            
+            if ~isempty(location)
+                toPath = makePath(toPath, quarter.dirName);
+                
+                locations = quarter.locations;
+                
+                location = location.createNewSession(projectPath, toPath, userName, sessionType, locations);
+                
+                quarter = quarter.updateLocation(location);
+            end
+        end
+        
     end
     
 end

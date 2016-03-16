@@ -15,7 +15,7 @@ end
 end
 
 function strings = generateMetadataStringsRecursive(metadataHistory, strings)
-    newString = [displayDate(metadataHistory.timestamp), ': ', metadataHistory.userName];
+    newString = [displayDateAndTime(metadataHistory.timestamp), ': ', metadataHistory.userName];
     
     strings = [strings, newString];
 

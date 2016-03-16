@@ -45,7 +45,26 @@ classdef Eye < FixedSample
         function eye = editMetadata(eye, projectPath, toSubjectPath, userName, dataFilename, existingSampleNumbers, existingEyeNumbers)
             isEdit = true;
             
-            [cancel, eyeId, eyeType, sampleNumber, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry([], existingSampleNumbers, [], existingEyeNumbers, userName, '', isEdit, eye);
+            [cancel,...
+                eyeId,...
+                eyeType,...
+                sampleNumber,...
+                eyeNumber,...
+                dissectionDate,...
+                dissectionDoneBy,...
+                notes,...
+                source,...
+                timeOfRemoval,...
+                timeOfProcessing,...
+                dateReceived,...
+                storingLocation,...
+                initialFixative,...
+                initialFixativePercent,...
+                initialFixingTime,...
+                secondaryFixative,...
+                secondaryFixativePercent,...
+                secondaryFixingTime] =...
+            EyeMetadataEntry([], existingSampleNumbers, [], existingEyeNumbers, userName, '', isEdit, eye);
             
             if ~cancel
                 eye = updateMetadataHistory(eye, userName);
@@ -61,6 +80,17 @@ classdef Eye < FixedSample
                 eye.dissectionDate = dissectionDate;
                 eye.dissectionDoneBy = dissectionDoneBy;
                 eye.notes = notes;
+                eye.source = source;
+                eye.timeOfRemoval = timeOfRemoval;
+                eye.timeOfProcessing = timeOfProcessing;
+                eye.dateReceived = dateReceived;
+                eye.storageLocation = storingLocation;
+                eye.initialFixative = initialFixative;
+                eye.initialFixativePercent = initialFixativePercent;
+                eye.initialFixingTime = initialFixingTime;
+                eye.secondaryFixative = secondaryFixative;
+                eye.secondaryFixativePercent = secondaryFixativePercent;
+                eye.secondaryFixingTime = secondaryFixingTime;
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 
@@ -318,7 +348,7 @@ classdef Eye < FixedSample
                     quarterOptions{i} = eye.quarters{i}.naviListboxLabel;
                 end
                 
-                set(handles.quarterSampleSelect, 'String', quarterOptions, 'Value', eye.quarterIndex, 'Enable', 'on');
+                set(handles.subSampleSelect, 'String', quarterOptions, 'Value', eye.quarterIndex, 'Enable', 'on');
                 
                 handles = eye.getSelectedQuarter().updateNavigationListboxes(handles);
             end
@@ -503,6 +533,46 @@ classdef Eye < FixedSample
                 quarter = quarter.editSelectedSessionMetadata(projectPath, toQuarterPath, userName, dataFilename);
             
                 eye = eye.updateSelectedQuarter(quarter);
+            end
+        end
+               
+        function eye = createNewQuarter(eye, projectPath, toPath, userName)
+            suggestedQuarterNumber = eye.nextQuarterNumber();
+            existingQuarterNumbers = eye.getQuarterNumbers();
+            
+            toEyePath = makePath(toPath, eye.dirName);
+            importDir = '';
+            
+            quarter = Quarter(suggestedQuarterNumber, existingQuarterNumbers, toEyePath, projectPath, importDir, userName);
+            
+            if ~isempty(quarter)
+                eye = eye.updateQuarter(quarter);
+            end
+        end  
+        
+        function eye = createNewLocation(eye, projectPath, toPath, userName, subjectType)
+            quarter = eye.getSelectedQuarter();
+            
+            if ~isempty(quarter)
+                toPath = makePath(toPath, eye.dirName);
+                
+                eyeType = eye.eyeType;
+                
+                quarter = quarter.createNewLocation(projectPath, toPath, userName, subjectType, eyeType);
+                
+                eye = eye.updateQuarter(quarter);
+            end
+        end
+                
+        function eye = createNewSession(eye, projectPath, toPath, userName, sessionType)
+            quarter = eye.getSelectedQuarter();
+            
+            if ~isempty(quarter)
+                toPath = makePath(toPath, eye.dirName);
+                
+                quarter = quarter.createNewSession(projectPath, toPath, userName, sessionType);
+                
+                eye = eye.updateQuarter(quarter);
             end
         end
         

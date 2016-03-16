@@ -415,6 +415,36 @@ classdef Project
             end
         end
         
+        function project = createNewQuarter(project, projectPath, userName)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.createNewQuarter(projectPath, userName);
+                
+                project = project.updateTrial(trial);
+            end
+        end
+        
+        function project = createNewLocation(project, projectPath, userName)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.createNewLocation(projectPath, userName);
+                
+                project = project.updateTrial(trial);
+            end
+        end
+        
+        function project = createNewSession(project, projectPath, userName, sessionType)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.createNewSession(projectPath, userName, sessionType);
+                
+                project = project.updateTrial(trial);
+            end
+        end
+        
     end
     
 end

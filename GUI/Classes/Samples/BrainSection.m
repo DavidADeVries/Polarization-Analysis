@@ -219,6 +219,30 @@ classdef BrainSection < FixedSample
         	disableNavigationListboxes(handles, handles.subSampleSelect);
         end
         
+        function section = createNewQuarter(section, projectPath, toPath, userName)
+            % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
+        end
+        
+        function section = editSelectedQuarterMetadata(section, projectPath, toEyePath, userName, dataFilename)
+            % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
+        end
+        
+        function section = createNewLocation(section, projectPath, toPath, userName, subjectType)
+            % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
+        end
+        
+        function section = editSelectedLocationMetadata(section, projectPath, toSamplePath, userName, dataFilename, subjectType)
+            % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
+        end
+        
+        function section = editSelectedSessionMetadata(section, projectPath, toSamplePath, userName, dataFilename)
+            % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
+        end
+        
+        function section = createNewSession(section, projectPath, toPath, userName, sessionType)
+            % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
+        end
+        
     end
     
 end

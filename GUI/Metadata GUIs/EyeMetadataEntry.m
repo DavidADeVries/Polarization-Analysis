@@ -930,10 +930,13 @@ function timeOfRemovalPicker_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = false;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.timeOfRemoval = serialDate;
-set(handles.timeOfRemovalDisplay, 'String', displayDate(serialDate));
+
+setDateInput(handles.timeOfRemovalDisplay, serialDate, justDate);
 
 checkToEnableOkButton(handles);
 
@@ -947,10 +950,13 @@ function timeOfProcessingPicker_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = false;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.timeOfProcessing = serialDate;
-set(handles.timeOfProcessingDisplay, 'String', displayDate(serialDate));
+
+setDateInput(handles.timeOfProcessingDisplay, serialDate, justDate);
 
 checkToEnableOkButton(handles);
 
@@ -964,10 +970,13 @@ function dateReceivedPicker_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = true;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.dateReceived = serialDate;
-set(handles.dateReceivedDisplay, 'String', displayDate(serialDate));
+
+setDateInput(handles.dateReceivedDisplay, serialDate, justDate);
 
 checkToEnableOkButton(handles);
 
@@ -981,10 +990,13 @@ function initialFixingTimePicker_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = false;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.initialFixingTime = serialDate;
-set(handles.initialFixingTimeDisplay, 'String', displayDate(serialDate));
+
+setDateInput(handles.initialFixingTimeDisplay, serialDate, justDate);
 
 checkToEnableOkButton(handles);
 
@@ -998,10 +1010,13 @@ function secondaryFixingTimePicker_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = false;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.secondaryFixingTime = serialDate;
-set(handles.secondaryFixingTimeDisplay, 'String', displayDate(serialDate));
+
+setDateInput(handles.secondaryFixingTimeDisplay, serialDate, justDate);
 
 checkToEnableOkButton(handles);
 

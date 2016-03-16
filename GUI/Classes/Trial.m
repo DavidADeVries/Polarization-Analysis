@@ -526,6 +526,44 @@ classdef Trial
                 trial = trial.updateSubject(subject);
             end
         end
+                
+        function trial = createNewQuarter(trial, projectPath, userName)
+            subject = trial.getSelectedSubject();
+            
+            if ~isempty(subject)
+                toPath = trial.dirName;
+                
+                subject = subject.createNewQuarter(projectPath, toPath, userName);
+                
+                trial = trial.updateSubject(subject);
+            end
+        end
+                
+        function trial = createNewLocation(trial, projectPath, userName)
+            subject = trial.getSelectedSubject();
+            
+            if ~isempty(subject)
+                toPath = trial.dirName;
+                
+                subjectType = trial.subjectType;
+                
+                subject = subject.createNewLocation(projectPath, toPath, userName, subjectType);
+                
+                trial = trial.updateSubject(subject);
+            end
+        end
+        
+        function trial = createNewSession(trial, projectPath, userName, sessionType)
+            subject = trial.getSelectedSubject();
+            
+            if ~isempty(subject)
+                toPath = trial.dirName;
+                
+                subject = subject.createNewSession(projectPath, toPath, userName, sessionType);
+                
+                trial = trial.updateSubject(subject);
+            end
+        end
         
     end
     

@@ -606,6 +606,38 @@ classdef Location
                 location = location.updateSelectedSession(session);
             end
         end
+                
+                        
+        function location = createNewSession(location, projectPath, toPath, userName, sessionType, locations)
+            toPath = makePath(toPath, location.dirName);
+            
+            sessionNumber = location.nextSessionNumber();
+            dataCollectionSessionNumber = location.nextDataCollectionSessionNumber();
+            dataProcessingSessionNumber = location.nextDataProcessingSessionNumber();
+            
+            importPath = '';
+            
+            noSessionType = []; %don't select a certian session type
+            sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessionsnoSessionType = []; %don't select a certian session type
+            
+            lastSession = getLastSessionByType(locations, sessionType);
+            
+            session = Session.createSession(...
+                sessionType,...
+                sessionNumber,...
+                dataCollectionSessionNumber,...
+                dataProcessingSessionNumber,...
+                toPath,...
+                projectPath,...
+                importPath,...
+                userName,...
+                sessionChoices,...
+                lastSession);
+            
+            if ~isempty(session)
+                location = location.updateSession(session);
+            end
+        end
         
     end
     

@@ -212,6 +212,43 @@ classdef Subject
                 subject = subject.updateSample(sample);
             end
         end
+               
+                
+        function subject = createNewQuarter(subject, projectPath, toPath, userName)
+            sample = subject.getSelectedSample();
+            
+            if ~isempty(sample)
+                toPath = makePath(toPath, subject.dirName);
+                
+                sample = sample.createNewQuarter(projectPath, toPath, userName);
+                
+                subject = subject.updateSample(sample);
+            end
+        end   
+        
+        function subject = createNewLocation(subject, projectPath, toPath, userName, subjectType)
+            sample = subject.getSelectedSample();
+            
+            if ~isempty(sample)
+                toPath = makePath(toPath, subject.dirName);
+                
+                sample = sample.createNewLocation(projectPath, toPath, userName, subjectType);
+                
+                subject = subject.updateSample(sample);
+            end
+        end
+        
+        function subject = createNewSession(subject, projectPath, toPath, userName, sessionType)
+            sample = subject.getSelectedSample();
+            
+            if ~isempty(sample)
+                toPath = makePath(toPath, subject.dirName);
+                
+                sample = sample.createNewSession(projectPath, toPath, userName, sessionType);
+                
+                subject = subject.updateSample(sample);
+            end
+        end
         
         
     end

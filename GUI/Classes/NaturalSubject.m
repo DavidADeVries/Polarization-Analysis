@@ -353,19 +353,19 @@ classdef NaturalSubject < Subject
         end
         
         function subject = updateLocationIndex(subject, index)
-            eye = subject.getSelectedEye();
+            sample = subject.getSelectedSample();
             
-            eye = eye.updateLocationIndex(index);
+            sample = sample.updateLocationIndex(index);
             
-            subject = subject.updateEye(eye);
+            subject = subject.updateSample(sample);
         end
         
         function subject = updateSessionIndex(subject, index)
-            eye = subject.getSelectedEye();
+            sample = subject.getSelectedSample();
             
-            eye = eye.updateSessionIndex(index);
+            sample = sample.updateSessionIndex(index);
             
-            subject = subject.updateEye(eye);
+            subject = subject.updateSample(sample);
         end
         
         function subject = updateSubfolderIndex(subject, index)
@@ -453,7 +453,7 @@ classdef NaturalSubject < Subject
         end
         
         function subject = editSelectedQuarterMetadata(subject, projectPath, toSubjectPath, userName, dataFilename)
-            eye = subject.getSelectedEye();
+            eye = subject.getSelectedSample();
             
             if ~isempty(eye)
                 toEyePath = makePath(toSubjectPath, eye.dirName);
@@ -462,35 +462,35 @@ classdef NaturalSubject < Subject
                 
                 eye = eye.editSelectedQuarterMetadata(projectPath, toEyePath, userName, dataFilename);
             
-                subject = subject.updateSelectedEye(eye);
+                subject = subject.updateSelectedSample(eye);
             end
         end
         
         function subject = editSelectedLocationMetadata(subject, projectPath, toSubjectPath, userName, dataFilename, subjectType)
-            eye = subject.getSelectedEye();
+            sample = subject.getSelectedSample();
             
-            if ~isempty(eye)
-                toEyePath = makePath(toSubjectPath, eye.dirName);
+            if ~isempty(sample)
+                toSamplePath = makePath(toSubjectPath, sample.dirName);
                 filenameSection = subject.generateFilenameSection();
                 dataFilename = [dataFilename, filenameSection];
                 
-                eye = eye.editSelectedLocationMetadata(projectPath, toEyePath, userName, dataFilename, subjectType);
+                sample = sample.editSelectedLocationMetadata(projectPath, toSamplePath, userName, dataFilename, subjectType);
             
-                subject = subject.updateSelectedEye(eye);
+                subject = subject.updateSelectedSample(sample);
             end
         end
         
         function subject = editSelectedSessionMetadata(subject, projectPath, toSubjectPath, userName, dataFilename)
-            eye = subject.getSelectedEye();
+            sample = subject.getSelectedSample();
             
-            if ~isempty(eye)
-                toEyePath = makePath(toSubjectPath, eye.dirName);
+            if ~isempty(sample)
+                toSamplePath = makePath(toSubjectPath, sample.dirName);
                 filenameSection = subject.generateFilenameSection();
                 dataFilename = [dataFilename, filenameSection];
                 
-                eye = eye.editSelectedSessionMetadata(projectPath, toEyePath, userName, dataFilename);
+                sample = sample.editSelectedSessionMetadata(projectPath, toSamplePath, userName, dataFilename);
             
-                subject = subject.updateSelectedEye(eye);
+                subject = subject.updateSelectedSample(sample);
             end
         end
         
