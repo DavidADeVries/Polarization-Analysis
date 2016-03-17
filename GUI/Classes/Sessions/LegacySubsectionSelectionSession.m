@@ -162,7 +162,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
             [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);            
             [dataProcessingSessionNumberString, linkedSessionsString] = session.getProcessingSessionMetadataString();
             
-            croppingTypeString = ['Cropping Type: ', session.croppingType.displayString];
+            croppingTypeString = ['Cropping Type: ', displayType(session.croppingType)];
             coordsString = ['Cropping Coords [x,y,w,h]: ' coordsToString(session.coords)];
             
             

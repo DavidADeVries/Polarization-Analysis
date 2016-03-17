@@ -171,7 +171,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
             [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
             [dataProcessingSessionNumberString, linkedSessionsString] = session.getProcessingSessionMetadataString();
             
-            registrationTypeString = ['Registration Type: ', session.registrationType.displayString];
+            registrationTypeString = ['Registration Type: ', displayType(session.registrationType)];
             registrationParamsString = ['Registration Parameters: ' session.registrationParams];
             
             

@@ -329,7 +329,7 @@ classdef Trial
             trialTitleString = ['Title: ', trial.title];
             trialDescriptionString = ['Description: ', trial.description];
             trialNumberString = ['Trial Number: ', num2str(trial.trialNumber)];
-            trialSubjectTypeString = ['Subject Type: ', trial.subjectType.displayString];
+            trialSubjectTypeString = ['Subject Type: ', displayType(trial.subjectType)];
             trialNotesString = ['Notes: ', trial.notes];
             metadataHistoryStrings = generateMetadataHistoryStrings(trial.metadataHistory);
             

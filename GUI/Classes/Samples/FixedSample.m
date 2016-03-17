@@ -3,22 +3,22 @@ classdef FixedSample < TissueSample
     
     properties
         initialFixative = []; %FixativeTypes
-        initialFixativePercent = 0; % numeric
-        initialFixingTime = 0;
+        initialFixativePercent = []; % numeric
+        initialFixingTime = [];
         
         secondaryFixative = []; %FixativeTypes
-        secondaryFixativePercent = 0; %numeric
-        secondaryFixingTime = 0;
+        secondaryFixativePercent = []; %numeric
+        secondaryFixingTime = [];
     end
     
     methods
         
         function [initFixativeString, initFixPercentString, initFixTimeString, secondFixativeString, secondFixPercentString, secondFixTimeString] = getFixedSampleMetadataString(sample)
-            initFixativeString = ['Initial Fixative: ', sample.initialFixative.displayString];
+            initFixativeString = ['Initial Fixative: ', displayType(sample.initialFixative)];
             initFixPercentString = ['Initial Fixative %: ', num2str(sample.initialFixativePercent)];
             initFixTimeString = ['Initial Fixing Time: ', displayDateAndTime(sample.initialFixingTime)];
             
-            secondFixativeString = ['Secondary Fixative: ', sample.secondaryFixative.displayString];
+            secondFixativeString = ['Secondary Fixative: ', displayType(sample.secondaryFixative)];
             secondFixPercentString = ['Secondary Fixative %: ', num2str(sample.secondaryFixativePercent)];
             secondFixTimeString = ['Secondary Fixing Time: ', displayDateAndTime(sample.secondaryFixingTime)];            
         end

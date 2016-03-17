@@ -347,7 +347,7 @@ classdef Quarter
             mountingDoneByString = ['Mounting Done By: ', quarter.mountingDoneBy];
             stainString = ['Stain: ', quarter.stain];
             slideMaterialString = ['Slide Material: ', quarter.slideMaterial];
-            quarterTypeString = ['Quarter Type: ', quarter.quarterType.displayString];
+            quarterTypeString = ['Quarter Type: ', displayType(quarter.quarterType)];
             quarterNumberString = ['Quarter number: ', num2str(quarter.quarterNumber)];
             quarterArbitraryString = ['Quarter Arbitrary: ', booleanToString(quarter.quarterArbitrary)];
             quarterNotesString = ['Notes: ', quarter.notes];

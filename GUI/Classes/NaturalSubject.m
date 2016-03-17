@@ -174,21 +174,6 @@ classdef NaturalSubject < Subject
             end          
         end
         
-        function eye = getEyeFromChoice(subject, choice)
-            eye = subject.eyes{choice};
-        end
-        
-        function eyeChoices = getEyeChoices(subject)
-            eyes = subject.eyes;
-            numEyes = length(eyes);
-            
-            eyeChoices = cell(numEyes, 1);
-            
-            for i=1:numEyes
-                eyeChoices{i} = eyes{i}.naviListboxLabel;
-            end
-        end
-        
         function sample = getSampleFromChoice(subject, choice)
             sample = subject.samples{choice};
         end
@@ -329,8 +314,8 @@ classdef NaturalSubject < Subject
             [subjectIdString, subjectNumberString, subjectNotesString] = subject.getSubjectMetadataString();
             
             ageString = ['Age: ', num2str(subject.age)];
-            genderString = ['Gender: ', subject.gender.displayString];
-            ADDiagnosisString = ['AD Diagnosis: ', subject.ADDiagnosis.displayString];
+            genderString = ['Gender: ', displayType(subject.gender)];
+            ADDiagnosisString = ['AD Diagnosis: ', displayType(subject.ADDiagnosis)];
             causeOfDeathString = ['Cause of Death: ', subject.causeOfDeath];
             medicalHistoryString = ['Medical History: ', subject.medicalHistory];
             metadataHistoryStrings = generateMetadataHistoryStrings(subject.metadataHistory);
@@ -369,37 +354,37 @@ classdef NaturalSubject < Subject
         end
         
         function subject = updateSubfolderIndex(subject, index)
-            eye = subject.getSelectedEye();
+            sample = subject.getSelectedSample();
             
-            eye = eye.updateSubfolderIndex(index);
+            sample = sample.updateSubfolderIndex(index);
             
-            subject = subject.updateEye(eye);
+            subject = subject.updateSample(sample);
         end
         
         function subject = updateFileIndex(subject, index)
-            eye = subject.getSelectedEye();
+            sample = subject.getSelectedSample();
             
-            eye = eye.updateFileIndex(index);
+            sample = sample.updateFileIndex(index);
             
-            subject = subject.updateEye(eye);
+            subject = subject.updateSample(sample);
         end
         
         function fileSelection = getSelectedFile(subject)
-            eye = subject.getSelectedEye();
+            sample = subject.getSelectedSample();
             
-            if ~isempty(eye)
-                fileSelection = eye.getSelectedFile();
+            if ~isempty(sample)
+                fileSelection = sample.getSelectedFile();
             else
                 fileSelection = [];
             end
         end
         
         function subject = incrementFileIndex(subject, increment)            
-            eye = subject.getSelectedEye();
+            sample = subject.getSelectedSample();
             
-            eye = eye.incrementFileIndex(increment);
+            sample = sample.incrementFileIndex(increment);
             
-            subject = subject.updateEye(eye);
+            subject = subject.updateSample(sample);
         end
         
         
@@ -409,25 +394,40 @@ classdef NaturalSubject < Subject
             
             prompt = ['Select the eye to which the data being imported from ', displayImportPath, ' belongs to.'];
             title = 'Select Eye';
-            choices = subject.getEyeChoices();
+            choices = subject.getSampleChoices();
             
             [choice, cancel, createNew] = selectEntryOrCreateNew(prompt, title, choices);
             
             if ~cancel
                 if createNew
-                    suggestedEyeNumber = subject.nextEyeNumber();
-                    
-                    eye = Eye(suggestedEyeNumber, subject.getEyeNumbers(), toSubjectProjectPath, localProjectPath, displayImportPath, userName);
+                      sampleType = SampleTypes.Eye;
+                      
+                      suggestedSampleNumber = subject.nextSampleNumber();
+                      suggestedSubSampleNumber = subject.nextSubSampleNumber(sampleType);
+                      
+                      existingSampleNumbers = subject.getSampleNumbers();
+                      existingSubSampleNumbers = subject.getSubSampleNumbers(sampleType);
+                      
+                      sample = Sample.createSample(...
+                          sampleType,...
+                          suggestedSampleNumber,...
+                          existingSampleNumbers,...
+                          suggestedSubSampleNumber,...
+                          existingSubSampleNumbers,...
+                          toSubjectProjectPath,...
+                          localProjectPath,...
+                          displayImportPath,...
+                          userName);
                 else
-                    eye = subject.getEyeFromChoice(choice);
+                    sample = subject.getSampleFromChoice(choice);
                 end
                 
-                if ~isempty(eye)
-                    toEyeProjectPath = makePath(toSubjectProjectPath, eye.dirName);
+                if ~isempty(sample)
+                    toEyeProjectPath = makePath(toSubjectProjectPath, sample.dirName);
                     
-                    eye = eye.importLegacyData(toEyeProjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType);
+                    sample = sample.importLegacyData(toEyeProjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType);
                     
-                    subject = subject.updateEye(eye);
+                    subject = subject.updateSample(sample);
                 end
             end
         end

@@ -4,11 +4,11 @@ classdef Eye < FixedSample
         
     properties        
         % set by metadata entry
-        eyeId
-        eyeType % EyeTypes        
+        eyeId = '';
+        eyeType = [];% EyeTypes        
         eyeNumber        
-        dissectionDate
-        dissectionDoneBy
+        dissectionDate = [];
+        dissectionDoneBy = '';
         
         % list of quarters and index
         quarters
@@ -157,7 +157,7 @@ classdef Eye < FixedSample
             end
         end
         
-        function eye = importEye(eye, toEyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType)  
+        function eye = importSample(eye, toEyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType)  
             dirList = getAllFolders(eyeImportPath);
             
             filenameSection = eye.generateFilenameSection();
@@ -380,7 +380,7 @@ classdef Eye < FixedSample
             [initFixativeString, initFixPercentString, initFixTimeString, secondFixativeString, secondFixPercentString, secondFixTimeString] = eye.getFixedSampleMetadataString();
             
             eyeIdString = ['Eye ID: ', eye.eyeId];
-            eyeTypeString = ['Eye Type: ', eye.eyeType.displayString];
+            eyeTypeString = ['Eye Type: ', displayType(eye.eyeType)];
             eyeNumberString = ['Eye Number: ', num2str(eye.eyeNumber)];
             dissectionDateString = ['Dissection Date: ', displayDate(eye.dissectionDate)];
             dissectionDoneByString = ['Dissection Done By: ', eye.dissectionDoneBy];
