@@ -134,16 +134,12 @@ set(handles.sessionNotesInput, 'String', handles.sessionNotes);
 
 % ** SET POP UP MENUS **
 
-[~, choiceStrings] = choicesFromEnum('RegistrationTypes');
+[choices, ~] = choicesFromEnum('RegistrationTypes');
 defaultChoiceString = 'Select a Registration Type';
 
-if isempty(handles.registrationType)
-    selectedString = '';
-else
-    selectedString = handles.registrationType.displayString;
-end
+selectedChoice = handles.registrationType;
 
-setPopUpMenu(handles.registrationTypeList, defaultChoiceString, choiceStrings, selectedString);
+setPopUpMenu(handles.registrationTypeList, defaultChoiceString, choices, selectedChoice);
 
 
 % ** SET LISTBOXES **

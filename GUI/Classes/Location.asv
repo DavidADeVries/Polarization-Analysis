@@ -635,7 +635,9 @@ classdef Location
                 lastSession);
             
             if ~isempty(session)
-                session = session.createFileSelectionEntries(makePath(projectPath, toPath));
+                
+                        
+                    session = session.createFileSelectionEntries(makePath(projectPath, toLocationProjectPath));
                 
                 location = location.updateSession(session);
             end

@@ -153,16 +153,13 @@ set(handles.heightInput, 'String', num2str(handles.height));
 
 % ** SET POP UP MENUS **
 
-[~, choiceStrings] = choicesFromEnum('CroppingTypes');
+[choices, ~] = choicesFromEnum('CroppingTypes');
 defaultChoiceString = 'Select a Cropping Type';
 
-if isempty(handles.croppingType)
-    selectedString = '';
-else
-    selectedString = handles.croppingType.displayString;
-end
+selectedChoice = handles.croppingType;
 
-setPopUpMenu(handles.croppingTypeMenu, defaultChoiceString, choiceStrings, selectedString);
+
+setPopUpMenu(handles.croppingTypeMenu, defaultChoiceString, choices, selectedChoice);
 
 
 % ** SET LISTBOXES **
