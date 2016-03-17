@@ -7,6 +7,7 @@ classdef Session
     
     properties
         % set at initialization
+        uuid
         dirName = '';
         naviListboxLabel = '';
         metadataHistory = {};
@@ -15,7 +16,6 @@ classdef Session
         sessionDate = 0;
         sessionDoneBy = '';    
         sessionNumber
-        isDataCollectionSession
         notes = '';
         
         rejected = false; % T/F, will exclude data from being included in analysis
@@ -60,6 +60,11 @@ classdef Session
     end
     
     methods
+        
+        function session = Session()
+            % set UUID
+            session.uuid = generateUUID();
+        end
         
         function session = wipeoutMetadataFields(session)
             session.dirName = '';

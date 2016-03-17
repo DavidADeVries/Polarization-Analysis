@@ -3,7 +3,9 @@ function object = updateMetadataHistory(object, userName)
 % updates the metadata history field for any object with a
 % '.metadataHistory' field
 
-entry = MetadataHistoryEntry(userName);
-object.metadataHistory = [object.metadataHistory, {entry}];
+cachedObject = object.wipeoutMetadataFields();
+
+entry = MetadataHistoryEntry(userName, cachedObject);
+object.metadataHistory = entry;
 
 end

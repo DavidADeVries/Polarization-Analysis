@@ -447,10 +447,13 @@ function sessionDatePick_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = true;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.imagingDate = serialDate;
-set(handles.imagingDateDisplay, 'String', displayDate(serialDate));
+
+setDateInput(handles.imagingDateDisplay, serialDate, justDate);
 
 checkToEnableOkButton(handles);
 

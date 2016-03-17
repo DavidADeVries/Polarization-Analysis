@@ -11,6 +11,10 @@ title = 'Select Local Directory (Sub-Directory of C:\ Recommended)';
 localPath = uigetdir('C:\', title);
 
 if localPath ~= 0 % folder has been successfully selected
+        
+    handles.localPath = localPath;
+    set(handles.localDirectoryLabel, 'String', localPath);
+        
     metadataPath = makePath(localPath, ProjectNamingConventions.METADATA_FILENAME);
     
     if exist(metadataPath, 'file') %check if metadata file exists    
@@ -19,11 +23,7 @@ if localPath ~= 0 % folder has been successfully selected
         
         project = project.loadProject(localPath);
         
-        handles.localProject = project;
-        
-        handles.localPath = localPath;
-        
-        set(handles.localDirectoryLabel, 'String', localPath);
+        handles.localProject = project;        
         
         % update list boxes
         handles.localProject.updateNavigationListboxes(handles);
@@ -31,13 +31,14 @@ if localPath ~= 0 % folder has been successfully selected
         % update metadata
         handles.localProject.updateMetadataFields(handles);
          
-        guidata(hObject, handles); %update variables
     else %an project directory with no metadata was selected
-        error = 'The directory selected is not a valid project directory. Please select a directory that contains a project metadata file or create the appropriate metadata file.';
-        error_name = 'Invalid Project Directory';
+        error = 'The directory selected did not contain a valid project. Please create a new project or select a valid directory containing a project metadata file.';
+        error_name = 'No Project Found';
         
-       errordlg(error, error_name, 'modal'); 
+       warndlg(error, error_name, 'modal'); 
     end   
+    
+    guidata(hObject, handles); %update variables
     
 end
 

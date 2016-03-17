@@ -7,10 +7,12 @@ slash = '\';
 path = '';
 
 for i=1:length(varargin)
-    if i == 1
-        path = varargin{i};
-    else
-        path = [path, slash, varargin{i}];
+    if ~isempty(varargin{i})
+        if isempty(path)
+            path = varargin{i};
+        else
+            path = [path, slash, varargin{i}];
+        end
     end
 end
 

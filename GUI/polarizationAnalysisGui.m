@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 02-Mar-2016 13:40:23
+% Last Modified by GUIDE v2.5 16-Mar-2016 10:12:11
 
 % Begin initialization code - DO NOT EDIT
 
@@ -181,20 +181,20 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in eyeSelect.
-function eyeSelect_Callback(hObject, eventdata, handles)
-% hObject    handle to eyeSelect (see GCBO)
+% --- Executes on selection change in sampleSelect.
+function sampleSelect_Callback(hObject, eventdata, handles)
+% hObject    handle to sampleSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns eyeSelect contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from eyeSelect
+% Hints: contents = cellstr(get(hObject,'String')) returns sampleSelect contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from sampleSelect
 
-eyeSelect(hObject, eventdata, handles);
+sampleSelect(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
-function eyeSelect_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to eyeSelect (see GCBO)
+function sampleSelect_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sampleSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -205,20 +205,20 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in quarterSampleSelect.
-function quarterSampleSelect_Callback(hObject, eventdata, handles)
-% hObject    handle to quarterSampleSelect (see GCBO)
+% --- Executes on selection change in subSampleSelect.
+function subSampleSelect_Callback(hObject, eventdata, handles)
+% hObject    handle to subSampleSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns quarterSampleSelect contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from quarterSampleSelect
+% Hints: contents = cellstr(get(hObject,'String')) returns subSampleSelect contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from subSampleSelect
 
-quarterSampleSelect(hObject, eventdata, handles);
+subSampleSelect(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
-function quarterSampleSelect_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to quarterSampleSelect (see GCBO)
+function subSampleSelect_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to subSampleSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -372,18 +372,18 @@ end
 
 
 
-function eyeQuarterSampleMetadata_Callback(hObject, eventdata, handles)
-% hObject    handle to eyeQuarterSampleMetadata (see GCBO)
+function sampleMetadata_Callback(hObject, eventdata, handles)
+% hObject    handle to sampleMetadata (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of eyeQuarterSampleMetadata as text
-%        str2double(get(hObject,'String')) returns contents of eyeQuarterSampleMetadata as a double
+% Hints: get(hObject,'String') returns contents of sampleMetadata as text
+%        str2double(get(hObject,'String')) returns contents of sampleMetadata as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function eyeQuarterSampleMetadata_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to eyeQuarterSampleMetadata (see GCBO)
+function sampleMetadata_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sampleMetadata (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -478,8 +478,8 @@ function trialMenu_Callback(hObject, eventdata, handles)
 
 
 % --------------------------------------------------------------------
-function eyeMenu_Callback(hObject, eventdata, handles)
-% hObject    handle to eyeMenu (see GCBO)
+function sampleMenu_Callback(hObject, eventdata, handles)
+% hObject    handle to sampleMenu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -564,12 +564,12 @@ function editLocationMetadata_Callback(hObject, eventdata, handles)
 editLocationMetadata(hObject, eventdata, handles);
 
 % --------------------------------------------------------------------
-function editEyeMetadata_Callback(hObject, eventdata, handles)
-% hObject    handle to editEyeMetadata (see GCBO)
+function editSampleMetadata_Callback(hObject, eventdata, handles)
+% hObject    handle to editSampleMetadata (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-editEyeMetadata(hObject, eventdata, handles);
+editSampleMetadata(hObject, eventdata, handles);
 
 % --------------------------------------------------------------------
 function editTrialMetadata_Callback(hObject, eventdata, handles)
@@ -618,3 +618,101 @@ function editSubjectMetadata_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 editSubjectMetadata(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function newEye_Callback(hObject, eventdata, handles)
+% hObject    handle to newEye (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newEye(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newBrainSection_Callback(hObject, eventdata, handles)
+% hObject    handle to newBrainSection (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newBrainSection(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newCsfSample_Callback(hObject, eventdata, handles)
+% hObject    handle to newCsfSample (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newCsfSample(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function newProject_Callback(hObject, eventdata, handles)
+% hObject    handle to newProject (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newProject(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newTrial_Callback(hObject, eventdata, handles)
+% hObject    handle to newTrial (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newTrial(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newSubject_Callback(hObject, eventdata, handles)
+% hObject    handle to newSubject (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newSubject(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newQuarter_Callback(hObject, eventdata, handles)
+% hObject    handle to newQuarter (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newQuarter(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newLocation_Callback(hObject, eventdata, handles)
+% hObject    handle to newLocation (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newLocation(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newMicroscopeSession_Callback(hObject, eventdata, handles)
+% hObject    handle to newMicroscopeSession (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newMicroscopeSession(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newCsloSession_Callback(hObject, eventdata, handles)
+% hObject    handle to newCsloSession (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newCsloSession(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newLegacyRegistrationSession_Callback(hObject, eventdata, handles)
+% hObject    handle to newLegacyRegistrationSession (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newLegacyRegistrationSession(hObject, eventdata, handles);
+
+% --------------------------------------------------------------------
+function newLegacySubsectionSelectionSession_Callback(hObject, eventdata, handles)
+% hObject    handle to newLegacySubsectionSelectionSession (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+newLegacySubsectionSelectionSession(hObject, eventdata, handles);

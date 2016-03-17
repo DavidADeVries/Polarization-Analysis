@@ -28,7 +28,7 @@ classdef MicroscopeSession < DataCollectionSession
                     session.naviListboxLabel = session.generateListboxLabel();
                     
                     % set metadata history
-                    session.metadataHistory = {MetadataHistoryEntry(userName)};
+                    session.metadataHistory = MetadataHistoryEntry(userName, MicroscopeSession.empty);
                     
                     % make directory/metadata file
                     session = session.createDirectories(toLocationPath, projectPath);
@@ -61,6 +61,8 @@ classdef MicroscopeSession < DataCollectionSession
              = MicroscopeSessionMetadataEntry(userName, '', isEdit, session);
             
             if ~cancel
+                session = updateMetadataHistory(session, userName);
+                
                 oldDirName = session.dirName;
                 oldFilenameSection = session.generateFilenameSection();  
                 
@@ -77,8 +79,6 @@ classdef MicroscopeSession < DataCollectionSession
                 session.rejected = rejected;
                 session.rejectedReason = rejectedReason;
                 session.rejectedBy = rejectedBy;
-                
-                session = updateMetadataHistory(session, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 

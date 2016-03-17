@@ -149,16 +149,13 @@ set(handles.heightInput, 'String', num2str(handles.height));
 
 % ** SET POP UP MENUS **
 
-[~, choiceStrings] = choicesFromEnum('CroppingTypes');
+[choices, ~] = choicesFromEnum('CroppingTypes');
 defaultChoiceString = 'Select a Cropping Type';
 
-if isempty(handles.croppingType)
-    selectedString = '';
-else
-    selectedString = handles.croppingType.displayString;
-end
+selectedChoice = handles.croppingType;
 
-setPopUpMenu(handles.croppingTypeMenu, defaultChoiceString, choiceStrings, selectedString);
+
+setPopUpMenu(handles.croppingTypeMenu, defaultChoiceString, choices, selectedChoice);
 
 
 % ** SET LISTBOXES **
@@ -268,10 +265,13 @@ function sessionDatePick_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = true;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.sessionDate = serialDate;
-set(handles.sessionDateDisplay, 'String', displayDate(serialDate));
+
+setDateInput(handles.sessionDateDisplay, serialDate, justDate);
 
 checkToEnableOkButton(handles);
 

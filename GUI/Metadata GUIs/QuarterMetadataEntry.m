@@ -567,10 +567,13 @@ function pickFixingDate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = true;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.fixingDate = serialDate;
-set(handles.fixingDateInput, 'String', displayDate(serialDate));
+
+setDateInput(handles.fixingDateInput, serialDate, justDate);
 
 checkToEnableOkButton(handles);
 

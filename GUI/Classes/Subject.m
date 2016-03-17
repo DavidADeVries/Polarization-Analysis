@@ -3,6 +3,7 @@ classdef Subject
     
     properties
         % set at initialization
+        uuid
         dirName
         naviListboxLabel
         metadataHistory
@@ -11,10 +12,19 @@ classdef Subject
         subjectId % person ID, dog name        
         subjectNumber                
         notes
+        
+        % list of eyes and index
+        samples
+        sampleIndex = 0
     end
     
     
     methods
+        
+        function subject = Subject()
+            % set UUID
+            subject.uuid = generateUUID();
+        end
         
         function dirName = generateDirName(subject)
             dirName = createDirName(SubjectNamingConventions.DIR_PREFIX, subject.subjectNumber, subject.subjectId, SubjectNamingConventions.DIR_NUM_DIGITS);
@@ -94,6 +104,149 @@ classdef Subject
                 end
                     
                 counter = counter + 1;
+            end
+        end
+        
+        function sampleNumbers = getSampleNumbers(subject)
+            samples = subject.samples;
+            numSamples = length(samples);
+            
+            sampleNumbers = zeros(numSamples, 1); % want this to be an matrix, not cell array
+            
+            for i=1:numSamples
+                sampleNumbers(i) = samples{i}.sampleNumber;                
+            end
+        end
+        
+        function nextSampleNumber = nextSampleNumber(subject)
+            sampleNumbers = subject.getSampleNumbers();
+            
+            if isempty(sampleNumbers)
+                nextSampleNumber = 1;
+            else
+                lastSampleNumber = max(sampleNumbers);
+                nextSampleNumber = lastSampleNumber + 1;
+            end
+        end
+        
+        function subSampleNumbers = getSubSampleNumbers(subject, sampleType)
+            subSampleNumbers = [];
+            
+            samples = subject.samples;
+            
+            counter = 1;
+            
+            classString = class(sampleType.sessionClass);
+            
+            for i=1:length(samples)
+                if isa(samples{i}, classString)
+                    subSampleNumbers(counter) = samples{i}.getSubSampleNumber();
+                    
+                    counter = counter + 1;
+                end
+            end
+        end
+        
+        function nextSubSampleNumber = nextSubSampleNumber(subject, sampleType)
+            subSampleNumbers = subject.getSubSampleNumbers(sampleType);
+            
+            if isempty(subSampleNumbers)
+                nextSubSampleNumber = 1;
+            else
+                lastSubSampleNumber = max(subSampleNumbers);
+                nextSubSampleNumber = lastSubSampleNumber + 1;
+            end
+        end
+        
+        
+        function subject = updateSample(subject, sample)
+            samples = subject.samples;
+            numSamples = length(samples);
+            updated = false;
+            
+            for i=1:numSamples
+                if samples{i}.sampleNumber == sample.sampleNumber
+                    subject.samples{i} = sample;
+                    updated = true;
+                    break;
+                end
+            end
+            
+            if ~updated % add new sample
+                subject.samples{numSamples + 1} = sample;
+                
+                if subject.sampleIndex == 0
+                    subject.sampleIndex = 1;
+                end
+            end            
+        end
+        
+        
+        function subject = updateSelectedSample(subject, sample)
+            subject.samples{subject.sampleIndex} = sample;
+        end
+        
+        
+        function subject = createNewSample(subject, projectPath, toPath, userName, sampleType)
+            suggestedSampleNumber = subject.nextSampleNumber();
+            suggestedSubSampleNumber = subject.nextSubSampleNumber(sampleType);
+            
+            existingSampleNumbers = subject.getSampleNumbers();
+            existingSubSampleNumbers = subject.getSubSampleNumbers(sampleType);
+            
+            toPath = makePath(toPath, subject.dirName);
+            importPath = '';
+            
+            sample = Sample.createSample(...
+                sampleType,...
+                suggestedSampleNumber,...
+                existingSampleNumbers,...
+                suggestedSubSampleNumber,...
+                existingSubSampleNumbers,...
+                toPath,...
+                projectPath,...
+                importPath,...
+                userName);
+            
+            if ~isempty(sample)
+                subject = subject.updateSample(sample);
+            end
+        end
+               
+                
+        function subject = createNewQuarter(subject, projectPath, toPath, userName)
+            sample = subject.getSelectedSample();
+            
+            if ~isempty(sample)
+                toPath = makePath(toPath, subject.dirName);
+                
+                sample = sample.createNewQuarter(projectPath, toPath, userName);
+                
+                subject = subject.updateSample(sample);
+            end
+        end   
+        
+        function subject = createNewLocation(subject, projectPath, toPath, userName, subjectType)
+            sample = subject.getSelectedSample();
+            
+            if ~isempty(sample)
+                toPath = makePath(toPath, subject.dirName);
+                
+                sample = sample.createNewLocation(projectPath, toPath, userName, subjectType);
+                
+                subject = subject.updateSample(sample);
+            end
+        end
+        
+        function subject = createNewSession(subject, projectPath, toPath, userName, sessionType)
+            sample = subject.getSelectedSample();
+            
+            if ~isempty(sample)
+                toPath = makePath(toPath, subject.dirName);
+                
+                sample = sample.createNewSession(projectPath, toPath, userName, sessionType);
+                
+                subject = subject.updateSample(sample);
             end
         end
         
