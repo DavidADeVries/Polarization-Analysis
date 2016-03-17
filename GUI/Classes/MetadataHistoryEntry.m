@@ -11,10 +11,12 @@ classdef MetadataHistoryEntry
     
     methods
         function entry = MetadataHistoryEntry(userName, cachedObject)
-            entry.userName = userName;
-            entry.timestamp = now; % current serial date stamp
-            
-            entry.cachedObject = cachedObject;
+            if nargin > 0
+                entry.userName = userName;
+                entry.timestamp = now; % current serial date stamp
+                
+                entry.cachedObject = cachedObject;
+            end
         end
         
         function dateString = getDateString(entry)

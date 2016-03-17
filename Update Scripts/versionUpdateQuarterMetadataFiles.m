@@ -1,27 +1,41 @@
-function [] = versionUpdateQuarterMetadataFiles(quarter, projectPath, toPath)
+function [] = versionUpdateQuarterMetadataFiles(projectPath, toPath)
 %updateQuarter
+
+% ** READ IN METADATA FILE **
+
+vars = load(makePath(projectPath, toPath, 'quarter_metadata.mat'), Constants.METADATA_VAR);
+metadata = vars.metadata;
+
 
 % ** UPDATE REQUIRED INFORMATION **
 
-quarter.uuid = generateUUID();
+metadata.uuid = generateUUID();
 
-quarter.metadataHistory = versionUpdateMetadataHistoryEntries(quarter.metadataHistory, Quarter.empty);
+entry = MetadataHistoryEntry;
+
+entry.userName = metadata.metadataHistory{1}.userName;
+entry.timestamp = metadata.metadataHistory{1}.timestamp;
+entry.cachedObject = Quarter.empty;
+
+metadata.metadataHistory = entry;
 
 % ** SAVE IT **
 
 metadataFilename = QuarterNamingConventions.METADATA_FILENAME;
 saveToBackup = true;
 
-toPath = makePath(toPath, quarter.dirName);
-
-saveObjectMetadata(quarter, projectPath, toPath, metadataFilename, saveToBackup);
+saveObjectMetadata(metadata, projectPath, toPath, metadataFilename, saveToBackup);
 
 
 % ** RECURSE ON NEXT LEVEL **
 
-for i=1:length(quarter.locations)
-    versionUpdateLocationMetadataFiles(quarter.locations{i}, projectPath, toPath);
+folders = getAllFolders(makePath(projectPath, toPath));
+
+for i=1:length(folders)
+    versionUpdateLocationMetadataFiles(projectPath, makePath(toPath, folders{i}));
 end
 
 end
+
+
 

@@ -1,27 +1,41 @@
-function [] = versionUpdateLocationMetadataFiles(location, projectPath, toPath)
+function [] = versionUpdateLocationMetadataFiles(projectPath, toPath)
 %updateLocation
+
+% ** READ IN METADATA FILE **
+
+vars = load(makePath(projectPath, toPath, 'location_metadata.mat'), Constants.METADATA_VAR);
+metadata = vars.metadata;
+
 
 % ** UPDATE REQUIRED INFORMATION **
 
-location.uuid = generateUUID();
+metadata.uuid = generateUUID();
 
-location.metadataHistory = versionUpdateMetadataHistoryEntries(location.metadataHistory, Location.empty);
+entry = MetadataHistoryEntry;
+
+entry.userName = metadata.metadataHistory{1}.userName;
+entry.timestamp = metadata.metadataHistory{1}.timestamp;
+entry.cachedObject = Location.empty;
+
+metadata.metadataHistory = entry;
 
 % ** SAVE IT **
 
 metadataFilename = LocationNamingConventions.METADATA_FILENAME;
 saveToBackup = true;
 
-toPath = makePath(toPath, location.dirName);
-
-saveObjectMetadata(location, projectPath, toPath, metadataFilename, saveToBackup);
+saveObjectMetadata(metadata, projectPath, toPath, metadataFilename, saveToBackup);
 
 
 % ** RECURSE ON NEXT LEVEL **
 
-for i=1:length(location.sessions)
-    versionUpdateSessionMetadataFiles(location.sessions{i}, projectPath, toPath);
+folders = getAllFolders(makePath(projectPath, toPath));
+
+for i=1:length(folders)
+    versionUpdateSessionMetadataFiles(projectPath, makePath(toPath, folders{i}));
 end
 
 end
+
+
 

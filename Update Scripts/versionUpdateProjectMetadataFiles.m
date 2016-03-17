@@ -1,24 +1,40 @@
-function [] = versionUpdateProjectMetadataFiles(project, projectPath)
+function [] = versionUpdateProjectMetadataFiles(projectPath)
 %updateProject
+
+% ** READ IN METADATA FILE **
+
+vars = load(makePath(projectPath, 'project_metadata.mat'), Constants.METADATA_VAR);
+metadata = vars.metadata;
+
 
 % ** UPDATE REQUIRED INFORMATION **
 
-project.uuid = generateUUID();
+metadata.uuid = generateUUID();
 
-project.metadataHistory = versionUpdateMetadataHistoryEntries(project.metadataHistory, Project.empty);
+entry = MetadataHistoryEntry;
+
+entry.userName = metadata.metadataHistory{1}.userName;
+entry.timestamp = metadata.metadataHistory{1}.timestamp;
+entry.cachedObject = Project.empty;
+
+metadata.metadataHistory = entry;
 
 % ** SAVE IT **
 
 metadataFilename = ProjectNamingConventions.METADATA_FILENAME;
 saveToBackup = false;
 
-saveObjectMetadata(project, projectPath, '', metadataFilename, saveToBackup);
+saveObjectMetadata(metadata, projectPath, '', metadataFilename, saveToBackup);
 
 
 % ** RECURSE ON NEXT LEVEL **
 
-for i=1:length(project.trials)
-    versionUpdateTrialMetadataFiles(project.trials{i}, projectPath);
+folders = getAllFolders(projectPath);
+
+for i=1:length(folders)
+    if ~strcmp(folders{i}, Constants.BACKUP_DIR)
+        versionUpdateTrialMetadataFiles(projectPath, folders{i});
+    end
 end
 
 end

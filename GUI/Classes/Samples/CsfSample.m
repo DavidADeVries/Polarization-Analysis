@@ -1,4 +1,4 @@
-classdef CsfSample
+classdef CsfSample < FrozenSample
     %CsfSample
     
     properties

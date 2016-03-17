@@ -1,27 +1,41 @@
-function [] = versionUpdateTrialMetadataFiles(trial, projectPath)
+function [] = versionUpdateTrialMetadataFiles(projectPath, toPath)
 %updateTrial
+
+% ** READ IN METADATA FILE **
+
+vars = load(makePath(projectPath, toPath, 'trial_metadata.mat'), Constants.METADATA_VAR);
+metadata = vars.metadata;
+
 
 % ** UPDATE REQUIRED INFORMATION **
 
-trial.uuid = generateUUID();
+metadata.uuid = generateUUID();
 
-trial.metadataHistory = versionUpdateMetadataHistoryEntries(trial.metadataHistory, Trial.empty);
+entry = MetadataHistoryEntry;
+
+entry.userName = metadata.metadataHistory{1}.userName;
+entry.timestamp = metadata.metadataHistory{1}.timestamp;
+entry.cachedObject = Trial.empty;
+
+metadata.metadataHistory = entry;
 
 % ** SAVE IT **
 
 metadataFilename = TrialNamingConventions.METADATA_FILENAME;
 saveToBackup = true;
 
-toTrialPath = trial.dirName;
-
-saveObjectMetadata(trial, projectPath, toTrialPath, metadataFilename, saveToBackup);
+saveObjectMetadata(metadata, projectPath, toPath, metadataFilename, saveToBackup);
 
 
 % ** RECURSE ON NEXT LEVEL **
 
-for i=1:length(trial.subjects)
-    versionUpdateSubjectMetadataFiles(trial.subjects{i}, projectPath, toTrialPath);
+folders = getAllFolders(makePath(projectPath, toPath));
+
+for i=1:length(folders)
+    versionUpdateSubjectMetadataFiles(projectPath, makePath(toPath, folders{i}));
 end
 
 end
+
+
 

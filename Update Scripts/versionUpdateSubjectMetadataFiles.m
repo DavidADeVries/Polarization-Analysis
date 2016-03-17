@@ -1,32 +1,42 @@
-function [] = versionUpdateSubjectMetadataFiles(subject, projectPath, toPath)
+function [] = versionUpdateSubjectMetadataFiles(projectPath, toPath)
 %updateSubject
 
-% ** UPDATE REQUIRED INFORMATION **
+% ** READ IN METADATA FILE **
 
-subject.uuid = generateUUID();
+vars = load(makePath(projectPath, toPath, 'subject_metadata.mat'), Constants.METADATA_VAR);
+metadata = vars.metadata;
 
-if isa(subject, 'NaturalSubject')
-    subject.metadataHistory = versionUpdateMetadataHistoryEntries(subject.metadataHistory, NaturalSubject.empty);
-else
-    error('Unknown Class!');
-end
-
-% ** SAVE IT **
-
-metadataFilename = SubjectNamingConventions.METADATA_FILENAME;
-saveToBackup = true;
-
-toPath = makePath(toPath, subject.dirName);
-
-saveObjectMetadata(subject, projectPath, toPath, metadataFilename, saveToBackup);
-
-
-% ** RECURSE ON NEXT LEVEL **
-
-if isa(subject, 'NaturalSubject')
-    for i=1:length(subject.eyes)
-        versionUpdateEyeMetadataFiles(subject.eyes{i}, projectPath, toPath);
+if isa(metadata, 'NaturalSubject')
+    
+    % ** UPDATE REQUIRED INFORMATION **
+    
+    metadata.uuid = generateUUID();
+    
+    entry = MetadataHistoryEntry;
+    
+    entry.userName = metadata.metadataHistory{1}.userName;
+    entry.timestamp = metadata.metadataHistory{1}.timestamp;
+    entry.cachedObject = NaturalSubject.empty;
+    
+    metadata.metadataHistory = entry;
+    
+    % ** SAVE IT **
+    
+    metadataFilename = SubjectNamingConventions.METADATA_FILENAME;
+    saveToBackup = true;
+    
+    saveObjectMetadata(metadata, projectPath, toPath, metadataFilename, saveToBackup);
+    
+    
+    % ** RECURSE ON NEXT LEVEL **
+    
+    folders = getAllFolders(makePath(projectPath, toPath));
+    
+    for i=1:length(folders)
+        versionUpdateSampleMetadataFiles(projectPath, makePath(toPath, folders{i}));
     end
+else
+    error(['Unknown class at: ', toPath]);
 end
 
 end
