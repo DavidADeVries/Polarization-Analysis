@@ -5,7 +5,8 @@ classdef MicroscopeSession < DataCollectionSession
     properties
         % set by metadata entry
         magnification = 40;
-        pixelSizeMicrons = 1.13; % size of pixel in microns (used for generating scale bars)
+        bwPixelSizeMicrons = 0.16; % size of pixel in microns (used for generating scale bars) - for monochrome camera
+        rgbPixelSizeMicrons = 0.17; % size of pixel in microns (used for generating scale bars) - for colour camera
         instrument = 'Nikon Eclipse Ti-U';
         
         % these three describe how the deposit was found
@@ -47,7 +48,8 @@ classdef MicroscopeSession < DataCollectionSession
             
             [cancel,...
              magnification,...
-             pixelSizeMicrons,...
+             bwPixelSizeMicrons,...
+             rgbPixelSizeMicrons,...
              instrument,...
              fluoroSignature,...
              crossedSignature,...
@@ -68,7 +70,8 @@ classdef MicroscopeSession < DataCollectionSession
                 
                 %Assigning values to Microscope Session Properties
                 session.magnification = magnification;
-                session.pixelSizeMicrons = pixelSizeMicrons;
+                session.bwPixelSizeMicrons = bwPixelSizeMicrons;
+                session.rgbPixelSizeMicrons = rgbPixelSizeMicrons;
                 session.instrument = instrument;
                 session.fluoroSignature = fluoroSignature;
                 session.crossedSignature = crossedSignature;
@@ -103,7 +106,8 @@ classdef MicroscopeSession < DataCollectionSession
             
             [cancel,...
              magnification,...
-             pixelSizeMicrons,...
+             bwPixelSizeMicrons,...
+             rgbPixelSizeMicrons,...
              instrument,...
              fluoroSignature,...
              crossedSignature,...
@@ -119,7 +123,8 @@ classdef MicroscopeSession < DataCollectionSession
             if ~cancel
                 %Assigning values to Microscope Session Properties
                 session.magnification = magnification;
-                session.pixelSizeMicrons = pixelSizeMicrons;
+                session.bwPixelSizeMicrons = bwPixelSizeMicrons;
+                session.rgbPixelSizeMicrons = rgbPixelSizeMicrons;
                 session.instrument = instrument;
                 session.fluoroSignature = fluoroSignature;
                 session.crossedSignature = crossedSignature;
@@ -224,14 +229,15 @@ classdef MicroscopeSession < DataCollectionSession
             [dataCollectionSessionNumberString] = session.getCollectionSessionMetadataString();
             
             magnificationString = ['Magnification: ', num2str(session.magnification)];
-            pixelSizeMicronsString = ['Pixel Size (microns): ', num2str(session.pixelSizeMicrons)];
+            bwPixelSizeMicronsString = ['Monochrome Pixel Size (microns): ', num2str(session.bwPixelSizeMicrons)];            
+            rgbPixelSizeMicronsString = ['Colour Pixel Size (microns): ', num2str(session.rgbPixelSizeMicrons)];
             instrumentString = ['Instrument: ', session.instrument];
             fluoroSignatureString = ['Fluoro Signature: ', booleanToString(session.fluoroSignature)];
             crossedSignatureString = ['Crossed Signature: ', booleanToString(session.crossedSignature)];
             visualSignatureString = ['Visual Signature: ', booleanToString(session.visualSignature)];
             
             
-            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataCollectionSessionNumberString, magnificationString, pixelSizeMicronsString, instrumentString, fluoroSignatureString, crossedSignatureString, visualSignatureString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataCollectionSessionNumberString, magnificationString, bwPixelSizeMicronsString, rgbPixelSizeMicronsString, instrumentString, fluoroSignatureString, crossedSignatureString, visualSignatureString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
         end
                 

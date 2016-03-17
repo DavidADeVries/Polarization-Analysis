@@ -25,7 +25,7 @@ function varargout = MicroscopeSessionMetadataEntry(varargin)
 
 % Edit the above text to modify the response to help MicroscopeSessionMetadataEntry
 
-% Last Modified by GUIDE v2.5 04-Mar-2016 10:54:05
+% Last Modified by GUIDE v2.5 17-Mar-2016 14:08:30
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -83,7 +83,8 @@ if isEdit
     set(handles.importPathTitle, 'Visible', 'off');
         
     handles.magnification = session.magnification;
-    handles.pixelSizeMicrons = session.pixelSizeMicrons;
+    handles.bwPixelSizeMicrons = session.bwPixelSizeMicrons;
+    handles.rgbPixelSizeMicrons = session.rgbPixelSizeMicrons;
     handles.instrument = session.instrument;
     handles.sessionDate = session.sessionDate;
     handles.sessionDoneBy = session.sessionDoneBy;    
@@ -100,7 +101,8 @@ else
     set(handles.importPathTitle, 'String', handles.importPath);
     
     handles.magnification = session.magnification;
-    handles.pixelSizeMicrons = session.pixelSizeMicrons;
+    handles.bwPixelSizeMicrons = session.bwPixelSizeMicrons;
+    handles.rgbPixelSizeMicrons = session.rgbPixelSizeMicrons;
     handles.instrument = session.instrument;    
     handles.sessionDate = session.sessionDate;
     
@@ -116,14 +118,15 @@ else
     handles.visualSignature = defaultSession.visualSignature;
     handles.rejected = defaultSession.rejected;
     handles.rejectedReason = defaultSession.rejectedReason;
-    handles.rejectedBy = handles.userName;
+    handles.rejectedBy = defaultSession.rejectedBy;
 end
 
 
 % ** SET TEXT FIELDS **
 
 set(handles.magnificationInput, 'String', num2str(handles.magnification));
-set(handles.pixelSizeInput, 'String', num2str(handles.pixelSizeMicrons));
+set(handles.bwPixelSizeInput, 'String', num2str(handles.bwPixelSizeMicrons));
+set(handles.rgbPixelSizeInput, 'String', num2str(handles.rgbPixelSizeMicrons));
 set(handles.instrumentInput, 'String', handles.instrument);
 
 if isempty(handles.sessionDate) || handles.sessionDate == 0
@@ -166,24 +169,25 @@ function varargout = MicroscopeSessionMetadataEntry_OutputFcn(hObject, eventdata
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% ******************************************************************************************************************************************************************************
-% OUTPUT: [cancel, magnification, pixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason]
-% ******************************************************************************************************************************************************************************
+% *****************************************************************************************************************************************************************************************************
+% OUTPUT: [cancel, magnification, bwPixelSizeMicrons, rgbPixelSizeMicrons, instrument, fluoroSignature, crossedSignature, visualSignature, sessionDate, sessionDoneBy, notes, rejected, rejectedReason]
+% *****************************************************************************************************************************************************************************************************
 
 %Output from GUI
 varargout{1} = handles.cancel;
 varargout{2} = handles.magnification;
-varargout{3} = handles.pixelSizeMicrons;
-varargout{4} = handles.instrument;
-varargout{5} = handles.fluoroSignature;
-varargout{6} = handles.crossedSignature;
-varargout{7} = handles.visualSignature;
-varargout{8} = handles.sessionDate;
-varargout{9} = handles.sessionDoneBy;
-varargout{10} = handles.sessionNotes;
-varargout{11} = handles.rejected;
-varargout{12} = handles.rejectedReason;
-varargout{13} = handles.rejectedBy;
+varargout{3} = handles.bwPixelSizeMicrons;
+varargout{4} = handles.rgbPixelSizeMicrons;
+varargout{5} = handles.instrument;
+varargout{6} = handles.fluoroSignature;
+varargout{7} = handles.crossedSignature;
+varargout{8} = handles.visualSignature;
+varargout{9} = handles.sessionDate;
+varargout{10} = handles.sessionDoneBy;
+varargout{11} = handles.sessionNotes;
+varargout{12} = handles.rejected;
+varargout{13} = handles.rejectedReason;
+varargout{14} = handles.rejectedBy;
 
 close(handles.MicroscopeSessionMetadataEntry);
 end
@@ -228,23 +232,23 @@ end
 end
 
 
-function pixelSizeInput_Callback(hObject, eventdata, handles)
-% hObject    handle to pixelSizeInput (see GCBO)
+function bwPixelSizeInput_Callback(hObject, eventdata, handles)
+% hObject    handle to bwPixelSizeInput (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of pixelSizeInput as text
-%        str2double(get(hObject,'String')) returns contents of pixelSizeInput as a double
+% Hints: get(hObject,'String') returns contents of bwPixelSizeInput as text
+%        str2double(get(hObject,'String')) returns contents of bwPixelSizeInput as a double
 
 if isnan(str2double(get(hObject, 'String')))
     
-    set(handles.pixelSizeInput, 'String', '');
-    handles.pixelSizeMicrons = [];
+    set(handles.bwPixelSizeInput, 'String', '');
+    handles.bwPixelSizeMicrons = [];
     
     warndlg('Pixel size must be numerical.', 'Pixel Size Error', 'modal'); 
     
 else
-    handles.pixelSizeMicrons = str2double(get(hObject, 'String'));
+    handles.bwPixelSizeMicrons = str2double(get(hObject, 'String'));
 end
 
 checkToEnableOkButton(handles);
@@ -254,8 +258,8 @@ guidata(hObject, handles);
 end
 
 % --- Executes during object creation, after setting all properties.
-function pixelSizeInput_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to pixelSizeInput (see GCBO)
+function bwPixelSizeInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to bwPixelSizeInput (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -419,7 +423,7 @@ switch exit
         handles.cancel = true;
         
         handles.magnification = [];
-        handles.pixelSizeMicrons = [];
+        handles.bwPixelSizeMicrons = [];
         handles.instrument = '';
         handles.fluoroSignature = [];
         handles.crossedSignature = [];
@@ -560,7 +564,7 @@ if isequal(get(hObject, 'waitstatus'), 'waiting')
     % The GUI is still in UIWAIT, us UIRESUME
     handles.cancel = true;
     handles.magnification = [];
-    handles.pixelSizeMicrons = [];
+    handles.bwPixelSizeMicrons = [];
     handles.instrument = '';
     handles.fluoroSignature = [];
     handles.crossedSignature = [];
@@ -577,7 +581,7 @@ else
     % The GUI is no longer waiting, just close it
     handles.cancel = true;
     handles.magnification = [];
-    handles.pixelSizeMicrons = [];
+    handles.bwPixelSizeMicrons = [];
     handles.instrument = '';
     handles.fluoroSignature = [];
     handles.crossedSignature = [];
@@ -671,6 +675,45 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 end
 
+function rgbPixelSizeInput_Callback(hObject, eventdata, handles)
+% hObject    handle to rgbPixelSizeInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of rgbPixelSizeInput as text
+%        str2double(get(hObject,'String')) returns contents of rgbPixelSizeInput as a double
+
+if isnan(str2double(get(hObject, 'String')))
+    
+    set(handles.rgbPixelSizeInput, 'String', '');
+    handles.rgbPixelSizeMicrons = [];
+    
+    warndlg('Pixel size must be numerical.', 'Pixel Size Error', 'modal'); 
+    
+else
+    handles.rgbPixelSizeMicrons = str2double(get(hObject, 'String'));
+end
+
+checkToEnableOkButton(handles);
+
+guidata(hObject, handles);
+
+end
+
+% --- Executes during object creation, after setting all properties.
+function rgbPixelSizeInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to rgbPixelSizeInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+end
+
 %% Local Functions
 
 function checkToEnableOkButton(handles)
@@ -678,7 +721,7 @@ function checkToEnableOkButton(handles)
 %This function will check to see if any of the input variables are empty,
 %and if not it will enable the OK button
 
-if ~isempty(handles.magnification) && ~isempty(handles.pixelSizeMicrons) && ~isempty(handles.instrument) && ~isempty(handles.sessionDate) && ~isempty(handles.sessionDoneBy) && ~isempty(handles.rejected)
+if ~isempty(handles.magnification) && ~isempty(handles.bwPixelSizeMicrons) && ~isempty(handles.rgbPixelSizeMicrons) && ~isempty(handles.instrument) && ~isempty(handles.sessionDate) && ~isempty(handles.sessionDoneBy) && ~isempty(handles.rejected)
     if handles.rejected 
         if ~isempty(handles.rejectedReason) && ~isempty(handles.rejectedBy)
             set(handles.OK, 'enable', 'on');
@@ -693,5 +736,3 @@ else
 end
 
 end
-
-

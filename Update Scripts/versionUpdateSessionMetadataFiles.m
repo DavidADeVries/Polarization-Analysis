@@ -1,41 +1,26 @@
 function [] = versionUpdateSessionMetadataFiles(projectPath, toPath)
-%updateLocation
+%updateSession
 
 % ** READ IN METADATA FILE **
 
 vars = load(makePath(projectPath, toPath, 'session_metadata.mat'), Constants.METADATA_VAR);
 metadata = vars.metadata;
 
-
-% ** UPDATE REQUIRED INFORMATION **
-
-metadata.uuid = generateUUID();
-
-entry = MetadataHistoryEntry;
-
-entry.userName = metadata.metadataHistory{1}.userName;
-entry.timestamp = metadata.metadataHistory{1}.timestamp;
-
 if isa(metadata, 'MicroscopeSession')
-    emptyObject = MicroscopeSession.empty;
-elseif isa(metadata, 'LegacyRegistrationSession')
-    emptyObject = LegacyRegistrationSession.empty;
-elseif isa(metadata, 'LegacySubsectionSelectionSession')
-    emptyObject = LegacySubsectionSelectionSession.empty;
-else
-    error('Unknown Class!');
+    % ** UPDATE REQUIRED INFORMATION **
+    
+    metadata.bwPixelSizeMicrons = 0.16; 
+    metadata.rgbPixelSizeMicrons = 0.17;
+    
+    % ** SAVE IT **
+    
+    metadataFilename = SessionNamingConventions.METADATA_FILENAME;
+    saveToBackup = true;
+    
+    saveObjectMetadata(metadata, projectPath, toPath, metadataFilename, saveToBackup);
 end
 
-entry.cachedObject = emptyObject;
 
-metadata.metadataHistory = entry;
-
-% ** SAVE IT **
-
-metadataFilename = SessionNamingConventions.METADATA_FILENAME;
-saveToBackup = true;
-
-saveObjectMetadata(metadata, projectPath, toPath, metadataFilename, saveToBackup);
 
 
 end

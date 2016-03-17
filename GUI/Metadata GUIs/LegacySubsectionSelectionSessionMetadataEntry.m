@@ -114,7 +114,7 @@ else
     
     handles.rejected = defaultSession.rejected;
     handles.rejectedReason = defaultSession.rejectedReason;
-    handles.rejectedBy = handles.userName;
+    handles.rejectedBy = defaultSession.rejectedBy;
     handles.sessionNotes = defaultSession.notes;
 end
 
