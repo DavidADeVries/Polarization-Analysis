@@ -67,7 +67,7 @@ classdef CsfSample < FrozenSample
             end
           end
                 
-        function sample = editMetadata(sample, projectPath, toSubjectPath, userName, dataFilename, existingSampleNumbers, existingCsfSampleNumbers)
+        function sample = editMetadata(sample, projectPath, toSubjectPath, userName, dataFilename, existingSampleNumbers, existingBrainSectionNumbers)
             isEdit = true;
             importPath = '';
             
@@ -151,43 +151,32 @@ classdef CsfSample < FrozenSample
             
             [sampleNumberString, notesString] = sample.getSampleMetadataString();
             [sourceString, timeOfRemovalString, timeOfProcessingString, dateReceivedString, storageLocationString] = sample.getTissueSampleMetadataString();
-            [storageTempString] = sample.getFrozenSampleMetadataString();
+            [initFixativeString, initFixPercentString, initFixTimeString, secondFixativeString, secondFixPercentString, secondFixTimeString] = sample.getFixedSampleMetadataString();
             
-            amountMlString = ['Sample Amount (ml): ', num2str(sample.amountMl)];
-            csfSampleNumberString = ['CSF Sample Number: ', sample.csfSampleNumber];
+            brainSectionNumberString = ['Brain Section Number: ', num2str(sample.brainSectionNumber)];
+            sectionAnatomyString = ['Section Anatomy: ', sample.sectionAnatomy];
             metadataHistoryStrings = generateMetadataHistoryStrings(sample.metadataHistory);
             
             
             metadataString = ...
                 {'Brain Section:',...
                 sampleNumberString,...
-                csfSampleNumberString,...
-                amountMlString,...
+                brainSectionNumberString,...
+                sectionAnatomyString,...
                 sourceString,...
                 timeOfRemovalString,...
                 timeOfProcessingString,...
                 dateReceivedString,...
                 storageLocationString,...
-                storageTempString,...
+                initFixativeString,...
+                initFixPercentString,...
+                initFixTimeString,...
+                secondFixativeString,...
+                secondFixPercentString,...
+                secondFixTimeString,...
                 notesString};
             metadataString = [metadataString, metadataHistoryStrings];
             
-        end
-        
-        function handles = updateMetadataFields(sample, handles, sampleMetadataString)
-            
-            metadataString = sampleMetadataString;
-            
-            disableMetadataFields(handles, handles.locationMetadata);
-            
-            set(handles.sampleMetadata, 'String', metadataString);
-        end
-        
-        function sample = updateSubSampleIndex(sample, index)
-        end
-        
-        function handles = updateNavigationListboxes(sample, handles)
-        	disableNavigationListboxes(handles, handles.subSampleSelect);
         end
                 
         function sample = createNewQuarter(sample, projectPath, toPath, userName)

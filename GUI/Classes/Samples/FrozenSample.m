@@ -6,6 +6,13 @@ classdef FrozenSample < TissueSample
     end
     
     methods
+        
+        function [storageTempString] = getFrozenSampleMetadataString(sample)
+            
+            storageTempString = ['Storage Temperature (°C): ', num2str(sample.storageTemp)];  
+            
+        end
+        
     end
     
 end
