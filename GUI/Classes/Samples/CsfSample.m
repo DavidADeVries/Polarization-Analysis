@@ -2,7 +2,7 @@ classdef CsfSample < FrozenSample
     %CsfSample
     
     properties
-        amountMl = 0; % numeric in millilitres
+        amountMl = []; % numeric in millilitres
         csfSampleNumber
     end
     
