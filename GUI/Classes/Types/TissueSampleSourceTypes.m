@@ -6,9 +6,9 @@ classdef TissueSampleSourceTypes
     end
     
     enumeration
-        eyeBankOfCanada  ('Eye Bank of Canada - Ontario Division')
-        fergus  ('1??')
-        ubc   ('2??')
+        eyeBankOfCanada  ('Eye Bank of Canada (Ontario Division)')
+        intervivo  ('Intervivo (Fergus)')
+        ubcIanMackenzie   ('UBC (Ian Mackenzie)')
     end
     
     methods
