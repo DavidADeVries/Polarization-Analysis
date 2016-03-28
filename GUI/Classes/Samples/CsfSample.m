@@ -8,7 +8,7 @@ classdef CsfSample < FrozenSample
     
     methods
         
-         function sample = CsfSample(sampleNumber, existingSampleNumbers, csfSampleNumber, existingCsfSampleNumbers, toSubjectPath, projectPath, importPath, userName)
+        function sample = CsfSample(sampleNumber, existingSampleNumbers, csfSampleNumber, existingCsfSampleNumbers, toSubjectPath, projectPath, importPath, userName)
             if nargin > 0
                 [cancel, sample] = sample.enterMetadata(sampleNumber, existingSampleNumbers, csfSampleNumber, existingCsfSampleNumbers, importPath, userName);
                 
@@ -32,12 +32,12 @@ classdef CsfSample < FrozenSample
                     sample = CsfSample.empty;
                 end
             end
-         end
+        end
         
-          function [cancel, sample] = enterMetadata(sample, suggestedSampleNumber, existingSampleNumbers, suggestedCsfSampleNumber, existingCsfSampleNumbers, importPath, userName)
+        function [cancel, sample] = enterMetadata(sample, suggestedSampleNumber, existingSampleNumbers, suggestedCsfSampleNumber, existingCsfSampleNumbers, importPath, userName)
             isEdit = false;
             
-            %Call to BrainSectionMetadataEntry GUI
+            %Call to CsfSampleMetadataEntry GUI
             [...
                 cancel,...
                 amountMl,...
@@ -65,8 +65,8 @@ classdef CsfSample < FrozenSample
                 sample.dateReceived = dateReceived;
                 sample.notes = notes;
             end
-          end
-                
+        end
+        
         function sample = editMetadata(sample, projectPath, toSubjectPath, userName, dataFilename, existingSampleNumbers, existingCsfSampleNumbers)
             isEdit = true;
             importPath = '';
@@ -121,24 +121,24 @@ classdef CsfSample < FrozenSample
         end
         
         function dirName = generateDirName(sample)
-            dirSubtitle = sample.amountMl;
+            dirSubtitle = ''; % No subtitle for CSF sample
             
             dirName = createDirName(CsfSampleNamingConventions.DIR_PREFIX, sample.csfSampleNumber, dirSubtitle, CsfSampleNamingConventions.DIR_NUM_DIGITS);
         end
-          
+        
         function label = generateListboxLabel(sample)
-            subtitle = sample.amountMl;
+            subtitle = ''; % No subtitle for CSF sample
             
             label = createNavigationListboxLabel(CsfSampleNamingConventions.NAVI_LISTBOX_PREFIX, sample.csfSampleNumber, subtitle);
         end
         
         function sample = generateFilenameSection(sample)
-            sample = createFilenameSection(CsfSampleNamingConventions.DATA_FILENAME_LABEL, num2str(sample.CsfSampleNumber));
+            sample = createFilenameSection(CsfSampleNamingConventions.DATA_FILENAME_LABEL, num2str(sample.csfSampleNumber));
         end
         
         function sample = loadObject(sample, samplePath)
         end
-                       
+        
         function subSampleNumber = getSubSampleNumber(sample)
             subSampleNumber = sample.csfSampleNumber;
         end
@@ -153,13 +153,13 @@ classdef CsfSample < FrozenSample
             [sourceString, timeOfRemovalString, timeOfProcessingString, dateReceivedString, storageLocationString] = sample.getTissueSampleMetadataString();
             [storageTempString] = sample.getFrozenSampleMetadataString();
             
-            amountMlString = ['Sample Amount (ml): ', num2str(sample.amountMl)];
-            csfSampleNumberString = ['CSF Sample Number: ', sample.csfSampleNumber];
+            amountMlString = ['Sample Amount (mL): ', num2str(sample.amountMl)];
+            csfSampleNumberString = ['CSF Sample Number: ', num2str(sample.csfSampleNumber)];
             metadataHistoryStrings = generateMetadataHistoryStrings(sample.metadataHistory);
             
             
             metadataString = ...
-                {'Brain Section:',...
+                {'CSF Sample:',...
                 sampleNumberString,...
                 csfSampleNumberString,...
                 amountMlString,...
@@ -187,9 +187,9 @@ classdef CsfSample < FrozenSample
         end
         
         function handles = updateNavigationListboxes(sample, handles)
-        	disableNavigationListboxes(handles, handles.subSampleSelect);
+            disableNavigationListboxes(handles, handles.subSampleSelect);
         end
-                
+        
         function sample = createNewQuarter(sample, projectPath, toPath, userName)
             % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
         end
@@ -208,7 +208,7 @@ classdef CsfSample < FrozenSample
         
         function sample = editSelectedSessionMetadata(sample, projectPath, toSamplePath, userName, dataFilename)
             % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
-        end 
+        end
         
         function sample = createNewSession(sample, projectPath, toPath, userName, sessionType)
             % DO NOTHING, NO QUARTERS FOR BRAIN SECTION

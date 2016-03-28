@@ -55,13 +55,13 @@ function CsfSampleMetadataEntry_OpeningFcn(hObject, eventdata, handles, varargin
 % Choose default command line output for CsfSampleMetadataEntry
 handles.output = hObject;
 
-% *********************************************************************************************************************************
+% ************************************************************************************************************************************************
 % INPUT: (suggestedSampleNumber, existingSampleNumbers, suggestedCsfSampleNumber, existingCsfSampleNumbers, userName, importPath, isEdit, sample*)
 %        *may be empty
-% *********************************************************************************************************************************
+% ************************************************************************************************************************************************
 
 if isa(varargin{1},'numeric');
-    handles.suggestedSampleNumber = num2str(varargin{1}); %Parameter name is 'suggestedSampleNumber' from Eye class function
+    handles.suggestedSampleNumber = varargin{1}; %Parameter name is 'suggestedSampleNumber' from Eye class function
 else
     handles.suggestedSampleNumber = '';
 end
@@ -69,7 +69,7 @@ end
 handles.existingSampleNumbers = varargin{2};
 
 if isa(varargin{3},'numeric');
-    handles.suggestedCsfSampleNumber = num2str(varargin{3}); %Parameter name is 'suggestedEyeNumber' from Eye class function
+    handles.suggestedCsfSampleNumber = varargin{3}; %Parameter name is 'suggestedEyeNumber' from Eye class function
 else
     handles.suggestedCsfSampleNumber = '';
 end
