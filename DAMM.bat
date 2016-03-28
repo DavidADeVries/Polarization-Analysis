@@ -1,0 +1,1 @@
+matlab -r "run('Data Analysis Management Module\polarizationAnalysisGui.m')"
