@@ -3,6 +3,8 @@ classdef Project
     % contains project metadata
     
     properties
+        uuid
+        
         title
         description
         
@@ -15,6 +17,47 @@ classdef Project
     end
     
     methods
+        
+        function project = Project(projectPath, userName)
+            if nargin > 0
+                [cancel, project] = project.enterMetadata();
+                
+                if ~cancel
+                    % set UUID
+                    project.uuid = generateUUID();
+                    
+                    % set metadata history
+                    project.metadataHistory = MetadataHistoryEntry(userName, Project.empty);
+                                                            
+                    % save metadata
+                    project.saveMetadata(projectPath);
+                else
+                    project = Project.empty;
+                end
+            end
+            
+        end
+        
+        
+        function [cancel, project] = enterMetadata(project)
+            [cancel, title, description, notes] = ProjectMetadataEntry();
+            
+            if ~cancel
+                project.title = title;
+                project.description = description;
+                project.notes = notes;
+            end
+        end
+                
+        
+        function [] = saveMetadata(project, projectPath)
+            toPath = '';
+            saveToBackup = false; %no backup for project metadata
+            
+            saveObjectMetadata(project, projectPath, toPath, ProjectNamingConventions.METADATA_FILENAME, saveToBackup);            
+        end
+        
+        
         function project = loadProject(project, projectDir)
             % load metadata
             vars = load(makePath(projectDir, ProjectNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
@@ -38,13 +81,13 @@ classdef Project
         function project = editProjectMetadata(project, projectPath, userName)
             [cancel, title, description, notes] = ProjectMetadataEntry(project);
             
-            if ~cancel
+            if ~cancel                
+                project = updateMetadataHistory(project, userName);
+                
                 %Assigning values to Microscope Session Properties
                 project.title = title;
                 project.description = description;
                 project.notes = notes;
-                
-                project = updateMetadataHistory(project, userName);
                 
                 project.saveMetadata(projectPath);
             end
@@ -66,9 +109,7 @@ classdef Project
             if ~updated % add new trial
                 project.trials{numTrials + 1} = trial;
                 
-                if project.trialIndex == 0
-                    project.trialIndex = 1;
-                end
+                project.trialIndex = numTrials + 1;
             end            
         end
         
@@ -189,18 +230,18 @@ classdef Project
             project = project.updateTrial(trial);
         end
         
-        function project = updateEyeIndex(project, index)
+        function project = updateSampleIndex(project, index)
             trial = project.getSelectedTrial();
             
-            trial = trial.updateEyeIndex(index);
+            trial = trial.updateSampleIndex(index);
             
             project = project.updateTrial(trial);
         end
         
-        function project = updateQuarterSampleIndex(project, index)
+        function project = updateSubSampleIndex(project, index)
             trial = project.getSelectedTrial();
             
-            trial = trial.updateQuarterSampleIndex(index);
+            trial = trial.updateSubSampleIndex(index);
             
             project = project.updateTrial(trial);
         end
@@ -298,11 +339,11 @@ classdef Project
             end
         end
         
-        function project = editSelectedEyeMetadata(project, projectPath, userName)
+        function project = editSelectedSampleMetadata(project, projectPath, userName)
             trial = project.getSelectedTrial();
             
             if ~isempty(trial)
-                trial = trial.editSelectedEyeMetadata(projectPath, userName);
+                trial = trial.editSelectedSampleMetadata(projectPath, userName);
                 
                 project = project.updateSelectedTrial(trial);
             end
@@ -338,16 +379,71 @@ classdef Project
             end
         end
         
-        function [] = saveMetadata(project, projectPath)
-            toPath = '';
-            saveToBackup = false;
-            
-            saveObjectMetadata(project, projectPath, toPath, ProjectNamingConventions.METADATA_FILENAME, saveToBackup);            
-        end
-        
         function project = wipeoutMetadataFields(project)
             project.trials = [];
-        end  
+        end
+        
+        function project = createNewTrial(project, projectPath, userName)
+            suggestedTrialNumber = project.nextTrialNumber;
+            existingTrialNumbers = project.getTrialNumbers;
+            importPath = '';
+            
+            trial = Trial(suggestedTrialNumber, existingTrialNumbers, userName, projectPath, importPath);
+            
+            if ~isempty(trial)
+                project = project.updateTrial(trial);
+            end
+        end
+        
+        function project = createNewSubject(project, projectPath, userName)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.createNewSubject(projectPath, userName);
+                
+                project = project.updateTrial(trial);
+            end
+        end
+        
+        function project = createNewSample(project, projectPath, userName, sampleType)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.createNewSample(projectPath, userName, sampleType);
+                
+                project = project.updateTrial(trial);
+            end
+        end
+        
+        function project = createNewQuarter(project, projectPath, userName)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.createNewQuarter(projectPath, userName);
+                
+                project = project.updateTrial(trial);
+            end
+        end
+        
+        function project = createNewLocation(project, projectPath, userName)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.createNewLocation(projectPath, userName);
+                
+                project = project.updateTrial(trial);
+            end
+        end
+        
+        function project = createNewSession(project, projectPath, userName, sessionType)
+            trial = project.getSelectedTrial();
+            
+            if ~isempty(trial)
+                trial = trial.createNewSession(projectPath, userName, sessionType);
+                
+                project = project.updateTrial(trial);
+            end
+        end
         
     end
     

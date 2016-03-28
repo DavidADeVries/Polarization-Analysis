@@ -130,16 +130,12 @@ set(handles.sessionNotesInput, 'String', handles.sessionNotes);
 
 % ** SET POP UP MENUS **
 
-[~, choiceStrings] = choicesFromEnum('RegistrationTypes');
+[choices, ~] = choicesFromEnum('RegistrationTypes');
 defaultChoiceString = 'Select a Registration Type';
 
-if isempty(handles.registrationType)
-    selectedString = '';
-else
-    selectedString = handles.registrationType.displayString;
-end
+selectedChoice = handles.registrationType;
 
-setPopUpMenu(handles.registrationTypeList, defaultChoiceString, choiceStrings, selectedString);
+setPopUpMenu(handles.registrationTypeList, defaultChoiceString, choices, selectedChoice);
 
 
 % ** SET LISTBOXES **
@@ -249,10 +245,13 @@ function sessionDatePick_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-serialDate = guiDatePicker(now);
+justDate = true;
+
+serialDate = guiDatePicker(now, justDate);
 
 handles.sessionDate = serialDate;
-set(handles.sessionDateDisplay, 'String', displayDate(serialDate));
+
+setDateInput(handles.sessionDateDisplay, serialDate, justDate);
 
 checkToEnableOkButton(handles);
 

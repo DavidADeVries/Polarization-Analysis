@@ -22,7 +22,7 @@ function varargout = guiDatePicker(varargin)
 
 % Edit the above text to modify the response to help guiDatePicker
 
-% Last Modified by GUIDE v2.5 11-Feb-2016 12:39:41
+% Last Modified by GUIDE v2.5 21-Apr-2011 12:54:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -51,13 +51,34 @@ function guiDatePicker_OpeningFcn(hObject, eventdata, handles, varargin)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to guiDatePicker (see VARARGIN)
+
+% *******************************
+% INPUT: (startingTime, onlyDate)
+% *******************************
+
 year = 2000:1:2020;
+
 dt = varargin{1}; %
+onlyDate = varargin{2};
+
 if ~isempty(dt)
-    [YYi, MMi, ~, ~, ~, ~] = datevec(dt);
+    [YYi, MMi, DDi, hhI, mmI, ssI] = datevec(dt);
+    
+    hhI = 0;
+    mmI = 0;
+    
     wo = find(year==YYi);
     set(handles.Year,'Value',wo);
     set(handles.Month,'Value',MMi);
+    set(handles.Hours,'String',num2str(hhI));
+    set(handles.Minutes,'String',num2str(mmI));
+end
+
+if onlyDate
+    set(handles.Hours, 'Visible', 'off');    
+    set(handles.Minutes, 'Visible', 'off');
+    set(handles.colonLabel, 'Visible', 'off');    
+    set(handles.timeLabel, 'Visible', 'off');
 end
 
 
@@ -262,9 +283,11 @@ YY = str2double(yy);
 MM = mi;
 if isfield(handles,'Day')
     DD = handles.Day;
+    hh = str2double(get(handles.Hours,'String'));
+    mm = str2double(get(handles.Minutes,'String'));
 
     % x = datenum([YY MM DD hh mm 0])
-    handles.output = datenum([YY MM DD 0 0 0]);
+    handles.output = datenum([YY MM DD hh mm 0]);
     % Close handles structure
     guidata(hObject, handles);
 
@@ -297,3 +320,47 @@ handles.Day = x{1};
 
 % Close handles structure
 guidata(hObject, handles);
+
+
+function Hours_Callback(hObject, eventdata, handles)
+% hObject    handle to Hours (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of Hours as text
+%        str2double(get(hObject,'String')) returns contents of Hours as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function Hours_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to Hours (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+function Minutes_Callback(hObject, eventdata, handles)
+% hObject    handle to Minutes (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of Minutes as text
+%        str2double(get(hObject,'String')) returns contents of Minutes as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function Minutes_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to Minutes (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

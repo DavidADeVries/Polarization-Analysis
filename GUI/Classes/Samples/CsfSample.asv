@@ -1,0 +1,209 @@
+classdef CsfSample < FrozenSample
+    %CsfSample
+    
+    properties
+        amountMl = []; % numeric in millilitres
+        csfSampleNumber
+    end
+    
+    methods
+        
+         function sample = CsfSample(sampleNumber, existingSampleNumbers, csfSampleNumber, existingCsfSampleNumbers, toSubjectPath, projectPath, importPath, userName)
+            if nargin > 0
+                [cancel, sample] = sample.enterMetadata(sampleNumber, existingSampleNumbers, csfSampleNumber, existingCsfSampleNumbers, importPath, userName);
+                
+                if ~cancel
+                    % set UUID
+                    sample.uuid = generateUUID();
+                    
+                    % set navigation listbox label
+                    sample.naviListboxLabel = sample.generateListboxLabel();
+                    
+                    % make directory/metadata file
+                    sample = sample.createDirectories(toSubjectPath, projectPath);
+                    
+                    % set metadata history
+                    sample.metadataHistory = MetadataHistoryEntry(userName, CsfSample.empty);
+                    
+                    % save metadata
+                    saveToBackup = true;
+                    sample.saveMetadata(makePath(toSubjectPath, sample.dirName), projectPath, saveToBackup);
+                else
+                    sample = CsfSample.empty;
+                end
+            end
+         end
+        
+          function [cancel, sample] = enterMetadata(sample, suggestedSampleNumber, existingSampleNumbers, suggestedCsfSampleNumber, existingCsfSampleNumbers, importPath, userName)
+            isEdit = false;
+            
+            %Call to BrainSectionMetadataEntry GUI
+            [...
+                cancel,...
+                amountMl,...
+                csfSampleNumber,...
+                sampleNumber,...
+                storageTemp,...
+                storageLocation,...
+                source,...
+                timeOfRemoval,...
+                timeOfProcessing,...
+                dateReceived,...
+                notes]...
+                = CsfSampleMetadataEntry(suggestedSampleNumber, existingSampleNumbers, suggestedCsfSampleNumber, existingCsfSampleNumbers, userName, importPath, isEdit);
+            
+            if ~cancel
+                %Assigning values to Csf Sample Properties
+                sample.amountMl = amountMl;
+                sample.csfSampleNumber = csfSampleNumber;
+                sample.sampleNumber = sampleNumber;
+                sample.storageTemp = storageTemp;
+                sample.storageLocation = storageLocation;
+                sample.source = source;
+                sample.timeOfRemoval = timeOfRemoval;
+                sample.timeOfProcessing = timeOfProcessing;
+                sample.dateReceived = dateReceived;
+                sample.notes = notes;
+            end
+          end
+                
+        function sample = editMetadata(sample, projectPath, toSubjectPath, userName, dataFilename, existingSampleNumbers, existingBrainSectionNumbers)
+            isEdit = true;
+            importPath = '';
+            
+            [...
+                cancel,...
+                amountMl,...
+                csfSampleNumber,...
+                sampleNumber,...
+                storageTemp,...
+                storageLocation,...
+                source,...
+                timeOfRemoval,...
+                timeOfProcessing,...
+                dateReceived,...
+                notes]...
+                = CsfSampleMetadataEntry([], existingSampleNumbers, [], existingCsfSampleNumbers, userName, importPath, isEdit, sample);
+            
+            if ~cancel
+                sample = updateMetadataHistory(sample, userName);
+                
+                oldDirName = sample.dirName;
+                oldFilenameSection = sample.generateFilenameSection();
+                
+                %Assigning values to Csf Sample Properties
+                sample.amountMl = amountMl;
+                sample.csfSampleNumber = csfSampleNumber;
+                sample.sampleNumber = sampleNumber;
+                sample.storageTemp = storageTemp;
+                sample.storageLocation = storageLocation;
+                sample.source = source;
+                sample.timeOfRemoval = timeOfRemoval;
+                sample.timeOfProcessing = timeOfProcessing;
+                sample.dateReceived = dateReceived;
+                sample.notes = notes;
+                
+                updateBackupFiles = updateBackupFilesQuestionGui();
+                
+                newDirName = sample.generateDirName();
+                newFilenameSection = sample.generateFilenameSection();
+                
+                renameDirectory(toSubjectPath, projectPath, oldDirName, newDirName, updateBackupFiles);
+                renameFiles(toSubjectPath, projectPath, dataFilename, oldFilenameSection, newFilenameSection, updateBackupFiles);
+                
+                sample.dirName = newDirName;
+                sample.naviListboxLabel = sample.generateListboxLabel();
+                
+                %section = section.updateFileSelectionEntries(makePath(projectPath, toSubjectPath)); %incase files renamed - NOT NEEDED AT THIS TIME
+                
+                sample.saveMetadata(makePath(toSubjectPath, sample.dirName), projectPath, updateBackupFiles);
+            end
+        end
+        
+        function dirName = generateDirName(sample)
+            dirSubtitle = sample.amountMl;
+            
+            dirName = createDirName(CsfSampleNamingConventions.DIR_PREFIX, sample.csfSampleNumber, dirSubtitle, CsfSampleNamingConventions.DIR_NUM_DIGITS);
+        end
+          
+        function label = generateListboxLabel(sample)
+            subtitle = sample.amountMl;
+            
+            label = createNavigationListboxLabel(CsfSampleNamingConventions.NAVI_LISTBOX_PREFIX, sample.csfSampleNumber, subtitle);
+        end
+        
+        function sample = generateFilenameSection(sample)
+            sample = createFilenameSection(CsfSampleNamingConventions.DATA_FILENAME_LABEL, num2str(sample.CsfSampleNumber));
+        end
+        
+        function sample = loadObject(sample, samplePath)
+        end
+                       
+        function subSampleNumber = getSubSampleNumber(sample)
+            subSampleNumber = sample.csfSampleNumber;
+        end
+        
+        function sample = wipeoutMetadataFields(sample)
+            sample.dirName = '';
+        end
+        
+        function metadataString = getMetadataString(sample)
+            
+            [sampleNumberString, notesString] = sample.getSampleMetadataString();
+            [sourceString, timeOfRemovalString, timeOfProcessingString, dateReceivedString, storageLocationString] = sample.getTissueSampleMetadataString();
+            [initFixativeString, initFixPercentString, initFixTimeString, secondFixativeString, secondFixPercentString, secondFixTimeString] = sample.getFixedSampleMetadataString();
+            
+            brainSectionNumberString = ['Brain Section Number: ', num2str(sample.brainSectionNumber)];
+            sectionAnatomyString = ['Section Anatomy: ', sample.sectionAnatomy];
+            metadataHistoryStrings = generateMetadataHistoryStrings(sample.metadataHistory);
+            
+            
+            metadataString = ...
+                {'Brain Section:',...
+                sampleNumberString,...
+                brainSectionNumberString,...
+                sectionAnatomyString,...
+                sourceString,...
+                timeOfRemovalString,...
+                timeOfProcessingString,...
+                dateReceivedString,...
+                storageLocationString,...
+                initFixativeString,...
+                initFixPercentString,...
+                initFixTimeString,...
+                secondFixativeString,...
+                secondFixPercentString,...
+                secondFixTimeString,...
+                notesString};
+            metadataString = [metadataString, metadataHistoryStrings];
+            
+        end
+                
+        function sample = createNewQuarter(sample, projectPath, toPath, userName)
+            % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
+        end
+        
+        function sample = editSelectedQuarterMetadata(sample, projectPath, toEyePath, userName, dataFilename)
+            % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
+        end
+        
+        function sample = createNewLocation(sample, projectPath, toPath, userName, subjectType)
+            % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
+        end
+        
+        function sample = editSelectedLocationMetadata(sample, projectPath, toSamplePath, userName, dataFilename, subjectType)
+            % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
+        end
+        
+        function sample = editSelectedSessionMetadata(sample, projectPath, toSamplePath, userName, dataFilename)
+            % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
+        end 
+        
+        function sample = createNewSession(sample, projectPath, toPath, userName, sessionType)
+            % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
+        end
+        
+    end
+    
+end
+

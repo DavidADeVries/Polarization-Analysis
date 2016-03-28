@@ -22,7 +22,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
                     session.naviListboxLabel = session.generateListboxLabel();
                     
                     % set metadata history
-                    session.metadataHistory = {MetadataHistoryEntry(userName)};
+                    session.metadataHistory = MetadataHistoryEntry(userName, LegacyRegistrationSession.empty);
                     
                     % make directory/metadata file
                     session = session.createDirectories(toLocationPath, projectPath);
@@ -53,6 +53,8 @@ classdef LegacyRegistrationSession < DataProcessingSession
              = LegacyRegistrationSessionMetadataEntry('', userName, sessionChoices, isEdit, session);
             
             if ~cancel
+                session = updateMetadataHistory(session, userName);
+                
                 oldDirName = session.dirName;
                 oldFilenameSection = session.generateFilenameSection();  
                 
@@ -67,8 +69,6 @@ classdef LegacyRegistrationSession < DataProcessingSession
                 session.rejectedBy = rejectedBy;
                                 
                 session.linkedSessionNumbers = getSelectedSessionNumbers(sessionChoices, selectedChoices);
-                
-                session = updateMetadataHistory(session, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 
@@ -171,7 +171,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
             [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
             [dataProcessingSessionNumberString, linkedSessionsString] = session.getProcessingSessionMetadataString();
             
-            registrationTypeString = ['Registration Type: ', session.registrationType.displayString];
+            registrationTypeString = ['Registration Type: ', displayType(session.registrationType)];
             registrationParamsString = ['Registration Parameters: ' session.registrationParams];
             
             

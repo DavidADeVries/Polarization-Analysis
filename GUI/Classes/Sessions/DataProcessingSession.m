@@ -8,13 +8,6 @@ classdef DataProcessingSession < Session
         dataProcessingSessionNumber
         linkedSessionNumbers = []; %the session numbers of sessions from which data for the processing was drawn
     end
-    
-    methods
-        function session = DataProcessingSession()
-            session.isDataCollectionSession = false;
-        end
-        
-    end
            
     methods
         

@@ -1,20 +1,14 @@
-classdef Eye
+classdef Eye < FixedSample
     % Eye
     % metadata about an eye
         
-    properties
-        % set at initialization
-        dirName
-        naviListboxLabel
-        metadataHistory
-        
+    properties        
         % set by metadata entry
-        eyeId
-        eyeType % EyeTypes        
+        eyeId = '';
+        eyeType = [];% EyeTypes        
         eyeNumber        
-        dissectionDate
-        dissectionDoneBy
-        notes
+        dissectionDate = [];
+        dissectionDoneBy = '';
         
         % list of quarters and index
         quarters
@@ -22,43 +16,81 @@ classdef Eye
     end
     
     methods
-        function eye = Eye(eyeNumber, existingEyeNumbers, toSubjectPath, projectPath, importPath, userName)
-            [cancel, eye] = eye.enterMetadata(eyeNumber, existingEyeNumbers, importPath, userName);
-            
-            if ~cancel
-                % set metadata history
-                eye.metadataHistory = {MetadataHistoryEntry(userName)};
+        function eye = Eye(sampleNumber, existingSampleNumbers, eyeNumber, existingEyeNumbers, toSubjectPath, projectPath, importPath, userName)
+            if nargin > 0
+                [cancel, eye] = eye.enterMetadata(sampleNumber, existingSampleNumbers, eyeNumber, existingEyeNumbers, importPath, userName);
                 
-                % set navigation listbox label        
-                eye.naviListboxLabel = eye.generateListboxLabel();
-                
-                % make directory/metadata file
-                eye = eye.createDirectories(toSubjectPath, projectPath);
-                
-                % save metadata
-                saveToBackup = true;
-                eye.saveMetadata(makePath(toSubjectPath, eye.dirName), projectPath, saveToBackup);
-            else
-                eye = Eye.empty;
-            end              
+                if ~cancel
+                    % set UUID
+                    eye.uuid = generateUUID();
+                    
+                    % set metadata history
+                    eye.metadataHistory = MetadataHistoryEntry(userName, Eye.empty);
+                    
+                    % set navigation listbox label
+                    eye.naviListboxLabel = eye.generateListboxLabel();
+                    
+                    % make directory/metadata file
+                    eye = eye.createDirectories(toSubjectPath, projectPath);
+                    
+                    % save metadata
+                    saveToBackup = true;
+                    eye.saveMetadata(makePath(toSubjectPath, eye.dirName), projectPath, saveToBackup);
+                else
+                    eye = Eye.empty;
+                end
+            end
         end
         
-        function eye = editMetadata(eye, projectPath, toSubjectPath, userName, dataFilename, existingEyeNumbers)
-            [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry([], existingEyeNumbers, userName, '', eye);
+        function eye = editMetadata(eye, projectPath, toSubjectPath, userName, dataFilename, existingSampleNumbers, existingEyeNumbers)
+            isEdit = true;
+            
+            [cancel,...
+                eyeId,...
+                eyeType,...
+                sampleNumber,...
+                eyeNumber,...
+                dissectionDate,...
+                dissectionDoneBy,...
+                notes,...
+                source,...
+                timeOfRemoval,...
+                timeOfProcessing,...
+                dateReceived,...
+                storingLocation,...
+                initialFixative,...
+                initialFixativePercent,...
+                initialFixingTime,...
+                secondaryFixative,...
+                secondaryFixativePercent,...
+                secondaryFixingTime] =...
+            EyeMetadataEntry([], existingSampleNumbers, [], existingEyeNumbers, userName, '', isEdit, eye);
             
             if ~cancel
+                eye = updateMetadataHistory(eye, userName);
+                                
                 oldDirName = eye.dirName;
                 oldFilenameSection = eye.generateFilenameSection();                
                 
                 %Assigning values to Eye Properties
                 eye.eyeId = eyeId;
                 eye.eyeType = eyeType;
+                eye.sampleNumber = sampleNumber;
                 eye.eyeNumber = eyeNumber;
                 eye.dissectionDate = dissectionDate;
                 eye.dissectionDoneBy = dissectionDoneBy;
                 eye.notes = notes;
-                
-                eye = updateMetadataHistory(eye, userName);
+                eye.source = source;
+                eye.timeOfRemoval = timeOfRemoval;
+                eye.timeOfProcessing = timeOfProcessing;
+                eye.dateReceived = dateReceived;
+                eye.storageLocation = storingLocation;
+                eye.initialFixative = initialFixative;
+                eye.initialFixativePercent = initialFixativePercent;
+                eye.initialFixingTime = initialFixingTime;
+                eye.secondaryFixative = secondaryFixative;
+                eye.secondaryFixativePercent = secondaryFixativePercent;
+                eye.secondaryFixingTime = secondaryFixingTime;
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 
@@ -108,16 +140,7 @@ classdef Eye
         end
         
         
-        function eye = loadEye(eye, toEyePath, eyeDir)
-            eyePath = makePath(toEyePath, eyeDir);
-
-            % load metadata
-            vars = load(makePath(eyePath, EyeNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
-            eye = vars.metadata;
-
-            % load dir name
-            eye.dirName = eyeDir;
-            
+        function eye = loadObject(eye, eyePath)            
             % load quarters
             quarterDirs = getMetadataFolders(eyePath, QuarterNamingConventions.METADATA_FILENAME);
             
@@ -134,7 +157,7 @@ classdef Eye
             end
         end
         
-        function eye = importEye(eye, toEyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType)  
+        function eye = importSample(eye, toEyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType)  
             dirList = getAllFolders(eyeImportPath);
             
             filenameSection = eye.generateFilenameSection();
@@ -246,33 +269,58 @@ classdef Eye
                 nextNumber = lastNumber + 1;
             end
         end
+        
+        function subSampleNumber = getSubSampleNumber(eye)
+            subSampleNumber = eye.eyeNumber;
+        end
                 
-        function [cancel, eye] = enterMetadata(eye, suggestedEyeNumber, existingEyeNumbers, importPath, userName)
+        function [cancel, eye] = enterMetadata(eye, suggestedSampleNumber, existingSampleNumbers, suggestedEyeNumber, existingEyeNumbers, importPath, userName)
             
             %Call to EyeMetadataEntry GUI
-            [cancel, eyeId, eyeType, eyeNumber, dissectionDate, dissectionDoneBy, notes] = EyeMetadataEntry(suggestedEyeNumber, existingEyeNumbers, userName, importPath);
+            isEdit = false;
+            
+            [cancel,...
+                eyeId,...
+                eyeType,...
+                sampleNumber,...
+                eyeNumber,...
+                dissectionDate,...
+                dissectionDoneBy,...
+                notes,...
+                source,...
+                timeOfRemoval,...
+                timeOfProcessing,...
+                dateReceived,...
+                storingLocation,...
+                initialFixative,...
+                initialFixativePercent,...
+                initialFixingTime,...
+                secondaryFixative,...
+                secondaryFixativePercent,...
+                secondaryFixingTime] =...
+            EyeMetadataEntry(suggestedSampleNumber, existingSampleNumbers, suggestedEyeNumber, existingEyeNumbers, userName, importPath, isEdit);
             
             if ~cancel
                 %Assigning values to Eye Properties
                 eye.eyeId = eyeId;
                 eye.eyeType = eyeType;
+                eye.sampleNumber = sampleNumber;
                 eye.eyeNumber = eyeNumber;
                 eye.dissectionDate = dissectionDate;
                 eye.dissectionDoneBy = dissectionDoneBy;
                 eye.notes = notes;
+                eye.source = source;
+                eye.timeOfRemoval = timeOfRemoval;
+                eye.timeOfProcessing = timeOfProcessing;
+                eye.dateReceived = dateReceived;
+                eye.storageLocation = storingLocation;
+                eye.initialFixative = initialFixative;
+                eye.initialFixativePercent = initialFixativePercent;
+                eye.initialFixingTime = initialFixingTime;
+                eye.secondaryFixative = secondaryFixative;
+                eye.secondaryFixativePercent = secondaryFixativePercent;
+                eye.secondaryFixingTime = secondaryFixingTime;
             end
-        end
-        
-        function eye = createDirectories(eye, toSubjectPath, projectPath)
-            eyeDirectory = eye.generateDirName();
-            
-            createObjectDirectories(projectPath, toSubjectPath, eyeDirectory);
-                        
-            eye.dirName = eyeDirectory;
-        end
-        
-        function [] = saveMetadata(eye, toEyePath, projectPath, saveToBackup)
-            saveObjectMetadata(eye, projectPath, toEyePath, EyeNamingConventions.METADATA_FILENAME, saveToBackup);            
         end
         
         function eye = wipeoutMetadataFields(eye)
@@ -292,7 +340,7 @@ classdef Eye
             numQuarters = length(eye.quarters);
             
             if numQuarters == 0
-                disableNavigationListboxes(handles, handles.quarterSampleSelect);
+                disableNavigationListboxes(handles, handles.subSampleSelect);
             else            
                 quarterOptions = cell(numQuarters, 1);
                 
@@ -300,7 +348,7 @@ classdef Eye
                     quarterOptions{i} = eye.quarters{i}.naviListboxLabel;
                 end
                 
-                set(handles.quarterSampleSelect, 'String', quarterOptions, 'Value', eye.quarterIndex, 'Enable', 'on');
+                set(handles.subSampleSelect, 'String', quarterOptions, 'Value', eye.quarterIndex, 'Enable', 'on');
                 
                 handles = eye.getSelectedQuarter().updateNavigationListboxes(handles);
             end
@@ -321,26 +369,49 @@ classdef Eye
                 handles = quarter.updateMetadataFields(handles);
             end
             
-            set(handles.eyeQuarterSampleMetadata, 'String', metadataString);
-        end        
+            set(handles.sampleMetadata, 'String', metadataString);
+        end 
+        
         
         function metadataString = getMetadataString(eye)
             
+            [sampleNumberString, notesString] = eye.getSampleMetadataString();
+            [sourceString, timeOfRemovalString, timeOfProcessingString, dateReceivedString, storageLocationString] = eye.getTissueSampleMetadataString();
+            [initFixativeString, initFixPercentString, initFixTimeString, secondFixativeString, secondFixPercentString, secondFixTimeString] = eye.getFixedSampleMetadataString();
+            
             eyeIdString = ['Eye ID: ', eye.eyeId];
-            eyeTypeString = ['Eye Type: ', eye.eyeType.displayString];
+            eyeTypeString = ['Eye Type: ', displayType(eye.eyeType)];
             eyeNumberString = ['Eye Number: ', num2str(eye.eyeNumber)];
             dissectionDateString = ['Dissection Date: ', displayDate(eye.dissectionDate)];
             dissectionDoneByString = ['Dissection Done By: ', eye.dissectionDoneBy];
-            eyeNotesString = ['Notes: ', eye.notes];
             metadataHistoryStrings = generateMetadataHistoryStrings(eye.metadataHistory);
             
             
-            metadataString = {'Eye:', eyeIdString, eyeTypeString, eyeNumberString, dissectionDateString, dissectionDoneByString, eyeNotesString};
+            metadataString = ...
+                {'Eye:',...
+                sampleNumberString,...
+                eyeNumberString,...
+                eyeIdString,...
+                eyeTypeString,...
+                dissectionDateString,...
+                dissectionDoneByString,...
+                sourceString,...
+                timeOfRemovalString,...
+                timeOfProcessingString,...
+                dateReceivedString,...
+                storageLocationString,...
+                initFixativeString,...
+                initFixPercentString,...
+                initFixTimeString,...
+                secondFixativeString,...
+                secondFixPercentString,...
+                secondFixTimeString,...
+                notesString};
             metadataString = [metadataString, metadataHistoryStrings];
             
         end
         
-        function eye = updateQuarterSampleIndex(eye, index)
+        function eye = updateSubSampleIndex(eye, index)
             eye.quarterIndex = index;
         end
         
@@ -462,6 +533,46 @@ classdef Eye
                 quarter = quarter.editSelectedSessionMetadata(projectPath, toQuarterPath, userName, dataFilename);
             
                 eye = eye.updateSelectedQuarter(quarter);
+            end
+        end
+               
+        function eye = createNewQuarter(eye, projectPath, toPath, userName)
+            suggestedQuarterNumber = eye.nextQuarterNumber();
+            existingQuarterNumbers = eye.getQuarterNumbers();
+            
+            toEyePath = makePath(toPath, eye.dirName);
+            importDir = '';
+            
+            quarter = Quarter(suggestedQuarterNumber, existingQuarterNumbers, toEyePath, projectPath, importDir, userName);
+            
+            if ~isempty(quarter)
+                eye = eye.updateQuarter(quarter);
+            end
+        end  
+        
+        function eye = createNewLocation(eye, projectPath, toPath, userName, subjectType)
+            quarter = eye.getSelectedQuarter();
+            
+            if ~isempty(quarter)
+                toPath = makePath(toPath, eye.dirName);
+                
+                eyeType = eye.eyeType;
+                
+                quarter = quarter.createNewLocation(projectPath, toPath, userName, subjectType, eyeType);
+                
+                eye = eye.updateQuarter(quarter);
+            end
+        end
+                
+        function eye = createNewSession(eye, projectPath, toPath, userName, sessionType)
+            quarter = eye.getSelectedQuarter();
+            
+            if ~isempty(quarter)
+                toPath = makePath(toPath, eye.dirName);
+                
+                quarter = quarter.createNewSession(projectPath, toPath, userName, sessionType);
+                
+                eye = eye.updateQuarter(quarter);
             end
         end
         

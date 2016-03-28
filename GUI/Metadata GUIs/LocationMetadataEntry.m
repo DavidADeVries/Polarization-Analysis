@@ -364,46 +364,47 @@ end
 axes(handles.retinalmap);
 [handles.xCoords,handles.yCoords] = ginput(1);
 
-
+errorMessage = 'Selected point conflicts with selected quarter type.';
+errorTitle = 'Invalid Point Selection';
 %Makes sure that the user is selecting a point that doesn't conflict with
 %the selected quarter.
 if handles.selectedQuarter == QuarterTypes.Superior
     while handles.yCoords < abs(handles.xCoords) || sqrt((handles.xCoords)^2 + (handles.yCoords)^2) > 1
-        waitfor(warndlg('Selected point conflicts with selected quarter type.','Invalid Point Selection'));
+        waitfor(warndlg(errorMessage, errorTitle));
         [handles.xCoords,handles.yCoords] = ginput(1);
     end
 elseif handles.selectedQuarter == QuarterTypes.Inferior
     while handles.yCoords > -abs(handles.xCoords) || sqrt((handles.xCoords)^2 + (handles.yCoords)^2) > 1
-        waitfor(warndlg('Selected point conflicts with selected quarter type.','Invalid Point Selection'));
+        waitfor(warndlg(errorMessage, errorTitle));
         [handles.xCoords,handles.yCoords] = ginput(1);
     end
 elseif handles.selectedQuarter == QuarterTypes.Temporal
     if handles.eyeType == EyeTypes.Right
          while handles.yCoords < handles.xCoords || handles.yCoords > -handles.xCoords || sqrt((handles.xCoords)^2 + (handles.yCoords)^2) > 1
-               waitfor(warndlg('Selected point conflicts with selected quarter type.','Invalid Point Selection'));
+               waitfor(warndlg(errorMessage, errorTitle));
                [handles.xCoords,handles.yCoords] = ginput(1);
          end
     elseif handles.eyeType == EyeTypes.Left
         while handles.yCoords > handles.xCoords || handles.yCoords < -handles.xCoords || sqrt((handles.xCoords)^2 + (handles.yCoords)^2) > 1
-               waitfor(warndlg('Selected point conflicts with selected quarter type.','Invalid Point Selection'));
+               waitfor(warndlg(errorMessage, errorTitle));
                [handles.xCoords,handles.yCoords] = ginput(1);
          end
     end
 elseif handles.selectedQuarter == QuarterTypes.Nasal
     if handles.eyeType == EyeTypes.Right
          while handles.yCoords > handles.xCoords || handles.yCoords < -handles.xCoords || sqrt((handles.xCoords)^2 + (handles.yCoords)^2) > 1
-               waitfor(warndlg('Selected point conflicts with selected quarter type.','Invalid Point Selection'));
+               waitfor(warndlg(errorMessage, errorTitle));
                [handles.xCoords,handles.yCoords] = ginput(1);
          end
     elseif handles.eyeType == EyeTypes.Left
         while handles.yCoords < handles.xCoords || handles.yCoords > -handles.xCoords || sqrt((handles.xCoords)^2 + (handles.yCoords)^2) > 1
-               waitfor(warndlg('Selected point conflicts with selected quarter type.','Invalid Point Selection'));
+               waitfor(warndlg(errorMessage, errorTitle));
                [handles.xCoords,handles.yCoords] = ginput(1);
          end
     end
 elseif handles.selectedQuarter == QuarterTypes.Unknown
     while sqrt((handles.xCoords)^2 + (handles.yCoords)^2) > 1
-        waitfor(warndlg('Selected point conflicts with selected quarter type.','Invalid Point Selection'));
+        waitfor(warndlg(errorMessage, errorTitle));
         [handles.xCoords,handles.yCoords] = ginput(1);
     end
 end

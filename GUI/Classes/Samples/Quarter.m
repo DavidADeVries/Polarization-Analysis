@@ -4,6 +4,7 @@ classdef Quarter
     
     properties
         % set at initialization
+        uuid
         dirName
         naviListboxLabel
         metadataHistory
@@ -28,8 +29,11 @@ classdef Quarter
             [cancel, quarter] = quarter.enterMetadata(suggestedQuarterNumber, existingQuarterNumbers, importDir, userName);
             
             if ~cancel
+                % set UUID
+                quarter.uuid = generateUUID();
+                
                 % set metadata history
-                quarter.metadataHistory = {MetadataHistoryEntry(userName)};
+                quarter.metadataHistory = MetadataHistoryEntry(userName, Quarter.empty);
                 
                 % set navigation listbox label
                 quarter.naviListboxLabel = quarter.generateListboxLabel();
@@ -50,6 +54,8 @@ classdef Quarter
             [cancel, stain, slideMaterial, quarterType, quarterArbitrary, quarterNumber, mountingDate, mountingDoneBy, notes] = QuarterMetadataEntry([], existingQuarterNumbers, '', userName, quarter);
             
             if ~cancel
+                quarter = updateMetadataHistory(quarter, userName);
+                
                 oldDirName = quarter.dirName;
                 oldFilenameSection = quarter.generateFilenameSection();                
                 
@@ -62,8 +68,6 @@ classdef Quarter
                 quarter.mountingDate = mountingDate;
                 quarter.mountingDoneBy = mountingDoneBy;
                 quarter.notes = notes;
-                
-                quarter = updateMetadataHistory(quarter, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 
@@ -343,7 +347,7 @@ classdef Quarter
             mountingDoneByString = ['Mounting Done By: ', quarter.mountingDoneBy];
             stainString = ['Stain: ', quarter.stain];
             slideMaterialString = ['Slide Material: ', quarter.slideMaterial];
-            quarterTypeString = ['Quarter Type: ', quarter.quarterType.displayString];
+            quarterTypeString = ['Quarter Type: ', displayType(quarter.quarterType)];
             quarterNumberString = ['Quarter number: ', num2str(quarter.quarterNumber)];
             quarterArbitraryString = ['Quarter Arbitrary: ', booleanToString(quarter.quarterArbitrary)];
             quarterNotesString = ['Notes: ', quarter.notes];
@@ -480,6 +484,39 @@ classdef Quarter
                 location = location.editSelectedSessionMetadata(projectPath, toLocationPath, userName, dataFilename);
             
                 quarter = quarter.updateSelectedLocation(location);
+            end
+        end
+        
+        function quarter = createNewLocation(quarter, projectPath, toPath, userName, subjectType, eyeType)
+            suggestedLocationNumber = quarter.nextLocationNumber();
+            existingLocationNumbers = quarter.getLocationNumbers();
+            
+            rejectSelectedLocation = false;
+            locationCoordsWithLabels = quarter.generateLocationCoordsWithLabels(rejectSelectedLocation);
+            
+            toQuarterPath = makePath(toPath, quarter.dirName);
+            quarterType = quarter.quarterType;
+            
+            importDir = '';
+            
+            location = Location(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, toQuarterPath, projectPath, importDir, userName, subjectType, eyeType, quarterType);
+            
+            if ~isempty(location)
+                quarter = quarter.updateLocation(location);
+            end
+        end
+                        
+        function quarter = createNewSession(quarter, projectPath, toPath, userName, sessionType)
+            location = quarter.getSelectedLocation();
+            
+            if ~isempty(location)
+                toPath = makePath(toPath, quarter.dirName);
+                
+                locations = quarter.locations;
+                
+                location = location.createNewSession(projectPath, toPath, userName, sessionType, locations);
+                
+                quarter = quarter.updateLocation(location);
             end
         end
         

@@ -4,6 +4,7 @@ classdef Location
     
     properties
         % set at initialization
+        uuid
         dirName
         naviListboxLabel
         metadataHistory
@@ -25,8 +26,11 @@ classdef Location
             [cancel, location] = location.enterMetadata(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, subjectType, eyeType, quarterType, importDir);
             
             if ~cancel
+                % set UUID
+                location.uuid = generateUUID();
+                
                 % set metadata history
-                location.metadataHistory = {MetadataHistoryEntry(userName)};
+                location.metadataHistory = MetadataHistoryEntry(userName, Location.empty);
                 
                 % set navigation listbox label
                 location.naviListboxLabel = location.generateListboxLabel();
@@ -47,6 +51,8 @@ classdef Location
             [cancel, coords, locationNumber, deposit, notes] = LocationMetadataEntry(eyeType, subjectType, quarterType, [], existingLocationNumbers, locationCoordsWithLabels, '', location);
             
             if ~cancel
+                location = updateMetadataHistory(location, userName);
+                
                 oldDirName = location.dirName;
                 oldFilenameSection = location.generateFilenameSection();   
                 
@@ -55,8 +61,6 @@ classdef Location
                 location.deposit = deposit;
                 location.locationCoords = coords;
                 location.notes = notes;
-                
-                location = updateMetadataHistory(location, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 
@@ -313,7 +317,7 @@ classdef Location
             counter = 1;
             
             for i=1:length(sessions)
-                if sessions{i}.isDataCollectionSession
+                if isa(sessions{i}, 'DataCollectionSession')
                     dataCollectionSessionNumbers(counter) = sessions{i}.dataCollectionSessionNumber;
                     
                     counter = counter + 1;
@@ -330,7 +334,7 @@ classdef Location
             counter = 1;
             
             for i=1:length(sessions)
-                if ~(sessions{i}.isDataCollectionSession)
+                if isa(sessions{i}, 'DataProcessingSession')
                     dataProcessingSessionNumbers(counter) = sessions{i}.dataProcessingSessionNumber;
                     
                     counter = counter + 1;
@@ -600,6 +604,40 @@ classdef Location
                 session = session.editMetadata(projectPath, toLocationPath, userName, dataFilename, sessionChoices);
             
                 location = location.updateSelectedSession(session);
+            end
+        end
+                
+                        
+        function location = createNewSession(location, projectPath, toPath, userName, sessionType, locations)
+            toPath = makePath(toPath, location.dirName);
+            
+            sessionNumber = location.nextSessionNumber();
+            dataCollectionSessionNumber = location.nextDataCollectionSessionNumber();
+            dataProcessingSessionNumber = location.nextDataProcessingSessionNumber();
+            
+            importPath = '';
+            
+            noSessionType = []; %don't select a certian session type
+            sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessionsnoSessionType = []; %don't select a certian session type
+            
+            lastSession = getLastSessionByType(locations, sessionType);
+            
+            session = Session.createSession(...
+                sessionType,...
+                sessionNumber,...
+                dataCollectionSessionNumber,...
+                dataProcessingSessionNumber,...
+                toPath,...
+                projectPath,...
+                importPath,...
+                userName,...
+                sessionChoices,...
+                lastSession);
+            
+            if ~isempty(session)
+                session = session.createFileSelectionEntries(makePath(projectPath, toPath));
+                
+                location = location.updateSession(session);
             end
         end
         

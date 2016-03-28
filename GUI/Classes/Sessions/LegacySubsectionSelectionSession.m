@@ -23,7 +23,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                     session.naviListboxLabel = session.generateListboxLabel();
                     
                     % set metadata history
-                    session.metadataHistory = {MetadataHistoryEntry(userName)};
+                    session.metadataHistory = MetadataHistoryEntry(userName, LegacySubsectionSelectionSession.empty);
                     
                     % make directory/metadata file
                     session = session.createDirectories(toLocationPath, projectPath);
@@ -44,6 +44,8 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
             [cancel, sessionDate, sessionDoneBy, notes, croppingType, coords, rejected, rejectedReason, rejectedBy, selectedChoices] = LegacySubsectionSelectionSessionMetadataEntry('', userName, sessionChoices, isEdit, session);
             
             if ~cancel
+                session = updateMetadataHistory(session, userName);
+                
                 oldDirName = session.dirName;
                 oldFilenameSection = session.generateFilenameSection();  
                 
@@ -58,8 +60,6 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                 session.rejectedBy = rejectedBy;
                                 
                 session.linkedSessionNumbers = getSelectedSessionNumbers(sessionChoices, selectedChoices);
-                
-                session = updateMetadataHistory(session, userName);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 
@@ -162,7 +162,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
             [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);            
             [dataProcessingSessionNumberString, linkedSessionsString] = session.getProcessingSessionMetadataString();
             
-            croppingTypeString = ['Cropping Type: ', session.croppingType.displayString];
+            croppingTypeString = ['Cropping Type: ', displayType(session.croppingType)];
             coordsString = ['Cropping Coords [x,y,w,h]: ' coordsToString(session.coords)];
             
             
