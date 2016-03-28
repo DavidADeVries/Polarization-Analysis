@@ -26,8 +26,6 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Begin initialization code - DO NOT EDIT
 
-addpath(genpath('.'));
-
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
@@ -44,6 +42,7 @@ if nargout
 else
     gui_mainfcn(gui_State, varargin{:});
 end
+
 % End initialization code - DO NOT EDIT
 
 
@@ -56,13 +55,9 @@ function polarizationAnalysisGui_OpeningFcn(hObject, eventdata, handles, varargi
 % varargin   command line arguments to polarizationAnalysisGui (see VARARGIN)
 
 % import needed libraries
-addpath('Callbacks');
+addpath(genpath('.'));
 
 handles = guiInitialize(handles);
-
-
-% Choose default command line output for polarizationAnalysisGui
-handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
@@ -79,7 +74,6 @@ function varargout = polarizationAnalysisGui_OutputFcn(hObject, eventdata, handl
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
-varargout{1} = handles.output;
 
 
 % --- Executes on button press in selectNetworkPath.

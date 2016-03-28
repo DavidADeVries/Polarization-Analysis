@@ -1,1 +1,1 @@
-matlab -r "run('Data Analysis Management Module\polarizationAnalysisGui.m')"
+matlab -r "addpath(genpath('.'));run('Data Analysis Management Module\polarizationAnalysisGui.m');"
