@@ -41,22 +41,22 @@ classdef LegacyRegistrationSession < DataProcessingSession
             isEdit = true;
             
             [cancel,...
-             sessionDate,...
-             sessionDoneBy,...
-             notes,...
-             registrationType,...
-             registrationParams,...
-             rejected,...
-             rejectedReason,...
-             rejectedBy,...
-             selectedChoices]...
-             = LegacyRegistrationSessionMetadataEntry('', userName, sessionChoices, isEdit, session);
+                sessionDate,...
+                sessionDoneBy,...
+                notes,...
+                registrationType,...
+                registrationParams,...
+                rejected,...
+                rejectedReason,...
+                rejectedBy,...
+                selectedChoices]...
+                = LegacyRegistrationSessionMetadataEntry('', userName, sessionChoices, isEdit, session);
             
             if ~cancel
                 session = updateMetadataHistory(session, userName);
                 
                 oldDirName = session.dirName;
-                oldFilenameSection = session.generateFilenameSection();  
+                oldFilenameSection = session.generateFilenameSection();
                 
                 %Assigning values to Legacy Registration Session Properties
                 session.registrationType = registrationType;
@@ -67,13 +67,13 @@ classdef LegacyRegistrationSession < DataProcessingSession
                 session.rejected = rejected;
                 session.rejectedReason = rejectedReason;
                 session.rejectedBy = rejectedBy;
-                                
+                
                 session.linkedSessionNumbers = getSelectedSessionNumbers(sessionChoices, selectedChoices);
                 
                 updateBackupFiles = updateBackupFilesQuestionGui();
                 
                 newDirName = session.generateDirName();
-                newFilenameSection = session.generateFilenameSection(); 
+                newFilenameSection = session.generateFilenameSection();
                 
                 renameDirectory(toLocationPath, projectPath, oldDirName, newDirName, updateBackupFiles);
                 renameFiles(toLocationPath, projectPath, dataFilename, oldFilenameSection, newFilenameSection, updateBackupFiles);
@@ -93,16 +93,16 @@ classdef LegacyRegistrationSession < DataProcessingSession
             
             %Call to Legacy Registration Session Metadata Entry GUI
             [cancel,...
-             sessionDate,...
-             sessionDoneBy,...
-             notes,...
-             registrationType,...
-             registrationParams,...
-             rejected,...
-             rejectedReason,...
-             rejectedBy,...
-             selectedChoices]...
-             = LegacyRegistrationSessionMetadataEntry(importPath, userName, sessionChoices, isEdit, lastSession);
+                sessionDate,...
+                sessionDoneBy,...
+                notes,...
+                registrationType,...
+                registrationParams,...
+                rejected,...
+                rejectedReason,...
+                rejectedBy,...
+                selectedChoices]...
+                = LegacyRegistrationSessionMetadataEntry(importPath, userName, sessionChoices, isEdit, lastSession);
             
             if ~cancel
                 %Assigning values to Legacy Registration Session Properties
@@ -114,49 +114,45 @@ classdef LegacyRegistrationSession < DataProcessingSession
                 session.rejected = rejected;
                 session.rejectedReason = rejectedReason;
                 session.rejectedBy = rejectedBy;
-                                
+                
                 session.linkedSessionNumbers = getSelectedSessionNumbers(sessionChoices, selectedChoices);
             end
-        
+            
         end
         
         
         function session = importSession(session, sessionProjectPath, importPath, projectPath, dataFilename)
             dataFilename = strcat(dataFilename, session.generateFilenameSection());
-            
-            filenameExtensions = {Constants.BMP_EXT};
-            
+                        
             waitText = 'Importing session data. Please wait.';
             waitTitle = 'Importing Data';
             
             waitHandle = popupMessage(waitText, waitTitle);
-                        
+            
             
             suggestedDirectoryName = MicroscopeNamingConventions.MM_DIR.getSingularProjectTag();
             suggestedDirectoryTag = MicroscopeNamingConventions.MM_FILENAME_LABEL;
             
             namingConventions = MicroscopeNamingConventions.getMMNamingConventions();
-                                                        
-            extensionImportPaths = getExtensionImportPaths(importPath, filenameExtensions, 'Registration');
-                
-            [filenames, pathIndicesForFilenames] = getFilenamesForTagAssignment(extensionImportPaths);
+            
+            recurse = false; %don't go into subfolders
+            [filenames, filenamePaths, filenameExtensions] = generateImportFilenames(importPath, recurse);
             
             suggestedFilenameTags = createSuggestedFilenameTags(filenames, namingConventions);
-            
-            
-            [cancel, newDir, directoryTag, filenameTags] = SelectProjectTags(importPath, filenames, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags);
-            
-            
+            extensionStrings = createFilenameExtensionStrings(filenameExtensions);
+                        
+            [cancel, newDir, directoryTag, filenameTags] = SelectProjectTags(importPath, filenames, extensionStrings, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags);
+                        
             if ~cancel
                 filenameSection = createFilenameSection(directoryTag, '');
                 
                 % import the files
                 dataFilename = strcat(dataFilename, filenameSection);
                 
-                importFiles(sessionProjectPath, extensionImportPaths, projectPath, dataFilename, filenames, pathIndicesForFilenames, filenameExtensions, filenameTags, newDir);
+                importFiles(sessionProjectPath, projectPath, dataFilename, filenames, filenamePaths, filenameExtensions, filenameTags, newDir);
             end
-
-            delete(waitHandle);     
+            
+            delete(waitHandle);
             
         end
         
@@ -165,7 +161,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
             dirSubtitle = [LegacyRegistrationNamingConventions.SESSION_DIR_SUBTITLE];
         end
         
-               
+        
         function metadataString = getMetadataString(session)
             
             [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
@@ -177,7 +173,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
             
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, registrationTypeString, registrationParamsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
-        end        
+        end
         
         
         function preppedSession = prepForAutofill(session)

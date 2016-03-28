@@ -5,8 +5,7 @@ classdef MicroscopeSession < DataCollectionSession
     properties
         % set by metadata entry
         magnification = 40;
-        bwPixelSizeMicrons = 0.16; % size of pixel in microns (used for generating scale bars) - for monochrome camera
-        rgbPixelSizeMicrons = 0.17; % size of pixel in microns (used for generating scale bars) - for colour camera
+        pixelSizeMicrons = 1.13; % size of pixel in microns (used for generating scale bars)
         instrument = 'Nikon Eclipse Ti-U';
         
         % these three describe how the deposit was found
@@ -48,8 +47,7 @@ classdef MicroscopeSession < DataCollectionSession
             
             [cancel,...
              magnification,...
-             bwPixelSizeMicrons,...
-             rgbPixelSizeMicrons,...
+             pixelSizeMicrons,...
              instrument,...
              fluoroSignature,...
              crossedSignature,...
@@ -70,8 +68,7 @@ classdef MicroscopeSession < DataCollectionSession
                 
                 %Assigning values to Microscope Session Properties
                 session.magnification = magnification;
-                session.bwPixelSizeMicrons = bwPixelSizeMicrons;
-                session.rgbPixelSizeMicrons = rgbPixelSizeMicrons;
+                session.pixelSizeMicrons = pixelSizeMicrons;
                 session.instrument = instrument;
                 session.fluoroSignature = fluoroSignature;
                 session.crossedSignature = crossedSignature;
@@ -106,8 +103,7 @@ classdef MicroscopeSession < DataCollectionSession
             
             [cancel,...
              magnification,...
-             bwPixelSizeMicrons,...
-             rgbPixelSizeMicrons,...
+             pixelSizeMicrons,...
              instrument,...
              fluoroSignature,...
              crossedSignature,...
@@ -123,8 +119,7 @@ classdef MicroscopeSession < DataCollectionSession
             if ~cancel
                 %Assigning values to Microscope Session Properties
                 session.magnification = magnification;
-                session.bwPixelSizeMicrons = bwPixelSizeMicrons;
-                session.rgbPixelSizeMicrons = rgbPixelSizeMicrons;
+                session.pixelSizeMicrons = pixelSizeMicrons;
                 session.instrument = instrument;
                 session.fluoroSignature = fluoroSignature;
                 session.crossedSignature = crossedSignature;
@@ -192,9 +187,15 @@ classdef MicroscopeSession < DataCollectionSession
                 
                 importPath = makePath(locationImportPath, dirName);
                 
-                recurse = true; %go into subfolders
-                [filenames, filenamePaths, filenameExtensions] = generateImportFilenames(importPath, recurse);
-                                
+                [filenames, paths, extensions] = generateImportFilenames(importPath);
+                
+                
+                
+                                    
+                extensionImportPaths = getExtensionImportPaths(importPath, filenameExtensions, dirName);
+                
+                [filenames, filenameExtensions, pathIndicesForFilenames] = getFilenamesForTagAssignment(extensionImportPaths);
+                
                 if isempty(namingConventions)
                     suggestedFilenameTags = {};
                 else
@@ -211,7 +212,7 @@ classdef MicroscopeSession < DataCollectionSession
                     % import the files
                     finalFilename = strcat(dataFilename, filenameSection);
                     
-                    importFiles(sessionProjectPath, projectPath, finalFilename, filenames, filenamePaths, filenameExtensions, filenameTags, newDir);
+                    importFiles(sessionProjectPath, extensionImportPaths, projectPath, finalFilename, filenames, pathIndicesForFilenames, filenameExtensions, filenameTags, newDir);
                 end                
                
             end      
@@ -230,15 +231,14 @@ classdef MicroscopeSession < DataCollectionSession
             [dataCollectionSessionNumberString] = session.getCollectionSessionMetadataString();
             
             magnificationString = ['Magnification: ', num2str(session.magnification)];
-            bwPixelSizeMicronsString = ['Monochrome Pixel Size (microns): ', num2str(session.bwPixelSizeMicrons)];            
-            rgbPixelSizeMicronsString = ['Colour Pixel Size (microns): ', num2str(session.rgbPixelSizeMicrons)];
+            pixelSizeMicronsString = ['Pixel Size (microns): ', num2str(session.pixelSizeMicrons)];
             instrumentString = ['Instrument: ', session.instrument];
             fluoroSignatureString = ['Fluoro Signature: ', booleanToString(session.fluoroSignature)];
             crossedSignatureString = ['Crossed Signature: ', booleanToString(session.crossedSignature)];
             visualSignatureString = ['Visual Signature: ', booleanToString(session.visualSignature)];
             
             
-            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataCollectionSessionNumberString, magnificationString, bwPixelSizeMicronsString, rgbPixelSizeMicronsString, instrumentString, fluoroSignatureString, crossedSignatureString, visualSignatureString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataCollectionSessionNumberString, magnificationString, pixelSizeMicronsString, instrumentString, fluoroSignatureString, crossedSignatureString, visualSignatureString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
         end
                 
