@@ -66,7 +66,7 @@ else
     handles.suggestedSampleNumber = '';
 end
 
-handles.existingEyeNumbers = varargin{2};
+handles.existingSampleNumbers = varargin{2};
 
 if isa(varargin{3},'numeric');
     handles.suggestedEyeNumber = num2str(varargin{3}); %Parameter name is 'suggestedEyeNumber' from Eye class function

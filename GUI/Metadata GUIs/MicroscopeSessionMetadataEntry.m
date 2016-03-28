@@ -77,7 +77,6 @@ end
 
 handles.cancel = false;
 
-
 if isEdit
     set(handles.pathTitle, 'Visible', 'off');
     set(handles.importPathTitle, 'Visible', 'off');
