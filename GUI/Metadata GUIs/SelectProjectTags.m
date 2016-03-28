@@ -22,7 +22,7 @@ function varargout = SelectProjectTags(varargin)
 
 % Edit the above text to modify the response to help SelectProjectTags
 
-% Last Modified by GUIDE v2.5 24-Feb-2016 13:05:12
+% Last Modified by GUIDE v2.5 28-Mar-2016 11:46:23
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -52,21 +52,23 @@ function SelectProjectTags_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to SelectProjectTags (see VARARGIN)
 
-% ****************************************************************************************************
-% INPUT: (importPath, filenames, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags)
-% ****************************************************************************************************
+% ************************************************************************************************************************
+% INPUT: (importPath, filenames, filenameExtensions, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags)
+% ************************************************************************************************************************
 
 handles.importPath = varargin{1};
 handles.filenames = varargin{2};
+handles.extensionStrings = varargin{3};
 
-handles.folderName = varargin{3};
-handles.directoryTag = varargin{4};
-handles.filenameTags = varargin{5};
+handles.folderName = varargin{4};
+handles.directoryTag = varargin{5};
+handles.filenameTags = varargin{6};
 
 handles.cancel = false;
 
 set(handles.importPathText, 'String', handles.importPath);
 set(handles.importFilenames, 'String', handles.filenames);
+set(handles.extensions, 'String', handles.extensionStrings);
 
 set(handles.folderNameInput, 'String', handles.folderName);
 set(handles.tagInput, 'String', handles.directoryTag);
@@ -270,6 +272,31 @@ function tagInput_Callback(hObject, eventdata, handles)
 % --- Executes during object creation, after setting all properties.
 function tagInput_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to tagInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function extensions_Callback(hObject, eventdata, handles)
+% hObject    handle to extensions (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of extensions as text
+%        str2double(get(hObject,'String')) returns contents of extensions as a double
+
+set(handles.extensions, 'String', handles.extensionStrings);
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function extensions_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to extensions (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

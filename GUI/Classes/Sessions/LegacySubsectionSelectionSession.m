@@ -114,9 +114,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
         
         function session = importSession(session, sessionProjectPath, importPath, projectPath, dataFilename) 
             dataFilename = strcat(dataFilename, session.generateFilenameSection());
-            
-            filenameExtensions = {Constants.BMP_EXT};
-            
+                        
             waitText = 'Importing session data. Please wait.';
             waitTitle = 'Importing Data';
             
@@ -127,24 +125,22 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
             suggestedDirectoryTag = MicroscopeNamingConventions.MM_FILENAME_LABEL;
             
             namingConventions = MicroscopeNamingConventions.getMMNamingConventions();
-                                                        
-            extensionImportPaths = getExtensionImportPaths(importPath, filenameExtensions, 'Subsection Selection');
-                
-            [filenames, pathIndicesForFilenames] = getFilenamesForTagAssignment(extensionImportPaths);
+            
+            recurse = false; %don't go into subfolders
+            [filenames, filenamePaths, filenameExtensions] = generateImportFilenames(importPath, recurse);
             
             suggestedFilenameTags = createSuggestedFilenameTags(filenames, namingConventions);
-            
-            
-            [cancel, newDir, directoryTag, filenameTags] = SelectProjectTags(importPath, filenames, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags);
-            
-            
+            extensionStrings = createFilenameExtensionStrings(filenameExtensions);
+                        
+            [cancel, newDir, directoryTag, filenameTags] = SelectProjectTags(importPath, filenames, extensionStrings, suggestedDirectoryName, suggestedDirectoryTag, suggestedFilenameTags);
+                        
             if ~cancel
                 filenameSection = createFilenameSection(directoryTag, '');
                 
                 % import the files
                 dataFilename = strcat(dataFilename, filenameSection);
                 
-                importFiles(sessionProjectPath, extensionImportPaths, projectPath, dataFilename, filenames, pathIndicesForFilenames, filenameExtensions, filenameTags, newDir);
+                importFiles(sessionProjectPath, projectPath, dataFilename, filenames, filenamePaths, filenameExtensions, filenameTags, newDir);
             end
 
             delete(waitHandle);    

@@ -187,9 +187,15 @@ classdef MicroscopeSession < DataCollectionSession
                 
                 importPath = makePath(locationImportPath, dirName);
                 
-                recurse = true; %go into subfolders
-                [filenames, filenamePaths, filenameExtensions] = generateImportFilenames(importPath, recurse);
-                                
+                [filenames, paths, extensions] = generateImportFilenames(importPath);
+                
+                
+                
+                                    
+                extensionImportPaths = getExtensionImportPaths(importPath, filenameExtensions, dirName);
+                
+                [filenames, filenameExtensions, pathIndicesForFilenames] = getFilenamesForTagAssignment(extensionImportPaths);
+                
                 if isempty(namingConventions)
                     suggestedFilenameTags = {};
                 else
@@ -206,7 +212,7 @@ classdef MicroscopeSession < DataCollectionSession
                     % import the files
                     finalFilename = strcat(dataFilename, filenameSection);
                     
-                    importFiles(sessionProjectPath, projectPath, finalFilename, filenames, filenamePaths, filenameExtensions, filenameTags, newDir);
+                    importFiles(sessionProjectPath, extensionImportPaths, projectPath, finalFilename, filenames, pathIndicesForFilenames, filenameExtensions, filenameTags, newDir);
                 end                
                
             end      

@@ -1,4 +1,4 @@
-function [ ] = importFiles(sessionProjectPath, importPaths, projectPath, dataFilename, filenames, pathIndicesForFilenames, filenameExtensions, filenameTags, newDir)
+function [ ] = importFiles(sessionProjectPath, projectPath, dataFilename, filenames, filenamePaths, filenameExtensions, filenameTags, newDir)
 % importFiles
 % takes the files from importPath of the given fileExtensions and transfers
 % them to the newDir
@@ -7,14 +7,11 @@ function [ ] = importFiles(sessionProjectPath, importPaths, projectPath, dataFil
 createObjectDirectories(projectPath, sessionProjectPath, newDir);
 projectToPath = makePath(sessionProjectPath, newDir);
 
-
-for i=1:length(filenames)
+for i=1:length(filenameTags)
     importFilename = filenames{i};
     filenameTag = filenameTags{i};
     
-    if ~isempty(filenameTag)    
-        pathIndicesForFilename = pathIndicesForFilenames{i};
-        
+    if ~isempty(filenameTag) % if empty, no import        
         % split up filename tag (comma seperated)
         splitupTags = strsplit(filenameTag, ',');
         
@@ -27,18 +24,26 @@ for i=1:length(filenames)
             finalFilename = strcat(finalFilename, filenameSection); %just needs extension
         end
         
-        for j=1:length(pathIndicesForFilename)
-            index = pathIndicesForFilename(j);
-            
-            % import file
-            fileExtension = filenameExtensions{index};
-            importPath = importPaths{index};
-            
-            projectFilename = strcat(finalFilename, fileExtension);
-            
-            finalImportFilename = strcat(importFilename, fileExtension);
-            
-            importFile(projectToPath, importPath, projectPath, finalImportFilename, projectFilename);
+        importPaths = filenamePaths{i};
+        importExtensions = filenameExtensions{i};
+        
+        numPaths = length(importPaths);
+        numExtensions = length(importExtensions);
+        
+        if numPaths == numExtensions            
+            for j=1:numPaths               
+                % import file
+                fileExtension = importExtensions{j};
+                importPath = importPaths{j};
+                
+                projectFilename = strcat(finalFilename, fileExtension);
+                
+                finalImportFilename = strcat(importFilename, fileExtension);
+                
+                importFile(projectToPath, importPath, projectPath, finalImportFilename, projectFilename);
+            end
+        else
+            error('Auto-import failure: Number of path and extension mismatch');
         end
     end
     
