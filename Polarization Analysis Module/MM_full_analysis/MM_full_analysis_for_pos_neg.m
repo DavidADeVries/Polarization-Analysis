@@ -68,7 +68,7 @@ disp('Complete!');
 
 disp('Computing Mueller Matrices...');
 %Compute the Mueller Matrices
-[MM_pixelwise_norm, MM_m00_max_norm] = compute_MM_corrected_super_old(filename);
+[MM_pixelwise_norm, MM_m00_max_norm] = compute_MM_corrected_new(filename);
 
 %Get horizontal and vertical dimensions
 imageSizes = size(MM_pixelwise_norm);
