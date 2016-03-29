@@ -120,7 +120,7 @@ if isEdit
 else
     defaultEye = Eye;
     
-    set(handles.OK, 'enable', 'off');
+    set(handles.OK, 'enable', 'on');
     
     set(handles.importPathTitle, 'String', handles.importPath);
     
@@ -1031,11 +1031,11 @@ function checkToEnableOkButton(handles)
 %This function will check to see if any of the input variables are empty,
 %and if not it will enable the OK button
 
-if ~isempty(handles.eyeId) && ~isempty(handles.eyeTypeChoice) && ~isempty(handles.eyeNumber) && ~isempty(handles.dissectionDate) && ~isempty(handles.dissectionDoneBy)
-    set(handles.OK, 'enable', 'on');
-else
-    set(handles.OK, 'enable', 'off');
-end
+% if ~isempty(handles.eyeId) && ~isempty(handles.eyeTypeChoice) && ~isempty(handles.eyeNumber) && ~isempty(handles.dissectionDate) && ~isempty(handles.dissectionDoneBy)
+%     set(handles.OK, 'enable', 'on');
+% else
+%     set(handles.OK, 'enable', 'off');
+% end
 
 end
 

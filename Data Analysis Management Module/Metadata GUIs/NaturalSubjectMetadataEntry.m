@@ -139,7 +139,7 @@ else
     
     set(handles.subjectNumberInput, 'String', handles.subjectNumber);
     
-    set(handles.OK, 'enable', 'off');
+    set(handles.OK, 'enable', 'on');
 end
 
 
@@ -562,11 +562,11 @@ function checkToEnableOkButton(handles)
 %This function will check to see if any of the input variables are empty,
 %and if not it will enable the OK button
 
-if ~isempty(handles.subjectNumber) && ~isempty(handles.subjectId) && ~isempty(handles.age) && ~isempty(handles.gender) && ~isempty(handles.ADDiagnosis) && ~isempty(handles.causeOfDeath)
-    set(handles.OK, 'enable', 'on');
-else
-    set(handles.OK, 'enable', 'off');
-end
+% if ~isempty(handles.subjectNumber) && ~isempty(handles.subjectId) && ~isempty(handles.age) && ~isempty(handles.gender) && ~isempty(handles.ADDiagnosis) && ~isempty(handles.causeOfDeath)
+%     set(handles.OK, 'enable', 'on');
+% else
+%     set(handles.OK, 'enable', 'off');
+% end
 
 end
 
