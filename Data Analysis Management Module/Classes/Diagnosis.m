@@ -2,21 +2,23 @@ classdef Diagnosis
     % Diagnosis
     
     properties
-        diagnosisType
-        diagnosisLevel
-        isPrimaryDiagnosis
+        diagnosisType = [];
+        diagnosisLevel = [];
+        isPrimaryDiagnosis = false;
     end
     
     methods
         
         function diagnosis = Diagnosis(diagnosisType, diagnosisLevel, isPrimaryDiagnosis)
-            diagnosis.diagnosisType = diagnosisType;
-            diagnosis.diagnosisLevel = diagnosisLevel;
-            diagnosis.isPrimaryDiagnosis = isPrimaryDiagnosis;
+            if nargin > 0
+                diagnosis.diagnosisType = diagnosisType;
+                diagnosis.diagnosisLevel = diagnosisLevel;
+                diagnosis.isPrimaryDiagnosis = isPrimaryDiagnosis;
+            end
         end
         
-        function string = getString(diagnosis)
-            string = [diagnosis.diagnosisType.displayString, ' (', diagnosis.diagnosisLevel.displayString, ')'];
+        function string = getDisplayString(diagnosis)
+            string = [diagnosis.diagnosisType.displayString, ' [', diagnosis.diagnosisLevel.displayString, ']'];
             
             if diagnosis.isPrimaryDiagnosis
                 string = [string, '*'];
