@@ -679,6 +679,7 @@ else
     handles.notes = '';
     delete(hObject);
 end
+
 end
 
 %% Local Functions

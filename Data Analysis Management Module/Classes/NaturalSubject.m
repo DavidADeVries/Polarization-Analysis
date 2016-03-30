@@ -6,8 +6,9 @@ classdef NaturalSubject < Subject
         % set by metadata entry
         age %number (decimal please!)
         gender % GenderTypes
-        ADDiagnosis % DiagnosisTypes
+        diagnoses % cell array of Diagnosis
         causeOfDeath
+        timeOfDeath
         medicalHistory
     end
     
@@ -36,7 +37,9 @@ classdef NaturalSubject < Subject
         end
         
         function subject = editMetadata(subject, projectPath, toTrialPath, userName, dataFilename, existingSubjectNumbers)
-            [cancel, subjectNumber, subjectId, age, gender, ADDiagnosis, causeOfDeath, medicalHistory, notes] = NaturalSubjectMetadataEntry([], existingSubjectNumbers, userName, '', subject);
+            isEdit = true;
+            
+            [cancel, subjectNumber, subjectId, age, gender, diagnoses, causeOfDeath, timeOfDeath, medicalHistory, notes] = NaturalSubjectMetadataEntry([], existingSubjectNumbers, userName, '', isEdit, subject);
             
             if ~cancel
                 subject = updateMetadataHistory(subject, userName);
@@ -49,8 +52,9 @@ classdef NaturalSubject < Subject
                 subject.subjectId = subjectId;
                 subject.age = age;
                 subject.gender = gender;
-                subject.ADDiagnosis = ADDiagnosis;
+                subject.diagnoses = diagnoses;
                 subject.causeOfDeath = causeOfDeath;
+                subject.timeOfDeath = timeOfDeath;
                 subject.medicalHistory = medicalHistory;
                 subject.notes = notes;
                 
@@ -249,8 +253,10 @@ classdef NaturalSubject < Subject
        
         function [cancel, subject] = enterMetadata(subject, subjectNumber, existingSubjectNumbers, importPath, userName)
             
+            isEdit = false;
+            
             %Call to NaturalSubjectMetadataEntry GUI
-            [cancel, subjectNumber, subjectId, age, gender, ADDiagnosis, causeOfDeath, medicalHistory, notes] = NaturalSubjectMetadataEntry(subjectNumber, existingSubjectNumbers, userName, importPath);
+            [cancel, subjectNumber, subjectId, age, gender, diagnoses, causeOfDeath, timeOfDeath, medicalHistory, notes] = NaturalSubjectMetadataEntry(subjectNumber, existingSubjectNumbers, userName, importPath, isEdit);
             
             if ~cancel
                 %Assigning values to NaturalSubject Properties
@@ -258,8 +264,9 @@ classdef NaturalSubject < Subject
                 subject.subjectId = subjectId;
                 subject.age = age;
                 subject.gender = gender;
-                subject.ADDiagnosis = ADDiagnosis;
+                subject.diagnoses = diagnoses;
                 subject.causeOfDeath = causeOfDeath;
+                subject.timeOfDeath = timeOfDeath;
                 subject.medicalHistory = medicalHistory;
                 subject.notes = notes;
             end
@@ -315,12 +322,14 @@ classdef NaturalSubject < Subject
             
             ageString = ['Age: ', num2str(subject.age)];
             genderString = ['Gender: ', displayType(subject.gender)];
-            ADDiagnosisString = ['AD Diagnosis: ', displayType(subject.ADDiagnosis)];
+            diagnosesStrings = ['Diagnoses: ', displayDiagnoses(subject.diagnoses)];
             causeOfDeathString = ['Cause of Death: ', subject.causeOfDeath];
+            timeOfDeathString = ['Time of Death: ', displayDateAndTime(subject.timeOfDeath)];
             medicalHistoryString = ['Medical History: ', subject.medicalHistory];
             metadataHistoryStrings = generateMetadataHistoryStrings(subject.metadataHistory);
             
-            metadataString = {subjectIdString, subjectNumberString, ageString, genderString, ADDiagnosisString, causeOfDeathString, medicalHistoryString, subjectNotesString};
+            metadataString = {subjectIdString, subjectNumberString, ageString, genderString, causeOfDeathString, timeOfDeathString, medicalHistoryString, subjectNotesString};
+            metadataString = [metadataString, diagnosesStrings];
             metadataString = [metadataString, metadataHistoryStrings];
             
         end

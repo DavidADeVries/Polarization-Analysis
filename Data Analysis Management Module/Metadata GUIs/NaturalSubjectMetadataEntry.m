@@ -22,7 +22,7 @@ function varargout = NaturalSubjectMetadataEntry(varargin)
 
 % Edit the above text to modify the response to help NaturalSubjectMetadataEntry
 
-% Last Modified by GUIDE v2.5 16-Feb-2016 16:36:12
+% Last Modified by GUIDE v2.5 29-Mar-2016 14:02:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -52,101 +52,84 @@ function NaturalSubjectMetadataEntry_OpeningFcn(hObject, eventdata, handles, var
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to NaturalSubjectMetadataEntry (see VARARGIN)
 
-%******************************************************************************
-%INPUT: (subjectNumber, existingSubjectNumbers, userName, importPath, subject*)
+%***********************************************************************************************
+%INPUT: (suggestedSubjectNumber, existingSubjectNumbers, userName, importPath, isEdit, subject*)
 %       *may be empty
-%******************************************************************************
+%***********************************************************************************************
 
-handles.subjectNumber = varargin{1};
+handles.suggestedSubjectNumber = varargin{1};
 handles.existingSubjectNumbers = varargin{2};
 handles.userName = varargin{3};
 handles.importPath = varargin{4};
 
+isEdit = varargin{5};
 
-[~, genderChoiceStrings] = choicesFromEnum('GenderTypes');
-[~, diagnosisChoiceStrings] = choicesFromEnum('DiagnosisTypes');
+subject = [];
 
-%Default gender choice list setting
-handles.genderChoiceListDefault = 'Select a Gender';
-
-%Default diagnosis choice list setting
-handles.diagnosisChoiceListDefault = 'Select a Diagnosis';
-
-%Setting the list values for the Gender Type pop up menu
-genderChoiceList = {handles.genderChoiceListDefault};
-for i = 1:size(genderChoiceStrings)
-    genderChoiceList{i+1} = genderChoiceStrings{i};
+if length(varargin) > 5
+    subject = varargin{6};
 end
-set(handles.genderInput, 'String', genderChoiceList);
 
-%Setting the list values for the Diagnosis Type pop up menu
-diagnosisChoiceList = {handles.diagnosisChoiceListDefault};
-for i = 1:size(diagnosisChoiceStrings)
-    diagnosisChoiceList{i+1} = diagnosisChoiceStrings{i};
+if isempty(subject)
+    subject = NaturalSubject;
 end
-set(handles.diagnosisInput, 'String', diagnosisChoiceList);
 
+handles.cancel = false;
 
-if length(varargin) > 4
-    subject = varargin{5};
-    
+if isEdit
+    set(handles.pathTitle, 'Visible', 'off');
+    set(handles.importPathTitle, 'Visible', 'off');
+
     handles.subjectNumber = subject.subjectNumber;
-    handles.importPath = 'None';
-    
+    handles.subjectId = subject.subjectId;    
     handles.age = subject.age;
     handles.gender = subject.gender;
-    handles.ADDiagnosis = subject.ADDiagnosis;
+    handles.diagnoses = subject.diagnoses;
     handles.causeOfDeath = subject.causeOfDeath;
-    handles.subjectNotes = subject.notes;
-    handles.medicalHistory = subject.medicalHistory;
-    handles.subjectId = subject.subjectId;
+    handles.timeOfDeath = subject.timeOfDeath;
+    handles.medicalHistory = subject.medicalHistory;    
+    handles.notes = subject.notes;
+else    
+    set(handles.importPathTitle, 'String', handles.importPath);
     
-    set(handles.ageInput, 'String', num2str(handles.age));
-    set(handles.deathInput, 'String', handles.causeOfDeath);
-    set(handles.subjectNumberInput, 'String', num2str(handles.subjectNumber));
-    set(handles.subjectIdInput, 'String', handles.subjectId);
-    set(handles.medicalHistoryInput, 'String', handles.medicalHistory);
-    set(handles.sbjNotesInput, 'String', handles.subjectNotes);
-    
-    genderMatchString = handles.gender.displayString;
-    
-    for i=1:length(genderChoiceStrings)
-        if strcmp(genderMatchString, genderChoiceStrings{i})
-            set(handles.genderInput, 'Value', i+1);
-            break;
-        end
-    end
-    
-    diagnosisMatchString = handles.ADDiagnosis.displayString;
-    
-    for i=1:length(diagnosisChoiceStrings)
-        if strcmp(diagnosisMatchString, diagnosisChoiceStrings{i})
-            set(handles.diagnosisInput, 'Value', i+1);
-            break;
-        end
-    end
-    
-    set(handles.OK, 'enable', 'on');
-else
-    %Defining the different input variables as empty, awaiting user input
-    handles.age = [];
-    handles.gender = [];
-    handles.ADDiagnosis = [];
-    handles.causeOfDeath = '';
-    handles.subjectNotes = '';
-    handles.medicalHistory = '';
-    handles.subjectId = '';
-    
-    set(handles.subjectNumberInput, 'String', handles.subjectNumber);
-    
-    set(handles.OK, 'enable', 'on');
+    defaultSubject = NaturalSubject;
+
+    handles.subjectNumber = handles.suggestedSubjectNumber;
+    handles.subjectId = defaultSubject.subjectId;  
+    handles.age = defaultSubject.age;
+    handles.gender = defaultSubject.gender;
+    handles.diagnoses = defaultSubject.diagnoses;
+    handles.causeOfDeath = defaultSubject.causeOfDeath;
+    handles.timeOfDeath = defaultSubject.timeOfDeath;
+    handles.medicalHistory = defaultSubject.medicalHistory;    
+    handles.notes = defaultSubject.notes;
 end
 
+% ** SET TEXT FIELDS **
 
-%Display the import path name
-set(handles.importPathTitle, 'String', handles.importPath);
+set(handles.ageInput, 'String', num2str(handles.age));
+set(handles.deathInput, 'String', handles.causeOfDeath);
+set(handles.subjectNumberInput, 'String', num2str(handles.subjectNumber));
+set(handles.subjectIdInput, 'String', handles.subjectId);
+set(handles.medicalHistoryInput, 'String', handles.medicalHistory);
+set(handles.sbjNotesInput, 'String', handles.notes);
 
-handles.cancelValue = false;
+justDate = false;
+
+setDateInput(handles.timeOfDeathInput, handles.timeOfDeath, justDate);
+
+% ** SET POP UP MENUS **
+
+defaultString = 'Select a Gender';
+[genderTypeChoices, ~] = choicesFromEnum('GenderTypes');
+selectedChoice = handles.gender;
+setPopUpMenu(handles.genderInput, defaultString, genderTypeChoices, selectedChoice);
+
+
+% ** SET DIAGNOSES LISTBOX **
+
+setDiagnosesListbox(handles.diagnosesListbox, handles.diagnoses);
+
 
 % Update handles structure
 guidata(hObject, handles);
@@ -162,16 +145,21 @@ function varargout = NaturalSubjectMetadataEntry_OutputFcn(hObject, eventdata, h
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% ********************************************************************************************************************
+% OUTPUT: [cancel, subjectNumber, subjectId, age, gender, diagnoses, causeOfDeath, timeOfDeath, medicalHistory, notes]
+% ********************************************************************************************************************
+
 % Get default command line output from handles structure
-varargout{1} = handles.cancelValue;
+varargout{1} = handles.cancel;
 varargout{2} = handles.subjectNumber;
 varargout{3} = handles.subjectId;
 varargout{4} = handles.age;
 varargout{5} = handles.gender;
-varargout{6} = handles.ADDiagnosis;
+varargout{6} = handles.diagnoses;
 varargout{7} = handles.causeOfDeath;
-varargout{8} = handles.medicalHistory;
-varargout{9} = handles.subjectNotes;
+varargout{8} = handles.timeOfDeath;
+varargout{9} = handles.medicalHistory;
+varargout{10} = handles.notes;
 
 close(handles.NaturalSubjectMetadataEntry);
 end
@@ -331,7 +319,7 @@ function sbjNotesInput_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of sbjNotesInput as text
 %        str2double(get(hObject,'String')) returns contents of sbjNotesInput as a double
 
-handles.subjectNotes = strjoin(rot90(cellstr(get(hObject, 'String'))));
+handles.notes = strjoin(rot90(cellstr(get(hObject, 'String'))));
 
 checkToEnableOkButton(handles);
 
@@ -369,11 +357,11 @@ switch exit
         handles.gender = [];
         handles.ADDiagnosis = [];
         handles.causeOfDeath = '';
-        handles.subjectNotes = '';
+        handles.notes = '';
         handles.medicalHistory = '';
         handles.subjectId = '';
         handles.subjectNumber = [];
-        handles.cancelValue = true;
+        handles.cancel = true;
         guidata(hObject, handles);
         uiresume(handles.NaturalSubjectMetadataEntry);
     case 'No'
@@ -405,11 +393,11 @@ if isequal(get(hObject, 'waitstatus'), 'waiting')
     handles.gender = [];
     handles.ADDiagnosis = [];
     handles.causeOfDeath = '';
-    handles.subjectNotes = '';
+    handles.notes = '';
     handles.medicalHistory = '';
     handles.subjectId = '';
     handles.subjectNumber = [];
-    handles.cancelValue = true;
+    handles.cancel = true;
     guidata(hObject, handles);
     uiresume(hObject);
 else
@@ -418,11 +406,11 @@ else
     handles.gender = [];
     handles.ADDiagnosis = [];
     handles.causeOfDeath = '';
-    handles.subjectNotes = '';
+    handles.notes = '';
     handles.medicalHistory = '';
     handles.subjectId = '';
     handles.subjectNumber = [];
-    handles.cancelValue = true;
+    handles.cancel = true;
     guidata(hObject, handles);
     delete(hObject);
 end
@@ -555,6 +543,171 @@ enableLineScrolling(hObject);
 
 end
 
+function timeOfDeathInput_Callback(hObject, eventdata, handles)
+% hObject    handle to timeOfDeathInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of timeOfDeathInput as text
+%        str2double(get(hObject,'String')) returns contents of timeOfDeathInput as a double
+
+end
+
+% --- Executes during object creation, after setting all properties.
+function timeOfDeathInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to timeOfDeathInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+end
+
+% --- Executes on button press in timeOfDeathButton.
+function timeOfDeathButton_Callback(hObject, eventdata, handles)
+% hObject    handle to timeOfDeathButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+justDate = false;
+
+serialDate = guiDatePicker(now, justDate);
+
+handles.timeOfDeath = serialDate;
+
+setDateInput(handles.timeOfDeathInput, serialDate, justDate);
+
+checkToEnableOkButton(handles);
+
+guidata(hObject, handles);
+
+end
+
+% --- Executes on selection change in diagnosesListbox.
+function diagnosesListbox_Callback(hObject, eventdata, handles)
+% hObject    handle to diagnosesListbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns diagnosesListbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from diagnosesListbox
+
+end
+
+% --- Executes during object creation, after setting all properties.
+function diagnosesListbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to diagnosesListbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+end
+
+% --- Executes on button press in addDiagnosisButton.
+function addDiagnosisButton_Callback(hObject, eventdata, handles)
+% hObject    handle to addDiagnosisButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+isEdit = false;
+
+[cancel, diagnosisType, diagnosisLevel, isPrimaryDiagnosis] = DiagnosisMetadataEntry(isEdit);
+
+if ~cancel
+    newDiagnosis = Diagnosis(diagnosisType, diagnosisLevel, isPrimaryDiagnosis);
+    
+    if isempty(handles.diagnoses)
+        handles.diagnoses = {newDiagnosis};
+    else
+        handles.diagnoses = [handles.diagnoses, {newDiagnosis}];
+    end
+    
+    setDiagnosesListbox(handles.diagnosesListbox, handles.diagnoses);
+    
+    guidata(hObject, handles);
+end
+
+end
+
+% --- Executes on button press in deleteDiagnosisButton.
+function deleteDiagnosisButton_Callback(hObject, eventdata, handles)
+% hObject    handle to deleteDiagnosisButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+diagnoses = handles.diagnoses;
+
+if ~isempty(diagnoses)
+    yes = 'Yes';
+    no = 'No';
+    
+    exit = questdlg('Are you sure you want to delete the selected diagnosis?', 'Delete', yes, no, yes);
+    
+    switch exit
+        case yes
+            index = get(handles.diagnosesListbox, 'Value');
+            
+            handles.diagnoses(index) = [];
+            
+            setDiagnosesListbox(handles.diagnosesListbox, handles.diagnoses);
+            
+            guidata(hObject, handles);        
+    end
+    
+end
+
+
+end
+
+% --- Executes on button press in editDiagnosisButton.
+function editDiagnosisButton_Callback(hObject, eventdata, handles)
+% hObject    handle to editDiagnosisButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+diagnoses = handles.diagnoses;
+
+if ~isempty(diagnoses)
+    index = get(handles.diagnosesListbox, 'Value');
+    
+    selectedDiagnosis = diagnoses{index};
+    
+    isEdit = true;
+    
+    [cancel, diagnosisType, diagnosisLevel, isPrimaryDiagnosis] = DiagnosisMetadataEntry(isEdit, selectedDiagnosis);
+    
+    if ~cancel
+        selectedDiagnosis.diagnosisType = diagnosisType;
+        selectedDiagnosis.diagnosisLevel = diagnosisLevel;
+        selectedDiagnosis.isPrimaryDiagnosis = isPrimaryDiagnosis;
+        
+        diagnoses{index} = selectedDiagnosis;
+        
+        handles.diagnoses = diagnoses;
+        
+        setDiagnosesListbox(handles.diagnosesListbox, handles.diagnoses);
+        
+        guidata(hObject, handles);
+    end
+end
+
+
+end
+
+
+
+
+
+
 %% Local Functions
 
 function checkToEnableOkButton(handles)
@@ -562,12 +715,15 @@ function checkToEnableOkButton(handles)
 %This function will check to see if any of the input variables are empty,
 %and if not it will enable the OK button
 
-% if ~isempty(handles.subjectNumber) && ~isempty(handles.subjectId) && ~isempty(handles.age) && ~isempty(handles.gender) && ~isempty(handles.ADDiagnosis) && ~isempty(handles.causeOfDeath)
-%     set(handles.OK, 'enable', 'on');
-% else
-%     set(handles.OK, 'enable', 'off');
-% end
+if ~isempty(handles.subjectNumber) && ~isempty(handles.subjectId) && ~isempty(handles.age) && ~isempty(handles.gender) && ~isempty(handles.timeOfDeath) && ~isempty(handles.causeOfDeath)
+    set(handles.OK, 'enable', 'on');
+else
+    set(handles.OK, 'enable', 'off');
+end
 
 end
+
+
+
 
 
