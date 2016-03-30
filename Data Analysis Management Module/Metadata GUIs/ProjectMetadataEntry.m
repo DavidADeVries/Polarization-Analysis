@@ -73,6 +73,10 @@ else
     handles.projectTitle = '';
     handles.projectDescription = '';
     handles.projectNotesInput = '';
+      
+    handles.projectTitle = '';
+    handles.projectDescription = '';
+    handles.projectNotes = '';
     
     set(handles.OK, 'enable', 'off');
 end
