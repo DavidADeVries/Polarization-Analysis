@@ -3,6 +3,8 @@ classdef PolarizationAnalysisSession < DataProcessingSession
     % stores metadata for a polarization analysis sessios
     
     properties
+        muellerMatrixComputationType = []
+        muellerMatrixNormalizationType = []
     end
     
     methods
