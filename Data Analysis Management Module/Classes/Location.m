@@ -641,6 +641,35 @@ classdef Location
             end
         end
         
+        
+        % ******************************************
+        % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
+        % ******************************************
+        
+        function [isValidLocation, selectStructureForLocation] = createLocationSelectStructure(location, indices)
+            sessions = location.sessions;
+            
+            hasMMData = false;
+            
+            for i=1:length(sessions)
+                if session.hasMMData()
+                    hasMMData = true;
+                    break;
+                end                
+            end
+            
+            if hasMMData
+                isValidLocation = true;
+                
+                selectStructureForLocation = SelectionEntry(location.naviListboxLabel, indices);
+            else
+                isValidLocation = false;
+                
+                selectStructureForLocation = {};
+            end
+            
+        end
+        
     end
     
 end

@@ -565,6 +565,28 @@ classdef Trial
             end
         end
         
+        
+        % ******************************************
+        % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
+        % ******************************************
+        
+        function [hasValidLocation, locationSelectStructureForTrial] = createLocationSelectStructure(trial)
+            subjects = trial.subjects;
+            
+            locationSelectStructureForTrial = {};
+            
+            for i=1:length(subjects)
+                [hasValidLocation, locationSelectStructureForSubject] = subjects{i}.createLocationSelectStructure(i);
+                
+                if hasValidLocation
+                    locationSelectStructureForTrial = [locationSelectStructureForTrial, {locationSelectStructureForSubject}];
+                end
+            end
+            
+            hasValidLocation = ~isempty(locationSelectStructureForTrial);
+        end
+        
+        
     end
     
 end

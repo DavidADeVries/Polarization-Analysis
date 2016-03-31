@@ -576,6 +576,38 @@ classdef Eye < FixedSample
             end
         end
         
+        % ******************************************
+        % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
+        % ******************************************
+        
+        function [hasValidLocation, selectStructureForEye] = createLocationSelectStructure(subject, indices)
+            quarters = subject.quarters;
+            
+            selectStructureForEye = {};
+            hasValidLocation = false;
+            
+            for i=1:length(quarters)
+                indices = [indices, i];
+                
+                [newHasValidLocation, selectStructureForQuarter] = quarters{i}.createLocationSelectStructure(indices);
+                
+                if newHasValidLocation
+                    selectStructureForEye = [selectStructureForEye, {selectStructureForQuarter}];
+                    
+                    hasValidLocation = true;
+                end
+            end
+            
+            if hasValidLocation
+                selectionEntry = SelectionEntry(subject.naviListboxLabel, indices);
+                
+                selectStructureForEye = [{selectionEntry}, selectStructureForEye];
+            else
+                selectStructureForEye = {};
+            end
+            
+        end
+        
     end
     
 end

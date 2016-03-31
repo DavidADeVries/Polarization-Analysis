@@ -4,15 +4,17 @@ classdef FileSelectionEntry
     properties
         toPath
         selectionLabel
+        dirName
         
         fileIndex = 0 %index of the file selected
         filesInDir % cell array of FileSelectionEntry
     end
     
     methods
-        function selectionEntry = FileSelectionEntry(toPath, selectionLabel, filesInDir)
+        function selectionEntry = FileSelectionEntry(toPath, selectionLabel, dirName, filesInDir)
             selectionEntry.toPath = toPath;
             selectionEntry.selectionLabel = selectionLabel;
+            selectionEntry.dirName = dirName;
             selectionEntry.filesInDir = filesInDir;
         end
         

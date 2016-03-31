@@ -5,6 +5,8 @@ classdef PolarizationAnalysisSession < DataProcessingSession
     properties
         muellerMatrixComputationType = []
         muellerMatrixNormalizationType = []
+        muellerMatrixOnly
+        versionNumber %compare to the Version.m versionNumber
     end
     
     methods

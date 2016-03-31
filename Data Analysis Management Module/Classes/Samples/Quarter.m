@@ -520,6 +520,39 @@ classdef Quarter
             end
         end
         
+        
+        % ******************************************
+        % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
+        % ******************************************
+        
+        function [hasValidLocation, selectStructureForQuarter] = createLocationSelectStructure(subject, indices)
+            locations = quarter.locations;
+            
+            selectStructureForQuarter = {};
+            hasValidLocation = false;
+            
+            for i=1:length(locations)
+                indices = [indices, i];
+                
+                [newHasValidLocation, selectStructureForLocation] = locations{i}.createLocationSelectStructure(indices);
+                
+                if newHasValidLocation
+                    selectStructureForQuarter = [selectStructureForQuarter, {selectStructureForLocation}];
+                    
+                    hasValidLocation = true;
+                end
+            end
+            
+            if hasValidLocation
+                selectionEntry = SelectionEntry(subject.naviListboxLabel, indices);
+                
+                selectStructureForQuarter = [{selectionEntry}, selectStructureForQuarter];
+            else
+                selectStructureForQuarter = {};
+            end
+            
+        end
+        
     end
     
 end

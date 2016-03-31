@@ -22,7 +22,7 @@ function varargout = PolarizationAnalysisModule(varargin)
 
 % Edit the above text to modify the response to help PolarizationAnalysisModule
 
-% Last Modified by GUIDE v2.5 30-Mar-2016 15:47:42
+% Last Modified by GUIDE v2.5 31-Mar-2016 14:50:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -52,14 +52,81 @@ function PolarizationAnalysisModule_OpeningFcn(hObject, eventdata, handles, vara
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to PolarizationAnalysisModule (see VARARGIN)
 
-% Choose default command line output for PolarizationAnalysisModule
-handles.output = hObject;
+% ***************************************
+% INPUT: (project, projectPath, username)
+% ***************************************
+
+handles.project = varargin{1};
+handles.projectPath = varargin{2};
+handles.userName = varargin{3};
+
+handles.versionCutoff = PolarizationAnalysisModuleVersion.versionNumber;
+
+handles.cancel = false;
+
+
+% ** SET POP UP MENUS **
+
+[choices, ~] = choicesFromEnum('MuellerMatrixNormalizationTypes');
+defaultChoiceString = 'Select a Normalization Type';
+
+selectedChoice = [];
+
+setPopUpMenu(handles.normalizationTypeSelect, defaultChoiceString, choices, selectedChoice);
+
+
+
+[choices, ~] = choicesFromEnum('MuellerMatrixComputationTypes');
+defaultChoiceString = 'Select a Computation Type';
+
+selectedChoice = [];
+
+setPopUpMenu(handles.mmComputationSelect, defaultChoiceString, choices, selectedChoice);
+
+
+% ** SET TEXT FIELDS **
+
+set(handles.versionCutoffInput, 'String', num2str(handles.versionCutoff));
+set(handles.currentVersionDisplay, 'String', num2str(handles.versionCutoff));
+
+
+% ** SET LISTBOXES **
+
+[choices, ~] = choicesFromEnum('CroppingTypes');
+
+setListBox(listBoxHandle, choices);
+
+setSubsectionSelectListbox(handles);
+
+
+% ** SET REJECTED INPUTS **
+
+handles = setRejectedInputFields(handles);
+
+
+% SET LOCATION SELECT AND PROCESSING PROGRESS
+
+selectedTrial = project.getSelectedTrial();
+
+[hasValidLocation, locationSelectStructure] = selectedTrial.createLocationSelectStructure();
+
+if hasValidLocation
+    [selectStrings, selectValues] = getSelectStringsAndValues(locationSelectStructure);
+else
+    selectStrings = {'No Valid Locations for Selected Trial'};
+    selectValues = {};
+    
+    set(handles.runAnalysisButton, 'enable', 'off');
+end
+
+set(handles.locationSelectListbox, 'String', selectStrings, 'Value', selectValues);
+
 
 % Update handles structure
 guidata(hObject, handles);
 
 % UIWAIT makes PolarizationAnalysisModule wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+uiwait(handles.PolarizationAnalysisModule);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -69,23 +136,27 @@ function varargout = PolarizationAnalysisModule_OutputFcn(hObject, eventdata, ha
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Get default command line output from handles structure
-varargout{1} = handles.output;
+% *************************
+% OUTPUT: [cancel, project]
+% *************************
+
+varargout{1} = handles.cancel;
+varargout{2} = handles.project;
 
 
-% --- Executes on selection change in popupmenu1.
-function popupmenu1_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu1 (see GCBO)
+% --- Executes on selection change in normalizationTypeSelect.
+function normalizationTypeSelect_Callback(hObject, eventdata, handles)
+% hObject    handle to normalizationTypeSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu1 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu1
+% Hints: contents = cellstr(get(hObject,'String')) returns normalizationTypeSelect contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from normalizationTypeSelect
 
 
 % --- Executes during object creation, after setting all properties.
-function popupmenu1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu1 (see GCBO)
+function normalizationTypeSelect_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to normalizationTypeSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -96,19 +167,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in popupmenu2.
-function popupmenu2_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu2 (see GCBO)
+% --- Executes on selection change in mmComputationSelect.
+function mmComputationSelect_Callback(hObject, eventdata, handles)
+% hObject    handle to mmComputationSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu2 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu2
+% Hints: contents = cellstr(get(hObject,'String')) returns mmComputationSelect contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from mmComputationSelect
 
 
 % --- Executes during object creation, after setting all properties.
-function popupmenu2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu2 (see GCBO)
+function mmComputationSelect_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to mmComputationSelect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -117,3 +188,304 @@ function popupmenu2_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in fullFieldDataCheckbox.
+function fullFieldDataCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to fullFieldDataCheckbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of fullFieldDataCheckbox
+
+
+% --- Executes on button press in useRegisteredDataCheckbox.
+function useRegisteredDataCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to useRegisteredDataCheckbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of useRegisteredDataCheckbox
+
+
+% --- Executes on button press in autoUseMostRecentDataCheckbox.
+function autoUseMostRecentDataCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to autoUseMostRecentDataCheckbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of autoUseMostRecentDataCheckbox
+
+
+% --- Executes on button press in processSubsectionDataCheckbox.
+function processSubsectionDataCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to processSubsectionDataCheckbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of processSubsectionDataCheckbox
+
+
+% --- Executes on selection change in subsectionSelectListbox.
+function subsectionSelectListbox_Callback(hObject, eventdata, handles)
+% hObject    handle to subsectionSelectListbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns subsectionSelectListbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from subsectionSelectListbox
+
+
+% --- Executes during object creation, after setting all properties.
+function subsectionSelectListbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to subsectionSelectListbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function rejectedReasonInput_Callback(hObject, eventdata, handles)
+% hObject    handle to rejectedReasonInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of rejectedReasonInput as text
+%        str2double(get(hObject,'String')) returns contents of rejectedReasonInput as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function rejectedReasonInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to rejectedReasonInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function rejectedByInput_Callback(hObject, eventdata, handles)
+% hObject    handle to rejectedByInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of rejectedByInput as text
+%        str2double(get(hObject,'String')) returns contents of rejectedByInput as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function rejectedByInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to rejectedByInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in cancelButton.
+function cancelButton_Callback(hObject, eventdata, handles)
+% hObject    handle to cancelButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in doneButton.
+function doneButton_Callback(hObject, eventdata, handles)
+% hObject    handle to doneButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+
+function notesInput_Callback(hObject, eventdata, handles)
+% hObject    handle to notesInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of notesInput as text
+%        str2double(get(hObject,'String')) returns contents of notesInput as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function notesInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to notesInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in onlyComputeMMCheckbox.
+function onlyComputeMMCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to onlyComputeMMCheckbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of onlyComputeMMCheckbox
+
+
+% --- Executes on button press in doNotRerunDataAboveCutoffCheckbox.
+function doNotRerunDataAboveCutoffCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to doNotRerunDataAboveCutoffCheckbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of doNotRerunDataAboveCutoffCheckbox
+
+
+
+function versionCutoffInput_Callback(hObject, eventdata, handles)
+% hObject    handle to versionCutoffInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of versionCutoffInput as text
+%        str2double(get(hObject,'String')) returns contents of versionCutoffInput as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function versionCutoffInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to versionCutoffInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function currentVersionDisplay_Callback(hObject, eventdata, handles)
+% hObject    handle to currentVersionDisplay (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of currentVersionDisplay as text
+%        str2double(get(hObject,'String')) returns contents of currentVersionDisplay as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function currentVersionDisplay_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to currentVersionDisplay (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in locationSelectListbox.
+function locationSelectListbox_Callback(hObject, eventdata, handles)
+% hObject    handle to locationSelectListbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns locationSelectListbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from locationSelectListbox
+
+
+% --- Executes during object creation, after setting all properties.
+function locationSelectListbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to locationSelectListbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in progressDisplay.
+function progressDisplay_Callback(hObject, eventdata, handles)
+% hObject    handle to progressDisplay (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns progressDisplay contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from progressDisplay
+
+
+% --- Executes during object creation, after setting all properties.
+function progressDisplay_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to progressDisplay (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in yesRejectedButton.
+function yesRejectedButton_Callback(hObject, eventdata, handles)
+% hObject    handle to yesRejectedButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of yesRejectedButton
+
+
+% --- Executes on button press in noRejectedButton.
+function noRejectedButton_Callback(hObject, eventdata, handles)
+% hObject    handle to noRejectedButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of noRejectedButton
+
+
+% --- Executes on button press in runAnalysisButton.
+function runAnalysisButton_Callback(hObject, eventdata, handles)
+% hObject    handle to runAnalysisButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in autoIgnoreRejectedSessions.
+function autoIgnoreRejectedSessions_Callback(hObject, eventdata, handles)
+% hObject    handle to autoIgnoreRejectedSessions (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of autoIgnoreRejectedSessions
+
+
+% ****************
+% Helper Functions
+% ****************
+
+function setSubsectionSelectListbox(handles)
+
+if get(handles.processSubsectionDataCheckbox, 'Value')
+    enable = 'on';
+else
+    enable = 'off';
+end
+
+set(handles.subsectionSelectListbox, 'enable', enable);

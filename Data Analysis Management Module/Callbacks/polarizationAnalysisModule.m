@@ -7,7 +7,7 @@ if ~isempty(project) % can't create a new project if a new isn't loaded
     selectedTrial = project.getSelectedTrial();
     
     if ~isempty(selectedTrial)
-        [cancel, project] = PolarizationAnalysisModule(handles.localProject, handles.localPath);
+        [cancel, project] = PolarizationAnalysisModule(handles.localProject, handles.localPath, handles.userName);
         
         if ~cancel
             handles.localProjcet = project;

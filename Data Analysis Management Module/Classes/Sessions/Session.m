@@ -162,6 +162,18 @@ classdef Session
             metadataHistoryStrings = generateMetadataHistoryStrings(session.metadataHistory);
         end
         
+        function hasMMDataBool = hasMMData(session)
+            hasMMDataBool = false;
+            
+            for i=1:length(session.fileSelectionEntries)
+                entry = session.fileSelectionEntries{i};
+                
+                if ~isempty(containsString(MicroscopeNamingConventions.MM_DIR.project, entry.dirName))
+                    hasMMDataBool = true;
+                    break;
+                end
+            end
+        end
         
     end
     
