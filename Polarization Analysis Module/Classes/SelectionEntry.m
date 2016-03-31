@@ -8,6 +8,10 @@ classdef SelectionEntry
     end
     
     methods
+        function entry = SelectionEntry(label, indices)
+            entry.label = label;
+            entry.indices = indices;
+        end
     end
     
 end

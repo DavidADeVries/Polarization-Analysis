@@ -652,7 +652,7 @@ classdef Location
             hasMMData = false;
             
             for i=1:length(sessions)
-                if session.hasMMData()
+                if sessions{i}.hasMMData()
                     hasMMData = true;
                     break;
                 end                

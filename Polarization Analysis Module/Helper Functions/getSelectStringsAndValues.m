@@ -24,6 +24,6 @@ function tab = genTab(numTabs)
     tab = '';
     
     for i=1:numTabs
-        tab = [tab, PolarizationAnalysisModuleContants.TAB];
+        tab = [tab, PolarizationAnalysisModuleConstants.TAB];
     end
 end

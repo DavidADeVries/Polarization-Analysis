@@ -514,12 +514,12 @@ classdef NaturalSubject < Subject
             hasValidLocation = false;
             
             for i=1:length(samples)
-                indices = [indices, i];
+                newIndices = [indices, i];
                 
-                [newHasValidLocation, selectStructureForSample] = samples{i}.createLocationSelectStructure(indices);
+                [newHasValidLocation, selectStructureForSample] = samples{i}.createLocationSelectStructure(newIndices);
                 
                 if newHasValidLocation
-                    selectStructureForSubject = [selectStructureForSubject, {selectStructureForSample}];
+                    selectStructureForSubject = [selectStructureForSubject, selectStructureForSample];
                     
                     hasValidLocation = true;
                 end

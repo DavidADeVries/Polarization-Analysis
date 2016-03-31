@@ -576,10 +576,12 @@ classdef Trial
             locationSelectStructureForTrial = {};
             
             for i=1:length(subjects)
-                [hasValidLocation, locationSelectStructureForSubject] = subjects{i}.createLocationSelectStructure(i);
+                indices = i;
+                
+                [hasValidLocation, locationSelectStructureForSubject] = subjects{i}.createLocationSelectStructure(indices);
                 
                 if hasValidLocation
-                    locationSelectStructureForTrial = [locationSelectStructureForTrial, {locationSelectStructureForSubject}];
+                    locationSelectStructureForTrial = [locationSelectStructureForTrial, locationSelectStructureForSubject];
                 end
             end
             

@@ -29,7 +29,7 @@ classdef MuellerMatrixComputationTypes
     end
     
     methods
-        function enum = MuellerMatrixNormalizationTypes(displayString, explanationString, startDateString, endDateString)
+        function enum = MuellerMatrixComputationTypes(displayString, explanationString, startDateString, endDateString)
             enum.displayString = displayString;
             enum.explanationString = explanationString;
             enum.startDateString = startDateString;

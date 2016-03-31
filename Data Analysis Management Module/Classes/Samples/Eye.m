@@ -587,12 +587,12 @@ classdef Eye < FixedSample
             hasValidLocation = false;
             
             for i=1:length(quarters)
-                indices = [indices, i];
+                newIndices = [indices, i];
                 
-                [newHasValidLocation, selectStructureForQuarter] = quarters{i}.createLocationSelectStructure(indices);
+                [newHasValidLocation, selectStructureForQuarter] = quarters{i}.createLocationSelectStructure(newIndices);
                 
                 if newHasValidLocation
-                    selectStructureForEye = [selectStructureForEye, {selectStructureForQuarter}];
+                    selectStructureForEye = [selectStructureForEye, selectStructureForQuarter];
                     
                     hasValidLocation = true;
                 end

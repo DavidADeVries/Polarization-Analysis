@@ -12,9 +12,9 @@ classdef MuellerMatrixNormalizationTypes
     end
     
     methods
-        function enum = MuellerMatrixNormalizationTypes(displayString, explanation)
+        function enum = MuellerMatrixNormalizationTypes(displayString, explanationString)
             enum.displayString = displayString;
-            enum.explanation = explanation;
+            enum.explanationString = explanationString;
         end
     end
     

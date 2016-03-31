@@ -22,7 +22,7 @@ function varargout = PolarizationAnalysisModule(varargin)
 
 % Edit the above text to modify the response to help PolarizationAnalysisModule
 
-% Last Modified by GUIDE v2.5 31-Mar-2016 14:50:29
+% Last Modified by GUIDE v2.5 31-Mar-2016 16:39:58
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -62,6 +62,10 @@ handles.userName = varargin{3};
 
 handles.versionCutoff = PolarizationAnalysisModuleVersion.versionNumber;
 
+handles.rejected = false;
+handles.rejectedReason = '';
+handles.rejectedBy = handles.userName;
+
 handles.cancel = false;
 
 
@@ -94,7 +98,7 @@ set(handles.currentVersionDisplay, 'String', num2str(handles.versionCutoff));
 
 [choices, ~] = choicesFromEnum('CroppingTypes');
 
-setListBox(listBoxHandle, choices);
+setListBox(handles.subsectionSelectListbox, choices);
 
 setSubsectionSelectListbox(handles);
 
@@ -106,7 +110,7 @@ handles = setRejectedInputFields(handles);
 
 % SET LOCATION SELECT AND PROCESSING PROGRESS
 
-selectedTrial = project.getSelectedTrial();
+selectedTrial = handles.project.getSelectedTrial();
 
 [hasValidLocation, locationSelectStructure] = selectedTrial.createLocationSelectStructure();
 
@@ -119,7 +123,7 @@ else
     set(handles.runAnalysisButton, 'enable', 'off');
 end
 
-set(handles.locationSelectListbox, 'String', selectStrings, 'Value', selectValues);
+set(handles.locationSelectListbox, 'String', selectStrings);%, 'Value', selectValues);
 
 
 % Update handles structure
