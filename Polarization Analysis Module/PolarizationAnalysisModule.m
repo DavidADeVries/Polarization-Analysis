@@ -519,10 +519,38 @@ function validateButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% disable fields that cann
+% disable fields that cannot be changed after validation
+set(handles.useRegisteredDataCheckbox, 'Enable', 'off');
+set(handles.autoUseMostRecentDataCheckbox, 'Enable', 'off');
+set(handles.autoIgnoreRejectedSessions, 'Enable', 'off');
+set(handles.doNotRerunDataAboveCutoffCheckbox, 'Enable', 'off');
+set(handles.versionCutoffInput, 'Enable', 'off');
+set(handles.fullFieldDataCheckbox, 'Enable', 'off');
+set(handles.processSubsectionDataCheckbox, 'Enable', 'off');
+set(handles.subsectionSelectListbox, 'Enable', 'off');
 
+set(handles.locationSelectListbox, 'Enable', 'inactive');
 
+% run validation
 selectionStructure = handles.locationSelectionStructure;
+
+useOnlyRegisteredData = get(handles.useRegisteredDataCheckbox, 'Value');
+autoUseMostRecentData = get(handles.autoUseMostRecentDataCheckbox, 'Value');
+autoIgnoreRejectedSessions = get(handles.autoIgnoreRejectedSessions, 'Value');
+doNotRerunDataAboveCutoff = get(handles.doNotRerunDataAboveCutoffCheckbox, 'Value');
+versionCutoff = str2double(get(handles.versionCutoffInput, 'Value'));
+processFullFieldData = get(handles.fullFieldDataCheckbox, 'Value');
+
+processSubsectionData = get(handles.processSubsectionDataCheckbox, 'Value');
+
+if processSubsectionData
+    choices = get(handles.subsectionSelectListbox, 'Value');
+    
+    
+else
+    subsectionChoices = {};
+
+
 
 
 
