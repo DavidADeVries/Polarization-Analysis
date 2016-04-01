@@ -4,7 +4,7 @@ function [selectStrings, selectValues] = getSelectStringsAndValues(locationSelec
 numEntries = length(locationSelectStructure);
 
 selectStrings = cell(numEntries, 1);
-selectValues = false(numEntries, 1);
+selectValues = [];
 
 for i=1:numEntries
     entry = locationSelectStructure{i};
@@ -14,7 +14,10 @@ for i=1:numEntries
     tab = genTab(numTabs);
     
     selectStrings{i} = [tab, entry.label];
-    selectValues = entry.selected;
+    
+    if entry.isSelected
+        selectValues = [selectValues, i];
+    end
 end
 
 

@@ -661,7 +661,9 @@ classdef Location
             if hasMMData
                 isValidLocation = true;
                 
-                selectStructureForLocation = SelectionEntry(location.naviListboxLabel, indices);
+                isLocation = true;
+                
+                selectStructureForLocation = SelectionEntry(location.naviListboxLabel, indices, isLocation);
             else
                 isValidLocation = false;
                 
