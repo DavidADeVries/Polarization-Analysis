@@ -62,7 +62,7 @@ handles.output = hObject;
 
 handles.importPath = varargin{1}; %Param is importPath
 handles.userName = varargin{2}; %Param is userName
-sessionChoices = varargin{3}; %Param is sessionChoices
+handles.sessionChoices = varargin{3}; %Param is sessionChoices
 
 isEdit = varargin{4};
 
@@ -142,7 +142,7 @@ setPopUpMenu(handles.registrationTypeList, defaultChoiceString, choices, selecte
 
 listBoxHandle = handles.sessionListbox;
 
-setSessionListBox(listBoxHandle, sessionChoices, handles.linkedSessionNumbers);
+setSessionListBox(listBoxHandle, handles.sessionChoices, handles.linkedSessionNumbers);
 
 
 % ** SET REJECTED INPUTS **
@@ -171,7 +171,8 @@ function varargout = LegacyRegistrationSessionMetadataEntry_OutputFcn(hObject, e
 %OUTPUT: [cancel, sessionDate, sessionDoneBy, notes, registrationType, registrationParams, rejected, rejectedReason, rejectedBy, sessionChoices]
 %*******************************************************************************************************************************
 
-handles.linkedSessionNumbers = get(handles.sessionListbox, 'Value');
+handles.linkedSessionNumbers = getSessionNumbersFromListBox(handles.sessionListbox, handles.sessionChoices);
+get(handles.sessionListbox, 'Value');
 guidata(hObject, handles);
 
 % Get default command line output from handles structure
