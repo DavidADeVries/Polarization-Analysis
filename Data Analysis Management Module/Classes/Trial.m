@@ -407,7 +407,7 @@ classdef Trial
             trial = trial.updateSubject(subject);
         end
         
-        function trial = importLegacyData(trial, legacySubjectImportDir, localProjectPath, userName)
+        function handles = importLegacyData(trial, legacySubjectImportDir, project, handles)
             % select subject
             
             prompt = ['Select the subject to which the data being imported from ', legacySubjectImportDir, ' belongs to.'];
@@ -420,7 +420,7 @@ classdef Trial
                 if createNew
                     suggestedSubjectNumber = trial.nextSubjectNumber();
                         
-                    subject = trial.createSubject(suggestedSubjectNumber, trial.getSubjectNumbers(), trial.dirName, localProjectPath, legacySubjectImportDir, userName);
+                    subject = trial.createSubject(suggestedSubjectNumber, trial.getSubjectNumbers(), trial.dirName, handles.localPath, legacySubjectImportDir, handles.userName);
                 else
                     subject = trial.getSubjectFromChoice(choice);
                 end
@@ -428,9 +428,7 @@ classdef Trial
                 if ~isempty(subject)
                     dataFilename = trial.generateFilenameSection();
                     
-                    subject = subject.importLegacyData(makePath(trial.dirName, subject.dirName), legacySubjectImportDir, localProjectPath, dataFilename, userName, trial.subjectType);
-                
-                    trial = trial.updateSubject(subject);
+                    handles = subject.importLegacyData(makePath(trial.dirName, subject.dirName), legacySubjectImportDir, dataFilename, handles, project, trial);
                 end
             end            
         end

@@ -10,9 +10,11 @@ subjectImportDir = uigetdir(start, title);
 if subjectImportDir ~= 0 %dir successfully selected
     project = handles.localProject;
     
-    project = project.importLegacyData(subjectImportDir, handles.localPath, handles.userName);
+    handles = project.importLegacyData(subjectImportDir, handles);    
     
-    handles.localProject = project;
+    % need to get the updated version of the project from within the
+    % handles object
+    project = handles.localProject;
     
     % update gui
     handles = project.updateNavigationListboxes(handles);

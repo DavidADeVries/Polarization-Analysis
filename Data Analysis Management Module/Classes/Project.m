@@ -296,7 +296,7 @@ classdef Project
             project = project.updateTrial(trial);
         end
         
-        function project = importLegacyData(project, legacySubjectImportDir, localProjectPath, userName)
+        function handles = importLegacyData(project, legacySubjectImportDir, handles)
             prompt = ['Select the trial to which the subject being imported belongs to. Import path: ', legacySubjectImportDir];
             title = 'Select Trial';
             choices = project.getTrialChoices();
@@ -305,15 +305,13 @@ classdef Project
             
             if ~cancel
                 if createNew
-                    trial = Trial(project.nextTrialNumber, project.getTrialNumbers(), userName, localProjectPath, legacySubjectImportDir);
+                    trial = Trial(project.nextTrialNumber, project.getTrialNumbers(), handles.userName, handles.localPath, legacySubjectImportDir);
                 else
                     trial = project.getTrialFromChoice(choice);
                 end
                 
                 if ~isempty(trial)
-                    trial = trial.importLegacyData(legacySubjectImportDir, localProjectPath, userName);
-                    
-                    project = project.updateTrial(trial);
+                    handles = trial.importLegacyData(legacySubjectImportDir, project, handles);                    
                 end
             end
         end

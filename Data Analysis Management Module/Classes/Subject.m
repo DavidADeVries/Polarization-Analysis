@@ -62,7 +62,7 @@ classdef Subject
         end
         
         
-        function subject = importLegacyData(subject, toSubjectPath, legacySubjectImportPath, localProjectPath, dataFilename, userName, subjectType)
+        function handles = importLegacyData(subject, toSubjectPath, legacySubjectImportPath,  dataFilename, handles, project, trial)
             % keep looping through importing locations for the subject
             counter = 1;
             
@@ -100,7 +100,16 @@ classdef Subject
                     
                     legacyImportPaths = struct('rawDataPath', rawDataPath, 'registeredDataPath', registeredDataPath, 'positiveAreaPath', positiveAreaPath, 'negativeAreaPath', negativeAreaPath);
                     
-                    subject = subject.importLegacyDataTypeSpecific(toSubjectPath, legacyImportPaths, displayImportPath, localProjectPath, dataFilename, userName, subjectType);
+                    subject = subject.importLegacyDataTypeSpecific(toSubjectPath, legacyImportPaths, displayImportPath, handles.localPath, dataFilename, handles.userName, trial.subjectType);
+                                    
+                    % update data/GUI
+                    trial = trial.updateSubject(subject);                    
+                    project = project.updateTrial(trial);                    
+                    
+                    handles.localProject = project;
+                    
+                    handles = project.updateNavigationListboxes(handles);
+                    handles = project.updateMetadataFields(handles);
                 end
                     
                 counter = counter + 1;

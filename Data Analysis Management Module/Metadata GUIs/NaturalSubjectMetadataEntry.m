@@ -715,11 +715,11 @@ function checkToEnableOkButton(handles)
 %This function will check to see if any of the input variables are empty,
 %and if not it will enable the OK button
 
-if ~isempty(handles.subjectNumber) && ~isempty(handles.subjectId) && ~isempty(handles.age) && ~isempty(handles.gender) && ~isempty(handles.timeOfDeath) && ~isempty(handles.causeOfDeath)
+%if ~isempty(handles.subjectNumber) && ~isempty(handles.subjectId) && ~isempty(handles.age) && ~isempty(handles.gender) && ~isempty(handles.timeOfDeath) && ~isempty(handles.causeOfDeath)
     set(handles.OK, 'enable', 'on');
-else
-    set(handles.OK, 'enable', 'off');
-end
+%else
+  %  set(handles.OK, 'enable', 'off');
+%end
 
 end
 
