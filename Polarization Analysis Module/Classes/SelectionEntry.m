@@ -10,6 +10,8 @@ classdef SelectionEntry
         
         isValidated = false;
         sessionsToProcess = []; %list of sessionNumbers
+        
+        toLocationPath = '';
     end
     
     methods

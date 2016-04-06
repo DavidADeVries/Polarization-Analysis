@@ -27,11 +27,11 @@ function varargout = PolarizationAnalysisModule(varargin)
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-                   'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @PolarizationAnalysisModule_OpeningFcn, ...
-                   'gui_OutputFcn',  @PolarizationAnalysisModule_OutputFcn, ...
-                   'gui_LayoutFcn',  [] , ...
-                   'gui_Callback',   []);
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @PolarizationAnalysisModule_OpeningFcn, ...
+    'gui_OutputFcn',  @PolarizationAnalysisModule_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -114,8 +114,6 @@ handles = setRejectedInputFields(handles);
 
 selectedTrial = handles.project.getSelectedTrial();
 
-handles.selectedTrial = selectedTrial;
-
 [hasValidLocation, locationSelectStructure] = selectedTrial.createLocationSelectStructure();
 
 if hasValidLocation
@@ -144,7 +142,7 @@ uiwait(handles.PolarizationAnalysisModule);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = PolarizationAnalysisModule_OutputFcn(hObject, eventdata, handles) 
+function varargout = PolarizationAnalysisModule_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -156,8 +154,6 @@ function varargout = PolarizationAnalysisModule_OutputFcn(hObject, eventdata, ha
 
 varargout{1} = handles.cancel;
 varargout{2} = handles.project;
-
-close(handles.PolarizationAnalysisModule);
 
 
 % --- Executes on selection change in normalizationTypeSelect.
@@ -526,7 +522,7 @@ function validateButton_Callback(hObject, eventdata, handles)
 
 
 % run validation
-selectStructure = handles.locationSelectStructure;
+selectionStructure = handles.locationSelectionStructure;
 
 useOnlyRegisteredData = get(handles.useRegisteredDataCheckbox, 'Value');
 autoUseMostRecentData = get(handles.autoUseMostRecentDataCheckbox, 'Value');
@@ -545,14 +541,14 @@ else
     subsectionChoices = {};
 end
 
-[isValidated, selectStructure] = validateLocationsForProcessing(...
-    handles.selectedTrial,...
-    selectStructure,...
+
+[isValidated, locationSelectionStructure] = validateLocationsForProcessing(...
+    selectionStructure,...
     useOnlyRegisteredData,...
     autoUseMostRecentData,...
     autoIgnoreRejectedSessions,...
     doNotRerunDataAboveCutoff,...
-    versionCutoff,...
+    versionCutoff,....
     processFullFieldData,...
     subsectionChoices);
 
@@ -569,23 +565,15 @@ if isValidated
     
     set(handles.locationSelectListbox, 'Enable', 'inactive');
     
-    % disable/enable buttons
+    % disable validateButton
     set(handles.validateButton, 'Enable', 'off');
+    
+    % enable
     set(handles.runAnalysisButton, 'Enable', 'on');
     
-    % set data handles
-    handles.validated = true;
-    handles.locationSelectStructure = selectStructure;
-    
-    % update progress strings
-    
-    progressStrings = getProgressStrings(selectStructure);
-    
-    set(handles.progressDisplay, 'String', progressStrings);
-    
-    % push up changes
-    
-    guidata(hObject, handles);
+    % set valid handle
+    handles.
+else
     
 end
 

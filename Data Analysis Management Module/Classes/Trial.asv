@@ -594,9 +594,8 @@ classdef Trial
             subject = trial.subjects(indices(1));
             
             newIndices = indices(2:length(indices));
-            toLocationPath = trial.dirName;
             
-            [isValidated, toLocationPath, sessionsToProcess] = subject.validateLocation(newIndices, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices);
+            [isValidated, toLocationPath, sessionsToProcess] = subject.validateLocation(newIndices, trial.
             
             if isValidated
                 entry.isValidated = true;

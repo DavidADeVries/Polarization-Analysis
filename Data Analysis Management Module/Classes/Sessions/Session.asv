@@ -176,7 +176,7 @@ classdef Session
         end
         
         function [linkedSessionNumbers, checkedSessions] = getLinkedSessionNumbers(session, allSessions, checkedSessions, linkedSessionNumbers)
-            checkedSessions = [checkedSessions, session.sessionNumber];
+            checkedSessions = [checkSessionSessions, session.sessionNumber];
             
             if isa(session, class(DataProcessingSession))
                 allLinkedSessionNumbers = session.linkedSessionNumbers;
@@ -190,8 +190,15 @@ classdef Session
                         
                         nextSession = getSessionBySessionNumber(allSessions, sessionNumber);
                         
-                        [linkedSessionNumbers, checkedSessions] = nextSession.getLinkedSessionNumbers(allSessions, checkedSessions);
+                        [linkedSessionNumbers, checkSessions] = nextSession.getLinkedSessionNumbers(allSessions, checkSessions);
                     end                    
+                end
+                
+                for i=1:length(linkedSessionNumbers)
+                    
+                    for j=1:length(allSessions)
+                    linkedSessionNumbers = [linkedSessionNumbers,];
+                    end
                 end
                     
             else % no linkedSessions list
