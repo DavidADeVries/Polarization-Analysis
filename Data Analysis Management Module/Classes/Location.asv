@@ -826,11 +826,7 @@ classdef Location
             finalSessionsToProcess = [];
             
             for i=1:length(sessionsToProcess)
-                session = getSessionBySessionNumber(sessions, sessionsToProcess(i));
-                
-                if session.hasMMData()
-                    finalSessionsToProcess = [finalSessionsToProcess, sessionsToProcess(i)];
-                end
+                session = get
             end
             
         end

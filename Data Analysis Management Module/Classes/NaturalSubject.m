@@ -535,13 +535,13 @@ classdef NaturalSubject < Subject
             
         end
         
-        function [isValidated, toLocationPath, sessionsToProcess] = validateLocation(subject, indices, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices)
+        function [isValidated, toLocationPath, sessionsToProcess] = validateLocation(subject, indices, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources)
             sample = subject.samples(indices(1));
             
             newIndices = indices(2:length(indices));
             toLocationPath = makePath(toLocationPath, subject.dirName);
             
-            [isValidated, toLocationPath, sessionsToProcess] = sample.validateLocation(newIndices, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices);
+            [isValidated, toLocationPath, sessionsToProcess] = sample.validateLocation(newIndices, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources);
         end
         
     end

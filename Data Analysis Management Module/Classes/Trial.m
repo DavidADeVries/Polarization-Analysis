@@ -588,7 +588,7 @@ classdef Trial
             hasValidLocation = ~isempty(locationSelectStructureForTrial);
         end
         
-        function entry = validateLocation(trial, entry, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices)
+        function entry = validateLocation(trial, entry, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources)
             indices = entry.indices;
             
             subject = trial.subjects(indices(1));
@@ -596,7 +596,7 @@ classdef Trial
             newIndices = indices(2:length(indices));
             toLocationPath = trial.dirName;
             
-            [isValidated, toLocationPath, sessionsToProcess] = subject.validateLocation(newIndices, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices);
+            [isValidated, toLocationPath, sessionsToProcess] = subject.validateLocation(newIndices, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources);
             
             if isValidated
                 entry.isValidated = true;

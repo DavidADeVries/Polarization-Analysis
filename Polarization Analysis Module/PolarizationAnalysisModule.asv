@@ -567,7 +567,7 @@ numSelections = length(selections);
 rawDataSources = cell(numSelections, 1);
 
 for i=1:numSelections
-    rawDataSources{i} = dataCollectionSessionTypes{selections(i)};
+    
 end
 
 
@@ -581,8 +581,7 @@ end
     doNotRerunDataAboveCutoff,...
     versionCutoff,...
     processFullFieldData,...
-    subsectionChoices,...
-    rawDataSources);
+    subsectionChoices);
 
 if isValidated
     % disable fields that cannot be changed after validation
@@ -594,10 +593,9 @@ if isValidated
     set(handles.fullFieldDataCheckbox, 'Enable', 'off');
     set(handles.processSubsectionDataCheckbox, 'Enable', 'off');
     set(handles.subsectionSelectListbox, 'Enable', 'off');
-    set(handles.rawDataSourcesListbox, 'Enable', 'off');
     
     set(handles.locationSelectListbox, 'Enable', 'inactive');
-        
+    
     % disable/enable buttons
     set(handles.validateButton, 'Enable', 'off');
     set(handles.runAnalysisButton, 'Enable', 'on');

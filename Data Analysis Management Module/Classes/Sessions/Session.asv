@@ -169,7 +169,7 @@ classdef Session
                 entry = session.fileSelectionEntries{i};
                 
                 if ~isempty(containsString(MicroscopeNamingConventions.MM_DIR.project, entry.dirName))
-                    hasMMDataBool = session.fileSelectionEntries{i}.hasMMData();
+                    hasMMDataBool = true;
                     break;
                 end
             end
@@ -270,15 +270,8 @@ classdef Session
             if doNotRerunDataAboveCutoff
                 polarizationAnalysisSessions = session.getPolarizationAnalysisSessions(sessions);
                 
-                runSession = true;
-                
                 for i=1:length(polarizationAnalysisSessions)
-                   analysisSession = polarizationAnalysisSessions{i};
-                   
-                   if analysisSession.versionNumber > versionCutoff
-                        runSession = false;
-                        break;
-                   end
+                    
                 end
             else
                 runSession = true;
