@@ -15,10 +15,10 @@ for i=2:length(raw_manifest)
     %iterate through locations
     
     for j=1:length(locations)
-        location_path = strcat(path, char(subject), '/Processed/', char(locations(j)), '/');
+        location_path = strcat(path, char(subject), '/Processed/', char(locations(j)), '/Control/');
         
         %need to find the file base name
-        file_search_dir = dir(fullfile(strcat(location_path, 'Control/')));
+        file_search_dir = dir(fullfile(location_path));
         
         search_string = '_con_0000.bmp';
         
@@ -30,7 +30,7 @@ for i=2:length(raw_manifest)
         
         filename = char(location_files(1));
                 
-        file_base_name = filename(1:length(filename)-length(search_string));
+        file_base_name = strcat(filename(1:length(filename)-length(search_string)), '_con');
         
         MM_full_analysis_for_pos_neg(location_path, file_base_name);
     end

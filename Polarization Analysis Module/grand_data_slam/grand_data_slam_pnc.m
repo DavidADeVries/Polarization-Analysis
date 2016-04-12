@@ -1,4 +1,4 @@
-function [] = grand_data_slam(main_analysis_path)
+function [] = grand_data_slam_pnc(main_analysis_path)
 % this function is to be run AFTER all your data has been put through the
 % full analysis pipeline (has MM calculated, metrics calculated and
 % outputed, stats files generated, pos vs. neg analysis run). What this
@@ -47,10 +47,10 @@ fprintf(skew_vals,'Subject,Location,');
 % fprintf(unpaired_t_test_vals,'Subject,Location,');
 
 for i=1:height(metric_labels)
-   fprintf(mean_vals,strcat(char(metric_labels(i)),',,'));
-   fprintf(stdev_vals,strcat(char(metric_labels(i)),',,'));
-   fprintf(median_vals,strcat(char(metric_labels(i)),',,'));
-   fprintf(skew_vals,strcat(char(metric_labels(i)),',,'));
+   fprintf(mean_vals,strcat(char(metric_labels(i)),',,,'));
+   fprintf(stdev_vals,strcat(char(metric_labels(i)),',,,'));
+   fprintf(median_vals,strcat(char(metric_labels(i)),',,,'));
+   fprintf(skew_vals,strcat(char(metric_labels(i)),',,,'));
 end
 % 
 % for i=1:height(tests_metric_labels)
@@ -68,10 +68,10 @@ fprintf(skew_vals,' \r\n ,,');
 % fprintf(unpaired_t_test_vals,' \r\n ,,');
 
 for i=1:height(metric_labels)
-   fprintf(mean_vals,'Pos,Neg,Control,'); %sub-column pos and neg headers
-   fprintf(stdev_vals,'Pos,Neg,Control,');
-   fprintf(median_vals,'Pos,Neg,Control,');
-   fprintf(skew_vals,'Pos,Neg,Control,');
+   fprintf(mean_vals,'Pos,Pos Con,Control,'); %sub-column pos and neg headers
+   fprintf(stdev_vals,'Pos,Pos Con,Control,');
+   fprintf(median_vals,'Pos,Pos Con,Control,');
+   fprintf(skew_vals,'Pos,Pos Con,Control,');
 end
 
 % for i=1:height(tests_metric_labels)
@@ -142,7 +142,7 @@ for i=2:length(raw_manifest)
         location_path = strcat(main_analysis_path, char(subject), '/Processed/', char(locations(j)), '/');
         
         pos_path = strcat(location_path, 'Positive/Metrics and Histograms/');
-        neg_path = strcat(location_path, 'Negative/Metrics and Histograms/');
+        neg_path = strcat(location_path, 'PosCon/Metrics and Histograms/');
         con_path = strcat(location_path, 'Control/Metrics and Histograms/');
         
         pos_dir = dir(fullfile(pos_path));
@@ -150,7 +150,7 @@ for i=2:length(raw_manifest)
         con_dir = dir(fullfile(con_path));
         
         pos_files = find_files_containing(pos_dir, 'pos_metrics.csv');
-        neg_files = find_files_containing(neg_dir, 'neg_metrics.csv');
+        neg_files = find_files_containing(neg_dir, 'poscon_metrics.csv');
         con_files = find_files_containing(con_dir, 'con_metrics.csv');
         
         if ~(height(pos_files) == 1)
@@ -338,7 +338,7 @@ fprintf(median_vals, '\r\n');
 fprintf(skew_vals, '\r\n');
 
 % print p vals
-pos_neg_label = 'Positive-Negative Paired T-Test';
+pos_neg_label = 'Positive-PosCon Paired T-Test';
 
 fprintf(mean_vals, strcat(pos_neg_label,',P Value'));
 fprintf(stdev_vals, strcat(pos_neg_label,',P Value'));
@@ -646,7 +646,7 @@ fprintf(median_vals, '\r\n');
 fprintf(skew_vals, '\r\n');
 
 % print p vals
-neg_con_label = 'Negative-Control Paired T-Test';
+neg_con_label = 'PosCon-Control Paired T-Test';
 
 fprintf(mean_vals, strcat(neg_con_label,',P Value'));
 fprintf(stdev_vals, strcat(neg_con_label,',P Value'));
