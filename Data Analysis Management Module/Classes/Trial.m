@@ -591,7 +591,7 @@ classdef Trial
         function entry = validateLocation(trial, entry, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources)
             indices = entry.indices;
             
-            subject = trial.subjects(indices(1));
+            subject = trial.subjects{indices(1)};
             
             newIndices = indices(2:length(indices));
             toLocationPath = trial.dirName;

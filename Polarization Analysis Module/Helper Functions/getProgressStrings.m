@@ -14,6 +14,10 @@ for i=1:numEntries
         else
             progressStrings{i} = 'Not Selected';
         end
+        
+        if entry.isValidated
+            progressStrings{i} = 'Validated';
+        end
     else        
         progressStrings{i} = ' '; %display nothing
     end

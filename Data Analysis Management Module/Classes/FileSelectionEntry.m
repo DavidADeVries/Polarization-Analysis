@@ -82,7 +82,7 @@ classdef FileSelectionEntry
         end
         
         function hasData = hasMMData(entry)
-            mmNamingConventions = MicroscopeNmaingConventions.getMMNamingConventions();
+            mmNamingConventions = MicroscopeNamingConventions.getMMNamingConventions();
             
             numNamingConventions = length(mmNamingConventions);
             
@@ -97,7 +97,7 @@ classdef FileSelectionEntry
             files = entry.filesInDir;
             
             for i=1:length(files)
-                indices = containsSubstring(fileNameEndings{i}, files{i}.dirName);
+                indices = containsSubstring(fileNameEndings, files{i}.dirName);
                 
                 if length(indices) == 1
                     index = indices(1);

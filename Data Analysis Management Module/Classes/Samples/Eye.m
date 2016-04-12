@@ -610,7 +610,7 @@ classdef Eye < FixedSample
            
         
         function [isValidated, toLocationPath, sessionsToProcess] = validateLocation(eye, indices, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources)
-            quarter = eye.samples(indices(1));
+            quarter = eye.quarters{indices(1)};
             
             newIndices = indices(2:length(indices));
             toLocationPath = makePath(toLocationPath, eye.dirName);

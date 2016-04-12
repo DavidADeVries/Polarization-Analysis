@@ -257,7 +257,7 @@ classdef Session
              for i=1:length(sessions)
                 nextSession = sessions{i};
                 
-                if isa(nextSession, class(SessionTypes.LegacyRegistrationSession)) || isa(nextSession, class(SessionTypes.RegistrationSession))
+                if isa(nextSession, class(SessionTypes.LegacyRegistration)) || isa(nextSession, class(SessionTypes.Registration))
                     if ~isempty(session.sessionNumber, nextSession.linkedSessionNumbers)
                         registeredSessions{counter} = nextSession;
                         counter = counter + 1;

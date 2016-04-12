@@ -555,7 +555,7 @@ classdef Quarter
            
         
         function [isValidated, toLocationPath, sessionsToProcess] = validateLocation(quarter, indices, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources)
-            location = quarter.samples(indices(1));
+            location = quarter.locations{indices(1)};
             
             toLocationPath = makePath(toLocationPath, quarter.dirName);
             

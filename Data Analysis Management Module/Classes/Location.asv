@@ -789,6 +789,8 @@ classdef Location
                                     if ~cancel
                                         filteredSessions{counter} = selectedSession;
                                         counter = counter + 1;
+                                    else
+                                        isValidated = false;
                                     end
                                 end
                             else % if not using registered data, but the data collection session in
@@ -812,6 +814,8 @@ classdef Location
                             
                             if ~cancel
                                 sessionsToProcess = [sessionsToProcess, selectedSession.sessionNumber];
+                            else
+                                isValidated = false;
                             end
                         end
                     end
@@ -825,8 +829,19 @@ classdef Location
             
             finalSessionsToProcess = [];
             
-            for i=1:length(sessionsToProcess)
-                session = get
+            if isempty(sessionsToProcess)
+                isValidated = true;
+            else
+                for i=1:length(sessionsToProcess)
+                    session = getSessionBySessionNumber(sessions, sessionsToProcess(i));
+                    
+                    if session.hasMMData()
+                        finalSessionsToProcess = [finalSessionsToProcess, sessionsToProcess(i)];
+                        isValidated = true;
+                    else
+                        isValidated = false;
+                    end
+                end
             end
             
         end
