@@ -29,7 +29,7 @@
 % 6) Horizontal Linear Polarizer
 % 7) Monochrome Imager
 
-function mm = computeMMFromPolarizationData(session, toLocationPath, normalizationType, mmComputationType)
+function MM_norm = computeMMFromPolarizationData(session, toLocationPath, normalizationType, mmComputationType)
 
 % find MM fileSelectionEntry
 
@@ -85,70 +85,63 @@ M = dims(2); %x size
 
 [M_G, M_A] = getGeneratorAndAnalyzerMatrices(mmComputationType);
 
-
-
-
-% Calculation of M_A in correspondance of Bueno/Campbell Paper
-% each M_AX is the first row of the MM of an analyzer state, that is the
-% MM of a HLP multiplied by the MM of a rotated QWP
-M_A1 = [0.5  0  0  0.5]; %QWP at -45
-M_A2 = [0.5  0.5      0       0]; %QWP at 0
-M_A3 = [0.5 0.125   -0.2165   -0.433]; %QWP at 30
-M_A4 = [0.5 0.125   0.2165    -0.433]; %QWP at 60
-M_A = [M_A1; M_A2; M_A3; M_A4]; %combine to make M_A
-inv_M_A = inv(M_A); %take the inverse, as is required
-
-% Calculation of M_G, as outlined in Bueno/Campbell Paper
-% each column is the Stokes vector of light exiting from the 4 generator
-% states. The input light into the generator is unpolarized light: 
-% S = [1;0;0;0;]
-% Then to find S_out, S_out = MM_QWP * MM_HLP * S
-M_G1 = [0.5;  0; 0; -0.5;]; %QWP at -45
-M_G2 = [0.5;  0.5; 0; 0;]; %QWP at 0
-M_G3 = [0.5;  0.125; -0.2165; 0.433;]; %QWP at 30
-M_G4 = [0.5;  0.125; 0.2165; 0.433;]; %QWP at 60
-M_G = [M_G1 M_G2 M_G3 M_G4]; %combine to make M_G
-
-MM_pixelwise_norm = zeros(N,M,4,4); %allocate memory for the image's MMs, each pixel have an associated 4x4 MM
-MM_m00_max_norm = zeros(N,M,4,4);
+MM = zeros(N,M,4,4); %allocate memory for the image's MMs, each pixel have an associated 4x4 MM
 
 %loop through image, calculating the MM at each point
 for y=1:N
     for x=1:M
-        image = zeros(4);
+        I = zeros(4);
         
-        image(1,1) = img1(y,x); %the imgX chosen for each of these corresponds to the image given in Eqn (2) of Bueno/Campbell paper
-        image(1,2) = img5(y,x);
-        image(1,3) = img9(y,x);
-        image(1,4) = img13(y,x);
+        I(1,1) = images{1}(y,x); %the imgX chosen for each of these corresponds to the image given in Eqn (2) of Bueno/Campbell paper
+        I(1,2) = images{5}(y,x);
+        I(1,3) = images{9}(y,x);
+        I(1,4) = images{13}(y,x);
         
-        image(2,1) = img2(y,x);
-        image(2,2) = img6(y,x);
-        image(2,3) = img10(y,x);
-        image(2,4) = img14(y,x);
+        I(2,1) = images{2}(y,x);
+        I(2,2) = images{6}(y,x);
+        I(2,3) = images{10}(y,x);
+        I(2,4) = images{14}(y,x);
         
-        image(3,1) = img3(y,x);
-        image(3,2) = img7(y,x);
-        image(3,3) = img11(y,x);
-        image(3,4) = img15(y,x);
+        I(3,1) = images{3}(y,x);
+        I(3,2) = images{7}(y,x);
+        I(3,3) = images{11}(y,x);
+        I(3,4) = images{15}(y,x);
         
-        image(4,1) = img4(y,x);
-        image(4,2) = img8(y,x);
-        image(4,3) = img12(y,x);
-        image(4,4) = img16(y,x);
+        I(4,1) = images{4}(y,x);
+        I(4,2) = images{8}(y,x);
+        I(4,3) = images{12}(y,x);
+        I(4,4) = images{16}(y,x);
                 
-        M_out = inv_M_A * image; % following eqn (2) in Bueno/Campbell
+        M_out = I / M_A; % following eqn (2) in Bueno/Campbell
         
-        MM_image = M_out / M_G; %following eqn (3) in Bueno/Campbell
-        
-        MM_m00_max_norm(y,x,:,:) = MM_image; %don't worry, it'll be normalized later
-        
-        MM_image = MM_image ./ MM_image(1,1); %normalize (can also normalize over all indices ie find max MM value in whole image, and divide all pixels' MMs by that value
-        
-        MM_pixelwise_norm(y,x,:,:) = MM_image; % store to pixel
+        MM(y,x,:,:) = M_out / M_G; %following eqn (3) in Bueno/Campbell
     end
 end
 
-max_m00 = max(max(MM_m00_max_norm(:,:,1,1)));
+% allocate memory for normalized MM
+MM_norm = zeros(N,M,4,4);
 
-MM_m00_max_norm = MM_m00_max_norm ./ max_m00;
+% normalize the MM
+switch normalizationType
+    case pixelWise
+        for y=1:N
+            for x=1:M
+                pixelMM = MM(y,x,:,:);
+                
+                maxVal = max(max(pixelMM));
+                
+                pixelMM_norm = pixelMM ./ maxVal;
+                
+                MM_norm(y,x,:,:) = pixelMM_norm;
+            end
+        end        
+    case mm00Max
+        mm00 = MM(:,:,1,1);
+        
+        maxVal = max(max(mm00));
+        
+        MM_norm = MM ./ maxVal;
+        
+    otherwise
+        error('Invalid Normalization Type');
+end

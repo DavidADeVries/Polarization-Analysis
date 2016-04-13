@@ -3,24 +3,23 @@ classdef SelectionEntry
     
     properties
         label = '';
-        indices = {}; %list of indices to get the location
+        indices = []; %list of indices to get the location
         
         isSelected = false;
-        isLocation = false;
+        isSession = false;
         
         isValidated = false;
-        sessionsToProcess = []; %list of sessionNumbers
         
         toLocationPath = '';
     end
     
     methods
-        function entry = SelectionEntry(label, indices, isLocation)
+        function entry = SelectionEntry(label, indices, isSession)
             entry.label = label;
             entry.indices = indices;
             
             if nargin > 2
-                entry.isLocation = isLocation;
+                entry.isSession = isSession;
             end
         end
     end

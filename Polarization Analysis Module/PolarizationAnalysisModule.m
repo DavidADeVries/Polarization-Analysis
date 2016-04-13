@@ -127,10 +127,10 @@ selectedTrial = handles.project.getSelectedTrial();
 
 handles.selectedTrial = selectedTrial;
 
-[hasValidLocation, locationSelectStructure] = selectedTrial.createLocationSelectStructure();
+[hasValidLocation, selectStructure] = selectedTrial.createSelectStructure();
 
 if hasValidLocation
-    [selectStrings, selectValues] = getSelectStringsAndValues(locationSelectStructure);
+    [selectStrings, selectValues] = getSelectStringsAndValues(selectStructure);
 else
     selectStrings = {'No Valid Locations for Selected Trial'};
     selectValues = {};
@@ -140,11 +140,11 @@ end
 
 set(handles.locationSelectListbox, 'String', selectStrings, 'Value', selectValues);
 
-progressStrings = getProgressStrings(locationSelectStructure);
+progressStrings = getProgressStrings(selectStructure);
 
 set(handles.progressDisplay, 'String', progressStrings);
 
-handles.locationSelectStructure = locationSelectStructure;
+handles.selectStructure = selectStructure;
 
 
 % Update handles structure
@@ -434,26 +434,26 @@ function locationSelectListbox_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns locationSelectListbox contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from locationSelectListbox
 
-locationSelectStructure = handles.locationSelectStructure;
+selectStructure = handles.selectStructure;
 
 clickedIndex = get(hObject, 'Value');
 
 if length(clickedIndex) == 1
     
-    locationSelectStructure = updateLocationSelectStructure(locationSelectStructure, clickedIndex);
+    selectStructure = updateLocationSelectStructure(selectStructure, clickedIndex);
     
     % update highlighting
-    [~, selectValues] = getSelectStringsAndValues(locationSelectStructure);
+    [~, selectValues] = getSelectStringsAndValues(selectStructure);
     
     set(handles.locationSelectListbox, 'Value', selectValues);
     
     % update progress strings
-    progressStrings = getProgressStrings(locationSelectStructure);
+    progressStrings = getProgressStrings(selectStructure);
     
     set(handles.progressDisplay, 'String', progressStrings);
     
     % push to handles
-    handles.locationSelectStructure = locationSelectStructure;
+    handles.selectStructure = selectStructure;
     
     guidata(hObject, handles);
 end
@@ -519,6 +519,35 @@ function runAnalysisButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+selectStructure = handles.selectStructure;
+progressDisplayHandle = handles.progressDisplay;
+
+normalizationType = handles.normalizationTypeSelect;
+mmComputationProgram = handles.mmComputationSelect;
+
+onlyComputeMM = get(handles.onlyComputeMMCheckbox, 'Value');
+
+sessionNotes = get(handles.notesInput, 'String');
+
+isRejected = get(handles.yesRejectedButton, 'Value');
+
+if isRejected
+    rejectedReason = get(handles.rejectedReasonInput, 'String');
+    rejectedBy = get(handles.rejectedByInput, 'String');
+else
+    rejectedReason = '';
+    rejectedBy = '';
+end
+
+selectedTrial = handles.selectedTrial;
+
+selectedTrial = runPolarizationAnalysis(selectedTrial, handles.projectPath, handles.userName,  selectStructure, progressDisplayHandle, normalizationType, mmComputationProgram, onlyComputeMM, sessionNotes, isRejected, rejectedReason, rejectedBy);
+
+handles.selectedTrial = selectedTrial;
+
+guidata(hObject, handles);
+
+
 
 % --- Executes on button press in autoIgnoreRejectedSessions.
 function autoIgnoreRejectedSessions_Callback(hObject, eventdata, handles)
@@ -537,7 +566,7 @@ function validateButton_Callback(hObject, eventdata, handles)
 
 
 % run validation
-selectStructure = handles.locationSelectStructure;
+selectStructure = handles.selectStructure;
 
 useOnlyRegisteredData = get(handles.useRegisteredDataCheckbox, 'Value');
 autoUseMostRecentData = get(handles.autoUseMostRecentDataCheckbox, 'Value');
@@ -604,7 +633,7 @@ if isValidated
     
     % set data handles
     handles.validated = true;
-    handles.locationSelectStructure = selectStructure;
+    handles.selectStructure = selectStructure;
     
     % update progress strings
     

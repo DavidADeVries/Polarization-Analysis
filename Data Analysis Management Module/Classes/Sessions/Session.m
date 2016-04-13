@@ -300,6 +300,21 @@ classdef Session
                 end
             end
         end
+                
+        
+        function [isValidSession, selectStructure] = createSelectStructure(session, indices)
+            if session.hasMMData() && ~isa(session, class(SessionTypes.PolarizationAnalysis.sessionClass));
+                isValidSession = true;
+                
+                isSession = true;
+                
+                selectStructure = SelectionEntry(session.naviListboxLabel, indices, isSession);
+            else
+                isValidSession = false;                
+                selectStructure = {};
+            end
+                        
+        end
         
     end
     

@@ -218,8 +218,8 @@ classdef CsfSample < FrozenSample
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
         
-        function [hasValidLocation, selectStructureForSample] = createLocationSelectStructure(sample, indices)
-            hasValidLocation = false;
+        function [hasValidSession, selectStructureForSample] = createSelectStructure(sample, indices)
+            hasValidSession = false;
             selectStructureForSample = {};
         end
         

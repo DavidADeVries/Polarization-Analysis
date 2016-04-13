@@ -8,7 +8,7 @@ progressStrings = cell(numEntries, 1);
 for i=1:numEntries
     entry = locationSelectStructure{i};
     
-    if entry.isLocation
+    if entry.isSession
         if entry.isSelected
             progressStrings{i} = 'Selected';
         else

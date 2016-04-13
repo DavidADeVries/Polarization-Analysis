@@ -1,0 +1,19 @@
+classdef PolarizationAnalysisSession < DataProcessingSession
+    % PolarizationAnalysisSession
+    % stores metadata for a polarization analysis sessios
+    
+    properties
+        muellerMatrixComputationType = []
+        muellerMatrixNormalizationType = []
+        muellerMatrixOnly
+        versionNumber %compare to the Version.m versionNumber
+    end
+    
+    methods
+        function session = setPreAnalysisFields(session, userName, normalizationType, mmComputationProgram, onlyComputeMM, sessionNotes, isRejected, rejectedReason, rejectedBy)
+            session.uuid = generateUUID();
+            
+        end
+    end
+    
+end

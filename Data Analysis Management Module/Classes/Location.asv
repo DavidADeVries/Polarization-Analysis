@@ -646,13 +646,41 @@ classdef Location
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
         
+        function [hasValidSession, selectStructureForLocation] = createSelectStructure(quarter, indices)
+            locations = quarter.locations;
+            
+            selectStructureForLocation = {};
+            hasValidSession = false;
+            
+            for i=1:length(locations)
+                newIndices = [indices, i];
+                
+                [newHasValidLocation, selectStructureForSession] = locations{i}.createLocationSelectStructure(newIndices);
+                
+                if newHasValidLocation
+                    selectStructureForLocation = [selectStructureForLocation, {selectStructureForSession}];
+                    
+                    hasValidSession = true;
+                end
+            end
+            
+            if hasValidSession
+                selectionEntry = SelectionEntry(quarter.naviListboxLabel, indices);
+                
+                selectStructureForLocation = [{selectionEntry}, selectStructureForLocation];
+            else
+                selectStructureForLocation = {};
+            end
+            
+        end
+        
         function [isValidLocation, selectStructureForLocation] = createLocationSelectStructure(location, indices)
             sessions = location.sessions;
             
             hasMMData = false;
             
             for i=1:length(sessions)
-                if sessions{i}.hasMMData()
+                if sessions{i}.hasMMData() && ~isa(session, class(SessionTypes.PolarizationAnalysis.sessionClass)); %
                     hasMMData = true;
                     break;
                 end                
@@ -751,10 +779,10 @@ classdef Location
                     filteredSessions = {};
                     counter = 1;
                     
-                    for j=1:length(matchSessions)
+                    for j=1:length(matchedSessions)
                         matchedSession = matchedSessions{j};
                         
-                        if matchedSession.noAnalysisAfterVersionCutoff(doNotRerunDataAboveCutoff, versionCutoff)
+                        if matchedSession.noAnalysisAfterVersionCutoff(doNotRerunDataAboveCutoff, versionCutoff, sessions)
                             if useOnlyRegisteredData
                                 nonFilteredRegisteredSessions = matchedSession.findRegisteredSessions(sessions);
                                 
