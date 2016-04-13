@@ -6,7 +6,7 @@ classdef MicroscopeNamingConventions
         % directories
         SESSION_DIR_SUBTITLE = 'Microscope';
         
-        FLUORO_DIR = NamingConvention({'F', 'FL', 'Fluorescent', 'Fluoro', 'Fluorescents'}, {'Fluorescent'});
+        FLUORO_DIR = NamingConvention({'F', 'FL', 'Fluorescent', 'Fluoro', 'Fluorescents', 'Flourescence'}, {'Fluorescent'});
         MM_DIR = NamingConvention({'MM', 'M M', 'Mueller', 'Mueller Matrix'}, {'MM'});
         TR_DIR = NamingConvention({'TR', 'T R', 'Top Row'}, {'Top Row'});
         LPO_DIR = NamingConvention({'JP', 'J P', 'Polarizers', 'Just Polarizers', 'Polarizers Only'}, {'Polarizers Only'});
