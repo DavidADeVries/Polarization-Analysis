@@ -11,7 +11,9 @@ title = 'Select Local Directory (Sub-Directory of C:\ Recommended)';
 localPath = uigetdir('C:\', title);
 
 if localPath ~= 0 % folder has been successfully selected
-        
+    
+    localPath = trimTrailingSlashes(localPath);
+    
     handles.localPath = localPath;
     set(handles.localDirectoryLabel, 'String', localPath);
         

@@ -2,7 +2,7 @@ function [ path ] = makePath( varargin )
 %makePath
 %takes a series of directories and joins them up with a slash
 
-slash = '\';
+slash = Constants.SLASH;
 
 path = '';
 

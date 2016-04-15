@@ -8,6 +8,7 @@ classdef Constants
         METADATA_VAR = 'metadata';
         
         TAB = '    '; % used for spacing out folder directory lists
+        SLASH = '\';
         
         BMP_EXT = '.bmp';
         ND2_EXT = '.nd2';
