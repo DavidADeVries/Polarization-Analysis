@@ -22,7 +22,7 @@ function varargout = PolarizationAnalysisModule(varargin)
 
 % Edit the above text to modify the response to help PolarizationAnalysisModule
 
-% Last Modified by GUIDE v2.5 06-Apr-2016 15:30:40
+% Last Modified by GUIDE v2.5 14-Apr-2016 13:47:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -138,7 +138,7 @@ else
     set(handles.runAnalysisButton, 'enable', 'off');
 end
 
-set(handles.locationSelectListbox, 'String', selectStrings, 'Value', selectValues);
+set(handles.sessionSelectListbox, 'String', selectStrings, 'Value', selectValues);
 
 progressStrings = getProgressStrings(selectStructure);
 
@@ -217,40 +217,40 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in fullFieldDataCheckbox.
-function fullFieldDataCheckbox_Callback(hObject, eventdata, handles)
-% hObject    handle to fullFieldDataCheckbox (see GCBO)
+% --- Executes on button press in selectFullFieldSessionsCheckbox.
+function selectFullFieldSessionsCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to selectFullFieldSessionsCheckbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of fullFieldDataCheckbox
+% Hint: get(hObject,'Value') returns toggle state of selectFullFieldSessionsCheckbox
 
 
-% --- Executes on button press in useRegisteredDataCheckbox.
-function useRegisteredDataCheckbox_Callback(hObject, eventdata, handles)
-% hObject    handle to useRegisteredDataCheckbox (see GCBO)
+% --- Executes on button press in selectRegisteredDataCheckbox.
+function selectRegisteredDataCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to selectRegisteredDataCheckbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of useRegisteredDataCheckbox
+% Hint: get(hObject,'Value') returns toggle state of selectRegisteredDataCheckbox
 
 
-% --- Executes on button press in autoUseMostRecentDataCheckbox.
-function autoUseMostRecentDataCheckbox_Callback(hObject, eventdata, handles)
-% hObject    handle to autoUseMostRecentDataCheckbox (see GCBO)
+% --- Executes on button press in selectOnlyMostRecentDataCheckbox.
+function selectOnlyMostRecentDataCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to selectOnlyMostRecentDataCheckbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of autoUseMostRecentDataCheckbox
+% Hint: get(hObject,'Value') returns toggle state of selectOnlyMostRecentDataCheckbox
 
 
-% --- Executes on button press in processSubsectionDataCheckbox.
-function processSubsectionDataCheckbox_Callback(hObject, eventdata, handles)
-% hObject    handle to processSubsectionDataCheckbox (see GCBO)
+% --- Executes on button press in selectSubsectionSessionsCheckbox.
+function selectSubsectionSessionsCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to selectSubsectionSessionsCheckbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of processSubsectionDataCheckbox
+% Hint: get(hObject,'Value') returns toggle state of selectSubsectionSessionsCheckbox
 
 setSubsectionSelectListbox(handles)
 
@@ -370,13 +370,13 @@ function onlyComputeMMCheckbox_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of onlyComputeMMCheckbox
 
 
-% --- Executes on button press in doNotRerunDataAboveCutoffCheckbox.
-function doNotRerunDataAboveCutoffCheckbox_Callback(hObject, eventdata, handles)
-% hObject    handle to doNotRerunDataAboveCutoffCheckbox (see GCBO)
+% --- Executes on button press in doNotSelectSessionsAboveCutoffCheckbox.
+function doNotSelectSessionsAboveCutoffCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to doNotSelectSessionsAboveCutoffCheckbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of doNotRerunDataAboveCutoffCheckbox
+% Hint: get(hObject,'Value') returns toggle state of doNotSelectSessionsAboveCutoffCheckbox
 
 
 
@@ -425,27 +425,60 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in locationSelectListbox.
-function locationSelectListbox_Callback(hObject, eventdata, handles)
-% hObject    handle to locationSelectListbox (see GCBO)
+% --- Executes on selection change in sessionSelectListbox.
+function sessionSelectListbox_Callback(hObject, eventdata, handles)
+% hObject    handle to sessionSelectListbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns locationSelectListbox contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from locationSelectListbox
+% Hints: contents = cellstr(get(hObject,'String')) returns sessionSelectListbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from sessionSelectListbox
 
 selectStructure = handles.selectStructure;
 
 clickedIndex = get(hObject, 'Value');
 
 if length(clickedIndex) == 1
+        
+    useOnlyRegisteredData = get(handles.selectRegisteredDataCheckbox, 'Value');
+    autoUseMostRecentData = get(handles.selectOnlyMostRecentDataCheckbox, 'Value');
+    autoIgnoreRejectedSessions = get(handles.noSelectRejectedSessionsCheckbox, 'Value');
+    doNotRerunDataAboveCutoff = get(handles.doNotSelectSessionsAboveCutoffCheckbox, 'Value');
+    versionCutoff = str2double(get(handles.versionCutoffInput, 'Value'));
+    processFullFieldData = get(handles.selectFullFieldSessionsCheckbox, 'Value');
+    
+    processSubsectionData = get(handles.selectSubsectionSessionsCheckbox, 'Value');
+    
+    if processSubsectionData
+        [choices, ~] = choicesFromEnum('CroppingTypes');
+        
+        subsectionChoices = getChoicesFromListbox(handles.subsectionSelectListbox, choices);
+    else
+        subsectionChoices = {};
+    end
+    
+    % get raw data sources
+    
+    dataCollectionSessionTypes = SessionTypes.getDataCollectionSessionTypes();
+    
+    selections = get(handles.rawDataSourcesListbox, 'Value');
+    
+    numSelections = length(selections);
+    
+    rawDataSources = cell(numSelections, 1);
+    
+    for i=1:numSelections
+        rawDataSources{i} = dataCollectionSessionTypes{selections(i)};
+    end
+
+    
     
     selectStructure = updateLocationSelectStructure(selectStructure, clickedIndex);
     
     % update highlighting
     [~, selectValues] = getSelectStringsAndValues(selectStructure);
     
-    set(handles.locationSelectListbox, 'Value', selectValues);
+    set(handles.sessionSelectListbox, 'Value', selectValues);
     
     % update progress strings
     progressStrings = getProgressStrings(selectStructure);
@@ -460,8 +493,8 @@ end
 
 
 % --- Executes during object creation, after setting all properties.
-function locationSelectListbox_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to locationSelectListbox (see GCBO)
+function sessionSelectListbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sessionSelectListbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -549,13 +582,13 @@ guidata(hObject, handles);
 
 
 
-% --- Executes on button press in autoIgnoreRejectedSessions.
-function autoIgnoreRejectedSessions_Callback(hObject, eventdata, handles)
-% hObject    handle to autoIgnoreRejectedSessions (see GCBO)
+% --- Executes on button press in noSelectRejectedSessionsCheckbox.
+function noSelectRejectedSessionsCheckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to noSelectRejectedSessionsCheckbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of autoIgnoreRejectedSessions
+% Hint: get(hObject,'Value') returns toggle state of noSelectRejectedSessionsCheckbox
 
 % --- Executes on button press in validateButton.
 function validateButton_Callback(hObject, eventdata, handles)
@@ -563,69 +596,32 @@ function validateButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
-
 % run validation
 selectStructure = handles.selectStructure;
 
-useOnlyRegisteredData = get(handles.useRegisteredDataCheckbox, 'Value');
-autoUseMostRecentData = get(handles.autoUseMostRecentDataCheckbox, 'Value');
-autoIgnoreRejectedSessions = get(handles.autoIgnoreRejectedSessions, 'Value');
-doNotRerunDataAboveCutoff = get(handles.doNotRerunDataAboveCutoffCheckbox, 'Value');
-versionCutoff = str2double(get(handles.versionCutoffInput, 'Value'));
-processFullFieldData = get(handles.fullFieldDataCheckbox, 'Value');
-
-processSubsectionData = get(handles.processSubsectionDataCheckbox, 'Value');
-
-if processSubsectionData
-    [choices, ~] = choicesFromEnum('CroppingTypes');
-    
-    subsectionChoices = getChoicesFromListbox(handles.subsectionSelectListbox, choices);
-else
-    subsectionChoices = {};
-end
-
-% get raw data sources
-
-dataCollectionSessionTypes = SessionTypes.getDataCollectionSessionTypes();
-
-selections = get(handles.rawDataSourcesListbox, 'Value');
-
-numSelections = length(selections);
-
-rawDataSources = cell(numSelections, 1);
-
-for i=1:numSelections
-    rawDataSources{i} = dataCollectionSessionTypes{selections(i)};
-end
-
-
-
-[isValidated, selectStructure] = validateLocationsForProcessing(...
-    handles.selectedTrial,...
-    selectStructure,...
-    useOnlyRegisteredData,...
-    autoUseMostRecentData,...
-    autoIgnoreRejectedSessions,...
-    doNotRerunDataAboveCutoff,...
-    versionCutoff,...
-    processFullFieldData,...
-    subsectionChoices,...
-    rawDataSources);
+[isValidated, selectStructure] = validateSessionsForProcessing(handles.selectedTrial, selectStructure);
 
 if isValidated
     % disable fields that cannot be changed after validation
-    set(handles.useRegisteredDataCheckbox, 'Enable', 'off');
-    set(handles.autoUseMostRecentDataCheckbox, 'Enable', 'off');
-    set(handles.autoIgnoreRejectedSessions, 'Enable', 'off');
-    set(handles.doNotRerunDataAboveCutoffCheckbox, 'Enable', 'off');
+    set(handles.selectRegisteredDataCheckbox, 'Enable', 'off');
+    set(handles.selectOnlyMostRecentDataCheckbox, 'Enable', 'off');
+    set(handles.noSelectRejectedSessionsCheckbox, 'Enable', 'off');
+    set(handles.doNotSelectSessionsAboveCutoffCheckbox, 'Enable', 'off');
     set(handles.versionCutoffInput, 'Enable', 'off');
-    set(handles.fullFieldDataCheckbox, 'Enable', 'off');
-    set(handles.processSubsectionDataCheckbox, 'Enable', 'off');
+    set(handles.selectFullFieldSessionsCheckbox, 'Enable', 'off');
+    set(handles.selectSubsectionSessionsCheckbox, 'Enable', 'off');
     set(handles.subsectionSelectListbox, 'Enable', 'off');
     set(handles.rawDataSourcesListbox, 'Enable', 'off');
     
-    set(handles.locationSelectListbox, 'Enable', 'inactive');
+    set(handles.versionCutoffText, 'Enable', 'off');
+    set(handles.currentVersionText, 'Enable', 'off');
+    set(handles.currentVersionDisplay, 'Enable', 'off');
+    set(handles.rawDataText, 'Enable', 'off');
+    
+    set(handles.selectAllButton, 'Enable', 'off');
+    set(handles.deselectAllButton, 'Enable', 'off');
+    
+    set(handles.sessionSelectListbox, 'Enable', 'inactive');
         
     % disable/enable buttons
     set(handles.validateButton, 'Enable', 'off');
@@ -671,19 +667,83 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
+% --- Executes on button press in deselectAllButton.
+function deselectAllButton_Callback(hObject, eventdata, handles)
+% hObject    handle to deselectAllButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+selectStructure = handles.selectStructure;
+
+selected = false;
+
+selectStructure = selectOrDeselectAll(selectStructure, selected);
+
+% update highlighting
+[~, selectValues] = getSelectStringsAndValues(selectStructure);
+
+set(handles.sessionSelectListbox, 'Value', selectValues);
+
+% update progress strings
+progressStrings = getProgressStrings(selectStructure);
+
+set(handles.progressDisplay, 'String', progressStrings);
+
+% push to handles
+handles.selectStructure = selectStructure;
+
+guidata(hObject, handles);
+
+
+% --- Executes on button press in selectAllButton.
+function selectAllButton_Callback(hObject, eventdata, handles)
+% hObject    handle to selectAllButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+selectStructure = handles.selectStructure;
+
+selected = true;
+
+selectStructure = selectOrDeselectAll(selectStructure, selected);
+
+% update highlighting
+[~, selectValues] = getSelectStringsAndValues(selectStructure);
+
+set(handles.sessionSelectListbox, 'Value', selectValues);
+
+% update progress strings
+progressStrings = getProgressStrings(selectStructure);
+
+set(handles.progressDisplay, 'String', progressStrings);
+
+% push to handles
+handles.selectStructure = selectStructure;
+
+guidata(hObject, handles);
+
+
+
 % ****************
 % Helper Functions
 % ****************
 
 function setSubsectionSelectListbox(handles)
 
-if get(handles.processSubsectionDataCheckbox, 'Value')
+if get(handles.selectSubsectionSessionsCheckbox, 'Value')
     enable = 'on';
 else
     enable = 'off';
 end
 
 set(handles.subsectionSelectListbox, 'enable', enable);
+
+
+
+
+
+
+
 
 
 

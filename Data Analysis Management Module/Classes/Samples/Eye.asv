@@ -617,18 +617,19 @@ classdef Eye < FixedSample
             
             [isValidated, toPath] = quarter.validateSession(newIndices, toPath);
         end
-               
         
-        function [eye, selectStructure] = runPolarizationAnalysis(eye, indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName)
-            quarter = eye.quarters{indices(1)};
+        
+        
+        function [subject, selectStructure] = runPolarizationAnalysis(subject, indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName)
+            sample = subject.samples{indices(1)};
             
             newIndices = indices(2:length(indices));
-            toPath = [toPath, eye.dirName];
-            fileName = [fileName, eye.generateFilenameSection];
+            toPath = [toPath, subject.dirName];
+            fileName = [fileName, subject.generateFilenameSection];
             
-            [quarter, selectStructure] = quarter.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
+            [sample, selectStructure] = sample.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
             
-            eye = eye.updateQuarter(quarter);
+            subject = subject.updateSample(sample);
         end
         
     end

@@ -607,15 +607,13 @@ classdef Trial
         end
         
         function [trial, selectStructure] = runPolarizationAnalysis(trial, indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex)
+            indices = entry.indices;
+            
             subject = trial.subjects{indices(1)};
             
             newIndices = indices(2:length(indices));
             toPath = trial.dirName;
             fileName = trial.generateFilenameSection;
-            
-            [subject, selectStructure] = subject.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
-            
-            trial = trial.updateSubject(subject);
         end
         
     end

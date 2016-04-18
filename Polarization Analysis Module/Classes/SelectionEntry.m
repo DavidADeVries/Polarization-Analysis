@@ -9,8 +9,11 @@ classdef SelectionEntry
         isSession = false;
         
         isValidated = false;
+        isProcessing = false;
         
-        toLocationPath = '';
+        statusType = [];
+        
+        toPath = '';
     end
     
     methods

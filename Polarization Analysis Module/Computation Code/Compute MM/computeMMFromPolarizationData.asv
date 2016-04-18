@@ -46,7 +46,7 @@ end
 
 namingConventions = MicroscopeNamingConventions.getMMNamingConventions();
 
-toDataPath = makePath(toSessionPath, mmEntry.dirName);
+toDataPath = makePath(toDataPath, session.dirName, mmEntry.dirName);
 
 files = mmEntry.filesInDir;
 

@@ -130,11 +130,10 @@ classdef MetricTypes
     end
     
     methods
-        function enum = MuellerMatrixComputationTypes(displayString, explanationString, startDateString, endDateString)
+        function enum = MetricTypes(displayString, metricGroupType, filenameTag)
             enum.displayString = displayString;
-            enum.explanationString = explanationString;
-            enum.startDateString = startDateString;
-            enum.endDateString = endDateString;
+            enum.metricGroupType = metricGroupType;
+            enum.filenameTag = filenameTag;
         end
     end
     

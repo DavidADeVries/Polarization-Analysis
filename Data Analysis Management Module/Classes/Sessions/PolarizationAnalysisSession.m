@@ -24,6 +24,21 @@ classdef PolarizationAnalysisSession < DataProcessingSession
             session.muellerMatrixOnly = onlyComputeMM;
             session.versionNumber = PolarizationAnalysisModuleVersion.versionNumber;
         end
+        
+        function session = setSpecificPreAnalysisFields(session, parentSession, parentLocation)
+            session.sessionNumber = parentLocation.nextSessionNumber();
+            session.dataProcessingSessionNumber = parentLocation.nextDataProcessingSessionNumber();
+            session.linkedSessionNumbers = [parentSession.sessionNumber];
+            
+            
+            session.dirName = sessoin.generateDirName();
+            session.naviListboxLabel = session.generateListboxLabel();
+            
+        end
+        
+        function dirSubtitle = getDirSubtitle(session)
+            dirSubtitle = [PolarizationAnalysisNamingConventions.SESSION_DIR_SUBTITLE, num2str(session.versionNumber)];
+        end
     end
     
 end

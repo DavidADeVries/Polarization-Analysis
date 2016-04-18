@@ -673,7 +673,30 @@ classdef Location
             end
             
         end
-                   
+           
+        
+        function [isValidated, toPath] = validateSession(location, indices, toPath)
+            session = location.sessions{indices(1)};
+            
+            toPath = makePath(toPath, location.dirName);
+            
+            [isValidated, toPath] = session.validateSession(toPath);
+        end
+        
+        
+        function [location, selectStructure] = runPolarizationAnalysis(location, indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName)
+            parentSession = location.locations{indices(1)};
+            
+            toPath = [toPath, location.dirName];
+            fileName = [fileName, location.generateFilenameSection];
+            
+            defaultSession = defaultSession.setSpecificPreAnalysisFields(parentSession, location);
+            
+            [newPolarizationAnalysisSession, selectStructure] = parentSession.runPolarizationAnalysis(defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
+            
+            location = location.updateSession(newPolarizationAnalysisSession);
+        end
+        
         
         function [isValidated, toLocationPath, finalSessionsToProcess] = validateLocation(location, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources)
             toLocationPath = makePath(toLocationPath, location.dirName);

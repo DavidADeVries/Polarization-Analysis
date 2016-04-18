@@ -554,12 +554,26 @@ classdef Quarter
         end
            
         
-        function [isValidated, toLocationPath, sessionsToProcess] = validateLocation(quarter, indices, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources)
+        function [isValidated, toPath] = validateSession(quarter, indices, toPath)
             location = quarter.locations{indices(1)};
             
-            toLocationPath = makePath(toLocationPath, quarter.dirName);
+            newIndices = indices(2:length(indices));
+            toPath = makePath(toPath, quarter.dirName);
             
-            [isValidated, toLocationPath, sessionsToProcess] = location.validateLocation(toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources);
+            [isValidated, toPath] = location.validateSession(newIndices, toPath);
+        end
+        
+        
+        function [quarter, selectStructure] = runPolarizationAnalysis(quarter, indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName)
+            location = quarter.locations{indices(1)};
+            
+            newIndices = indices(2:length(indices));
+            toPath = [toPath, quarter.dirName];
+            fileName = [fileName, quarter.generateFilenameSection];
+            
+            [location, selectStructure] = location.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
+            
+            quarter = quarter.updateLocation(location);
         end
         
     end

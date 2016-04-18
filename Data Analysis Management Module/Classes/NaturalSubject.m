@@ -535,13 +535,25 @@ classdef NaturalSubject < Subject
             
         end
         
-        function [isValidated, toLocationPath, sessionsToProcess] = validateLocation(subject, indices, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources)
+        function [isValidated, toPath] = validateSession(subject, indices, toPath)
             sample = subject.samples{indices(1)};
             
             newIndices = indices(2:length(indices));
-            toLocationPath = makePath(toLocationPath, subject.dirName);
+            toPath = makePath(toPath, subject.dirName);
             
-            [isValidated, toLocationPath, sessionsToProcess] = sample.validateLocation(newIndices, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources);
+            [isValidated, toPath] = sample.validateSession(newIndices, toPath);
+        end
+        
+        function [subject, selectStructure] = runPolarizationAnalysis(subject, indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName)
+            sample = subject.samples{indices(1)};
+            
+            newIndices = indices(2:length(indices));
+            toPath = [toPath, subject.dirName];
+            fileName = [fileName, subject.generateFilenameSection];
+            
+            [sample, selectStructure] = sample.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
+            
+            subject = subject.updateSample(sample);
         end
         
     end

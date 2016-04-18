@@ -646,18 +646,18 @@ classdef Location
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
         
-        function [hasValidSession, selectStructureForLocation] = createSelectStructure(quarter, indices)
-            locations = quarter.locations;
+        function [hasValidSession, selectStructureForLocation] = createSelectStructure(location, indices)
+            sessions = location.sessions;
             
             selectStructureForLocation = {};
             hasValidSession = false;
             
-            for i=1:length(locations)
+            for i=1:length(sessions)
                 newIndices = [indices, i];
                 
-                [newHasValidLocation, selectStructureForSession] = locations{i}.createLocationSelectStructure(newIndices);
+                [isValidSession, selectStructureForSession] = sessions{i}.createSelectStructure(newIndices);
                 
-                if newHasValidLocation
+                if isValidSession
                     selectStructureForLocation = [selectStructureForLocation, {selectStructureForSession}];
                     
                     hasValidSession = true;
@@ -665,7 +665,7 @@ classdef Location
             end
             
             if hasValidSession
-                selectionEntry = SelectionEntry(quarter.naviListboxLabel, indices);
+                selectionEntry = SelectionEntry(location.naviListboxLabel, indices);
                 
                 selectStructureForLocation = [{selectionEntry}, selectStructureForLocation];
             else
@@ -673,33 +673,30 @@ classdef Location
             end
             
         end
+           
         
-        function [isValidLocation, selectStructureForLocation] = createLocationSelectStructure(location, indices)
-            sessions = location.sessions;
+        function [isValidated, toPath] = validateSession(location, indices, toPath)
+            session = location.sessions{indices(1)};
             
-            hasMMData = false;
+            toPath = makePath(toPath, location.dirName);
             
-            for i=1:length(sessions)
-                if sessions{i}.hasMMData() && ~isa(session, class(SessionTypes.PolarizationAnalysis.sessionClass)); %
-                    hasMMData = true;
-                    break;
-                end                
-            end
-            
-            if hasMMData
-                isValidLocation = true;
-                
-                isLocation = true;
-                
-                selectStructureForLocation = SelectionEntry(location.naviListboxLabel, indices, isLocation);
-            else
-                isValidLocation = false;
-                
-                selectStructureForLocation = {};
-            end
-            
+            [isValidated, toPath] = session.validateSession(toPath);
         end
-                   
+        
+        
+        function [location, selectStructure] = runPolarizationAnalysis(location, indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName)
+            session = location.locations{indices(1)};
+            
+            toPath = [toPath, location.dirName];
+            fileName = [fileName, location.generateFilenameSection];
+            
+            defaultSession.
+            
+            [newPolarizationAnalysisSession, selectStructure] = session.runPolarizationAnalysis(defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
+            
+            location = location.updateSession(newPolarizationAnalysisSession);
+        end
+        
         
         function [isValidated, toLocationPath, finalSessionsToProcess] = validateLocation(location, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources)
             toLocationPath = makePath(toLocationPath, location.dirName);

@@ -12,7 +12,32 @@ classdef PolarizationAnalysisSession < DataProcessingSession
     methods
         function session = setPreAnalysisFields(session, userName, normalizationType, mmComputationProgram, onlyComputeMM, sessionNotes, isRejected, rejectedReason, rejectedBy)
             session.uuid = generateUUID();
+            session.metadataHistory = MetadataHistoryEntry(userName, PolarizationAnalysisSession.empty);
+            session.sessionDate = now;
+            session.sessionDoneBy = userName;
+            session.notes = sessionNotes;
+            session.rejected = isRejected;
+            session.rejectedReason = rejectedReason;
+            session.rejectedBy = rejectedBy;
+            session.muellerMatrixComputationType = mmComputationProgram;
+            session.muellerMatrixNormalizationType = normalizationType;
+            session.muellerMatrixOnly = onlyComputeMM;
+            session.versionNumber = PolarizationAnalysisModuleVersion.versionNumber;
+        end
+        
+        function session = setSpecificPreAnalysisFields(session, parentSession, parentLocation)
+            session.sessionNumber = parentLocation.nextSessionNumber();
+            session.dataProcessingSessionNumber = parentLocation.nextDataProcessingSessionNumber();
+            session.linkedSessionNumbers = [parentSession.sessionNumber];
             
+            % no dirName?
+            % no naviListboxLabel?
+            % no fileSelectionEntries?
+            % no subfolderIndex?
+        end
+        
+        function dirSubtitle = getDirSubtitle(session)
+            dirSubtitle = [PolarizationAnalysisNamingConventions.SESSION_DIR_SUBTITLE];
         end
     end
     

@@ -9,7 +9,7 @@ for i=1:length(selectStructure)
     entry = selectStructure{i};
     
     if entry.isLocation && entry.isSelected && entry.isValidated
-        trial = trial.runPolarizationAnalysis(indices, sessionsToProcess, defaultSession, projectPath, progressDisplayHandle, selectStructure, i);
+        [trial, selectStructure] = trial.runPolarizationAnalysis(entry.indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, i);
     end
 end
 
