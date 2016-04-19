@@ -41,7 +41,10 @@ newStatus = StatusTypes.ComputeMM;
 selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure, selectStructureIndex);
 
 % Write MM Files
-writeMMFiles(MM_norm, writePath, fileName);
+dirName = PolarizationAnalysisNamingConventions.MM_DIR;
+fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.MM_MATLAB_VAR_FILENAME_LABEL, []);
+
+writeMMFiles(MM_norm, writePath, dirName, [fileName, fileNameSection]);
 
 
 % *******************
@@ -65,7 +68,7 @@ selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure
 newStatus = StatusTypes.ComputingMetrics;
 selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure, selectStructureIndex);
 
-metricResults = computeMetrics(MM_norm);
+[metricResults, M_D, M_delta, M_R] = computeMetrics(MM_norm);
 
 
 % ***************************
@@ -77,7 +80,22 @@ metricResults = computeMetrics(MM_norm);
 newStatus = StatusTypes.WritingMetrics;
 selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure, selectStructureIndex);
 
-writeMetricFiles(metricResults);
+dirName = PolarizationAnalysisNamingConventions.M_D_FILENAME_LABEL;
+fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_D_MATLAB_VAR_NAME, []);
+
+writeMMFiles(M_D, writePath, dirName, [fileName, fileNameSection]);
+
+dirName = PolarizationAnalysisNamingConventions.M_DELTA_FILENAME_LABEL;
+fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_DELTA_MATLAB_VAR_NAME, []);
+
+writeMMFiles(M_delta, writePath, dirName, [fileName, fileNameSection]);
+
+dirName = PolarizationAnalysisNamingConventions.M_R_FILENAME_LABEL;
+fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_R_MATLAB_VAR_NAME, []);
+
+writeMMFiles(M_R, writePath, dirName, [fileName, fileNameSection]);
+
+writeMetricFiles(writePath, fileName, metricResults);
 
 
 % *****************

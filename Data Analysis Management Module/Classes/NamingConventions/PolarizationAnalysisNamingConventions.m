@@ -22,6 +22,21 @@ classdef PolarizationAnalysisNamingConventions
         
         MM_COMPOSITE_FILENAME_LABEL = 'Comp';
         
+        MM_COLORBAR_FILENAME_LABEL = 'CB';
+        
+        METRIC_MATLAB_VAR_NAME = 'data';
+        
+        % MM Decomposition
+        M_D_FILENAME_LABEL = 'M_D';        
+        M_D_MATLAB_VAR_NAME = 'M_D';
+
+        M_DELTA_FILENAME_LABEL = 'M_del';        
+        M_DELTA_MATLAB_VAR_NAME = 'M_del';
+
+        M_R_FILENAME_LABEL = 'M_R';        
+        M_R_MATLAB_VAR_NAME = 'M_R';
+
+        
     end
     
     methods (Static)

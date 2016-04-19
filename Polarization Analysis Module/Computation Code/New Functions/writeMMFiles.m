@@ -1,11 +1,11 @@
-function [] = writeMMFiles(MM, writePath, fileName)
+function [] = writeMMFiles(MM, writePath, fileName, dirName, filenameSection)
 %writeMMFiles
 
-rootPath = makePath(writePath, PolarizationAnalysisNamingConventions.MM_DIR);
+rootPath = makePath(writePath, dirName);
 
-mkdir(writePath, PolarizationAnalysisNamingConventions.MM_DIR);
+mkdir(writePath, dirName);
 
-rootFileName = [fileName, createFilenameSection(PolarizationAnalysisNamingConventions.MM_MATLAB_VAR_FILENAME_LABEL)];
+rootFileName = [fileName, filenameSection];
 
 % save MM as MATLAB file
 matlabFileName = [rootFileName, createFilenameSection(PolarizationAnalysisNamingConventions.MM_MATLAB_VAR_FILENAME_LABEL), Constants.MATLAB_EXT];
