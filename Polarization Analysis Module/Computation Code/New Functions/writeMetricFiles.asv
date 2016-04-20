@@ -25,7 +25,7 @@ for i=1:length(metricTypes)
     
     groupDir = metricGroupType.dirName;
     
-    writeFilename = [fileName, groupFileNameSection, metricFileNameSection];
+    writeFilename = [fileName, groupfileNameSection, metricFileNameSection];
     
     writePath = makePath(path, groupDir);
     

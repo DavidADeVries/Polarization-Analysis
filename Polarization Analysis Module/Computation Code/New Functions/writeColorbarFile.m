@@ -15,6 +15,8 @@ caxis(dataRange);
 
 saveas(figHandle, writePath);
 
+close(figHandle);
+
 
 end
 

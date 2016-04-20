@@ -80,6 +80,8 @@ selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure
 newStatus = StatusTypes.WritingMetrics;
 selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure, selectStructureIndex);
 
+% write decomposition MM results
+
 dirName = PolarizationAnalysisNamingConventions.M_D_FILENAME_LABEL;
 fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_D_MATLAB_VAR_NAME, []);
 
@@ -95,7 +97,13 @@ fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_
 
 writeMMFiles(M_R, writePath, dirName, [fileName, fileNameSection]);
 
+% write metric files
+
 writeMetricFiles(writePath, fileName, metricResults);
+
+% write stats and histogram files
+
+writeStatsFile(writePath, fileName, metricResults);
 
 
 % *****************

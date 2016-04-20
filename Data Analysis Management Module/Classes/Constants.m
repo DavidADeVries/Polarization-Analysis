@@ -12,6 +12,8 @@ classdef Constants
         BMP_EXT = '.bmp';
         ND2_EXT = '.nd2';
         MATLAB_EXT = '.mat';
+        CSV_EXT = '.csv';
+        XLSX_EXT = '.xlsx';
                 
         FIGURE_INIT_SIZE_WARNING_ID = 'images:initSize:adjustingMag';
         
