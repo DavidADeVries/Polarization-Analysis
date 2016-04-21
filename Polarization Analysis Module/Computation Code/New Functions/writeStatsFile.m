@@ -36,14 +36,14 @@ for i=1:length(metricTypes)
     rowLabel = metricType.displayString;
     
     if metricType.isCircularData
-        circRowLabel = [rowLabel, ' (Circ)'];
-        rowLabel = [rowLabel, ' (Non-Circ)'];
+        circRowLabel = [rowLabel, ' ', Constants.CIRC_STATS_LABEL];
+        rowLabel = [rowLabel, ' ', Constants.NON_CIRC_STATS_LABEL];
         
         circDataCol = convertCircData(dataCol, metricType.dataRange);
         
         circularMean = unconvertCircData(circ_mean(circDataCol), metricType.dataRange);
         circularStdev = unconvertCircData(circ_std(circDataCol), metricType.dataRange);
-        circularMedian = [];%unconvertCircData(circ_median(circDataCol), metricType.dataRange); % CAN'T DO! CRASHES MATLAB
+        circularMedian = [];%unconvertCircData(circ_median(circDataCol), metricType.dataRange); % CAN'T DO! CRASHES MATLAB, Requires too much memory?!
         circularSkew = unconvertCircData(circ_skewneww(circDataCol), metricType.dataRange);
         
         row = {circRowLabel, dataMin, dataMax, circularMean, circularStdev, circularMedian, circularSkew};

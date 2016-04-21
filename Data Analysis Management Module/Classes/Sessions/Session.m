@@ -334,7 +334,7 @@ classdef Session
             savePath = [toPath, polarizationAnalysisSession.dirName];
             fileName = [fileName, polarizationAnalysisSession.generateFilenameSection()];
             
-            runAnalysis(parentSession, polarizationAnalysisSession, projectPath, dataPath, savePath, fileName, progressDisplayHandle, selectStructure, selectStructureIndex);
+            selectStructure = runAnalysis(parentSession, polarizationAnalysisSession, projectPath, dataPath, savePath, fileName, progressDisplayHandle, selectStructure, selectStructureIndex);
             
             polarizationAnalysisSession = polarizationAnalysisSession.createFileSelectionEntries(polarizationAnalysisSession, makePath(projectPath, savePath));
                 
