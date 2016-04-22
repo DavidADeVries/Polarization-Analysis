@@ -34,74 +34,77 @@ MM_norm = computeMMFromPolarizationData(dataSession, readInPath, normalizationTy
 
 
 % update status
-newStatus = StatusTypes.ComputeMM;
+newStatus = StatusTypes.WritingMM;
 selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure, selectStructureIndex);
 
 % Write MM Files
-dirName = PolarizationAnalysisNamingConventions.MM_DIR;
-fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.MM_MATLAB_VAR_FILENAME_LABEL, []);
+dirName = PolarizationAnalysisNamingConventions.MM_DIR.getSingularProjectTag;
+fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.MM_FILENAME_LABEL, []);
 
-writeMMFiles(MM_norm, writePath, dirName, [fileName, fileNameSection]);
-
-
-% *******************
-% STEP 3: Validate MM
-% *******************
+writeMMFiles(MM_norm, writePath, fileName, dirName, fileNameSection);
 
 
-% DON'T THINK WE HAVE ANYTHING TO DO HERE
-
-% update status
-newStatus = StatusTypes.ValidatingMM;
-selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure, selectStructureIndex);
-
-
-% *************************
-% STEP 4: Computing Metrics
-% *************************
-
-
-% update status
-newStatus = StatusTypes.ComputingMetrics;
-selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure, selectStructureIndex);
-
-[metricResults, M_D, M_delta, M_R] = computeMetrics(MM_norm);
-
-
-% ***************************
-% STEP 5: Write Metrics Files
-% ***************************
-
-
-% update status
-newStatus = StatusTypes.WritingMetrics;
-selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure, selectStructureIndex);
-
-% write decomposition MM results
-
-dirName = PolarizationAnalysisNamingConventions.M_D_FILENAME_LABEL;
-fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_D_MATLAB_VAR_NAME, []);
-
-writeMMFiles(M_D, writePath, dirName, [fileName, fileNameSection]);
-
-dirName = PolarizationAnalysisNamingConventions.M_DELTA_FILENAME_LABEL;
-fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_DELTA_MATLAB_VAR_NAME, []);
-
-writeMMFiles(M_delta, writePath, dirName, [fileName, fileNameSection]);
-
-dirName = PolarizationAnalysisNamingConventions.M_R_FILENAME_LABEL;
-fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_R_MATLAB_VAR_NAME, []);
-
-writeMMFiles(M_R, writePath, dirName, [fileName, fileNameSection]);
-
-% write metric files
-
-writeMetricFiles(writePath, fileName, metricResults);
-
-% write stats and histogram files
-
-writeStatsFile(writePath, fileName, metricResults);
-
+if ~analysisSession.muellerMatrixOnly % only continue on if selected
+    
+    % *******************
+    % STEP 3: Validate MM
+    % *******************
+    
+    
+    % DON'T THINK WE HAVE ANYTHING TO DO HERE
+    
+    % update status
+    newStatus = StatusTypes.ValidatingMM;
+    selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure, selectStructureIndex);
+    
+    
+    % *************************
+    % STEP 4: Computing Metrics
+    % *************************
+    
+    
+    % update status
+    newStatus = StatusTypes.ComputingMetrics;
+    selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure, selectStructureIndex);
+    
+    [metricResults, M_D, M_delta, M_R] = computeMetrics(MM_norm);
+    
+    
+    % ***************************
+    % STEP 5: Write Metrics Files
+    % ***************************
+    
+    
+    % update status
+    newStatus = StatusTypes.WritingMetrics;
+    selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure, selectStructureIndex);
+    
+    % write decomposition MM results
+    
+    dirName = PolarizationAnalysisNamingConventions.M_D_FILENAME_LABEL;
+    fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_D_MATLAB_VAR_NAME, []);
+    
+    writeMMFiles(M_D, writePath, dirName, [fileName, fileNameSection]);
+    
+    dirName = PolarizationAnalysisNamingConventions.M_DELTA_FILENAME_LABEL;
+    fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_DELTA_MATLAB_VAR_NAME, []);
+    
+    writeMMFiles(M_delta, writePath, dirName, [fileName, fileNameSection]);
+    
+    dirName = PolarizationAnalysisNamingConventions.M_R_FILENAME_LABEL;
+    fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_R_MATLAB_VAR_NAME, []);
+    
+    writeMMFiles(M_R, writePath, dirName, [fileName, fileNameSection]);
+    
+    % write metric files
+    
+    writeMetricFiles(writePath, fileName, metricResults);
+    
+    % write stats and histogram files
+    
+    writeStatsFile(writePath, fileName, metricResults);
+    
+end
 
 % *****************
 % STEP 6: Complete!
@@ -122,6 +125,7 @@ function selectStructure = updateStatus(newStatusType, progressDisplayHandle, se
     progressStrings = getProgressStrings(selectStructure);
     
     set(progressDisplayHandle, 'String', progressStrings);
+    drawnow;
 end
 
 

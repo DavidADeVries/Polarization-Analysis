@@ -685,9 +685,9 @@ classdef Location
         
         
         function [location, selectStructure] = runPolarizationAnalysis(location, indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName)
-            parentSession = location.locations{indices(1)};
+            parentSession = location.sessions{indices(1)};
             
-            toPath = [toPath, location.dirName];
+            toPath = makePath(toPath, location.dirName);
             fileName = [fileName, location.generateFilenameSection];
             
             defaultSession = defaultSession.setSpecificPreAnalysisFields(parentSession, location);

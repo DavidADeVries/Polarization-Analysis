@@ -1,4 +1,4 @@
-function [] = createAndWriteMMComposite(MM, compositeFileName)
+function [] = createAndWriteMMComposite(MM, compositeFilePath)
 % createAndWriteMMComposite
 
 refImage = MM(:,:,1,1);
@@ -75,7 +75,7 @@ colorbarPosition(3) = 0.025; %make it wider
 
 set(colorbarHandle, 'Position', colorbarPosition);
 
-savefig(figHandle, compositeFileName);
+savefig(figHandle, compositeFilePath);
 
 close(figHandle);
 

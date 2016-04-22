@@ -623,7 +623,7 @@ classdef Eye < FixedSample
             quarter = eye.quarters{indices(1)};
             
             newIndices = indices(2:length(indices));
-            toPath = [toPath, eye.dirName];
+            toPath = makePath(toPath, eye.dirName);
             fileName = [fileName, eye.generateFilenameSection];
             
             [quarter, selectStructure] = quarter.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);

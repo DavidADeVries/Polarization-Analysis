@@ -330,8 +330,8 @@ classdef Session
         function [polarizationAnalysisSession, selectStructure] = runPolarizationAnalysis(parentSession, polarizationAnalysisSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName)
             %parent session is the session where the data is coming from
             
-            dataPath = [toPath, parentSession.dirName];
-            savePath = [toPath, polarizationAnalysisSession.dirName];
+            dataPath = makePath(toPath, parentSession.dirName);
+            savePath = makePath(toPath, polarizationAnalysisSession.dirName);
             fileName = [fileName, polarizationAnalysisSession.generateFilenameSection()];
             
             selectStructure = runAnalysis(parentSession, polarizationAnalysisSession, projectPath, dataPath, savePath, fileName, progressDisplayHandle, selectStructure, selectStructureIndex);

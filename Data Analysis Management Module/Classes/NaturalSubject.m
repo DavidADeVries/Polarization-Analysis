@@ -548,7 +548,7 @@ classdef NaturalSubject < Subject
             sample = subject.samples{indices(1)};
             
             newIndices = indices(2:length(indices));
-            toPath = [toPath, subject.dirName];
+            toPath = makePath(toPath, subject.dirName);
             fileName = [fileName, subject.generateFilenameSection];
             
             [sample, selectStructure] = sample.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);

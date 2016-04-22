@@ -14,6 +14,7 @@ classdef Constants
         MATLAB_EXT = '.mat';
         CSV_EXT = '.csv';
         XLSX_EXT = '.xlsx';
+        PNG_EXT = '.png';
         
         CIRC_STATS_LABEL = '(Circ)';
         NON_CIRC_STATS_LABEL = '(Non-Circ)';

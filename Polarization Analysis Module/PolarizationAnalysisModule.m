@@ -555,8 +555,13 @@ function runAnalysisButton_Callback(hObject, eventdata, handles)
 selectStructure = handles.selectStructure;
 progressDisplayHandle = handles.progressDisplay;
 
-normalizationType = handles.normalizationTypeSelect;
-mmComputationProgram = handles.mmComputationSelect;
+[choices, ~] = choicesFromEnum('MuellerMatrixNormalizationTypes');
+
+normalizationType = choices(get(handles.normalizationTypeSelect, 'Value') - 1);
+
+[choices, ~] = choicesFromEnum('MuellerMatrixComputationTypes');
+
+mmComputationProgram = choices(get(handles.mmComputationSelect, 'Value') - 1);
 
 onlyComputeMM = get(handles.onlyComputeMMCheckbox, 'Value');
 
@@ -574,7 +579,7 @@ end
 
 selectedTrial = handles.selectedTrial;
 
-selectedTrial = runPolarizationAnalysis(selectedTrial, handles.projectPath, handles.userName,  selectStructure, progressDisplayHandle, normalizationType, mmComputationProgram, onlyComputeMM, sessionNotes, isRejected, rejectedReason, rejectedBy);
+selectedTrial = runPolarizationAnalysisForSelectStructure(selectedTrial, handles.projectPath, handles.userName,  selectStructure, progressDisplayHandle, normalizationType, mmComputationProgram, onlyComputeMM, sessionNotes, isRejected, rejectedReason, rejectedBy);
 
 handles.selectedTrial = selectedTrial;
 

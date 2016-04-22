@@ -568,7 +568,7 @@ classdef Quarter
             location = quarter.locations{indices(1)};
             
             newIndices = indices(2:length(indices));
-            toPath = [toPath, quarter.dirName];
+            toPath = makePath(toPath, quarter.dirName);
             fileName = [fileName, quarter.generateFilenameSection];
             
             [location, selectStructure] = location.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);

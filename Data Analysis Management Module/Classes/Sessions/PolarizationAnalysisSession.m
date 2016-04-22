@@ -31,7 +31,7 @@ classdef PolarizationAnalysisSession < DataProcessingSession
             session.linkedSessionNumbers = [parentSession.sessionNumber];
             
             
-            session.dirName = sessoin.generateDirName();
+            session.dirName = session.generateDirName();
             session.naviListboxLabel = session.generateListboxLabel();
             
         end

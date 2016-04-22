@@ -35,7 +35,7 @@ for y=1:mmDims(1)
         MM_sqr = MM .^ 2; %each index squared, not MM*MM
         
         for i=1:numMetrics
-            metricResults{i}(y,x) = computeMetricValue(metricTypes(i), MM, MM_sqr, M_D_pix, M_delta_pix, M_R_pix, R);
+            metricResults(i,y,x) = computeMetricValue(metricTypes(i), MM, MM_sqr, M_D_pix, M_delta_pix, M_R_pix, R);
         end
         
     end

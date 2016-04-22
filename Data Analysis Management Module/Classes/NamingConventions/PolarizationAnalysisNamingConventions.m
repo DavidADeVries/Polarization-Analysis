@@ -4,7 +4,7 @@ classdef PolarizationAnalysisNamingConventions
     
     properties (Constant)       
         % directories
-        SESSION_DIR_SUBTITLE = 'Polariztion Analysis - v';
+        SESSION_DIR_SUBTITLE = 'Polarization Analysis - v';
         
         % MM Naming Conventions
         

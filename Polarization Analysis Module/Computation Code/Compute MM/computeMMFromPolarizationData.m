@@ -38,7 +38,7 @@ entries = session.fileSelectionEntries;
 mmEntry = [];
 
 for i=1:length(entries)
-    if stcmp(entries{i}.dirName, MicroscopNamingConventions.MM_DIR.project)
+    if strcmp(entries{i}.dirName, MicroscopeNamingConventions.MM_DIR.getSingularProjectTag())
         mmEntry = entries{i};
     end
 end
@@ -54,25 +54,36 @@ files = mmEntry.filesInDir;
 images = {};
 counter = 1;
 
-for i=1:length(namingconventions)
+for i=1:length(namingConventions)
     projectNamingConventions = namingConventions{i}.project;
     
     fileNameEnding = [createFilenameString(projectNamingConventions, []), Constants.BMP_EXT];
-            
-    for j=1:length(files)
-        indices = containsSubstring(files.dirName, fileNameEnding);
+    
+    numFiles = length(files);
+    
+    dirNames = cell(numFiles,1);
+    
+    for j=1:numFiles
+        dirNames{j} = files{j}.dirName;
+    end
+    
+    indices = containsSubstring(dirNames, fileNameEnding);
+    
+    if length(indices) == 1
+        index = indices(1);
         
-        if length(indices) == 1
-            index = indices(1);
-            
-            % delete the match
-            file = files{index};
-            
-            fileName = file.dirName;
-            
-            images{counter} = imread(makePath(toDataPath, fileName));
-            counter = counter + 1;
-        end
+%         % delete the match
+%         dirNames(index) = [];
+%         files(index) = [];
+        
+        file = files{index};
+        
+        fileName = file.dirName;
+        
+        images{counter} = imread(makePath(toDataPath, fileName));
+        counter = counter + 1;
+    else
+        error('Multiple file matches!!');
     end
     
 end
@@ -123,7 +134,7 @@ MM_norm = zeros(N,M,4,4);
 
 % normalize the MM
 switch normalizationType
-    case pixelWise
+    case MuellerMatrixNormalizationTypes.pixelWise
         for y=1:N
             for x=1:M
                 pixelMM = MM(y,x,:,:);
@@ -135,7 +146,7 @@ switch normalizationType
                 MM_norm(y,x,:,:) = pixelMM_norm;
             end
         end        
-    case mm00Max
+    case MuellerMatrixNormalizationTypes.mm00Max
         mm00 = MM(:,:,1,1);
         
         maxVal = max(max(mm00));

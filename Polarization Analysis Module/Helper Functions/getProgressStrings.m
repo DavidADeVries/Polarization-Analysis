@@ -9,14 +9,18 @@ for i=1:numEntries
     entry = locationSelectStructure{i};
     
     if entry.isSession
-        if entry.isSelected
-            progressStrings{i} = 'Selected';
+        if entry.isProcessing
+            progressStrings{i} = entry.statusType.displayString;
         else
-            progressStrings{i} = 'Not Selected';
-        end
-        
-        if entry.isValidated
-            progressStrings{i} = 'Validated';
+            if entry.isSelected
+                progressStrings{i} = 'Selected';
+            else
+                progressStrings{i} = 'Not Selected';
+            end
+            
+            if entry.isValidated
+                progressStrings{i} = 'Validated';
+            end
         end
     else        
         progressStrings{i} = ' '; %display nothing
