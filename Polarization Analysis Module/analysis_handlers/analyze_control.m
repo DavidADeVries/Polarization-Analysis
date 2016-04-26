@@ -3,7 +3,7 @@ function [ ] = analyze_control(path)
 %actual subject name and deposit locations are given by the manifest file
 %titled 'Control Analysis Manifest.csv'
 
-raw_manifest = importdata(strcat(path, 'Control Analysis Manifest.csv'));
+raw_manifest = importdata(strcat(path, 'Control Analysis Manifest.csv'),',');
 
 for i=2:length(raw_manifest)
     subject_and_locations = strsplit(char(raw_manifest(i)),',');

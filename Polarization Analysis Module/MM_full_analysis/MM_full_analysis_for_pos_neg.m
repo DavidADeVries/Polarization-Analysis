@@ -37,6 +37,9 @@ format long;
 disp('Analysis Start');
 disp(path);
 
+writePath = path;%strrep(path, 'Kurt', 'Kurt - Testbed2');
+%writePath = path;%strrep(writePath, 'Chris', 'Chris - Testbed2');
+
 filename = strcat(path,file);
 
 %CONVENTIONS:
@@ -46,29 +49,30 @@ filename = strcat(path,file);
 
 disp('Creating Output Directories...');
 
-make_MM_output_folders(strcat(path, 'MM - Pixelwise Norm'));
-make_MM_output_folders(strcat(path, 'MM - Max m_00 Norm'));
+make_MM_output_folders(strcat(writePath, 'MM - Pixelwise Norm'));
+make_MM_output_folders(strcat(writePath, 'MM - Max m_00 Norm'));
+make_MM_output_folders(strcat(writePath, 'MM - All Max Norm'));
 
-make_output_folders(strcat(path, 'Polarizance'));
-make_output_folders(strcat(path, 'Diattenuation'));
-make_output_folders(strcat(path, 'DOP, DI, and Q Metric'));
-make_output_folders(strcat(path, 'Retardance'));
-make_output_folders(strcat(path, 'Related Retardance Metrics'));
+make_output_folders(strcat(writePath, 'Polarizance'));
+make_output_folders(strcat(writePath, 'Diattenuation'));
+make_output_folders(strcat(writePath, 'DOP, DI, and Q Metric'));
+make_output_folders(strcat(writePath, 'Retardance'));
+make_output_folders(strcat(writePath, 'Related Retardance Metrics'));
 
-make_MM_output_folders(strcat(path, 'Retardance/MM'));
-make_MM_output_folders(strcat(path, 'Diattenuation/MM'));
-make_MM_output_folders(strcat(path, 'Polarizance/MM'));
+make_MM_output_folders(strcat(writePath, 'Retardance/MM'));
+make_MM_output_folders(strcat(writePath, 'Diattenuation/MM'));
+make_MM_output_folders(strcat(writePath, 'Polarizance/MM'));
 
-% mkdir(strcat(path, 'Stokes'));
-mkdir(strcat(path, 'Metrics and Histograms'));
-mkdir(strcat(path, 'Metrics and Histograms/Histograms'));
+% mkdir(strcat(writePath, 'Stokes'));
+mkdir(strcat(writePath, 'Metrics and Histograms'));
+mkdir(strcat(writePath, 'Metrics and Histograms/Histograms'));
 
 
 disp('Complete!');
 
 disp('Computing Mueller Matrices...');
 %Compute the Mueller Matrices
-[MM_pixelwise_norm, MM_m00_max_norm] = compute_MM_corrected_new(filename);
+[MM_pixelwise_norm, MM_m00_max_norm, MM_all_max_norm] = compute_MM_corrected_new(filename);
 
 %Get horizontal and vertical dimensions
 imageSizes = size(MM_pixelwise_norm);
@@ -78,13 +82,14 @@ xSize = imageSizes(2);
 disp('Complete!');
 disp('Writing Mueller Matrix Files...');
 
-write_MM_files(MM_pixelwise_norm, strcat(path,'MM - Pixelwise Norm/'), file); %both normalizations are outputted
-write_MM_files(MM_m00_max_norm, strcat(path,'MM - Max m_00 Norm/'), file);
+write_MM_files(MM_pixelwise_norm, strcat(writePath,'MM - Pixelwise Norm/'), file); %both normalizations are outputted
+write_MM_files(MM_m00_max_norm, strcat(writePath,'MM - Max m_00 Norm/'), file);
+write_MM_files(MM_all_max_norm, strcat(writePath,'MM - All Max Norm/'), file);
 
 %remove!
 %MM_pixelwise_norm = MM_m00_max_norm;
 
-clear MM_m00_max_norm; %clear this image from RAM, it is no longer needed.
+%clear MM_m00_max_norm; %clear this image from RAM, it is no longer needed.
 
 disp('Complete!');
 disp('Validating Mueller Matrices for Analysis...');
@@ -412,7 +417,7 @@ metric_datasets = [
     reshape(deltaApprox,1,m);
     ];
 
-filepath = strcat(path, 'Metrics and Histograms/', file, '_metrics.csv');
+filepath = strcat(writePath, 'Metrics and Histograms/', file, '_metrics.csv');
 
 write_metrics_file(exhaustive_metric_labels(),metric_datasets,filepath);
 
@@ -424,64 +429,64 @@ figure;
 set(gcf,'Visible','off');
 
 hist(reshape(diatten,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_diattenuation_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_diattenuation_histogram.png'));
 hist(reshape(diattenLinear,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_linear_diattenuation_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_linear_diattenuation_histogram.png'));
 hist(reshape(diattenHorz,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_horizontal_diattenuation_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_horizontal_diattenuation_histogram.png'));
 hist(reshape(diatten45deg,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_45deg_diattenuation_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_45deg_diattenuation_histogram.png'));
 hist(reshape(diattenCirc,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_circular_diattenuation_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_circular_diattenuation_histogram.png'));
 
 hist(reshape(polarizance,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_polarizance_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_polarizance_histogram.png'));
 hist(reshape(polarizanceLinear,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_linear_polarizance_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_linear_polarizance_histogram.png'));
 hist(reshape(polarizanceHorz,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_horizontal_polarizance_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_horizontal_polarizance_histogram.png'));
 hist(reshape(polarizance45deg,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_45deg_polarizance_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_45deg_polarizance_histogram.png'));
 hist(reshape(polarizanceCirc,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_circular_polarizance_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_circular_polarizance_histogram.png'));
 
 hist(reshape(retardance,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_retardance_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_retardance_histogram.png'));
 hist(reshape(retardanceLinear,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_linear_retardance_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_linear_retardance_histogram.png'));
 hist(reshape(retardanceHorz,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_horizontal_retardance_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_horizontal_retardance_histogram.png'));
 hist(reshape(retardance45deg,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_45deg_retardance_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_45deg_retardance_histogram.png'));
 hist(reshape(retardanceCirc,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_circular_retardance_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_circular_retardance_histogram.png'));
 
 hist(reshape(rho1,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_rho1_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_rho1_histogram.png'));
 % hist(reshape(rhoApprox1,1,m),100);
-% saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_rho1_approx_histogram.png'));
+% saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_rho1_approx_histogram.png'));
 hist(reshape(rho2,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_rho2_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_rho2_histogram.png'));
 % hist(reshape(rhoApprox2,1,m),100);
-% saveas(gcf, strcat(path, 'Metrics and Histograms/', file, '_rho2_approx_histogram.png'));
+% saveas(gcf, strcat(writePath, 'Metrics and Histograms/', file, '_rho2_approx_histogram.png'));
 hist(reshape(delta,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_delta_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_delta_histogram.png'));
 % hist(reshape(deltaApprox,1,m),100);
-% saveas(gcf, strcat(path, 'Metrics and Histograms/', file, '_delta_approx_histogram.png'));
+% saveas(gcf, strcat(writePath, 'Metrics and Histograms/', file, '_delta_approx_histogram.png'));
 hist(reshape(theta,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_theta_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_theta_histogram.png'));
 % hist(reshape(thetaApprox,1,m),100);
-% saveas(gcf, strcat(path, 'Metrics and Histograms/', file, '_theta_approx_histogram.png'));
+% saveas(gcf, strcat(writePath, 'Metrics and Histograms/', file, '_theta_approx_histogram.png'));
 
 
 hist(reshape(opticalRotation,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_optical_rotation_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_optical_rotation_histogram.png'));
 hist(reshape(depolarizationIndex,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_depolarization_index_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_depolarization_index_histogram.png'));
 hist(reshape(degreeOfPolarization,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_degree_of_polarization_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_degree_of_polarization_histogram.png'));
 hist(reshape(qMetric,1,m),100);
-saveas(gcf, strcat(path, 'Metrics and Histograms/Histograms/', file, '_Q_metric_histogram.png'));
+saveas(gcf, strcat(writePath, 'Metrics and Histograms/Histograms/', file, '_Q_metric_histogram.png'));
 
 close;
 
@@ -489,7 +494,7 @@ close;
 
 %Write Stokes files
 
-% stokesPath = strcat(path, 'Stokes/', file);
+% stokesPath = strcat(writePath, 'Stokes/', file);
 % 
 % dlmwrite(strcat(stokesPath, '_stokes_degree_of_polarization.txt'), (stokesDegreeOfPolarization));
 % dlmwrite(strcat(stokesPath, '_stokes_retardance.txt'), (stokesRetardance));
@@ -507,7 +512,7 @@ close;
 
 %Write Retardance files
 
-retardancePath = strcat(path, 'Retardance/');
+retardancePath = strcat(writePath, 'Retardance/');
 
 csvPath = strcat(retardancePath, 'CSVs/', file);
 
@@ -536,13 +541,13 @@ write_colourbar_files(opticalRotation, retardancePath, strcat(file, '_optical_ro
 
 
 %Write Retardance Matrix files
-write_MM_files(retardanceMatrices, strcat(path, 'Retardance/MM/'), strcat(file,'_retardance'));
+write_MM_files(retardanceMatrices, strcat(writePath, 'Retardance/MM/'), strcat(file,'_retardance'));
 
 %End Retardance
 
 % Write DOP, DI, Q files
 
-dopPath = strcat(path, 'DOP, DI, and Q Metric/');
+dopPath = strcat(writePath, 'DOP, DI, and Q Metric/');
 
 csvPath = strcat(dopPath, 'CSVs/', file);
 
@@ -564,7 +569,7 @@ write_colourbar_files(qMetric, dopPath, strcat(file, '_Q_metric'),[0,3]);
 
 %Write Diattenuation files
 
-diattenPath = strcat(path, 'Diattenuation/');
+diattenPath = strcat(writePath, 'Diattenuation/');
 
 csvPath = strcat(diattenPath, 'CSVs/', file);
 
@@ -595,13 +600,13 @@ write_colourbar_files(diattenCirc, diattenPath, strcat(file, '_circular_diattenu
 %write_colourbar_files(minTransmitance, strcat(diattenPath, '_min_transmitance'));
 
 %Write Diattenuation Matrix files
-write_MM_files(diattenMatrices, strcat(path, 'Diattenuation/MM/'), strcat(file,'_diattenuation'));
+write_MM_files(diattenMatrices, strcat(writePath, 'Diattenuation/MM/'), strcat(file,'_diattenuation'));
 
 %End Diattenuation
 
 %Write Polarizance files
 
-polarizancePath = strcat(path, 'Polarizance/');
+polarizancePath = strcat(writePath, 'Polarizance/');
 
 %write metric results to text file
 
@@ -629,14 +634,14 @@ write_colourbar_files(polarizanceCirc, polarizancePath, strcat(file, '_circular_
 
 
 %Write Deplorization Matrix files
-write_MM_files(depolarMatrices, strcat(path, 'Polarizance/MM/'), strcat(file,'_polarizance'));
+write_MM_files(depolarMatrices, strcat(writePath, 'Polarizance/MM/'), strcat(file,'_polarizance'));
 
 
 %End Depolarization
 
 %Write Related Retardance files
 
-relatedRetardancePath = strcat(path, 'Related Retardance Metrics/');
+relatedRetardancePath = strcat(writePath, 'Related Retardance Metrics/');
 
 csvPath = strcat(relatedRetardancePath, 'CSVs/', file);
 

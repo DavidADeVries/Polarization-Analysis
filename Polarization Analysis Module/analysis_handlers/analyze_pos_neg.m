@@ -3,7 +3,7 @@ function [ ] = analyze_pos_neg(path)
 %actual subject name and deposit locations are given by the manifest file
 %titled 'Pos Neg Analysis Manifest.csv'
 
-raw_manifest = importdata(strcat(path, 'Pos Neg Analysis Manifest.csv'));
+raw_manifest = importdata(strcat(path, 'Pos Neg Analysis Manifest.csv'),',');
 
 for i=2:length(raw_manifest)
     subject_and_locations = strsplit(char(raw_manifest(i)),',');

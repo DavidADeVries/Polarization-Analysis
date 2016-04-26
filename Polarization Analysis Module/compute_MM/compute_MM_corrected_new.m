@@ -30,7 +30,7 @@
 % 6) Horizontal Linear Polarizer
 % 7) Monochrome Imager
 
-function[MM_pixelwise_norm, MM_m00_max_norm] = compute_MM_corrected(filename)
+function[MM_pixelwise_norm, MM_m00_max_norm, MM_all_max_norm] = compute_MM_corrected_new(filename)
 
 %input for 3 variables
 
@@ -164,6 +164,7 @@ M_G = [M_G1 M_G2 M_G3 M_G4]; %combine to make M_G
 
 MM_pixelwise_norm = zeros(N,M,4,4); %allocate memory for the image's MMs, each pixel have an associated 4x4 MM
 MM_m00_max_norm = zeros(N,M,4,4);
+MM_all_max_norm = zeros(N,M,4,4);
 
 %loop through image, calculating the MM at each point
 for y=1:N
@@ -195,6 +196,8 @@ for y=1:N
         MM_image = M_out / M_G; %following eqn (3) in Bueno/Campbell
         
         MM_m00_max_norm(y,x,:,:) = MM_image; %don't worry, it'll be normalized later
+        MM_all_max_norm(y,x,:,:) = MM_image; %don't worry, it'll be normalized later
+        
         
         MM_image = MM_image ./ MM_image(1,1); %normalize (can also normalize over all indices ie find max MM value in whole image, and divide all pixels' MMs by that value
         
@@ -205,3 +208,7 @@ end
 max_m00 = max(max(MM_m00_max_norm(:,:,1,1)));
 
 MM_m00_max_norm = MM_m00_max_norm ./ max_m00;
+
+
+all_max = max(max(max(max(abs(MM_all_max_norm)))));
+MM_all_max_norm = MM_all_max_norm ./ all_max;
