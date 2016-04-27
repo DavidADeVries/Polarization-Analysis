@@ -1,46 +1,55 @@
 function [metricResults, M_D, M_delta, M_R] = computeMetrics(MM_norm)
 % computeMetrics
 
-metricTypes = enumeration('MetricTypes');
+allMetricTypes = enumeration('MetricTypes');
 
-numMetrics = length(metricTypes);
+numMetrics = length(allMetricTypes);
 
 mmDims = size(MM_norm);
 
-metricResults = zeros(numMetrics, mmDims(1), mmDims(2)); %allocate memory for all these metric values
+height = mmDims(1);
+width = mmDims(2);
 
-M_D = zeros(mmDims);
-M_delta = zeros(mmDims);
-M_R = zeros(mmDims);
+newHeight = height * width;
+
+MM_norm = reshape(MM_norm,newHeight,4,4);
+
+metricResults = zeros(newHeight, numMetrics); %allocate memory for all these metric values
+
+M_D = zeros(newHeight,4,4);
+M_delta = zeros(newHeight,4,4);
+M_R = zeros(newHeight,4,4);
 
 % run through columns, then rows (better for memory accress)
 
-for y=1:mmDims(1)
-    for x=1:mmDims(2)
-                
-        MM = zeros(4,4);
+
+parfor i=1:newHeight
         
-        for i = 1:4,
-            for j = 1:4,
-                MM(j,i) = MM_norm(y,x,j,i);
-            end
-        end
+    MM = squeeze(MM_norm(i,:,:));
         
-        [M_D_pix, M_delta_pix, M_R_pix, R] = performMatrixDecomposition(MM);
+    [M_D_pix, M_delta_pix, M_R_pix] = performMatrixDecomposition(MM);
+    
+    M_D(i,:,:) = M_D_pix;
+    M_delta(i,:,:) = M_delta_pix;
+    M_R(i,:,:) = M_R_pix;
+    
+    MM_sqr = MM .^ 2; %each index squared, not MM*MM
         
-        M_D(y,x,:,:) = M_D_pix;
-        M_delta(y,x,:,:) = M_delta_pix;
-        M_R(y,x,:,:) = M_R_pix;
-        
-        MM_sqr = MM .^ 2; %each index squared, not MM*MM
-        
-        for i=1:numMetrics
-            metricResults(i,y,x) = computeMetricValue(metricTypes(i), MM, MM_sqr, M_D_pix, M_delta_pix, M_R_pix, R);
-        end
-        
+    [metricValues, metricTypes] = computeMetricValues(MM, MM_sqr, M_D_pix, M_delta_pix, M_R_pix); 
+    
+    if length(metricTypes) ~= numMetrics
+        error('Metric computation is not configured!');
     end
+
+    metricResults(i,:) = metricValues;
+        
 end
 
+M_D = reshape(M_D, mmDims);
+M_delta = reshape(M_delta, mmDims);
+M_R = reshape(M_R, mmDims);
+
+metricResults = reshape(metricResults, height, width, numMetrics);
 
 
 end

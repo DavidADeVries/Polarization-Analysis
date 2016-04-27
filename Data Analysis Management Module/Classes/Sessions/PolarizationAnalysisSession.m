@@ -39,6 +39,21 @@ classdef PolarizationAnalysisSession < DataProcessingSession
         function dirSubtitle = getDirSubtitle(session)
             dirSubtitle = [PolarizationAnalysisNamingConventions.SESSION_DIR_SUBTITLE, num2str(session.versionNumber)];
         end
+        
+        function metadataString = getMetadataString(session)
+            
+            [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
+            [dataProcessingSessionNumberString, linkedSessionsString] = session.getProcessingSessionMetadataString();
+            
+            computationTypeString = ['MM Computation Type: ', displayType(session.muellerMatrixComputationType)];
+            normalizationTypeString = ['MM Normalization Type: ', displayType(session.muellerMatrixNormalizationType)];
+            muellerMatrixOnlyString = ['Only MM Computed: ', booleanToString(session.muellerMatrixOnly)];
+            versionNumberString = ['Analysis Module Version: ', num2str(session.versionNumber)];
+            
+            
+            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, computationTypeString, normalizationTypeString, muellerMatrixOnlyString, versionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            metadataString = [metadataString, metadataHistoryStrings];
+        end
     end
     
 end

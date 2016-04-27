@@ -48,7 +48,12 @@ for x=1:4
         subplotPosition = [subplotLeft, subplotBottom, imageWidthProp, imageHeightProp];
         
         subplot('Position', subplotPosition);
-        imshow(MM(:,:,x,y), imageColorscale);
+        
+        imagesc(MM(:,:,x,y));
+        colormap gray;
+        axis image;
+        axis off;        
+        caxis(imageColorscale);
     end
 end
 
@@ -68,6 +73,7 @@ axis off;
 
 colormap gray;
 colorbarHandle = colorbar;
+caxis(imageColorscale);
 
 colorbarPosition = get(colorbarHandle, 'Position');
 
@@ -75,7 +81,7 @@ colorbarPosition(3) = 0.025; %make it wider
 
 set(colorbarHandle, 'Position', colorbarPosition);
 
-savefig(figHandle, compositeFilePath);
+saveas(figHandle, compositeFilePath);
 
 close(figHandle);
 

@@ -4,7 +4,7 @@ function fileData = openFile(filePath)
 
 fileExtension = getFileExtension(filePath);
 
-if strcmp(fileExtension, Constants.BMP_EXT)
+if isOpenableFileExtension(fileExtension)
     fileData = imread(filePath);
 else
     fileData = [];

@@ -1,7 +1,7 @@
 function [] = writeColorbarFile(data, path, filename, dataRange)
 % writeColorbarFile
 
-filename = [filename, makeFilenameSection(PolarizationNamingConventions.MM_COLORBAR_FILENAME_LABEL), Constants.BMP_EXT];
+filename = [filename, createFilenameSection(PolarizationAnalysisNamingConventions.MM_COLORBAR_FILENAME_LABEL,[]), Constants.PNG_EXT];
 
 writePath = makePath(path, filename);
 

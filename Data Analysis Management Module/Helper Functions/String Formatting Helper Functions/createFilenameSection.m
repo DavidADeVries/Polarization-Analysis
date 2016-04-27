@@ -1,11 +1,13 @@
 function filenameSection = createFilenameSection(label, number)
 % createFilenameSection
-% creates a piece of a filename e.g. [Q2]
+% creates a piece of a filename e.g. (Q2)
 
-if isempty(label) || isempty(number)
-    filenameSection = ['[', label, number, ']'];
+if isempty(label) && isempty(number)
+    filenameSection = '';
+elseif isempty(label) || isempty(number)
+    filenameSection = ['(', label, number, ')'];
 else
-    filenameSection = ['[', label, number, ']'];
+    filenameSection = ['(', label, number, ')'];
 end
 
 

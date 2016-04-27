@@ -337,6 +337,14 @@ function doneButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+project = handles.project;
+
+project = project.updateTrial(handles.selectedTrial);
+
+handles.project = project;
+
+guidata(hObject, handles);
+uiresume(handles.PolarizationAnalysisModule);
 
 
 function notesInput_Callback(hObject, eventdata, handles)
@@ -579,9 +587,12 @@ end
 
 selectedTrial = handles.selectedTrial;
 
-selectedTrial = runPolarizationAnalysisForSelectStructure(selectedTrial, handles.projectPath, handles.userName,  selectStructure, progressDisplayHandle, normalizationType, mmComputationProgram, onlyComputeMM, sessionNotes, isRejected, rejectedReason, rejectedBy);
+[selectedTrial, selectStructure] = runPolarizationAnalysisForSelectStructure(selectedTrial, handles.projectPath, handles.userName,  selectStructure, progressDisplayHandle, normalizationType, mmComputationProgram, onlyComputeMM, sessionNotes, isRejected, rejectedReason, rejectedBy);
 
 handles.selectedTrial = selectedTrial;
+handles.selectStructure = selectStructure;
+
+set(handles.runAnalysisButton, 'Enable', 'off');
 
 guidata(hObject, handles);
 

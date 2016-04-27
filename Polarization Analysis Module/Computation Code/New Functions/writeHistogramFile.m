@@ -1,7 +1,7 @@
 function [] = writeHistogramFile(data, path, filename, dataRange)
 % writeHistogramFile
 
-filename = [filename, makeFilenameSection(PolarizationNamingConventions.HISTOGRAM_FILENAME_LABEL), Constants.BMP_EXT];
+filename = [filename, createFilenameSection(PolarizationAnalysisNamingConventions.HISTOGRAM_FILENAME_LABEL, []), Constants.PNG_EXT];
 
 writePath = makePath(path, filename);
 

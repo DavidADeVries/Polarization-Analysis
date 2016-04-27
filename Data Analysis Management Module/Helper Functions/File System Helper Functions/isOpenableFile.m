@@ -5,8 +5,7 @@ function bool = isOpenableFile(file)
 
 fileExtension = getFileExtension(file.toPath);
 
-bool = strcmp(fileExtension, Constants.BMP_EXT); % just Bitmaps for now
-
+bool = isOpenableFileExtension(fileExtension);
 
 
 end

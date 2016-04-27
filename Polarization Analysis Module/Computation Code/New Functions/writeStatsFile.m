@@ -1,11 +1,11 @@
 function [] = writeStatsFile(path, fileName, metricResults)
 % writeStatsFile
 
-fileNameSection = createFileNameSection(PolarizationAnalysisNamingConventions.STAT_FILENAME_LABEL, []);
+fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.STAT_FILENAME_LABEL, []);
 
 writeFileName = [fileName, fileNameSection, Constants.XLSX_EXT];
 
-writePath = makePath(path, writeFileName);
+writePath = makePath(path, MetricGroupTypes.Stats.dirName, writeFileName);
 
 writeData = {};
 
@@ -18,9 +18,9 @@ metricTypes = enumeration('MetricTypes');
 counter = 2;
 
 for i=1:length(metricTypes)
-    metricType = metricTypes{i};
+    metricType = metricTypes(i);
     
-    data = metricResults{i};
+    data = metricResults(:,:,i);
     
     dims = size(data);
     
@@ -44,7 +44,7 @@ for i=1:length(metricTypes)
         circularMean = unconvertCircData(circ_mean(circDataCol), metricType.dataRange);
         circularStdev = unconvertCircData(circ_std(circDataCol), metricType.dataRange);
         circularMedian = [];%unconvertCircData(circ_median(circDataCol), metricType.dataRange); % CAN'T DO! CRASHES MATLAB, Requires too much memory?!
-        circularSkew = unconvertCircData(circ_skewneww(circDataCol), metricType.dataRange);
+        circularSkew = unconvertCircData(circ_skewness(circDataCol), metricType.dataRange);
         
         row = {circRowLabel, dataMin, dataMax, circularMean, circularStdev, circularMedian, circularSkew};
         

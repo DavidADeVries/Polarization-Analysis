@@ -336,8 +336,12 @@ classdef Session
             
             selectStructure = runAnalysis(parentSession, polarizationAnalysisSession, projectPath, dataPath, savePath, fileName, progressDisplayHandle, selectStructure, selectStructureIndex);
             
-            polarizationAnalysisSession = polarizationAnalysisSession.createFileSelectionEntries(polarizationAnalysisSession, makePath(projectPath, savePath));
+            polarizationAnalysisSession = polarizationAnalysisSession.createFileSelectionEntries(makePath(projectPath, savePath));
                 
+            % save metadata
+            saveToBackup = false;
+            
+            polarizationAnalysisSession.saveMetadata(savePath, projectPath, saveToBackup)
         end
         
     end

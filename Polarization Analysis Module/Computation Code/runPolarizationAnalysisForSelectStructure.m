@@ -1,4 +1,4 @@
-function trial = runPolarizationAnalysisForSelectStructure(trial, projectPath, userName,  selectStructure, progressDisplayHandle, normalizationType, mmComputationProgram, onlyComputeMM, sessionNotes, isRejected, rejectedReason, rejectedBy)
+function [trial, selectStructure] = runPolarizationAnalysisForSelectStructure(trial, projectPath, userName,  selectStructure, progressDisplayHandle, normalizationType, mmComputationProgram, onlyComputeMM, sessionNotes, isRejected, rejectedReason, rejectedBy)
 % runPolarizationAnalysisForSelectStructure
 
 defaultSession = PolarizationAnalysisSession;

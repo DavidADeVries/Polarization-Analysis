@@ -29,7 +29,7 @@ for i=1:length(metricTypes)
     
     writePath = makePath(path, groupDir);
     
-    data = metricResults{i};
+    data = metricResults(:,:,i);
     
     % write colorbar image
     writeColorbarFile(data, writePath, writeFilename, metricType.dataRange);

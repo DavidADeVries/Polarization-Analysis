@@ -90,69 +90,84 @@ end
 
 
 dims = size(images{1}); %size of image found
-N = dims(1); %y size
-M = dims(2); %x size
+height = dims(1); %y size
+width = dims(2); %x size
 
-
-[M_G, M_A] = getGeneratorAndAnalyzerMatrices(mmComputationType);
-
-MM = zeros(N,M,4,4); %allocate memory for the image's MMs, each pixel have an associated 4x4 MM
-
-%loop through image, calculating the MM at each point
-for y=1:N
-    for x=1:M
-        I = zeros(4);
-        
-        I(1,1) = images{1}(y,x); %the imgX chosen for each of these corresponds to the image given in Eqn (2) of Bueno/Campbell paper
-        I(1,2) = images{5}(y,x);
-        I(1,3) = images{9}(y,x);
-        I(1,4) = images{13}(y,x);
-        
-        I(2,1) = images{2}(y,x);
-        I(2,2) = images{6}(y,x);
-        I(2,3) = images{10}(y,x);
-        I(2,4) = images{14}(y,x);
-        
-        I(3,1) = images{3}(y,x);
-        I(3,2) = images{7}(y,x);
-        I(3,3) = images{11}(y,x);
-        I(3,4) = images{15}(y,x);
-        
-        I(4,1) = images{4}(y,x);
-        I(4,2) = images{8}(y,x);
-        I(4,3) = images{12}(y,x);
-        I(4,4) = images{16}(y,x);
-                
-        M_out = I / M_A; % following eqn (2) in Bueno/Campbell
-        
-        MM(y,x,:,:) = M_out / M_G; %following eqn (3) in Bueno/Campbell
+if length(dims) == 3 %must have been saved as rgb
+    for i=1:length(images)
+        images{i} = rgb2gray(images{i});
     end
 end
 
+colHeight = height * width;
+
+[M_G, M_A] = getGeneratorAndAnalyzerMatrices(mmComputationType);
+
+MM = zeros(colHeight,4,4); %allocate memory for the image's MMs, each pixel have an associated 4x4 MM
+
+%reshape raw data in column vectors
+reshapeImages = cell(length(images),1);
+
+for i=1:length(images)
+    reshapeImages{i} = reshape(images{i}, colHeight, 1);
+end
+
+
+%loop through image, calculating the MM at each point
+parfor i=1:colHeight
+    I = zeros(4);
+    
+    I(1,1) = reshapeImages{1}(i); %the imgX chosen for each of these corresponds to the image given in Eqn (2) of Bueno/Campbell paper
+    I(1,2) = reshapeImages{5}(i);
+    I(1,3) = reshapeImages{9}(i);
+    I(1,4) = reshapeImages{13}(i);
+    
+    I(2,1) = reshapeImages{2}(i);
+    I(2,2) = reshapeImages{6}(i);
+    I(2,3) = reshapeImages{10}(i);
+    I(2,4) = reshapeImages{14}(i);
+    
+    I(3,1) = reshapeImages{3}(i);
+    I(3,2) = reshapeImages{7}(i);
+    I(3,3) = reshapeImages{11}(i);
+    I(3,4) = reshapeImages{15}(i);
+    
+    I(4,1) = reshapeImages{4}(i);
+    I(4,2) = reshapeImages{8}(i);
+    I(4,3) = reshapeImages{12}(i);
+    I(4,4) = reshapeImages{16}(i);
+    
+    M_out = I / M_A; % following eqn (2) in Bueno/Campbell
+    
+    MM(i,:,:) = M_out / M_G; %following eqn (3) in Bueno/Campbell
+end
+
 % allocate memory for normalized MM
-MM_norm = zeros(N,M,4,4);
+MM_norm = zeros(colHeight,4,4);
 
 % normalize the MM
 switch normalizationType
     case MuellerMatrixNormalizationTypes.pixelWise
-        for y=1:N
-            for x=1:M
-                pixelMM = MM(y,x,:,:);
+        parfor i=1:colHeight
+                pixelMM = MM(i,:,:);
                 
                 maxVal = max(max(pixelMM));
                 
                 pixelMM_norm = pixelMM ./ maxVal;
                 
-                MM_norm(y,x,:,:) = pixelMM_norm;
-            end
+                MM_norm(i,:,:) = pixelMM_norm;
         end        
     case MuellerMatrixNormalizationTypes.mm00Max
-        mm00 = MM(:,:,1,1);
+        mm00 = MM(:,1,1);
         
-        maxVal = max(max(mm00));
+        maxVal = max(mm00);
         
         MM_norm = MM ./ maxVal;
         
     otherwise
         error('Invalid Normalization Type');
 end
+
+% reshape back
+ MM_norm = reshape(MM_norm, height, width, 4, 4);
+

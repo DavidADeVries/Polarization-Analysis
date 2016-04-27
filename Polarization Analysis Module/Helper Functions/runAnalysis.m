@@ -84,17 +84,17 @@ if ~analysisSession.muellerMatrixOnly % only continue on if selected
     dirName = PolarizationAnalysisNamingConventions.M_D_FILENAME_LABEL;
     fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_D_MATLAB_VAR_NAME, []);
     
-    writeMMFiles(M_D, writePath, dirName, [fileName, fileNameSection]);
+    writeMMFiles(M_D, writePath, fileName, dirName, fileNameSection);
     
     dirName = PolarizationAnalysisNamingConventions.M_DELTA_FILENAME_LABEL;
     fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_DELTA_MATLAB_VAR_NAME, []);
     
-    writeMMFiles(M_delta, writePath, dirName, [fileName, fileNameSection]);
+    writeMMFiles(M_delta, writePath, fileName, dirName, fileNameSection);
     
     dirName = PolarizationAnalysisNamingConventions.M_R_FILENAME_LABEL;
     fileNameSection = createFilenameSection(PolarizationAnalysisNamingConventions.M_R_MATLAB_VAR_NAME, []);
     
-    writeMMFiles(M_R, writePath, dirName, [fileName, fileNameSection]);
+    writeMMFiles(M_R, writePath, fileName, dirName, fileNameSection);
     
     % write metric files
     
