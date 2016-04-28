@@ -105,6 +105,15 @@ for i=1:length(images)
     images{i} = double(images{i});
 end
 
+% get rid of zeros
+for i=1:length(images)
+    image = images{i};
+    
+    zeroVals = (image == 0);
+    
+    images{i} = image + zeroVals;
+end
+
 
 colHeight = height * width;
 
@@ -144,7 +153,7 @@ parfor i=1:colHeight
     I(4,3) = reshapeImages{12}(i);
     I(4,4) = reshapeImages{16}(i);
     
-    M_out = I / M_A; % following eqn (2) in Bueno/Campbell
+    M_out = inv(M_A \ I; % following eqn (2) in Bueno/Campbell
     
     MM(i,:,:) = M_out / M_G; %following eqn (3) in Bueno/Campbell
 end
@@ -156,13 +165,11 @@ MM_norm = zeros(colHeight,4,4);
 switch normalizationType
     case MuellerMatrixNormalizationTypes.pixelWise
         parfor i=1:colHeight
-                pixelMM = MM(i,:,:);
-                
-                maxVal = max(max(pixelMM));
-                
-                pixelMM_norm = pixelMM ./ maxVal;
-                
-                MM_norm(i,:,:) = pixelMM_norm;
+            pixelMM = squeeze(MM(i,:,:));
+            
+            pixelMM_norm = pixelMM ./ pixelMM(1,1);
+            
+            MM_norm(i,:,:) = pixelMM_norm;
         end        
     case MuellerMatrixNormalizationTypes.mm00Max
         mm00 = MM(:,1,1);

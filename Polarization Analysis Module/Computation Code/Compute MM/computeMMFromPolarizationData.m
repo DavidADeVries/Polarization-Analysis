@@ -153,7 +153,7 @@ parfor i=1:colHeight
     I(4,3) = reshapeImages{12}(i);
     I(4,4) = reshapeImages{16}(i);
     
-    M_out = I / M_A; % following eqn (2) in Bueno/Campbell
+    M_out = M_A \ I; % following eqn (2) in Bueno/Campbell
     
     MM(i,:,:) = M_out / M_G; %following eqn (3) in Bueno/Campbell
 end
