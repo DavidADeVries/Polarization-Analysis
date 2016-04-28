@@ -105,15 +105,6 @@ for i=1:length(images)
     images{i} = double(images{i});
 end
 
-% get rid of zeros
-for i=1:length(images)
-    image = images{i};
-    
-    zeroVals = (image == 0);
-    
-    images{i} = image + zeroVals;
-end
-
 
 colHeight = height * width;
 
@@ -165,11 +156,13 @@ MM_norm = zeros(colHeight,4,4);
 switch normalizationType
     case MuellerMatrixNormalizationTypes.pixelWise
         parfor i=1:colHeight
-            pixelMM = squeeze(MM(i,:,:));
-            
-            pixelMM_norm = pixelMM ./ pixelMM(1,1);
-            
-            MM_norm(i,:,:) = pixelMM_norm;
+                pixelMM = MM(i,:,:);
+                
+                maxVal = max(max(pixelMM));
+                
+                pixelMM_norm = pixelMM ./ maxVal;
+                
+                MM_norm(i,:,:) = pixelMM_norm;
         end        
     case MuellerMatrixNormalizationTypes.mm00Max
         mm00 = MM(:,1,1);

@@ -10,6 +10,8 @@ rootFileName = [fileName, filenameSection];
 % save MM as MATLAB file
 matlabFileName = [rootFileName, createFilenameSection(PolarizationAnalysisNamingConventions.MM_MATLAB_VAR_FILENAME_LABEL, []), Constants.MATLAB_EXT];
 
+data = MM; % name of the variable when saving
+
 save(makePath(rootPath, matlabFileName), PolarizationAnalysisNamingConventions.MM_MATLAB_VAR_NAME);
 
 % save MM as composite image

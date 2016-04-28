@@ -17,8 +17,9 @@ classdef PolarizationAnalysisNamingConventions
         % image filename suffixes        
         MM_FILENAME_LABEL = 'MM';
         
-        MM_MATLAB_VAR_NAME = 'MM';
-        MM_MATLAB_VAR_FILENAME_LABEL = 'Var';
+        MM_MATLAB_VAR_NAME = 'data';
+        
+        MM_MATLAB_VAR_FILENAME_LABEL = 'Data';
         
         MM_COMPOSITE_FILENAME_LABEL = 'Comp';
         

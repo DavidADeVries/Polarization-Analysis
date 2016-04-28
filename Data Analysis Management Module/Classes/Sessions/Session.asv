@@ -341,7 +341,7 @@ classdef Session
             
             polarizationAnalysisSession.saveMetadata(savePath, projectPath, saveToBackup)
             
-            % create file selection structure
+            % 
             polarizationAnalysisSession = polarizationAnalysisSession.createFileSelectionEntries(makePath(projectPath, toPath));
         end
         

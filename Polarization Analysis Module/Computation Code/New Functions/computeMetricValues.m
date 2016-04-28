@@ -160,11 +160,11 @@ value = atan2d((M_R(3,2) - M_R(2,3)), (M_R(2,2) + M_R(3,3)));
 end
 
 function value = computeDelta(MM)
-value = acosd(MM(4,4));
+value = real(acosd(MM(4,4)));
 end
 
 function value = computeRho1(MM)
-value = 0.5 .* acosd(MM(3,4) ./ sqrt(1 - MM(4,4) .^ 2));
+value = real(0.5 .* acosd(MM(3,4) ./ sqrt(1 - MM(4,4) .^ 2)));
 end
 
 function value = computeRho2(MM)
