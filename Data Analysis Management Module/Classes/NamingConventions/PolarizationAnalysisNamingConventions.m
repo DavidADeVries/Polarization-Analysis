@@ -35,7 +35,7 @@ classdef PolarizationAnalysisNamingConventions
         M_D_FILENAME_LABEL = 'M_D';        
         M_D_MATLAB_VAR_NAME = 'M_D';
 
-        M_DELTA_FILENAME_LABEL = 'M_del'; %char 916 is the Uppercase Delta     
+        M_DELTA_FILENAME_LABEL = 'M_del';    
         M_DELTA_MATLAB_VAR_NAME = 'M_del';
 
         M_R_FILENAME_LABEL = 'M_R';        
