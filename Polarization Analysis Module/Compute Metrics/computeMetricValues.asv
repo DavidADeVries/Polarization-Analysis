@@ -210,9 +210,9 @@ end
 
 % Source: Mueller matrix approach for determination of optical rotation in chiral turbid media in backscattering geometry (Manhas et al.)
 % Pg. 195, Eqn (17)
-function value = computeTheta(retardance_vector)
-    numerator = retardance_vector(3);
-    denominator = retardance_vector(2);
+function value = computeTheta(M_R)
+    numerator = M_R(2,3) - M_R(3,2);
+    denominator = M_R(4,2) - M_R(2,4);
 
     value = 0.5 .* atand(numerator/denominator);
 end
