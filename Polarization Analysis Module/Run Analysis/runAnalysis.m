@@ -1,4 +1,4 @@
-function [selectStructure] = runAnalysis(dataSession, analysisSession, projectPath, dataPath, savePath, fileName, progressDisplayHandle, selectStructure, selectStructureIndex)
+function [selectStructure, analysisSession] = runAnalysis(dataSession, analysisSession, projectPath, dataPath, savePath, fileName, progressDisplayHandle, selectStructure, selectStructureIndex)
 % runAnalysis
 
 
@@ -14,6 +14,7 @@ writePath = makePath(projectPath, savePath);
 
 % update status
 selectStructure{selectStructureIndex}.isProcessing = true;
+selectStructure{selectStructureIndex}.completedAnalysisPath = writePath;
 
 newStatus = StatusTypes.ComputeMM;
 selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure, selectStructureIndex);
@@ -23,7 +24,9 @@ selectStructure = updateStatus(newStatus, progressDisplayHandle, selectStructure
 normalizationType = analysisSession.muellerMatrixNormalizationType;
 mmComputationType = analysisSession.muellerMatrixComputationType;
 
-MM_norm = computeMMFromPolarizationData(dataSession, readInPath, normalizationType, mmComputationType);
+[MM_norm, outOfRangePixelsRatio] = computeMMFromPolarizationData(dataSession, readInPath, normalizationType, mmComputationType);
+
+analysisSession.outOfRangePixelsRatio = outOfRangePixelsRatio;
 
 
 

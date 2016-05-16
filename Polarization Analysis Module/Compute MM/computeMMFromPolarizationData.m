@@ -29,7 +29,7 @@
 % 6) Horizontal Linear Polarizer
 % 7) Monochrome Imager
 
-function MM_norm = computeMMFromPolarizationData(session, toSessionPath, normalizationType, mmComputationType)
+function [MM_norm, outOfRangePixelsRatio] = computeMMFromPolarizationData(session, toSessionPath, normalizationType, mmComputationType)
 
 % find MM fileSelectionEntry
 
@@ -100,20 +100,32 @@ if length(dims) == 3 %must have been saved as rgb
     end
 end
 
-% double precision conversion
+% make sure they're doubles
 for i=1:length(images)
     images{i} = double(images{i});
 end
 
-% get rid of zeros
+% normalize images
+
 for i=1:length(images)
-    image = images{i};
-    
-    zeroVals = (image == 0);
-    
-    images{i} = image + zeroVals;
+    maxValues(i) = max(max(images{i}));
 end
 
+maxVal = max(maxValues);
+
+if maxVal <= 1 % no normalization needed
+    normalizationValue = 1;
+elseif maxVal <= 255
+    normalizationValue = 255;
+else
+    error(['Image cannot be normalized! Invalid values found (Max Value: ', num2str(maxVal), ')']);
+end
+
+for i=1:length(images)
+    images{i} = images{i} ./ normalizationValue; %apply normalization
+end
+
+% Start MM computation
 
 colHeight = height * width;
 
@@ -158,30 +170,28 @@ parfor i=1:colHeight
     MM(i,:,:) = M_out / M_G; %following eqn (3) in Bueno/Campbell
 end
 
-% allocate memory for normalized MM
-MM_norm = zeros(colHeight,4,4);
 
-% normalize the MM
-switch normalizationType
-    case MuellerMatrixNormalizationTypes.pixelWise
-        parfor i=1:colHeight
-            pixelMM = squeeze(MM(i,:,:));
-            
-            pixelMM_norm = pixelMM ./ pixelMM(1,1);
-            
-            MM_norm(i,:,:) = pixelMM_norm;
-        end        
-    case MuellerMatrixNormalizationTypes.mm00Max
-        mm00 = MM(:,1,1);
-        
-        maxVal = max(mm00);
-        
-        MM_norm = MM ./ maxVal;
-        
-    otherwise
-        error('Invalid Normalization Type');
-end
+% normalize MM
+MM_norm = normalizeMM(MM, normalizationType);
 
 % reshape back
  MM_norm = reshape(MM_norm, height, width, 4, 4);
+ 
+% check that there aren't too many pixels outside of the acceptable range
+isOutOfRangePixel = zeros(height, width);
 
+for i=1:4
+    for j=1:4
+        if i == 1 && j == 1 % MM(0,0) index has range of 0..1
+            range = [0, 1];
+        else
+            range = [-1, 1];
+        end
+        
+        isOutOfRangePixel(:,:) = isOutOfRangePixel(:,:) | ((MM_norm(:,:,i,j) < range(1)) | (MM_norm(:,:,i,j) > range(2)));
+    end
+end
+
+numberOutOfRangePixels = sum(sum(isOutOfRangePixel));
+
+outOfRangePixelsRatio = numberOutOfRangePixels / (width*height);

@@ -152,7 +152,7 @@ classdef Session
         
         function [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session)
             
-            sessionDateString = ['Date: ', displayDate(session.sessionDate)];
+            sessionDateString = ['Date: ', displayDateAndTime(session.sessionDate)];
             sessionDoneByString = ['Done By: ', session.sessionDoneBy];
             sessionNumberString = ['Session Number: ', num2str(session.sessionNumber)];
             rejectedString = ['Rejected: ' , booleanToString(session.rejected)];
@@ -334,7 +334,7 @@ classdef Session
             savePath = makePath(toPath, polarizationAnalysisSession.dirName);
             fileName = [fileName, polarizationAnalysisSession.generateFilenameSection()];
             
-            selectStructure = runAnalysis(parentSession, polarizationAnalysisSession, projectPath, dataPath, savePath, fileName, progressDisplayHandle, selectStructure, selectStructureIndex);
+            [selectStructure, polarizationAnalysisSession] = runAnalysis(parentSession, polarizationAnalysisSession, projectPath, dataPath, savePath, fileName, progressDisplayHandle, selectStructure, selectStructureIndex);
             
             % save metadata
             saveToBackup = false;

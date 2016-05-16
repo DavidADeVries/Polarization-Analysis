@@ -1,30 +1,27 @@
-function [M_D, M_delta, M_R] = performMatrixDecomposition(MM)
+function [M_D, M_delta, M_R] = performMatrixDecomposition(M)
 % performMatrixDecomposition
 
-mm = MM(2:4, 2:4);
+m = (1 / M(1,1)) * M(2:4, 2:4);
 
-D = (1/MM(1,1)) .* (MM(1, 2:4))';
+D = (1/M(1,1)) .* (M(1, 2:4))';
 
-P = (1/MM(1,1)) .* MM(2:4, 1);
+P = (1/M(1,1)) .* M(2:4, 1);
 
-D_mag_sqr = (1/(MM(1,1)^2)) .* (((MM(1,2))^2) + ((MM(1,3))^2) + ((MM(1,4))^2));
+D_mag = norm(D);
+
+D_unit = D ./ D_mag;
 
 I = eye(3);
 
-m_D = (sqrt(1 - D_mag_sqr) * I) + ((1 - sqrt(1 - D_mag_sqr)) * ((1/D_mag_sqr)*(D*D')));
+m_D = (sqrt(1 - D_mag^2) .* I) + ((1 - sqrt(1 - D_mag^2)) .* (D_unit*D_unit'));
 
-M_D(1,1) = 1;
-M_D(1, 2:4) = D';
-M_D(2:4, 1) = D;
-M_D(2:4, 2:4) = m_D;
-M_D = (1/MM(1,1)) .* M_D; %normalize
+M_D = M(1,1) .* [1, D'; D, m_D];
 
-
-M_prime = MM / M_D;
+M_prime = M / M_D;
 
 m_prime = M_prime(2:4, 2:4);
 
-P_delta = (P - (mm * D)) / (1- D_mag_sqr);
+P_delta = (P - (m * D)) ./ (1 - (D_mag^2));
 
 eigens = eig(m_prime * m_prime');
 
@@ -37,9 +34,7 @@ if det(m_prime) < 0
     m_delta = -m_delta;
 end
 
-M_delta(1,:) = [1 0 0 0];
-M_delta(2:4, 1) = P_delta;
-M_delta(2:4, 2:4) = m_delta;
+M_delta = [1 0 0 0; P_delta m_delta];
 
 M_R = M_delta \ M_prime;
 
@@ -49,9 +44,9 @@ M_R = M_delta \ M_prime;
 % According to: "which should be real, may acquire a tiny imaginary part due to computational rounding errors. This imaginary part should be discarded"
 % From: "Mueller matrix roots algorithm and computational considerations", Noble & Chipman
 
-M_D = real(M_D);
-M_R = real(M_R);
-M_delta = real(M_delta);
+M_D = M_D;
+M_R = M_R;
+M_delta = M_delta;
 
 
 end

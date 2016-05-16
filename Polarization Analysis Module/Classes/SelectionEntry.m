@@ -14,6 +14,7 @@ classdef SelectionEntry
         statusType = [];
         
         toPath = '';
+        completedAnalysisPath = '';
     end
     
     methods

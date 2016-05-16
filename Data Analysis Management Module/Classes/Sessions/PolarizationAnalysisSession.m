@@ -6,6 +6,7 @@ classdef PolarizationAnalysisSession < DataProcessingSession
         muellerMatrixComputationType = []
         muellerMatrixNormalizationType = []
         muellerMatrixOnly
+        outOfRangePixelsRatio
         versionNumber %compare to the Version.m versionNumber
     end
     
@@ -49,9 +50,9 @@ classdef PolarizationAnalysisSession < DataProcessingSession
             normalizationTypeString = ['MM Normalization Type: ', displayType(session.muellerMatrixNormalizationType)];
             muellerMatrixOnlyString = ['Only MM Computed: ', booleanToString(session.muellerMatrixOnly)];
             versionNumberString = ['Analysis Module Version: ', num2str(session.versionNumber)];
-            
-            
-            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, computationTypeString, normalizationTypeString, muellerMatrixOnlyString, versionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            outOfRangePixelsRatioString = ['Out of Range Pixels Ratio: ', num2str(100*session.outOfRangePixelsRatio), '%'];
+                        
+            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, computationTypeString, normalizationTypeString, muellerMatrixOnlyString, versionNumberString, outOfRangePixelsRatioString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
         end
     end
