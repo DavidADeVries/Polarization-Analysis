@@ -58,6 +58,10 @@ classdef DataProcessingSession < Session
             linkedSessionsString = ['Linked Session Numbers: ', sessionNumbersString];
             
         end
+        
+        function isLinked = isLinkedToSession(session, checkSession)
+            isLinked = ~isempty(findInArray(checkSession.sessionNumber, session.linkedSessionNumbers));
+        end
     end
     
 end

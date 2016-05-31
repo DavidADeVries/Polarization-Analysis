@@ -52,12 +52,13 @@ function FluorescentSubsectionSelectionModule_OpeningFcn(hObject, eventdata, han
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to FluorescentSubsectionSelectionModule (see VARARGIN)
 
-% ********************************************
-% INPUT: (polarimetryImages, fluorsecentImage)
-% ********************************************
+% *******************************************************
+% INPUT: (polarimetryImages, filenames, fluorsecentImage)
+% *******************************************************
 
 handles.polarimetryImages = varargin{1};
-handles.fluorescentImage = varargin{2};
+handles.filenames = varargin{2};
+handles.fluorescentImage = varargin{3};
 
 handles.xShift = 0;
 handles.yShift = 0;
@@ -73,11 +74,13 @@ handles.cancel = false;
 
 updateImageAxes(handles);
 
+set(handles.polarimetryImageSelect, 'String', handles.filenames);
+
 % Update handles structure
 guidata(hObject, handles);
 
 % UIWAIT makes FluorescentSubsectionSelectionModule wait for user response (see UIRESUME)
-% uiwait(handles.FluorescentSubsectionSelectionModule);
+uiwait(handles.FluorescentSubsectionSelectionModule);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -87,8 +90,16 @@ function varargout = FluorescentSubsectionSelectionModule_OutputFcn(hObject, eve
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Get default command line output from handles structure
-varargout{1} = handles.transformParameters;
+% ******************************************
+% OUTPUT: [cancel, xShift, yShift, rotShift]
+% ******************************************
+
+varargout{1} = handles.cancel;
+varargout{2} = handles.xShift;
+varargout{3} = handles.yShift;
+varargout{4} = handles.rotAngle;
+
+close(handles.FluorescentSubsectionSelectionModule);
 
 
 % --- Executes on selection change in polarimetryImageSelect.

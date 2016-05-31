@@ -262,7 +262,7 @@ classdef Subject
             else
                 [session, toLocationPath] = sample.getSelectedLocation();
                 
-                toLocationPath = makePath(subject.dirName, toLocationPath);
+                toLocationPath = makePath(sample.dirName, toLocationPath);
             end
         end
         

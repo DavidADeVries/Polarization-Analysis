@@ -248,17 +248,19 @@ classdef MicroscopeSession < DataCollectionSession
             % get all files in the dir
             fileList = getAllFiles(toFluoroPath);
             
-            matchString = createFilenameSection(MicroscopeNamingConventions.FLUORO_GREYSCALE, []);
+            matchString = createFilenameSection(MicroscopeNamingConventions.FLUORO_GREYSCALE.getSingularProjectTag(), []);
             
             matchIndices = containsSubstring(fileList, matchString);
             
             % have the BW images, no make sure only BMPs
             
+            bwFileList = {};
+            
             for i=1:length(matchIndices)
-                bwFileList{i} = fileList{matchIndex(i)};
+                bwFileList{i} = fileList{matchIndices(i)};
             end
             
-            matchString = Constants.BMP_EXP;
+            matchString = Constants.BMP_EXT;
             
             matchIndices = containsSubstring(bwFileList, matchString);
             
@@ -269,7 +271,7 @@ classdef MicroscopeSession < DataCollectionSession
                 if length(matchIndices) == 1
                     filename = fileList{matchIndices(1)};
                                         
-                    fluoroImage = openImage(makePath(toFluoroImage, filename));
+                    fluoroImage = openImage(makePath(toFluoroPath, filename));
                 else
                     filenameOptions = {};
                     
@@ -282,11 +284,39 @@ classdef MicroscopeSession < DataCollectionSession
                     if ok
                         filename = filenameOptions{index(1)};
                         
-                        fluoroImage = openImage(makePath(toFluoroImage, filename));
+                        fluoroImage = openImage(makePath(toFluoroPath, filename));
                     else
                         fluoroImage = [];
                     end
                 end
+            end
+        end
+        
+        function [polarimetryImages, filenames] = getAlignedPolarimetryImages(session, sessions, toLocationPath)
+            counter = 1;
+            
+            for i=1:length(sessions)
+                if isRegistrationSession(sessions{i})
+                    regSession = sessions{i};
+                    
+                    if regSession.isLinkedToSession(session)
+                        possibleSessions{counter} = regSession;
+                        counter = counter + 1;
+                    end
+                end
+            end
+            
+            if isempty(possibleSessions)
+                polarimetryImages = {};
+                filenames = {};
+            else % need to get polarimetry images now
+                if length(possibleSessions) == 1
+                    registrationSession = possibleSessions{1};
+                else
+                    registrationSession = chooseSession(possibleSessions);
+                end
+                
+                [polarimetryImages, filenames] = registrationSession.getMMImages(makePath(toLocationPath, registrationSession.dirName));
             end
         end
         

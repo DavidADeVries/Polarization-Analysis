@@ -186,6 +186,21 @@ classdef LegacyRegistrationSession < DataProcessingSession
             preppedSession.linkedSessionNumbers = session.linkedSessionNumbers;
         end
         
+        
+        function [images, filenames] = getMMImages(session, toSessionPath)
+            mmPath = makePath(toSessionPath, LegacyRegistrationNamingConventions.MM_DIR.getSingularProjectTag());
+            
+            filenames = getAllFiles(mmPath);
+            
+            filenames = getFilesByExtension(filenames, Constants.BMP_EXT);
+            
+            images = {};
+            
+            for i=1:length(filenames)
+                images{i} = openImage(makePath(mmPath, filenames{i}));
+            end
+        end
+        
     end
     
 end

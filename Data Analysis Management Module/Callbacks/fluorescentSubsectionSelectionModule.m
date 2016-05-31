@@ -10,10 +10,10 @@ sessions = location.sessions;
 
 if ~isempty(session)
     if isa(session, 'MicroscopeSession')
-        fluoroImage = session.getFluoroscentImage(toLocationPath);
-        polarimetryImages = session.getAlignedPolarimetryImages(sessions, toLocationPath);
+        fluoroImage = session.getFluoroscentImage(makePath(handles.localPath, toLocationPath));
+        [polarimetryImages, filenames] = session.getAlignedPolarimetryImages(sessions, makePath(handles.localPath, toLocationPath));
         
-        [cancel, xShift, yShift, rotShift] = FluorescentSubsectionSelectionModule(polarimetryImages, fluoroImage);
+        [cancel, xShift, yShift, rotShift] = FluorescentSubsectionSelectionModule(polarimetryImages, filenames, fluoroImage);
     else
         warndlg('Please select a registration session.', 'Incorrect Session Type');
     end
