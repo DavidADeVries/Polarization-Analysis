@@ -154,7 +154,7 @@ end
 % Source: Interpretation of Mueller matrices based on polar decomposition (Lu, Chipman)
 % Pg. 1107, Eqn (8) and Pg. 1108, Eqn (17)
 function value = computeRetardance(M_R)
-    value = acosd((trace(M_R) / 2) - 1);
+    value = real(acosd((trace(M_R) / 2) - 1));
 end
 
 % Source: Interpretation of Mueller matrices based on polar decomposition (Lu, Chipman)
@@ -214,7 +214,7 @@ function value = computePsi(retardance, delta)
     numerator = cosd(retardance/2);
     denominator = cosd(delta/2);
     
-    value = acosd(numerator/denominator);
+    value = real(acosd(numerator/denominator));
 end
 
 % Source: Mueller matrix approach for determination of optical rotation in chiral turbid media in backscattering geometry (Manhas et al.)
@@ -223,7 +223,7 @@ function value = computeTheta(retardance_vector)
     numerator = retardance_vector(3);
     denominator = retardance_vector(2);
 
-    value = 0.5 .* atand(numerator/denominator);
+    value = real(0.5 .* atand(numerator/denominator));
 end
 
 % Source: Mueller matrix approach for determination of optical rotation in chiral turbid media in backscattering geometry (Manhas et al.)
@@ -233,7 +233,7 @@ function value = computeDelta(retardance_vector, R)
     
     r_3 = retardance_vector(3);
     
-    value = 2*acosd(sqrt((r_3^2)*(1-a) + a));
+    value = real(2*acosd(sqrt((r_3^2)*(1-a) + a)));
 end
 
 % Source: Interpretation of Mueller matrices based on polar decomposition (Lu, Chipman)

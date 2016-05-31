@@ -250,6 +250,32 @@ classdef Subject
             end
         end
         
+        function sample = getSelectedSample(subject)
+            sample = subject.samples(subject.sampleIndex);
+        end
+        
+        function [session, toLocationPath] = getSelectedLocation(subject)
+            sample = subject.getSelectedSample();
+            
+            if isempty(sample)            
+                session = [];
+            else
+                [session, toLocationPath] = sample.getSelectedLocation();
+                
+                toLocationPath = makePath(subject.dirName, toLocationPath);
+            end
+        end
+        
+        function session = getSelectedSession(subject)
+            sample = subject.getSelectedSample();
+            
+            if isempty(sample)            
+                session = [];
+            else
+                session = sample.getSelectedSession();
+            end
+        end
+        
         
     end
     

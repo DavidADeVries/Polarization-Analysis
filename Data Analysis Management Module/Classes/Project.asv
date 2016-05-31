@@ -453,7 +453,6 @@ classdef Project
             else
                 [session, toLocationPath] = trial.getSelectedLocation();
                 
-                toLocationPath = makePath(trial.dirName, toLocationPath);
             end
         end
         

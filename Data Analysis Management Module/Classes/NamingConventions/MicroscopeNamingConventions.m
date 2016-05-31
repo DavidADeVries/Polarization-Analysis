@@ -13,7 +13,8 @@ classdef MicroscopeNamingConventions
         
         
         % image series
-        FLUORO_IMAGES = {NamingConvention({'colour'}, {'RGB'}), NamingConvention({'mono'}, {'BW'})};
+        FLUORO_COLOUR = NamingConvention({'colour'}, {'RGB'});
+        FLUORO_GREYSCALE = NamingConvention({'mono'}, {'BW'});
         
         MM_IMAGES_PSA = {NamingConvention({'45'}, {'45'}), NamingConvention({'00'}, {'00'}), NamingConvention({'30'}, {'30'}), NamingConvention({'60'}, {'60'})};
         MM_IMAGES_PSG = {NamingConvention({'45'}, {'45'}), NamingConvention({'00'}, {'00'}), NamingConvention({'30'}, {'30'}), NamingConvention({'60'}, {'60'})};
@@ -68,7 +69,7 @@ classdef MicroscopeNamingConventions
         end
         
         function namingConventions = getFluoroNamingConventions()
-            namingConventions = MicroscopeNamingConventions.FLUORO_IMAGES;
+            namingConventions = {MicroscopeNamingConventions.FLUORO_COLOUR, MicroscopeNamingConventions.FLUORO_GREYSCALE};
         end
         
         function namingConventions = getTRNamingConventions()

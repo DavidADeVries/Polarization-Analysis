@@ -565,6 +565,28 @@ classdef Trial
             end
         end
         
+        function [session, toLocationPath] = getSelectedLocation(trial)
+            subject = trial.getSelectedSubject();
+            
+            if isempty(subject)            
+                session = [];
+            else
+                [session, toLocationPath] = subject.getSelectedLocation();
+                
+                toLocationPath = makePath(subject.dirName, toLocationPath);
+            end
+        end
+        
+        function session = getSelectedSession(trial)
+            subject = trial.getSelectedSubject();
+            
+            if isempty(subject)            
+                session = [];
+            else
+                session = subject.getSelectedSession();
+            end
+        end
+        
         
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE

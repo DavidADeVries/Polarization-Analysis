@@ -214,6 +214,14 @@ classdef CsfSample < FrozenSample
             % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
         end
         
+        function location = getSelectedLocation(sample)
+            location = [];
+        end
+        
+        function session = getSelectedSession(sample)
+            session = [];
+        end
+        
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************

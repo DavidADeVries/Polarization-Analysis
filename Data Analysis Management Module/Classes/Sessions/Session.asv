@@ -350,7 +350,7 @@ classdef Session
             
             registrationClasses = {class(RegistrationSession), class(LegacyRegistrationSession)};
             
-            bool = ~isempty(containsString(registrationClasses, sessionClass));
+            
         end
         
     end

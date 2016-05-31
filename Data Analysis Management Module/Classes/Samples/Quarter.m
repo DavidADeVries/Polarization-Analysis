@@ -576,6 +576,17 @@ classdef Quarter
             quarter = quarter.updateLocation(location);
         end
         
+        
+        function session = getSelectedSession(quarter)
+            location = quarter.getSelectedLocation();
+            
+            if isempty(location)            
+                session = [];
+            else
+                session = location.getSelectedSession();
+            end
+        end
+        
     end
     
 end

@@ -631,15 +631,13 @@ classdef Eye < FixedSample
             eye = eye.updateQuarter(quarter);
         end
         
-        function [location, toLocationPath] = getSelectedLocation(sample)
+        function [session = getSelectedLocation(sample)
             quarter = sample.getSelectedQuarter();
             
             if isempty(quarter)            
-                location = [];
+                session = [];
             else
-                location = quarter.getSelectedLocation();
-                
-                toLocationPath = makePath(quarter.dirName, location.dirName);
+                session = quarter.getSelectedLocation();
             end
         end
         

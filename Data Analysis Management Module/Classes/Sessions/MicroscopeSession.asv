@@ -290,6 +290,16 @@ classdef MicroscopeSession < DataCollectionSession
             end
         end
         
+        function polarimetryImages = getAlignedPolarimetryImages(session, sessions, toLocationPath)
+            searchSessionNumber = session.sessionNumber; % session number for the raw data, we need to find registration sessions that drew data from this session
+            
+            for i=1:length(sessions)
+                if isRegistrationSession(sessions{i})
+                    
+                end
+            end
+        end
+        
     end
     
 end

@@ -6,7 +6,9 @@ if mmComputationType == MuellerMatrixComputationTypes.chrisFranProgram
 elseif mmComputationType == MuellerMatrixComputationTypes.davidProgram
     [M_G, M_A] = getMatrices_David();    
 elseif mmComputationType == MuellerMatrixComputationTypes.frankProgram
-    [M_G, M_A] = getMatrices_Frank(); % THIS IS THE RIGHT ONE!!!  
+    [M_G, M_A] = getMatrices_Frank(); % THIS IS THE RIGHT ONE!!!
+elseif mmComputationType == MuellerMatrixComputationTypes.csloProgram
+    [M_G, M_A] = getMatrices_CSLO();
 else
     error('Invalid Computation Type');
 end

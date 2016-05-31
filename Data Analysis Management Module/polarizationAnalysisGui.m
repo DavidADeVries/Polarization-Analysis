@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 30-Mar-2016 15:20:27
+% Last Modified by GUIDE v2.5 30-May-2016 12:40:40
 
 % Begin initialization code - DO NOT EDIT
 
@@ -726,3 +726,12 @@ function polarizationAnalysisModule_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 polarizationAnalysisModule(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function fluorescentSubsectionSelectionModule_Callback(hObject, eventdata, handles)
+% hObject    handle to fluorescentSubsectionSelectionModule (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+fluorescentSubsectionSelectionModule(hObject, eventdata, handles);

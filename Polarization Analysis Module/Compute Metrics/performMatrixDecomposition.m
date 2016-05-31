@@ -44,9 +44,9 @@ M_R = M_delta \ M_prime;
 % According to: "which should be real, may acquire a tiny imaginary part due to computational rounding errors. This imaginary part should be discarded"
 % From: "Mueller matrix roots algorithm and computational considerations", Noble & Chipman
 
-M_D = M_D;
-M_R = M_R;
-M_delta = M_delta;
+M_D = real(M_D);
+M_R = real(M_R);
+M_delta = real(M_delta);
 
 
 end

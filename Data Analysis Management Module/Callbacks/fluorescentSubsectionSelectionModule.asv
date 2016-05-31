@@ -1,0 +1,23 @@
+function [] = fluorescentSubsectionSelectionModule(hObject, eventdata, handles)
+% fluorescentSubsectionSelectionModule
+
+project = handles.localProject;
+
+location = project.getSelectedLocation();
+
+if ~isempty(session)
+    if isa(session, 'MicroscopeSession')
+        fluoroImage = session.getFluoroscentImage();
+        polarimetryImages = session.getPolarimetryImages(project);
+        
+        [cancel, xShift, yShift, rotShift] = FluorescentSubsectionSelectionModule(polarimetryImages, fluoroImage);
+    else
+        warndlg('Please select a registration session.', 'Incorrect Session Type');
+    end
+    
+else
+    warndlg('Please select a  microscope session.', 'No Session Open');    
+end
+
+end
+

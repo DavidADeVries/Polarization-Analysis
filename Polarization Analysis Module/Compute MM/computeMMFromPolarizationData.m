@@ -105,6 +105,7 @@ for i=1:length(images)
     images{i} = double(images{i});
 end
 
+
 % normalize images
 
 for i=1:length(images)
@@ -124,6 +125,9 @@ end
 for i=1:length(images)
     images{i} = images{i} ./ normalizationValue; %apply normalization
 end
+
+
+
 
 % Start MM computation
 
