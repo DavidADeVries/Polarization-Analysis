@@ -26,7 +26,7 @@ if ~isempty(session)
             
             fluoroSession = FluorescentSubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, userName, transformParams, cropCoords);
             
-            fluoroSession.writeImages(writePath, toLocationFilename, fluoroImage, fluoroMask, mmImages);
+            FluorsecentSubsectionSelectionSession.writeImages(toLocat
         end
     else
         warndlg('Please select a registration session.', 'Incorrect Session Type');

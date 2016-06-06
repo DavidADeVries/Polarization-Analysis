@@ -16,6 +16,9 @@ classdef Constants
         XLSX_EXT = '.xlsx';
         PNG_EXT = '.png';
         
+        FILENAME_SECTION_LEFT_BRACKET = '(';
+        FILENAME_SECTION_RIGHT_BRACKET = ')';
+        
         CIRC_STATS_LABEL = '(Circ)';
         NON_CIRC_STATS_LABEL = '(Non-Circ)';
                 

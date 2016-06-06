@@ -565,16 +565,15 @@ classdef Trial
             end
         end
         
-        function [session, toLocationPath, toLocationFilename] = getSelectedLocation(trial)
+        function [session, toLocationPath, toLocation] = getSelectedLocation(trial)
             subject = trial.getSelectedSubject();
             
             if isempty(subject)            
                 session = [];
             else
-                [session, toLocationPath, toLocationFilename] = subject.getSelectedLocation();
+                [session, toLocationPath] = subject.getSelectedLocation();
                 
                 toLocationPath = makePath(subject.dirName, toLocationPath);
-                toLocationFilename = [subject.generateFilenameSection, toLocationFilename];
             end
         end
         

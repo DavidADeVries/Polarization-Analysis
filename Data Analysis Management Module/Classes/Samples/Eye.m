@@ -631,7 +631,7 @@ classdef Eye < FixedSample
             eye = eye.updateQuarter(quarter);
         end
         
-        function [location, toLocationPath] = getSelectedLocation(sample)
+        function [location, toLocationPath, toLocationFilename] = getSelectedLocation(sample)
             quarter = sample.getSelectedQuarter();
             
             if isempty(quarter)            
@@ -640,6 +640,7 @@ classdef Eye < FixedSample
                 location = quarter.getSelectedLocation();
                 
                 toLocationPath = makePath(quarter.dirName, location.dirName);
+                toLocationFilename = [quarter.generateFilenameSection, location.generateFilenameSection];
             end
         end
         

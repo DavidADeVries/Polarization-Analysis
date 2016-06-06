@@ -445,15 +445,16 @@ classdef Project
             end
         end
         
-        function [session, toLocationPath] = getSelectedLocation(project)
+        function [session, toLocationPath, toLocationFilename] = getSelectedLocation(project)
             trial = project.getSelectedTrial();
             
             if isempty(trial)            
                 session = [];
             else
-                [session, toLocationPath] = trial.getSelectedLocation();
+                [session, toLocationPath, toLocationFilename] = trial.getSelectedLocation();
                 
                 toLocationPath = makePath(trial.dirName, toLocationPath);
+                toLocationFilename = [trial.generateFilenameSection, toLocationFilename];
             end
         end
         
