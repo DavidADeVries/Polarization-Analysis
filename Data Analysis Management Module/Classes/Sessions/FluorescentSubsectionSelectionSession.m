@@ -68,8 +68,25 @@ classdef FluorescentSubsectionSelectionSession < DataProcessingSession
             end
         end
         
-        function session = writeImages(session, writePath, toLocationFilename, fluoroImage, fluoroMask, mmImages)
+        function session = writeMMImages(session, toLocationPath, toLocationFilename, mmImages, mmFilenames)
+            writePath = makePath(toLocationPath, session.dirName, FluorescentSubsectionNamingConventions.MM_DIR);
             
+            mkdir(writePath);
+            
+            mmFilenameSection = createFilenameSection(FluorescentSubsectionSelectionNamingConvention);
+            
+            toSessionFilename = [toLocationPath, session.generateFilenameSection(), mmFilenameSection];
+            
+            mmNamingConventions = FluorescentSubsectionSelectionNamingConvention.getMMNamingConventions();
+            
+            for i=1:length(mmImages)
+                image = mmImages{i};
+                imageFilename = mmFilenames{i};
+                
+                filenameSections = extractFilenameSections(imageFilename);
+                
+                namingConvention = findMatchingNamingConvention(filenameSections, mmNamingConventions);
+            end
         end
         
     end

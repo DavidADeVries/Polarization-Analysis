@@ -102,9 +102,9 @@ function varargout = FluorescentSubsectionSelectionModule_OutputFcn(hObject, eve
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% *********************************************
-% OUTPUT: [cancel, transformParams, cropCoords]
-% *********************************************
+% ********************************************************************************
+% OUTPUT: [cancel, transformParams, cropCoords, fluoroImage, fluoroMask, mmImages]
+% ********************************************************************************
 
 varargout{1} = handles.cancel;
 varargout{2} = [handles.xShift, handles.yShift, handles.rotAngle];
