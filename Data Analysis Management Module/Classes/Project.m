@@ -117,6 +117,14 @@ classdef Project
             project.trials{project.trialIndex} = trial;
         end
         
+        function project = updateSelectedLocation(project, location)
+            trial = project.trials{project.trialIndex};
+            
+            trial = trial.updateSelectedLocation(location);
+            
+            project.trials{project.trialIndex} = trial;
+        end
+        
         function trialChoices = getTrialChoices(project)
             trials = project.trials;
             numTrials = length(trials);
@@ -467,7 +475,7 @@ classdef Project
                 session = trial.getSelectedSession();
             end
         end
-        
+                
     end
     
 end

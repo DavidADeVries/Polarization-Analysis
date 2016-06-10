@@ -257,6 +257,14 @@ classdef Trial
             trial.subjects{trial.subjectIndex} = subject;
         end
         
+        function trial = updateSelectedLocation(trial, location)
+            subject = trial.subjects{trial.subjectIndex};
+            
+            subject = subject.updateSelectedLocation(location);
+                        
+            trial.subjects{trial.subjectIndex} = subject;
+        end
+        
         function subjectIds = getSubjectIds(trial)
             subjects = trial.subjects;
             numSubjects = length(subjects);

@@ -398,34 +398,34 @@ refImage = handles.polarimetryImages{handles.polarimetryImageIndex};
 
 [~, fillMap] = applyTransforms(handles.fluorescentImage, handles.xShift, handles.yShift, handles.rotAngle, refImage);
 
-colHasFill = any(fillMap, 1);
-rowHasFill = any(fillMap, 2);
+colDoesNotHaveFill = any(~fillMap, 1);
+rowDoesNotHaveFill = any(~fillMap, 2);
 
 dims = size(fillMap);
 
 for i=1:dims(2)
-    if ~colHasFill(i)
+    if colDoesNotHaveFill(i)
         leftBound = i;
         break;
     end
 end
 
 for i=dims(2):-1:1
-    if ~colHasFill(i)
+    if colDoesNotHaveFill(i)
         rightBound = i;
         break;
     end
 end
 
 for i=1:dims(1)
-    if ~rowHasFill(i)
+    if rowDoesNotHaveFill(i)
         topBound = i;
         break;
     end
 end
 
 for i=dims(1):-1:1
-    if ~rowHasFill(i)
+    if rowDoesNotHaveFill(i)
         bottomBound = i;
         break;
     end
@@ -433,11 +433,81 @@ end
 
 cropCoords = [leftBound, topBound, rightBound - leftBound, bottomBound - topBound];
 
+% now need to account for rotation
+
+if handles.rotAngle ~= 0
+    tempFillMapCrop = imcrop(fillMap, cropCoords);
+    
+    if handles.rotAngle > 0
+        % left bound
+        for i=1:cropCoords(3)
+            if ~tempFillMapCrop(1,i)
+                newLeftBound = leftBound + i;
+                break;
+            end
+        end
+        % right bound
+        for i=cropCoords(3):-1:1
+            if ~tempFillMapCrop(cropCoords(4),i)
+                newRightBound = leftBound + i;
+                break;
+            end
+        end
+        % top bound
+        for i=1:cropCoords(4)
+            if ~tempFillMapCrop(i,cropCoords(3))
+                newTopBound = topBound + i;
+                break;
+            end
+        end
+        % bottom bound
+        for i=cropCoords(4):-1:1
+            if ~tempFillMapCrop(i,1)
+                newBottomBound = bottomBound + i;
+                break;
+            end
+        end
+        
+    elseif handles.rotAngle < 0
+        % left bound
+        for i=1:cropCoords(3)
+            if ~tempFillMapCrop(cropCoords(4),i)
+                newLeftBound = leftBound + i;
+                break;
+            end
+        end
+        % right bound
+        for i=cropCoords(3):-1:1
+            if ~tempFillMapCrop(1,i)
+                newRightBound = leftBound + i;
+                break;
+            end
+        end
+        % top bound
+        for i=1:cropCoords(4)
+            if ~tempFillMapCrop(i,1)
+                newTopBound = topBound + i;
+                break;
+            end
+        end
+        % bottom bound
+        for i=cropCoords(4):-1:1
+            if ~tempFillMapCrop(i,cropCoords(3))
+                newBottomBound = bottomBound + i;
+                break;
+            end
+        end
+        
+    end
+    
+    cropCoords = [newLeftBound, newTopBound, newRightBound - newLeftBound, newBottomBound - newTopBound];
+end
+
 
 function finalImage = getFinalFluorescenceImage(handles, cropCoords)
 
 image = handles.fluorescentImage;
-refImage = handles.polarimetryImages(handles.polarimetryIndex);
+refImage = handles.polarimetryImages{handles.polarimetryImageIndex};
 
 [transformedImage, ~] = applyTransforms(image, handles.xShift, handles.yShift, handles.rotAngle, refImage);
 
@@ -447,7 +517,7 @@ finalImage = imcrop(transformedImage, cropCoords);
 function finalImage = getFinalFluorescenceMask(handles, cropCoords)
 
 image = handles.fluorescentMask;
-refImage = handles.polarimetryImages(handles.polarimetryIndex);
+refImage = handles.polarimetryImages{handles.polarimetryImageIndex};
 
 [transformedImage, ~] = applyTransforms(image, handles.xShift, handles.yShift, handles.rotAngle, refImage);
 
@@ -459,7 +529,7 @@ function finalImages = getFinalPolarimetryImages(handles, cropCoords)
 images = handles.polarimetryImages;
 
 for i=1:length(images)
-    finalImages{i} = imcrop(images, cropCoords);
+    finalImages{i} = imcrop(images{i}, cropCoords);
 end
 
 

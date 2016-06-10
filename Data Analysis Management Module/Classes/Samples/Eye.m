@@ -234,6 +234,14 @@ classdef Eye < FixedSample
         function eye = updateSelectedQuarter(eye, quarter)
             eye.quarters{eye.quarterIndex} = quarter;
         end
+                
+        function eye = updateSelectedLocation(eye, location)
+            quarter = eye.quarters{eye.quarterIndex};
+            
+            quarter = quarter.updateSelectedLocation(location);
+                        
+            eye.quarters{eye.quarterIndex} = quarter;
+        end
         
         function quarter = getQuarterByNumber(eye, number)
             quarters = eye.quarters;

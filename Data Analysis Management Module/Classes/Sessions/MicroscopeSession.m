@@ -292,7 +292,7 @@ classdef MicroscopeSession < DataCollectionSession
             end
         end
         
-        function [polarimetryImages, filenames] = getAlignedPolarimetryImages(session, sessions, toLocationPath)
+        function [polarimetryImages, filenames, registrationSession] = getAlignedPolarimetryImages(session, sessions, toLocationPath)
             counter = 1;
             
             for i=1:length(sessions)

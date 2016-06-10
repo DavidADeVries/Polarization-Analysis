@@ -51,6 +51,18 @@ classdef NamingConvention
             end
         end
         
+        function filenameSection = generateProjectFilenameSection(namingConvention)
+            namingConventions = namingConvention.project;
+            
+            filenameSection = [];
+            
+            for i=1:length(namingConventions)
+                nextSection = createFilenameSection(namingConventions{i}, []);
+                
+                filenameSection = [filenameSection, nextSection];
+            end
+        end
+        
     end
     
 end

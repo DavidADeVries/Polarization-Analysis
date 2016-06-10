@@ -8,11 +8,15 @@ classdef FluorescentSubsectionSelectionSession < DataProcessingSession
     end
     
     methods
-        function session = FluorescentSubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, userName, transformParams, cropCoords)
+        function session = FluorescentSubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, userName, transformParams, cropCoords, linkedSessionNumber)
             if nargin > 0
+                session.sessionDoneBy = userName;
+                session.sessionDate = now;
+                
                 % set session numbers
                 session.sessionNumber = sessionNumber;
                 session.dataProcessingSessionNumber = dataProcessingSessionNumber;
+                session.linkedSessionNumbers = linkedSessionNumber;
                 
                 % set navigation listbox label
                 session.naviListboxLabel = session.generateListboxLabel();
@@ -69,15 +73,15 @@ classdef FluorescentSubsectionSelectionSession < DataProcessingSession
         end
         
         function session = writeMMImages(session, toLocationPath, toLocationFilename, mmImages, mmFilenames)
-            writePath = makePath(toLocationPath, session.dirName, FluorescentSubsectionNamingConventions.MM_DIR);
+            writePath = makePath(toLocationPath, session.dirName, FluorescentSubsectionSelectionNamingConventions.MM_DIR.getSingularProjectTag());
             
             mkdir(writePath);
             
-            mmFilenameSection = createFilenameSection(FluorescentSubsectionSelectionNamingConvention);
+            mmFilenameSection = createFilenameSection(FluorescentSubsectionSelectionNamingConventions.MM_FILENAME_LABEL, []);
             
-            toSessionFilename = [toLocationPath, session.generateFilenameSection(), mmFilenameSection];
+            toSessionFilename = [toLocationFilename, session.generateFilenameSection(), mmFilenameSection];
             
-            mmNamingConventions = FluorescentSubsectionSelectionNamingConvention.getMMNamingConventions();
+            mmNamingConventions = FluorescentSubsectionSelectionNamingConventions.getMMNamingConventions();
             
             for i=1:length(mmImages)
                 image = mmImages{i};
@@ -86,7 +90,45 @@ classdef FluorescentSubsectionSelectionSession < DataProcessingSession
                 filenameSections = extractFilenameSections(imageFilename);
                 
                 namingConvention = findMatchingNamingConvention(filenameSections, mmNamingConventions);
+                
+                imageFilenameSection = namingConvention.generateProjectFilenameSection();
+                
+                filename = [toSessionFilename, imageFilenameSection, Constants.BMP_EXT];
+                
+                fullImageWritePath = makePath(writePath, filename);
+                
+                writeImage(image, fullImageWritePath);
             end
+        end
+        
+        function session = writeFluoroImages(session, toLocationPath, toLocationFilename, fluoroImage, fluoroMask)
+            writePath = makePath(toLocationPath, session.dirName, FluorescentSubsectionSelectionNamingConventions.FLUORO_DIR.getSingularProjectTag());
+            
+            mkdir(writePath);
+            
+            mmFilenameSection = createFilenameSection(FluorescentSubsectionSelectionNamingConventions.FLUORO_FILENAME_LABEL, []);
+            
+            toSessionFilename = [toLocationFilename, session.generateFilenameSection(), mmFilenameSection];
+            
+            % write fluoro image
+                        
+            imageFilenameSection = FluorescentSubsectionSelectionNamingConventions.FLUORO_GREYSCALE.generateProjectFilenameSection();
+            
+            filename = [toSessionFilename, imageFilenameSection, Constants.BMP_EXT];
+            
+            fullImageWritePath = makePath(writePath, filename);
+            
+            writeImage(fluoroImage, fullImageWritePath);
+            
+            % write fluoro mask
+            
+            imageFilenameSection = FluorescentSubsectionSelectionNamingConventions.FLUORO_MASK.generateProjectFilenameSection();
+            
+            filename = [toSessionFilename, imageFilenameSection, Constants.BMP_EXT];
+            
+            fullImageWritePath = makePath(writePath, filename);
+            
+            writeImage(fluoroMask, fullImageWritePath);
         end
         
     end

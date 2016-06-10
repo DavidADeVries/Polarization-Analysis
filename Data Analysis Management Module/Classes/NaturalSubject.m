@@ -215,6 +215,15 @@ classdef NaturalSubject < Subject
             end            
         end
         
+        
+        function subject = updateSelectedLocation(subject, location)
+            sample = subject.samples{subject.sampleIndex};
+            
+            sample = sample.updateSelectedLocation(location);
+                        
+            subject.samples{subject.sampleIndex} = sample;
+        end
+        
                
         function eye = getEyeByNumber(subject, number)
             eyes = subject.eyes;
