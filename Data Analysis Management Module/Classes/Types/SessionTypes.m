@@ -20,6 +20,14 @@ classdef SessionTypes
         
     end
     
+    methods (Static)
+        function sessionTypes = getDataCollectionSessionTypes()
+            sessionTypes = {...
+                SessionTypes.Microscope,...
+                SessionTypes.CSLO};                
+        end
+    end
+    
     methods
         function enum = SessionTypes(string, class)
             enum.displayString = string;

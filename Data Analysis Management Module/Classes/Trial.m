@@ -257,6 +257,14 @@ classdef Trial
             trial.subjects{trial.subjectIndex} = subject;
         end
         
+        function trial = updateSelectedLocation(trial, location)
+            subject = trial.subjects{trial.subjectIndex};
+            
+            subject = subject.updateSelectedLocation(location);
+                        
+            trial.subjects{trial.subjectIndex} = subject;
+        end
+        
         function subjectIds = getSubjectIds(trial)
             subjects = trial.subjects;
             numSubjects = length(subjects);
@@ -561,6 +569,82 @@ classdef Trial
                 
                 trial = trial.updateSubject(subject);
             end
+        end
+        
+        function [session, toLocationPath, toLocationFilename] = getSelectedLocation(trial)
+            subject = trial.getSelectedSubject();
+            
+            if isempty(subject)            
+                session = [];
+            else
+                [session, toLocationPath, toLocationFilename] = subject.getSelectedLocation();
+                
+                toLocationPath = makePath(subject.dirName, toLocationPath);
+                toLocationFilename = [subject.generateFilenameSection, toLocationFilename];
+            end
+        end
+        
+        function session = getSelectedSession(trial)
+            subject = trial.getSelectedSubject();
+            
+            if isempty(subject)            
+                session = [];
+            else
+                session = subject.getSelectedSession();
+            end
+        end
+        
+        
+        % ******************************************
+        % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
+        % ******************************************
+        
+        function [hasValidSession, locationSelectStructureForTrial] = createSelectStructure(trial)
+            subjects = trial.subjects;
+            
+            locationSelectStructureForTrial = {};
+            
+            for i=1:length(subjects)
+                indices = i;
+                
+                [hasValidSession, locationSelectStructureForSubject] = subjects{i}.createSelectStructure(indices);
+                
+                if hasValidSession
+                    locationSelectStructureForTrial = [locationSelectStructureForTrial, locationSelectStructureForSubject];
+                end
+            end
+            
+            hasValidSession = ~isempty(locationSelectStructureForTrial);
+        end
+        
+        function entry = validateSession(trial, entry)
+            indices = entry.indices;
+            
+            subject = trial.subjects{indices(1)};
+            
+            newIndices = indices(2:length(indices));
+            toPath = trial.dirName;
+            
+            [isValidated, toPath] = subject.validateSession(newIndices, toPath);
+            
+            if isValidated
+                entry.isValidated = true;
+                entry.toPath = toPath;
+            else
+                entry.isValidated = false;
+            end
+        end
+        
+        function [trial, selectStructure] = runPolarizationAnalysis(trial, indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex)
+            subject = trial.subjects{indices(1)};
+            
+            newIndices = indices(2:length(indices));
+            toPath = trial.dirName;
+            fileName = trial.generateFilenameSection;
+            
+            [subject, selectStructure] = subject.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
+            
+            trial = trial.updateSubject(subject);
         end
         
     end

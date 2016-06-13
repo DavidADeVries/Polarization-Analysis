@@ -117,6 +117,14 @@ classdef Project
             project.trials{project.trialIndex} = trial;
         end
         
+        function project = updateSelectedLocation(project, location)
+            trial = project.trials{project.trialIndex};
+            
+            trial = trial.updateSelectedLocation(location);
+            
+            project.trials{project.trialIndex} = trial;
+        end
+        
         function trialChoices = getTrialChoices(project)
             trials = project.trials;
             numTrials = length(trials);
@@ -443,6 +451,29 @@ classdef Project
             end
         end
         
+        function [session, toLocationPath, toLocationFilename] = getSelectedLocation(project)
+            trial = project.getSelectedTrial();
+            
+            if isempty(trial)            
+                session = [];
+            else
+                [session, toLocationPath, toLocationFilename] = trial.getSelectedLocation();
+                
+                toLocationPath = makePath(trial.dirName, toLocationPath);
+                toLocationFilename = [trial.generateFilenameSection, toLocationFilename];
+            end
+        end
+        
+        function session = getSelectedSession(project)
+            trial = project.getSelectedTrial();
+            
+            if isempty(trial)            
+                session = [];
+            else
+                session = trial.getSelectedSession();
+            end
+        end
+                
     end
     
 end

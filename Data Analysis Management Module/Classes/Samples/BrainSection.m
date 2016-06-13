@@ -243,6 +243,23 @@ classdef BrainSection < FixedSample
             % DO NOTHING, NO QUARTERS FOR BRAIN SECTION
         end
         
+        function location = getSelectedLocation(sample)
+            location = [];
+        end
+        
+        function session = getSelectedSession(sample)
+            session = [];
+        end
+        
+        % ******************************************
+        % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
+        % ******************************************
+        
+        function [hasValidSession, selectStructureForSample] = createSelectStructure(sample, indices)
+            hasValidSession = false;
+            selectStructureForSample = {};
+        end
+        
     end
     
 end

@@ -234,6 +234,14 @@ classdef Eye < FixedSample
         function eye = updateSelectedQuarter(eye, quarter)
             eye.quarters{eye.quarterIndex} = quarter;
         end
+                
+        function eye = updateSelectedLocation(eye, location)
+            quarter = eye.quarters{eye.quarterIndex};
+            
+            quarter = quarter.updateSelectedLocation(location);
+                        
+            eye.quarters{eye.quarterIndex} = quarter;
+        end
         
         function quarter = getQuarterByNumber(eye, number)
             quarters = eye.quarters;
@@ -573,6 +581,84 @@ classdef Eye < FixedSample
                 quarter = quarter.createNewSession(projectPath, toPath, userName, sessionType);
                 
                 eye = eye.updateQuarter(quarter);
+            end
+        end
+        
+        % ******************************************
+        % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
+        % ******************************************
+        
+        function [hasValidSession, selectStructureForEye] = createSelectStructure(subject, indices)
+            quarters = subject.quarters;
+            
+            selectStructureForEye = {};
+            hasValidSession = false;
+            
+            for i=1:length(quarters)
+                newIndices = [indices, i];
+                
+                [newHasValidLocation, selectStructureForQuarter] = quarters{i}.createSelectStructure(newIndices);
+                
+                if newHasValidLocation
+                    selectStructureForEye = [selectStructureForEye, selectStructureForQuarter];
+                    
+                    hasValidSession = true;
+                end
+            end
+            
+            if hasValidSession
+                selectionEntry = SelectionEntry(subject.naviListboxLabel, indices);
+                
+                selectStructureForEye = [{selectionEntry}, selectStructureForEye];
+            else
+                selectStructureForEye = {};
+            end
+            
+        end
+           
+        
+        function [isValidated, toPath] = validateSession(eye, indices, toPath)
+            quarter = eye.quarters{indices(1)};
+            
+            newIndices = indices(2:length(indices));
+            toPath = makePath(toPath, eye.dirName);
+            
+            [isValidated, toPath] = quarter.validateSession(newIndices, toPath);
+        end
+               
+        
+        function [eye, selectStructure] = runPolarizationAnalysis(eye, indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName)
+            quarter = eye.quarters{indices(1)};
+            
+            newIndices = indices(2:length(indices));
+            toPath = makePath(toPath, eye.dirName);
+            fileName = [fileName, eye.generateFilenameSection];
+            
+            [quarter, selectStructure] = quarter.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
+            
+            eye = eye.updateQuarter(quarter);
+        end
+        
+        function [location, toLocationPath, toLocationFilename] = getSelectedLocation(sample)
+            quarter = sample.getSelectedQuarter();
+            
+            if isempty(quarter)            
+                location = [];
+            else
+                location = quarter.getSelectedLocation();
+                
+                toLocationPath = makePath(quarter.dirName, location.dirName);
+                toLocationFilename = [quarter.generateFilenameSection, location.generateFilenameSection];
+            end
+        end
+        
+        function session = getSelectedSession(sample)
+            quarter = sample.getSelectedQuarter();
+            
+            if isempty(quarter)            
+                session = [];
+            else
+                session = quarter.getSelectedSession();
             end
         end
         

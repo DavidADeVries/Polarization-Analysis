@@ -215,6 +215,15 @@ classdef NaturalSubject < Subject
             end            
         end
         
+        
+        function subject = updateSelectedLocation(subject, location)
+            sample = subject.samples{subject.sampleIndex};
+            
+            sample = sample.updateSelectedLocation(location);
+                        
+            subject.samples{subject.sampleIndex} = sample;
+        end
+        
                
         function eye = getEyeByNumber(subject, number)
             eyes = subject.eyes;
@@ -501,6 +510,59 @@ classdef NaturalSubject < Subject
             
                 subject = subject.updateSelectedSample(sample);
             end
+        end
+        
+        % ******************************************
+        % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
+        % ******************************************
+        
+        function [hasValidSession, selectStructureForSubject] = createSelectStructure(subject, indices)
+            samples = subject.samples;
+            
+            selectStructureForSubject = {};
+            hasValidSession = false;
+            
+            for i=1:length(samples)
+                newIndices = [indices, i];
+                
+                [newHasValidLocation, selectStructureForSample] = samples{i}.createSelectStructure(newIndices);
+                
+                if newHasValidLocation
+                    selectStructureForSubject = [selectStructureForSubject, selectStructureForSample];
+                    
+                    hasValidSession = true;
+                end
+            end
+            
+            if hasValidSession
+                selectionEntry = SelectionEntry(subject.naviListboxLabel, indices);
+                
+                selectStructureForSubject = [{selectionEntry}, selectStructureForSubject];
+            else
+                selectStructureForSubject = {};
+            end
+            
+        end
+        
+        function [isValidated, toPath] = validateSession(subject, indices, toPath)
+            sample = subject.samples{indices(1)};
+            
+            newIndices = indices(2:length(indices));
+            toPath = makePath(toPath, subject.dirName);
+            
+            [isValidated, toPath] = sample.validateSession(newIndices, toPath);
+        end
+        
+        function [subject, selectStructure] = runPolarizationAnalysis(subject, indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName)
+            sample = subject.samples{indices(1)};
+            
+            newIndices = indices(2:length(indices));
+            toPath = makePath(toPath, subject.dirName);
+            fileName = [fileName, subject.generateFilenameSection];
+            
+            [sample, selectStructure] = sample.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
+            
+            subject = subject.updateSample(sample);
         end
         
     end

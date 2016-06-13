@@ -520,6 +520,73 @@ classdef Quarter
             end
         end
         
+        
+        % ******************************************
+        % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
+        % ******************************************
+        
+        function [hasValidSession, selectStructureForQuarter] = createSelectStructure(quarter, indices)
+            locations = quarter.locations;
+            
+            selectStructureForQuarter = {};
+            hasValidSession = false;
+            
+            for i=1:length(locations)
+                newIndices = [indices, i];
+                
+                [newHasValidLocation, selectStructureForLocation] = locations{i}.createSelectStructure(newIndices);
+                
+                if newHasValidLocation
+                    selectStructureForQuarter = [selectStructureForQuarter, selectStructureForLocation];
+                    
+                    hasValidSession = true;
+                end
+            end
+            
+            if hasValidSession
+                selectionEntry = SelectionEntry(quarter.naviListboxLabel, indices);
+                
+                selectStructureForQuarter = [{selectionEntry}, selectStructureForQuarter];
+            else
+                selectStructureForQuarter = {};
+            end
+            
+        end
+           
+        
+        function [isValidated, toPath] = validateSession(quarter, indices, toPath)
+            location = quarter.locations{indices(1)};
+            
+            newIndices = indices(2:length(indices));
+            toPath = makePath(toPath, quarter.dirName);
+            
+            [isValidated, toPath] = location.validateSession(newIndices, toPath);
+        end
+        
+        
+        function [quarter, selectStructure] = runPolarizationAnalysis(quarter, indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName)
+            location = quarter.locations{indices(1)};
+            
+            newIndices = indices(2:length(indices));
+            toPath = makePath(toPath, quarter.dirName);
+            fileName = [fileName, quarter.generateFilenameSection];
+            
+            [location, selectStructure] = location.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
+            
+            quarter = quarter.updateLocation(location);
+        end
+        
+        
+        function session = getSelectedSession(quarter)
+            location = quarter.getSelectedLocation();
+            
+            if isempty(location)            
+                session = [];
+            else
+                session = location.getSelectedSession();
+            end
+        end
+        
     end
     
 end

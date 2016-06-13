@@ -10,7 +10,7 @@ tab = getTab(Constants.TAB, depth);
 
 currentPath = makePath(path, dirName);
 
-newEntry = FileSelectionEntry(currentPath, [tab, dirName], {});
+newEntry = FileSelectionEntry(currentPath, [tab, dirName], dirName, {});
 
 newEntryIndex = length(fileSelectionEntries) + 1;
 
@@ -31,7 +31,7 @@ for i=1:length(dirList)
         if entry.isdir
             fileSelectionEntries = generateFileSelectionEntries(fileSelectionEntries, currentPath, entry.name, depth+1);
         else
-            fileList{fileCounter} = FileSelectionEntry(makePath(currentPath, entry.name), entry.name, {});
+            fileList{fileCounter} = FileSelectionEntry(makePath(currentPath, entry.name), entry.name, entry.name, {});
             
             fileCounter = fileCounter + 1;
         end

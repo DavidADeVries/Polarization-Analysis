@@ -241,7 +241,84 @@ classdef MicroscopeSession < DataCollectionSession
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataCollectionSessionNumberString, magnificationString, bwPixelSizeMicronsString, rgbPixelSizeMicronsString, instrumentString, fluoroSignatureString, crossedSignatureString, visualSignatureString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
         end
+        
+        function fluoroImage = getFluoroscentImage(session, toLocationPath)
+            toFluoroPath = makePath(toLocationPath, session.dirName, MicroscopeNamingConventions.FLUORO_DIR.getSingularProjectTag());
+            
+            % get all files in the dir
+            fileList = getAllFiles(toFluoroPath);
+            
+            matchString = createFilenameSection(MicroscopeNamingConventions.FLUORO_GREYSCALE.getSingularProjectTag(), []);
+            
+            matchIndices = containsSubstring(fileList, matchString);
+            
+            % have the BW images, no make sure only BMPs
+            
+            bwFileList = {};
+            
+            for i=1:length(matchIndices)
+                bwFileList{i} = fileList{matchIndices(i)};
+            end
+            
+            matchString = Constants.BMP_EXT;
+            
+            matchIndices = containsSubstring(bwFileList, matchString);
+            
+            
+            if isempty(matchIndices)
+                fluoroImage = [];
+            else
+                if length(matchIndices) == 1
+                    filename = fileList{matchIndices(1)};
+                                        
+                    fluoroImage = openImage(makePath(toFluoroPath, filename));
+                else
+                    filenameOptions = {};
+                    
+                    for i=1:length(matchIndices)
+                        filenameOptions{i} = bwFileList{matchIndices(i)};
+                    end
+                    
+                    [index, ok] = listdlg('ListString', filenameOptions, 'SelectionMode', 'single', 'Name', 'Choose Fluoroscent Image', 'PromptString', 'Multiple greyscale fluoroscent images found. Please choose one.');
+                    
+                    if ok
+                        filename = filenameOptions{index(1)};
+                        
+                        fluoroImage = openImage(makePath(toFluoroPath, filename));
+                    else
+                        fluoroImage = [];
+                    end
+                end
+            end
+        end
+        
+        function [polarimetryImages, filenames, registrationSession] = getAlignedPolarimetryImages(session, sessions, toLocationPath)
+            counter = 1;
+            
+            for i=1:length(sessions)
+                if isRegistrationSession(sessions{i})
+                    regSession = sessions{i};
+                    
+                    if regSession.isLinkedToSession(session)
+                        possibleSessions{counter} = regSession;
+                        counter = counter + 1;
+                    end
+                end
+            end
+            
+            if isempty(possibleSessions)
+                polarimetryImages = {};
+                filenames = {};
+            else % need to get polarimetry images now
+                if length(possibleSessions) == 1
+                    registrationSession = possibleSessions{1};
+                else
+                    registrationSession = chooseSession(possibleSessions);
+                end
                 
+                [polarimetryImages, filenames] = registrationSession.getMMImages(makePath(toLocationPath, registrationSession.dirName));
+            end
+        end
         
     end
     

@@ -168,7 +168,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
             [dataProcessingSessionNumberString, linkedSessionsString] = session.getProcessingSessionMetadataString();
             
             registrationTypeString = ['Registration Type: ', displayType(session.registrationType)];
-            registrationParamsString = ['Registration Parameters: ' session.registrationParams];
+            registrationParamsString = ['Registration Parameters: ', session.registrationParams];
             
             
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, registrationTypeString, registrationParamsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
@@ -184,6 +184,21 @@ classdef LegacyRegistrationSession < DataProcessingSession
             preppedSession.sessionDoneBy = session.sessionDoneBy;
             preppedSession.registrationType = session.registrationType;
             preppedSession.linkedSessionNumbers = session.linkedSessionNumbers;
+        end
+        
+        
+        function [images, filenames] = getMMImages(session, toSessionPath)
+            mmPath = makePath(toSessionPath, LegacyRegistrationNamingConventions.MM_DIR.getSingularProjectTag());
+            
+            filenames = getAllFiles(mmPath);
+            
+            filenames = getFilesByExtension(filenames, Constants.BMP_EXT);
+            
+            images = {};
+            
+            for i=1:length(filenames)
+                images{i} = openImage(makePath(mmPath, filenames{i}));
+            end
         end
         
     end

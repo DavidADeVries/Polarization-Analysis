@@ -4,15 +4,17 @@ classdef FileSelectionEntry
     properties
         toPath
         selectionLabel
+        dirName
         
         fileIndex = 0 %index of the file selected
         filesInDir % cell array of FileSelectionEntry
     end
     
     methods
-        function selectionEntry = FileSelectionEntry(toPath, selectionLabel, filesInDir)
+        function selectionEntry = FileSelectionEntry(toPath, selectionLabel, dirName, filesInDir)
             selectionEntry.toPath = toPath;
             selectionEntry.selectionLabel = selectionLabel;
+            selectionEntry.dirName = dirName;
             selectionEntry.filesInDir = filesInDir;
         end
         
@@ -77,6 +79,35 @@ classdef FileSelectionEntry
             if counter ~= numFiles %suitable file found, update index
                 fileSelection.fileIndex = newIndex;
             end
+        end
+        
+        function hasData = hasMMData(entry)
+            mmNamingConventions = MicroscopeNamingConventions.getMMNamingConventions();
+            
+            numNamingConventions = length(mmNamingConventions);
+            
+            fileNameEndings = cell(numNamingConventions, 1);
+            
+            for i=1:numNamingConventions
+                projectNamingConventions = mmNamingConventions{i}.project;
+                
+                fileNameEndings{i} = [createFilenameString(projectNamingConventions, []), Constants.BMP_EXT];
+            end
+            
+            files = entry.filesInDir;
+            
+            for i=1:length(files)
+                indices = containsSubstring(fileNameEndings, files{i}.dirName);
+                
+                if length(indices) == 1
+                    index = indices(1);
+                    
+                    % delete the match
+                    fileNameEndings(index) = [];
+                end
+            end
+            
+            hasData = isempty(fileNameEndings);
         end
     end
     

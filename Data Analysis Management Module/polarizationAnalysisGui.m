@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 16-Mar-2016 10:12:11
+% Last Modified by GUIDE v2.5 30-May-2016 12:40:40
 
 % Begin initialization code - DO NOT EDIT
 
@@ -710,3 +710,28 @@ function newLegacySubsectionSelectionSession_Callback(hObject, eventdata, handle
 % handles    structure with handles and user data (see GUIDATA)
 
 newLegacySubsectionSelectionSession(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function analyzeMenu_Callback(hObject, eventdata, handles)
+% hObject    handle to analyzeMenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function polarizationAnalysisModule_Callback(hObject, eventdata, handles)
+% hObject    handle to polarizationAnalysisModule (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+polarizationAnalysisModule(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function fluorescentSubsectionSelectionModule_Callback(hObject, eventdata, handles)
+% hObject    handle to fluorescentSubsectionSelectionModule (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+fluorescentSubsectionSelectionModule(hObject, eventdata, handles);

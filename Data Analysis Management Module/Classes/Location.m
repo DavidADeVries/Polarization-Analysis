@@ -641,6 +641,236 @@ classdef Location
             end
         end
         
+        
+        % ******************************************
+        % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
+        % ******************************************
+        
+        function [hasValidSession, selectStructureForLocation] = createSelectStructure(location, indices)
+            sessions = location.sessions;
+            
+            selectStructureForLocation = {};
+            hasValidSession = false;
+            
+            for i=1:length(sessions)
+                newIndices = [indices, i];
+                
+                [isValidSession, selectStructureForSession] = sessions{i}.createSelectStructure(newIndices);
+                
+                if isValidSession
+                    selectStructureForLocation = [selectStructureForLocation, {selectStructureForSession}];
+                    
+                    hasValidSession = true;
+                end
+            end
+            
+            if hasValidSession
+                selectionEntry = SelectionEntry(location.naviListboxLabel, indices);
+                
+                selectStructureForLocation = [{selectionEntry}, selectStructureForLocation];
+            else
+                selectStructureForLocation = {};
+            end
+            
+        end
+           
+        
+        function [isValidated, toPath] = validateSession(location, indices, toPath)
+            session = location.sessions{indices(1)};
+            
+            toPath = makePath(toPath, location.dirName);
+            
+            [isValidated, toPath] = session.validateSession(toPath);
+        end
+        
+        
+        function [location, selectStructure] = runPolarizationAnalysis(location, indices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName)
+            parentSession = location.sessions{indices(1)};
+            
+            toPath = makePath(toPath, location.dirName);
+            fileName = [fileName, location.generateFilenameSection];
+            
+            defaultSession = defaultSession.setSpecificPreAnalysisFields(parentSession, location);
+            
+            [newPolarizationAnalysisSession, selectStructure] = parentSession.runPolarizationAnalysis(defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
+            
+            location = location.updateSession(newPolarizationAnalysisSession);
+        end
+        
+        
+        function [isValidated, toLocationPath, finalSessionsToProcess] = validateLocation(location, toLocationPath, useOnlyRegisteredData, autoUseMostRecentData, autoIgnoreRejectedSessions, doNotRerunDataAboveCutoff, versionCutoff, processFullFieldData, subsectionChoices, rawDataSources)
+            toLocationPath = makePath(toLocationPath, location.dirName);
+            
+            numRawDataSources = length(rawDataSources);
+            rawDataSourcesClasses = cell(numRawDataSources, 1);
+            
+            for i=1:numRawDataSources
+                rawDataSourcesClasses{i} = class(rawDataSources{i}.sessionClass);
+            end
+            
+            sessions = location.sessions;
+                        
+            sessionsToProcess = [];
+            
+            % get subsections
+            
+            for i=1:length(subsectionChoices)
+                croppingType = subsectionChoices{i};
+                
+                matchedSessions  = {};
+                counter = 1;
+                
+                legacySubsectionClassString = class(LegacySubsectionSelectionSession);
+                subsectionClassString = class(SubsectionSelectionSession);
+                
+                for j=1:length(sessions)
+                    if isa(sessions{j}, legacySubsectionClassString) || isa(sessions{j}, subsectionClassString)
+                        if sessions{j}.croppingType == croppingType
+                            if sessions{j}.noAnalysisAfterVersionCutoff(doNotRerunDataAboveCutoff, versionCutoff)
+                                [linkedSessionNumbers, ~] = getLinkedSessionNumbers(sessions{j}, sessions, [], []);
+                                
+                                if autoIgnoreRejectedSessions || sessions{j}.isConnectedToRejectedSession(sessions, linkedSessionNumbers)
+                                    if ~useOnlyRegisteredData || sessions{j}.isConnectedToRegistedData(sessions, linkedSessionNumbers)
+                                        dataCollectionSession = sessions{j}.getLinkedDataCollectionSession(sessions, linkedSessionNumbers);
+                                        
+                                        if ~isempty(dataCollectionSession)
+                                            searchClassString = class(dataCollectionSession);
+                                            
+                                            if ~isempty(containsString(rawDataSourcesClasses, searchClassString));
+                                                % finally get to add it!!
+                                                matchedSessions{counter} = sessions{j};
+                                                counter = counter + 1;
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+                
+                if length(matchedSessions) > 1 % if there are multiple sessions, we needed to narrow that down
+                    if autoUseMostRecentData
+                        [selectedSession, duplicateTimes] = getMostRecentSession(matchedSessions);
+                    end
+                    
+                    if duplicateTimes || ~autoUseMostRecentData % duplicateTimes is true is there were two or more sesssions with the same session date
+                        [selectedSession, cancel] = chooseSession(matchedSessions, croppingType);
+                    end
+                    
+                    if ~cancel
+                        sessionsToProcess = [sessionsToProcess, selectedSession.sessionNumber];
+                    else
+                        isValidated = false;
+                    end
+                end
+            end
+            
+            % get full field (if needed!)
+            if processFullFieldData
+                for i=1:numRawDataSources
+                    rawDataSourceClassString = rawDataSourcesClasses{i};
+                    
+                    matchedSessions = findSessionsMatchClass(sessions, rawDataSourceClassString);
+                    
+                    filteredSessions = {};
+                    counter = 1;
+                    
+                    for j=1:length(matchedSessions)
+                        matchedSession = matchedSessions{j};
+                        
+                        if matchedSession.noAnalysisAfterVersionCutoff(doNotRerunDataAboveCutoff, versionCutoff, sessions)
+                            if useOnlyRegisteredData
+                                nonFilteredRegisteredSessions = matchedSession.findRegisteredSessions(sessions);
+                                
+                                if doNotRerunDataAboveCutoff
+                                    registeredSessions = {};
+                                    regCounter = 1;
+                                    
+                                    for k=1:length(nonFilteredRegisteredSessions)
+                                        if nonFilteredRegisteredSessions{k}.noAnalysisAfterVersionCutoff(doNotRerunDataAboveCutoff, versionCutoff)
+                                            registeredSessions{regCounter} = nonFilteredRegisteredSessions{k};
+                                            regCounter = regCounter + 1;
+                                        end
+                                    end                                    
+                                else
+                                    registeredSessions = nonFilteredRegisteredSessions;
+                                end
+                                
+                                if isempty(registeredSessions)
+                                    % no nothing
+                                elseif length(registeredSessions) == 1
+                                    filteredSessions{counter} = selectedSession;
+                                    counter = counter + 1;
+                                else
+                                    if autoUseMostRecentData
+                                        [selectedSession, duplicateTimes] = getMostRecentSession(registeredSessions);
+                                    end
+                                    
+                                    if duplicateTimes || ~autoUseMostRecentData % duplicateTimes is true is there were two or more sesssions with the same session date
+                                        [selectedSession, cancel] = chooseSession(registeredSessions, []);
+                                    end
+                                    
+                                    if ~cancel
+                                        filteredSessions{counter} = selectedSession;
+                                        counter = counter + 1;
+                                    else
+                                        isValidated = false;
+                                    end
+                                end
+                            else % if not using registered data, but the data collection session in
+                                filteredSessions{counter} = matchedSession;
+                                counter = counter + 1;
+                            end
+                        end
+                    end
+                    
+                    if ~isempty(filteredSessions)
+                        if length(filteredSessions) == 1
+                            sessionsToProcess = [sessionsToProcess, filteredSessions{1}.sessionNumber];
+                        else
+                            if autoUseMostRecentData
+                                [selectedSession, duplicateTimes] = getMostRecentSession(filteredSessions);
+                            end
+                            
+                            if duplicateTimes || ~autoUseMostRecentData % duplicateTimes is true is there were two or more sesssions with the same session date
+                                [selectedSession, cancel] = chooseSession(filteredSessions, []);
+                            end
+                            
+                            if ~cancel
+                                sessionsToProcess = [sessionsToProcess, selectedSession.sessionNumber];
+                            else
+                                isValidated = false;
+                            end
+                        end
+                    end
+                end                
+            end
+            
+            
+            % WE NOW HAVE A LIST OF THE SESSION NUMBERS TO PROCESS!
+            % now do a final check that we have all the data we need for
+            % these sessions
+            
+            finalSessionsToProcess = [];
+            
+            if isempty(sessionsToProcess)
+                isValidated = true;
+            else
+                for i=1:length(sessionsToProcess)
+                    session = getSessionBySessionNumber(sessions, sessionsToProcess(i));
+                    
+                    if session.hasMMData()
+                        finalSessionsToProcess = [finalSessionsToProcess, sessionsToProcess(i)];
+                        isValidated = true;
+                    else
+                        isValidated = false;
+                    end
+                end
+            end
+            
+        end
+        
     end
     
 end
