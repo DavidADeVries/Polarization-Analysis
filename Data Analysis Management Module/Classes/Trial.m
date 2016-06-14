@@ -599,7 +599,7 @@ classdef Trial
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
         
-        function [hasValidSession, locationSelectStructureForTrial] = createSelectStructure(trial)
+        function [hasValidSession, locationSelectStructureForTrial] = createSelectStructure(trial, sessionClass)
             subjects = trial.subjects;
             
             locationSelectStructureForTrial = {};
@@ -607,7 +607,7 @@ classdef Trial
             for i=1:length(subjects)
                 indices = i;
                 
-                [hasValidSession, locationSelectStructureForSubject] = subjects{i}.createSelectStructure(indices);
+                [hasValidSession, locationSelectStructureForSubject] = subjects{i}.createSelectStructure(indices, sessionClass);
                 
                 if hasValidSession
                     locationSelectStructureForTrial = [locationSelectStructureForTrial, locationSelectStructureForSubject];

@@ -255,7 +255,7 @@ classdef BrainSection < FixedSample
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
         
-        function [hasValidSession, selectStructureForSample] = createSelectStructure(sample, indices)
+        function [hasValidSession, selectStructureForSample] = createSelectStructure(sample, indices, sessionClass)
             hasValidSession = false;
             selectStructureForSample = {};
         end

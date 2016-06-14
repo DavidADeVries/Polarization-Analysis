@@ -646,7 +646,7 @@ classdef Location
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
         
-        function [hasValidSession, selectStructureForLocation] = createSelectStructure(location, indices)
+        function [hasValidSession, selectStructureForLocation] = createSelectStructure(location, indices, sessionClass)
             sessions = location.sessions;
             
             selectStructureForLocation = {};
@@ -655,7 +655,7 @@ classdef Location
             for i=1:length(sessions)
                 newIndices = [indices, i];
                 
-                [isValidSession, selectStructureForSession] = sessions{i}.createSelectStructure(newIndices);
+                [isValidSession, selectStructureForSession] = sessions{i}.createSelectStructure(newIndices, sessionClass);
                 
                 if isValidSession
                     selectStructureForLocation = [selectStructureForLocation, {selectStructureForSession}];

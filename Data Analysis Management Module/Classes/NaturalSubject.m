@@ -516,7 +516,7 @@ classdef NaturalSubject < Subject
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
         
-        function [hasValidSession, selectStructureForSubject] = createSelectStructure(subject, indices)
+        function [hasValidSession, selectStructureForSubject] = createSelectStructure(subject, indices, sessionClass)
             samples = subject.samples;
             
             selectStructureForSubject = {};
@@ -525,7 +525,7 @@ classdef NaturalSubject < Subject
             for i=1:length(samples)
                 newIndices = [indices, i];
                 
-                [newHasValidLocation, selectStructureForSample] = samples{i}.createSelectStructure(newIndices);
+                [newHasValidLocation, selectStructureForSample] = samples{i}.createSelectStructure(newIndices, sessionClass);
                 
                 if newHasValidLocation
                     selectStructureForSubject = [selectStructureForSubject, selectStructureForSample];

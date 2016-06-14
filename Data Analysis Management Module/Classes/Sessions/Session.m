@@ -302,24 +302,46 @@ classdef Session
         end
                 
         
-        function [isValidSession, selectStructure] = createSelectStructure(session, indices)
-            if session.hasMMData() && ~isa(session, class(SessionTypes.PolarizationAnalysis.sessionClass));
-                isValidSession = true;
-                
-                isSession = true;
-                
-                label = [session.naviListboxLabel, ' [', displayDate(session.sessionDate), ']'];
-                
-                if session.rejected
-                    label = [label, '*'];
-                end
-                
-                selectStructure = SelectionEntry(label, indices, isSession);
-            else
-                isValidSession = false;                
-                selectStructure = {};
-            end
+        function [isValidSession, selectStructure] = createSelectStructure(session, indices, sessionClass)
+            switch sessionClass
+                case class(PolarizationAnalysisSession)                  
+                    if session.hasMMData() && ~isa(session, class(SessionTypes.PolarizationAnalysis.sessionClass));
+                        isValidSession = true;
                         
+                        isSession = true;
+                        
+                        label = [session.naviListboxLabel, ' [', displayDate(session.sessionDate), ']'];
+                        
+                        if session.rejected
+                            label = [label, '*'];
+                        end
+                        
+                        selectStructure = SelectionEntry(label, indices, isSession);
+                    else
+                        isValidSession = false;
+                        selectStructure = {};
+                    end
+                case class(SubsectionStatisticsAnalysisSession)
+                    if isa(session, class(SubsectionSelectionSession)) || isa(session, class(FluorescentSubsectionSelectionSession))
+                        isValidSession = true;
+                        
+                        isSession = true;
+                        
+                        label = [session.naviListboxLabel, ' [', displayDate(session.sessionDate), ']'];
+                        
+                        if session.rejected
+                            label = [label, '*'];
+                        end
+                        
+                        selectStructure = SelectionEntry(label, indices, isSession, session);
+                    else
+                        isValidSession = false;
+                        selectStructure = {};
+                    end                    
+                otherwise
+                    error('Unrecognized class type');
+            end
+                                    
         end
         
         function [isValid, toPath] = validateSession(session, toPath)
