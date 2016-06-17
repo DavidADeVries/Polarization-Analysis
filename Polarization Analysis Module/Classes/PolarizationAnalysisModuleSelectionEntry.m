@@ -1,5 +1,5 @@
-classdef SelectionEntry
-    %SelectionEntry
+classdef PolarizationAnalysisModuleSelectionEntry
+    % PolarizationAnalysisModuleSelectionEntry
     
     properties
         label = '';
@@ -8,19 +8,22 @@ classdef SelectionEntry
         isSelected = false;
         isSession = false;
         
-        session = Session.empty;
+        isValidated = false;
+        isProcessing = false;
+        
+        statusType = [];
         
         toPath = '';
+        completedAnalysisPath = '';
     end
     
     methods
-        function entry = SelectionEntry(label, indices, isSession, session)
+        function entry = PolarizationAnalysisModuleSelectionEntry(label, indices, isSession)
             entry.label = label;
             entry.indices = indices;
             
             if nargin > 2
                 entry.isSession = isSession;
-                entry.session = session;
             end
         end
     end

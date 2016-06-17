@@ -1,5 +1,5 @@
-classdef SelectionEntry
-    %SelectionEntry
+classdef SubsectionStatisticsModuleSelectionEntry
+    % SubsectionStatisticsModuleSelectionEntry
     
     properties
         label = '';
@@ -8,22 +8,19 @@ classdef SelectionEntry
         isSelected = false;
         isSession = false;
         
-        isValidated = false;
-        isProcessing = false;
-        
-        statusType = [];
+        session = Session.empty;
         
         toPath = '';
-        completedAnalysisPath = '';
     end
     
     methods
-        function entry = SelectionEntry(label, indices, isSession)
+        function entry = SubsectionStatisticsModuleSelectionEntry(label, indices, isSession, session)
             entry.label = label;
             entry.indices = indices;
             
             if nargin > 2
                 entry.isSession = isSession;
+                entry.session = session;
             end
         end
     end

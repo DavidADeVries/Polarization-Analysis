@@ -182,12 +182,12 @@ classdef MetricTypes
             end
         end
         
-        function useCircStats = getUseCircStats(metricType)
-            if metricType.isCircularData()
-                useCircStats = {true, false};
-            else
-                useCircStats = {false};
-            end
+        function 
+    if metricType.isCircularData()
+        useCircStats = {true, false};
+    else
+        useCircStats = {false};
+    end
         end
     
     end

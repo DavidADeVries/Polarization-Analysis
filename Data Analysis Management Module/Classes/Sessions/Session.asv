@@ -403,13 +403,13 @@ classdef Session
             bool = ~isempty(containsString(polarizationAnalysisClasses, sessionClass));            
         end
         
-        function data = getPolarizationAnalysisDataFromSubsectionSelectionSession(session, allSessions, toLocationPath, fileName)
-            toSessionPath = makePath(toLocationPath, session.dirName);
+        function data = getPolarizationAnalysisDataFromSubsectionSelectionSession(session, allSessions, toPath, fileName)
+            toSessionPath = makePath(toPath, session.dirName);
             
             if session.isAnySubsectionSelectionSession()
-                polarizationAnalysisSession = session.getPolarizationAnalysisSession(allSessions, toSessionPath);
+                polarizationAnalysisSession = session.getPolarizationAnalysisSession(allSessions);
                 
-                data = polarizationAnalysisSession.getPolarizationAnalysisData(toLocationPath, fileName);
+                data = polarizationAnalysisSession.getPolarizationAnalysisData(toPath, fileName);
             else
                 data = {};
             end

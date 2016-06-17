@@ -55,6 +55,29 @@ classdef PolarizationAnalysisSession < DataProcessingSession
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, computationTypeString, normalizationTypeString, muellerMatrixOnlyString, versionNumberString, outOfRangePixelsRatioString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
         end
+        
+        function data = getPolarizationAnalysisData(session, toLocationPath, toLocationFileName)
+            toSessionPath = makePath(toLocationPath, session.dirName);
+            
+            toSessionFileName = [toLocationFileName, session.generateFilenameSection()];
+            
+            metricTypes = enumeration('MetricTypes');
+            
+            fileNameEnd = [createFilenameSection(PolarizationAnalysisNamingConventions.MM_MATLAB_VAR_FILENAME_LABEL, []), Contants.MATLAB_EXT];
+            
+            for i=1:length(metricTypes)
+                metricType = metricTypes{i};
+                
+                metricGroupTag = createFilenameSection(metricType.metricGroupType.filenameTag,[]);
+                metricTag = createFilenameSection(metricType.filenameTag,[]);
+                
+                metricFilename = [toSessionFileName, metricGroupTag, metricTag, fileNameEnd];
+                
+                loadPath = makePath(toSessionPath, metricType.metricGroupType.dirName, metricFilename);
+                
+                data{i} = load(loadPath, PolarizationAnalysisNamingConventions.METRIC_MATLAB_VAR_NAME);
+            end
+        end
     end
     
 end

@@ -886,11 +886,9 @@ classdef Location
         % FUNCTIONS FOR SUBSECTION STATISTICS MODULE
         % ******************************************
         
-        function [data, locationString] = getPolarizationAnalysisData(location, subsectionSession, toPath, fileName)
+        function data = getPolarizationAnalysisData(location, subsectionSession, toPath, fileName)
             toPath = makePath(toPath, location.dirName);
             fileName = [fileName, location.generateFilenameSection];
-            
-            locationString = fileName;
             
             data = subsectionSession.getPolarizationAnalysisData(location.sessions, toPath, fileName);
         end
