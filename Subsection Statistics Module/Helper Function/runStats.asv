@@ -7,8 +7,6 @@ statTypes = enumeration('StatisticTypes');
 
 colHeaders = comparisonType.columnHeaders;
 
-numLocations = length(dataLocationStrings);
-
 statsOutput = {};
 
 template = {};
@@ -105,6 +103,8 @@ numLocations = length(data);
 
 metricCounter = 1;
 
+subPreppedMetricData = [];
+
 for i=1:length(metricTypes)
     metricType = metricTypes(i);
     
@@ -119,17 +119,19 @@ for i=1:length(metricTypes)
         
         numCols = length(locationData);
         
-        for k=1:numCols
+        k = 1;
+        
+        while k <= numCols
             colLocationData = locationData{k};
             
             metricData = colLocationData{i};
             
             for l=1:numStats
-                subPreppedMetricData = preppedMetricData{l};
-                
                 subPreppedMetricData(j,k) = prepMetricData(metricData, useCircStats{l}, statFile);
                 
                 preppedMetricData{l} = subPreppedMetricData;
+                
+                k = k + 1;
             end
         end
     end
@@ -144,6 +146,11 @@ end
 
 % prepMetricData
 function preppedData = prepMetricData(metricData, useCircStats, statType)
+
+dims = size(metricData);
+
+metricData = reshape(metricData, dims(1)*dims(2), 1);
+
 switch statType
     case StatisticTypes.mean
         if useCircStats
@@ -168,7 +175,7 @@ switch statType
         
     case StatisticTypes.skewness
         if useCircStats
-            preppedData = skewnwss(metricData);
+            preppedData = skewness(metricData);
         else
             preppedData = circ_skewness(metricData);
         end
@@ -182,22 +189,21 @@ function output = placeData(output, data)
 dims = size(output);
 
 endRow = dims(1);
-endCol = dims(2);
 
-rowIndex = 0;
+spacerColIndex = 0;
 
 for i=1:dims(1)
-    if isempty(output{i,endCol});
-        rowIndex = i;
+    if isempty(output{endRow,i});
+        spacerColIndex = i;
         break;
     end
 end
 
-colIndex = 0;
+spacerRowIndex = 0;
 
 for i=1:dims(1)
-    if isempty(output{endRow,i});
-        colIndex = i;
+    if isempty(output{i,spacerColIndex});
+        spacerRowIndex = i;
         break;
     end
 end
@@ -208,7 +214,12 @@ for i=1:length(data)
     dims = size(dataFromMetric);
     
     for j=1:dims(1)
+        rowIndex = spacerRowIndex;
+        
+        colIndex = spaceColIndex;
+        
         for k=1:dims(2)
+            output{rowIndex, colIndex} = dataFromMetric(j,k);
             
             colIndex = colIndex + 1;
         end

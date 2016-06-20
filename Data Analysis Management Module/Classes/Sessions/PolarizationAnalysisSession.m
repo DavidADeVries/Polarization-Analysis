@@ -63,10 +63,10 @@ classdef PolarizationAnalysisSession < DataProcessingSession
             
             metricTypes = enumeration('MetricTypes');
             
-            fileNameEnd = [createFilenameSection(PolarizationAnalysisNamingConventions.MM_MATLAB_VAR_FILENAME_LABEL, []), Contants.MATLAB_EXT];
+            fileNameEnd = [createFilenameSection(PolarizationAnalysisNamingConventions.MM_MATLAB_VAR_FILENAME_LABEL, []), Constants.MATLAB_EXT];
             
             for i=1:length(metricTypes)
-                metricType = metricTypes{i};
+                metricType = metricTypes(i);
                 
                 metricGroupTag = createFilenameSection(metricType.metricGroupType.filenameTag,[]);
                 metricTag = createFilenameSection(metricType.filenameTag,[]);
@@ -75,7 +75,9 @@ classdef PolarizationAnalysisSession < DataProcessingSession
                 
                 loadPath = makePath(toSessionPath, metricType.metricGroupType.dirName, metricFilename);
                 
-                data{i} = load(loadPath, PolarizationAnalysisNamingConventions.METRIC_MATLAB_VAR_NAME);
+                vars = load(loadPath, PolarizationAnalysisNamingConventions.METRIC_MATLAB_VAR_NAME);
+                
+                data{i} = vars.data;
             end
         end
     end

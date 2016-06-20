@@ -52,6 +52,9 @@ classdef Session
             elseif sessionType == SessionTypes.PolarizationAnalysis
                 session = PolarizationAnalysisSession();
                 
+            elseif sessionType == SessionTypes.SubsectionStatisticsAnalysis
+                session = SubsectionStatisticsAnalysisSession();
+                
             else
                 error('Invalid Session type!');
             end                
@@ -398,7 +401,7 @@ classdef Session
         function bool = isPolarizationAnalysisSession(session)
             sessionClass = class(session);
             
-            polarizationAnalysisClasses = {class(PolarizationAnalysisSelectionSession)};
+            polarizationAnalysisClasses = {class(PolarizationAnalysisSession)};
             
             bool = ~isempty(containsString(polarizationAnalysisClasses, sessionClass));            
         end
@@ -428,7 +431,7 @@ classdef Session
                 end
             end
             
-            if empty(validSessions)
+            if isempty(validSessions)
                 polarizationAnalysisSession = [];
             elseif length(validSessions) == 1
                 polarizationAnalysisSession = validSessions{1};

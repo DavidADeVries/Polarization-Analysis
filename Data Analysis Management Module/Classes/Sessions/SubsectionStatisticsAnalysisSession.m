@@ -8,19 +8,44 @@ classdef SubsectionStatisticsAnalysisSession < DataProcessingSession
     end
     
     methods
-        function session = setPreAnalysisFields(session, userName, normalizationType, mmComputationProgram, onlyComputeMM, sessionNotes, isRejected, rejectedReason, rejectedBy)
-            session.uuid = generateUUID();
-            session.metadataHistory = MetadataHistoryEntry(userName, SubsectionStatisticsAnalysisSession.empty);
-            session.sessionDate = now;
-            session.sessionDoneBy = userName;
-            session.notes = sessionNotes;
-            session.rejected = isRejected;
-            session.rejectedReason = rejectedReason;
-            session.rejectedBy = rejectedBy;
+        function session = SubsectionStatisticsAnalysisSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, userName, notes, rejected, rejectedReason, rejectedBy, comparisonType, skippedRejectedSessions)
+            if nargin > 0
+                % set session numbers
+                session.sessionNumber = sessionNumber;
+                session.dataProcessingSessionNumber = dataProcessingSessionNumber;
+                
+                % set navigation listbox label
+                session.naviListboxLabel = session.generateListboxLabel();
+                
+                % set metadata history
+                session.metadataHistory = MetadataHistoryEntry(userName, SubsectionStatisticsAnalysisSession.empty);
+                
+                % set other fields
+                session.uuid = generateUUID();
+                session.sessionDate = now;
+                session.sessionDoneBy = userName;
+                session.notes = notes;
+                session.rejected = rejected;
+                session.rejectedReason = rejectedReason;
+                session.rejectedBy = rejectedBy;
+                
+                session.comparisonType = comparisonType;
+                session.skippedRejectedSessions = skippedRejectedSessions;
+                
+                session.linkedSessionNumbers = []; %distributed over multiple subjects, could uuids I suppose
+                
+                % make directory/metadata file
+                session = session.createDirectories(toLocationPath, projectPath);
+                
+                % save metadata
+                saveToBackup = false;
+                session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
+            end
         end
         
+        
         function dirSubtitle = getDirSubtitle(session)
-            dirSubtitle = [PolarizationAnalysisNamingConventions.SESSION_DIR_SUBTITLE, num2str(session.versionNumber)];
+            dirSubtitle = [SubsectionStatisticsAnalysisNamingConventions.SESSION_DIR_SUBTITLE];
         end
         
         function metadataString = getMetadataString(session)

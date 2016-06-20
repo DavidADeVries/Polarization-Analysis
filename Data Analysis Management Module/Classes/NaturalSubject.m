@@ -579,7 +579,7 @@ classdef NaturalSubject < Subject
         function [data, locationString] = getPolarizationAnalysisData(subject, subsectionSession, toIndices, toPath, fileName)
             sample = subject.samples{toIndices(1)};
             
-            newIndices = indices(2:length(toIndices));
+            newIndices = toIndices(2:length(toIndices));
             toPath = makePath(toPath, subject.dirName);
             fileName = [fileName, subject.generateFilenameSection];
             

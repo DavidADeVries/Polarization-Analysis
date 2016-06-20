@@ -676,7 +676,7 @@ classdef Eye < FixedSample
         function [data, locationString] = getPolarizationAnalysisData(eye, subsectionSession, toIndices, toPath, fileName)
             quarter = eye.quarters{toIndices(1)};
             
-            newIndices = indices(2:length(toIndices));
+            newIndices = toIndices(2:length(toIndices));
             toPath = makePath(toPath, eye.dirName);
             fileName = [fileName, eye.generateFilenameSection];
             

@@ -382,7 +382,9 @@ classdef Location
         function location = createDirectories(location, toQuarterPath, projectPath)
             locationDirectory = location.generateDirName();
             
-            createObjectDirectories(projectPath, toQuarterPath, locationDirectory);
+            createBackup = true;
+            
+            createObjectDirectories(projectPath, toQuarterPath, locationDirectory, createBackup);
                         
             location.dirName = locationDirectory;
         end
@@ -892,7 +894,7 @@ classdef Location
             
             locationString = fileName;
             
-            data = subsectionSession.getPolarizationAnalysisData(location.sessions, toPath, fileName);
+            data = subsectionSession.getPolarizationAnalysisDataFromSubsectionSelectionSession(location.sessions, toPath, fileName);
         end
         
         function mask = getFluoroMask(location, subsectionSession, toPath, fileName)

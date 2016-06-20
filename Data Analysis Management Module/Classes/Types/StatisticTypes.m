@@ -3,18 +3,20 @@ classdef StatisticTypes
     
     properties
         displayString
+        filenameString
     end
     
     enumeration
-        mean     ('Mean')
-        median   ('Median');
-        stdev    ('Standard Deviation');
-        skewness ('Skewness');
+        mean     ('Mean', 'Mean')
+        median   ('Median', 'Median');
+        stdev    ('Standard Deviation', 'St. Dev.');
+        skewness ('Skewness', 'Skewnewss');
     end
     
     methods
-        function enum = StatisticTypes(string)
-            enum.displayString = string;
+        function enum = StatisticTypes(displayString, filenameString)
+            enum.displayString = displayString;
+            enum.filenameString = filenameString;
         end
     end
     

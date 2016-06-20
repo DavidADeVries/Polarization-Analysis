@@ -287,7 +287,9 @@ classdef Quarter
              
             quarterDirectory = quarter.generateDirName();
             
-            createObjectDirectories(projectPath, toEyePath, quarterDirectory);
+            createBackup = true;
+            
+            createObjectDirectories(projectPath, toEyePath, quarterDirectory, createBackup);
                         
             quarter.dirName = quarterDirectory;
         end

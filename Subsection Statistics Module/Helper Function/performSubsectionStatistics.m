@@ -1,4 +1,4 @@
-function trial = performSubsectionStatistics(trial, selectStructure, comparisonType, toPath, userName)
+function trial = performSubsectionStatistics(trial, selectStructure, comparisonType, projectPath, userName, notes, rejected, rejectedReason, rejectedBy, skippedRejectedSessions)
 % performSubsectionStatistics
 
 gathering = false; %flag that signifies at set of sessions for a location are being scooped up
@@ -13,8 +13,14 @@ dataSessionStrings = {};
 
 dataCounter = 1;
 
+toPath = projectPath;
 
-for i=1:length(selectStructure)
+% add a blank entry to the end for convienence
+isSession = false;
+selectStructure{length(selectStructure)+1} = SubsectionStatisticsModuleSelectionEntry('', [], isSession, []); %add this to the end
+
+
+for i=1:length(selectStructure)    
     if selectStructure{i}.isSession && selectStructure{i}.isSelected
         if ~gathering
             gathering = true;
@@ -30,7 +36,7 @@ for i=1:length(selectStructure)
         if gathering
             numSessions = length(gatheredSessions);
             
-            if numSessions == comparisonType.numSesssionsRequired
+            if numSessions == comparisonType.numSessionsRequired
                 locationData = {};
                 locationString = [];
                 sessionString = '';
@@ -52,7 +58,7 @@ for i=1:length(selectStructure)
                             end
                         end
                         
-                        if isempty(posData) || isempy(negData)
+                        if isempty(posData) || isempty(negData)
                             error('Intended positive and negative data not found');
                         else
                             % reshape into col vectors
@@ -84,9 +90,9 @@ for i=1:length(selectStructure)
                 
                 % check if we have data to run with
                 if ~isempty(locationData)
-                    dataForStats{counter} = locationData;
-                    dataLocationStrings{counter} = locationString;
-                    dataSessionStrings{counter} = sessionString;
+                    dataForStats{dataCounter} = locationData;
+                    dataLocationStrings{dataCounter} = locationString;
+                    dataSessionStrings{dataCounter} = sessionString;
                     
                     dataCounter = dataCounter + 1;
                 end
@@ -105,6 +111,13 @@ end
 
 % have all the data collected, so now run the stats!
 statsOutput = runStats(dataForStats, dataLocationStrings, dataSessionStrings, comparisonType);
+
+% write outputs
+analysisSession = writeStats(statsOutput, projectPath, trial, userName, notes, rejected, rejectedReason, rejectedBy, comparisonType, skippedRejectedSessions);
+
+
+% add session
+trial = trial.addSession(analysisSession);
 
 
 

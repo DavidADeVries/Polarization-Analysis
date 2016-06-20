@@ -17,6 +17,7 @@ classdef SessionTypes
         FrameAveraging              ('Frame Averaging Session',                 FrameAveragingSession.empty)
         Registration                ('Registration Session',                    RegistrationSession.empty)
         PolarizationAnalysis        ('Polarization Analysis Session',           PolarizationAnalysisSession.empty)
+        SubsectionStatisticsAnalysis('Subsection Statistics Analysis',          SubsectionStatisticsAnalysisSession.empty);
         
     end
     

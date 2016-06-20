@@ -31,7 +31,9 @@ classdef DataProcessingSession < Session
         function session = createDirectories(session, toLocationPath, projectPath)            
             sessionDirectory = session.generateDirName();
             
-            createObjectDirectories(projectPath, toLocationPath, sessionDirectory);
+            createBackup = false;
+            
+            createObjectDirectories(projectPath, toLocationPath, sessionDirectory, createBackup);
                         
             session.dirName = sessionDirectory;
         end

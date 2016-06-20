@@ -76,7 +76,9 @@ classdef Sample
         function sample = createDirectories(sample, toSubjectPath, projectPath)
             sampleDirectory = sample.generateDirName();
             
-            createObjectDirectories(projectPath, toSubjectPath, sampleDirectory);
+            createBackup = true;
+            
+            createObjectDirectories(projectPath, toSubjectPath, sampleDirectory, createBackup);
                         
             sample.dirName = sampleDirectory;
         end
