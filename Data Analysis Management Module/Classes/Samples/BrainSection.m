@@ -251,6 +251,12 @@ classdef BrainSection < FixedSample
             session = [];
         end
         
+        function [data, locationString, sessionString] = getPolarizationAnalysisData(sample, subsectionSession, toIndices, toPath, fileName)
+            data = [];
+            locationString = '';
+            sessionString = '';
+        end
+        
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************

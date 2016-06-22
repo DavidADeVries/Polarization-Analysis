@@ -8,14 +8,20 @@ maskColLength = maskDims(1) * maskDims(2);
 
 maskCol = reshape(mask, maskColLength, 1);
 
-for i=length(data)
+% make sure mask is logical
+maskCol = logical(maskCol);
+
+posData = {};
+negData = {};
+
+for i=1:length(data)
     image = data{i};
     
     dims = size(image);
     
     colLength = dims(1)*dims(2);
     
-    if maskColLenght == colLength
+    if maskColLength == colLength
         dataCol = reshape(image, colLength, 1);
         
         posData{i} = dataCol(maskCol);

@@ -600,13 +600,13 @@ classdef Quarter
         % FUNCTIONS FOR SUBSECTION STATISTICS MODULE
         % ******************************************
         
-        function [data, locationString] = getPolarizationAnalysisData(quarter, subsectionSession, toIndices, toPath, fileName)
+        function [data, locationString, sessionString] = getPolarizationAnalysisData(quarter, subsectionSession, toIndices, toPath, fileName)
             location = quarter.locations{toIndices(1)};
             
             toPath = makePath(toPath, quarter.dirName);
             fileName = [fileName, quarter.generateFilenameSection];
             
-            [data, locationString] = location.getPolarizationAnalysisData(subsectionSession, toPath, fileName);
+            [data, locationString, sessionString] = location.getPolarizationAnalysisData(subsectionSession, toPath, fileName);
         end
         
         function mask = getFluoroMask(quarter, subsectionSession, toIndices, toPath, fileName)

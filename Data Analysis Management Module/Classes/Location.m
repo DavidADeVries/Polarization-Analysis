@@ -888,13 +888,13 @@ classdef Location
         % FUNCTIONS FOR SUBSECTION STATISTICS MODULE
         % ******************************************
         
-        function [data, locationString] = getPolarizationAnalysisData(location, subsectionSession, toPath, fileName)
+        function [data, locationString, sessionString] = getPolarizationAnalysisData(location, subsectionSession, toPath, fileName)
             toPath = makePath(toPath, location.dirName);
             fileName = [fileName, location.generateFilenameSection];
             
             locationString = fileName;
             
-            data = subsectionSession.getPolarizationAnalysisDataFromSubsectionSelectionSession(location.sessions, toPath, fileName);
+            [data, sessionString] = subsectionSession.getPolarizationAnalysisDataFromSubsectionSelectionSession(location.sessions, toPath, fileName);
         end
         
         function mask = getFluoroMask(location, subsectionSession, toPath, fileName)

@@ -395,7 +395,7 @@ classdef Session
         end
         
         function bool = isAnySubsectionSelectionSession(session)
-            bool = session.isSubsectionSelectionSession() || session.isFluorescentSubsectionSelectionSession(session);
+            bool = session.isSubsectionSelectionSession() || session.isFluorescentSubsectionSelectionSession();
         end
         
         function bool = isPolarizationAnalysisSession(session)
@@ -406,15 +406,18 @@ classdef Session
             bool = ~isempty(containsString(polarizationAnalysisClasses, sessionClass));            
         end
         
-        function data = getPolarizationAnalysisDataFromSubsectionSelectionSession(session, allSessions, toLocationPath, fileName)
+        function [data, sessionString] = getPolarizationAnalysisDataFromSubsectionSelectionSession(session, allSessions, toLocationPath, fileName)
             toSessionPath = makePath(toLocationPath, session.dirName);
             
             if session.isAnySubsectionSelectionSession()
                 polarizationAnalysisSession = session.getPolarizationAnalysisSession(allSessions, toSessionPath);
                 
+                sessionString = polarizationAnalysisSession.generateFilenameSection();
+                
                 data = polarizationAnalysisSession.getPolarizationAnalysisData(toLocationPath, fileName);
             else
                 data = {};
+                sessionString = '';
             end
         end
         

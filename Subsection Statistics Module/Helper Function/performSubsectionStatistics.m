@@ -50,11 +50,11 @@ for i=1:length(selectStructure)
                             session = gatheredSessions{j};
                             
                             if session.croppingType == CroppingTypes.positiveArea
-                                [posData, locationString] = trial.getPolarizationAnalysisData(gatheredSessions{j}, toIndices, toPath);
-                                sessionString = addSessionToString(sessionString, session);
+                                [posData, locationString, newSessionString] = trial.getPolarizationAnalysisData(gatheredSessions{j}, toIndices, toPath);
+                                sessionString = addSessionString(sessionString, newSessionString);
                             elseif session.croppingType == CroppingTypes.negativeArea
-                                [negData, locationString] = trial.getPolarizationAnalysisData(gatheredSessions{j}, toIndices, toPath);
-                                sessionString = addSessionToString(sessionString, session);
+                                [negData, locationString, newSessionString] = trial.getPolarizationAnalysisData(gatheredSessions{j}, toIndices, toPath);
+                                sessionString = addSessionString(sessionString, newSessionString);
                             end
                         end
                         
@@ -74,9 +74,9 @@ for i=1:length(selectStructure)
                     case SubsectionComparisonTypes.fluorescentSubsectionComparison
                         session = gatheredSessions{1};
                         
-                        sessionString = addSessionToString(sessionString, session);
+                        [data, locationString, newSessionString] = trial.getPolarizationAnalysisData(session, toIndices, toPath);
                         
-                        [data, locationString] = trial.getPolarizationAnalysisData(session, toIndices, toPath);
+                        sessionString = addSessionString(sessionString, newSessionString);
                         
                         fluoroMask = trial.getFluoroMask(session, toIndices, toPath);
                         
@@ -124,14 +124,12 @@ trial = trial.addSession(analysisSession);
 
 % HELPER FUNCTIONS
 
-function string = addSessionToString(string, session)
-
-stringToAdd = session.generateFilenameSection();
+function string = addSessionString(string, sessionString)
 
 if isempty(string)
-    string = stringToAdd;
+    string = sessionString;
 else
-    string = [string, ', ', stringToAdd];
+    string = [string, ', ', sessionString];
 end
 
 

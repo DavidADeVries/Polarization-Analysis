@@ -576,20 +576,20 @@ classdef NaturalSubject < Subject
         % FUNCTIONS FOR SUBSECTION STATISTICS MODULE
         % ******************************************
         
-        function [data, locationString] = getPolarizationAnalysisData(subject, subsectionSession, toIndices, toPath, fileName)
+        function [data, locationString, sessionString] = getPolarizationAnalysisData(subject, subsectionSession, toIndices, toPath, fileName)
             sample = subject.samples{toIndices(1)};
             
             newIndices = toIndices(2:length(toIndices));
             toPath = makePath(toPath, subject.dirName);
             fileName = [fileName, subject.generateFilenameSection];
             
-            [data, locationString] = sample.getPolarizationAnalysisData(subsectionSession, newIndices, toPath, fileName);
+            [data, locationString, sessionString] = sample.getPolarizationAnalysisData(subsectionSession, newIndices, toPath, fileName);
         end
         
         function mask = getFluoroMask(subject, subsectionSession, toIndices, toPath, fileName)
             sample = subject.samples{toIndices(1)};
             
-            newIndices = indices(2:length(toIndices));
+            newIndices = toIndices(2:length(toIndices));
             toPath = makePath(toPath, subject.dirName);
             fileName = [fileName, subject.generateFilenameSection];
             

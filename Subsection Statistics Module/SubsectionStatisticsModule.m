@@ -220,12 +220,12 @@ project = handles.project;
 [choices, ~] = choicesFromEnum('SubsectionComparisonTypes');
     
 comparisonType = choices(get(handles.comparisonTypeListbox,'Value'));
-notes = get(handles.notesInput, 'Value');
+notes = get(handles.notesInput, 'String');
 rejected = get(handles.yesRejectedButton, 'Value');
 
 if rejected
-    rejectedReason = get(handles.rejectedResonInput, 'Value');
-    rejectedBy = get(handles.rejectedByInput, 'Value');
+    rejectedReason = get(handles.rejectedReasonInput, 'String');
+    rejectedBy = get(handles.rejectedByInput, 'String');
 else
     rejectedReason = '';
     rejectedBy = '';

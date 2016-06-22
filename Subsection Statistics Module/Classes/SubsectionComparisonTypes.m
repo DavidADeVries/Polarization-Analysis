@@ -18,6 +18,26 @@ classdef SubsectionComparisonTypes
             enum.columnHeaders = columnHeaders;
             enum.numSessionsRequired = numSessionsRequired;
         end
+        
+        function testColHeaders = getTestColumnHeaders(comparisonType)
+            vs = ' vs. ';
+            
+            colHeaders = comparisonType.columnHeaders;
+            
+            numHeaders = length(colHeaders);
+            
+            testColHeaders = {};
+            counter = 1;
+            
+            for i=1:numHeaders
+                for j=i+1:numHeaders
+                    testColHeaders{counter} = [colHeaders{i}, vs, colHeaders{j}];
+                    
+                    counter = counter + 1;                    
+                end
+            end
+            
+        end
     end
     
 end

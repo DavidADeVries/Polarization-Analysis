@@ -759,20 +759,20 @@ classdef Trial
         % FUNCTIONS FOR SUBSECTION STATISTICS MODULE
         % ******************************************
         
-        function [data, locationString] = getPolarizationAnalysisData(trial, subsectionSession, toIndices, toPath)
+        function [data, locationString, sessionString] = getPolarizationAnalysisData(trial, subsectionSession, toIndices, toPath)
             subject = trial.subjects{toIndices(1)};
             
             newIndices = toIndices(2:length(toIndices));
             toPath = makePath(toPath, trial.dirName);
             fileName = trial.generateFilenameSection;
             
-            [data, locationString] = subject.getPolarizationAnalysisData(subsectionSession, newIndices, toPath, fileName);
+            [data, locationString, sessionString] = subject.getPolarizationAnalysisData(subsectionSession, newIndices, toPath, fileName);
         end
         
         function mask = getFluoroMask(trial, subsectionSession, toIndices, toPath)
             subject = trial.subjects{toIndices(1)};
             
-            newIndices = indices(2:length(toIndices));
+            newIndices = toIndices(2:length(toIndices));
             toPath = makePath(toPath, trial.dirName);
             fileName = trial.generateFilenameSection;
             

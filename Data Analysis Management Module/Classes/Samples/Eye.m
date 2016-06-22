@@ -673,20 +673,20 @@ classdef Eye < FixedSample
         % FUNCTIONS FOR SUBSECTION STATISTICS MODULE
         % ******************************************
         
-        function [data, locationString] = getPolarizationAnalysisData(eye, subsectionSession, toIndices, toPath, fileName)
+        function [data, locationString, sessionString] = getPolarizationAnalysisData(eye, subsectionSession, toIndices, toPath, fileName)
             quarter = eye.quarters{toIndices(1)};
             
             newIndices = toIndices(2:length(toIndices));
             toPath = makePath(toPath, eye.dirName);
             fileName = [fileName, eye.generateFilenameSection];
             
-            [data, locationString] = quarter.getPolarizationAnalysisData(subsectionSession, newIndices, toPath, fileName);
+            [data, locationString, sessionString] = quarter.getPolarizationAnalysisData(subsectionSession, newIndices, toPath, fileName);
         end
         
         function mask = getFluoroMask(eye, subsectionSession, toIndices, toPath, fileName)
             quarter = eye.quarters{toIndices(1)};
             
-            newIndices = indices(2:length(toIndices));
+            newIndices = toIndices(2:length(toIndices));
             toPath = makePath(toPath, eye.dirName);
             fileName = [fileName, eye.generateFilenameSection];
             

@@ -22,7 +22,7 @@ if length(dims) == 3 % got 3D data, check if colour or BW that's just duplicated
         dataMin = min(min(min(image)));
         dataMax = max(max(max(image)));
     end
-elseif length(dims) == 1
+elseif length(dims) == 2
     image = rawData;
     
     dataMin = min(min(image));
