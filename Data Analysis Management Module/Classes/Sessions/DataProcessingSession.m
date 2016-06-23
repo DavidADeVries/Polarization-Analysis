@@ -31,7 +31,7 @@ classdef DataProcessingSession < Session
         function session = createDirectories(session, toLocationPath, projectPath)            
             sessionDirectory = session.generateDirName();
             
-            createBackup = false;
+            createBackup = session.shouldCreateBackup();
             
             createObjectDirectories(projectPath, toLocationPath, sessionDirectory, createBackup);
                         
@@ -64,6 +64,7 @@ classdef DataProcessingSession < Session
         function isLinked = isLinkedToSession(session, checkSession)
             isLinked = ~isempty(findInArray(checkSession.sessionNumber, session.linkedSessionNumbers));
         end
+       
         
     end
     

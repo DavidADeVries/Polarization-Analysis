@@ -152,6 +152,11 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
             dirSubtitle = [LegacySubsectionSelectionNamingConventions.SESSION_DIR_SUBTITLE, ' ', session.croppingType.displayString];
         end
         
+        
+        function bool = shouldCreateBackup(session)
+            bool = true;
+        end
+        
                
         function metadataString = getMetadataString(session)
             

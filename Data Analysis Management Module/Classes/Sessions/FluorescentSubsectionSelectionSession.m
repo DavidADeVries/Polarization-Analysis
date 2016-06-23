@@ -45,6 +45,11 @@ classdef FluorescentSubsectionSelectionSession < DataProcessingSession
         end
         
         
+        function bool = shouldCreateBackup(session)
+            bool = false;
+        end
+        
+        
         function metadataString = getMetadataString(session)
             
             [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);

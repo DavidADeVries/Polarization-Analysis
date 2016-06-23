@@ -1,4 +1,4 @@
-function statsOutput, testsOutput = runStats(dataForStats, dataLocationStrings, dataSessionStrings, comparisonType)
+function [statsOutput, testsOutput] = runStats(dataForStats, dataLocationStrings, dataSessionStrings, comparisonType)
 % runStats
 
 metricTypes = enumeration('MetricTypes');
@@ -9,6 +9,7 @@ colHeaders = comparisonType.columnHeaders;
 testsColHeaders = comparisonType.getTestColumnHeaders();
 
 statsOutput = {};
+testsOutput = {};
 
 template = {};
 
@@ -17,13 +18,14 @@ template = {};
 
 testsTemplate = {};
 
-[testsTemplate] = setTestColumnHeaders(testsTemplate, metricTypes, testsColHeaders);
+testsTemplate = setTestColumnHeaders(testsTemplate, metricTypes, testsColHeaders);
+testsTemplate = setRowTestLabels(testsTemplate);
 
 for i=1:length(statTypes)
     statType = statTypes(i);
     
     statTypeOutput = template;
-    tstOutput = testTemplate;
+    testOutput = testsTemplate;
     
     % prep data: format is cell array for each metric where each index
     % contains non-cell array with columns for pos, neg, etc, and rows for
@@ -39,7 +41,16 @@ for i=1:length(statTypes)
     
     statTypeOutput = placeGeneralStats(statTypeOutput, dataStats, rowLabels, colSpacer);
     
+    [headerLabel, testLabels, testResults, passedNormalityResults] = normalityTestsForData(data, metricTypes);
     
+    statTypeOutput = placeNormalityTestResults(statTypeOutput, headerLabel, testLabels, testResults, colSpacer);
+    
+    % run tests for stats
+      
+    [testLabels, testResults] = tTestsForData(data, metricTypes, passedNormalityResults);
+    
+    
+    % put 
     
     statsOutput{i} = statTypeOutput;
     testsOutput{i} = testOutput;
@@ -147,24 +158,10 @@ function output = setRowTestLabels(output)
 
 headerOffset = 2; %two rows from header and sub headers
 
-normalityTestsLabel = {'Normality Tests'};
-
-andersonDarlingLabels = {...
-    'Anderson-Darling Normality Test',...
-    'h - Value',...
-    'p - Value',...
-    'Test Statistic',...
-    'Critical Value'};
-
-shapiroWilkLabels = {...
-    'Shapiro-Wilk Normality Test',...
-    'h - Value',...
-    'p - Value',...
-    'Test Statistic'};
-
 pairedTestsLabels = {'Paired Tests'};
 
 pairedTTestLabels = {...
+    'Paired T-Test',...
     'h - Value',...
     'p - Value',...
     'Confidence Interval 1',...
@@ -174,6 +171,7 @@ pairedTTestLabels = {...
     'Standard Deviation'};
 
 wilcoxonSignedRankLabels = {...
+    'Wilcoxon Signed-Rank Test',...
     'h - Value',...
     'p - Value',...
     'Test Statistics',...
@@ -182,6 +180,7 @@ wilcoxonSignedRankLabels = {...
 unpairedTestsLabel = {'Unpaired Tests'};
 
 unpairedTTestLabels = {...
+    'Unpaired T Test',...
     'h - Value',...
     'p - Value',...
     'Confidence Interval 1',...
@@ -191,43 +190,40 @@ unpairedTTestLabels = {...
     'Standard Deviation'};
 
 mannWhitneyRankSumLabels = {...
+    'Mann Whitney Rank Sum Test',...
     'h - Value',...
     'p - Value'};
 
 spacer = {''};
 
-tab = '';
+hasHeader = true;
 
 rowLabels = [...
-    normalityTestsLabel,...
-    indent(andersonDarlingLabels, tab),...
-    spacer,...
-    indent(shapiroWilkLabels, tab),...
-    spacer,...
     pairedTestsLabels,...
-    indent(pairedTTestLabels, tab),...
+    indent(pairedTTestLabels, hasHeader),...
     spacer,...
-    indent(wilcoxonSignedRankLabels, tab),...
+    indent(wilcoxonSignedRankLabels, hasHeader),...
     spacer,...
     unpairedTestsLabel,...
-    indent(unpairedTTestLabels, tab),...
+    indent(unpairedTTestLabels, hasHeader),...
     spacer,...
-    indent(mannWhitneyRankSumLabels, tab)];
+    indent(mannWhitneyRankSumLabels, hasHeader)];
 
 
-for i=1:length(dataLocationStrings)
-    output{i + headerOffset, 1} = dataLocationStrings{i};
-    output{i + headerOffset, 2} = dataSessionStrings{i};
+for i=1:length(rowLabels)
+    output{i + headerOffset, 1} = rowLabels{i};
 end
 
 end
 
 % indent
-function labels = indent(labels, tab)
+function labels = indent(labels, hasHeader)
+    tab = '  ';
+
     for i=1:length(labels)
         labels{i} = [tab, labels{i}];
         
-        if i ~= 1
+        if i ~= 1 && hasHeader
             labels{i} = [tab, labels{i}];
         end
     end
@@ -403,10 +399,42 @@ end
 
 end
 
+% normalityTestsForData
+function [headerLabel, testLabels, testResults, passedNormalityResults] = normalityTestsForData(data, metricTypes)
+
+dataIndex = 1;
+
+testResults = {};
+passedNormalityResults = {};
+
+for i=1:length(metricTypes)
+    metricType = metricTypes(i);
+    
+    useCircStats = metricType.getUseCircStats();
+    
+    for j=1:length(useCircStats)
+        dataForMetric = data{dataIndex};
+        
+        [headerLabel, testLabels, testResult, passedNormality] = computeNormalityTests(dataForMetric);
+        
+        testResults{dataIndex} = testResult;
+        passedNormalityResults{dataIndex} = passedNormality;
+        
+        dataIndex = dataIndex + 1;
+    end
+end
+
+
+end
+
 % computeGeneralStats
 function [rowLabels, generalStats] = computeGeneralStats(dataForMetric, useCircStats)
 
 rowLabels = {'Min', 'Max', 'Mean', 'Std Dev', 'Median', 'Skewness'};
+
+hasHeader = false;
+
+rowLabels = indent(rowLabels, hasHeader);
 
 numStats = length(rowLabels);
 
@@ -432,6 +460,73 @@ for i=1:dims(2)
         generalStats(5,i) = median(dataCol);
         generalStats(6,i) = skewness(dataCol);
     end
+end
+
+end
+
+% computeNormalityTests
+function [headerLabel, testLabels, testResult, passedNormality] = computeNormalityTests(dataForMetric)
+
+hasHeader = true;
+
+headerLabel = 'Normality Tests';
+
+andersonDarlingLabels = {...
+    'Anderson-Darling Normality Test',...
+    'h - Value',...
+    'p - Value',...
+    'Test Statistic',...
+    'Critical Value'};
+
+andersonDarlingLabels = indent(andersonDarlingLabels, hasHeader);
+
+shapiroWilkLabels = {...
+    'Shapiro-Wilk Normality Test',...
+    'h - Value',...
+    'p - Value',...
+    'Test Statistic'};
+
+shapiroWilkLabels = indent(shapiroWilkLabels, hasHeader);
+
+testLabels = {andersonDarlingLabels, shapiroWilkLabels};
+
+dims = size(dataForMetric);
+
+testResult = {};
+
+for i=1:length(testLabels)
+    testResult{i} = [];
+end
+
+passedNormality = [];
+
+for i=1:dims(2)
+    dataCol = dataForMetric(:,i);
+    
+    % Anderson-Darling Normality Test
+    output = testResult{1};
+    
+    [h, p, stat, cv] = adtest(dataCol);
+    
+    output(1,i) = h;
+    output(2,i) = p;
+    output(3,i) = stat;
+    output(4,i) = cv;
+    
+    testResult{1} = output;
+    
+    passedNormality(i) = ~h;
+    
+    % Shapiro-Wilk Normality Test
+    output = testResult{2};
+    
+    [h, p, stat] = swtest(dataCol);
+    
+    output(1,i) = h;
+    output(2,i) = p;
+    output(3,i) = stat;
+    
+    testResult{2} = output;
 end
 
 end
@@ -480,5 +575,203 @@ for i=1:length(dataStats)
 end
 
 end
+
+% placeNormalityTestResults
+function testOutput = placeNormalityTestResults(testOutput, headerLabel, testLabels, testResults, colSpacer)
+
+dims = size(testOutput);
+
+rowIndex = dims(1) + 2; %put space between test results
+labelColIndex = 1;
+
+% place labels
+
+testOutput{rowIndex, labelColIndex} = headerLabel;
+
+rowIndex = rowIndex + 1;
+
+startingRowIndex = rowIndex + 1; %stash this index we'll need it for dropping the test results in
+
+numLabels = length(testLabels);
+
+for i=1:numLabels
+    labels = testLabels{i};
+    
+    for j=1:length(labels)
+        testOutput{rowIndex, labelColIndex} = labels{j};
+        
+        rowIndex = rowIndex + 1;
+    end
+    
+    if i ~= numLabels
+        rowIndex = rowIndex + 1;
+    end
+end
+
+% place results
+
+colIndex = colSpacer;
+
+for i=1:length(testResults) % go through metric types
+    rowIndex = startingRowIndex;
+    
+    results = testResults{i};
+    
+    colIncrement = 0;
+    
+    for j=1:length(results) % going through different tests
+        singleTestResults = results{j};
+        
+        dims = size(singleTestResults);
+        colIncrement = dims(2);
+        
+        for k=1:dims(2) % go through cols            
+            for l=1:dims(1) % go through rows
+                testOutput{rowIndex + (l-1), colIndex + (k - 1)} = singleTestResults(l,k);
+            end
+        end
+        
+        rowIndex = rowIndex + dims(1) + 2;
+    end
+    
+    colIndex = colIndex + colIncrement;
+end
+
+end
+
+
+% tTestsForData
+function [testLabels, testResults] = tTestsForData(data, metricTypes, passedNormalityResults)
+
+dataIndex = 1;
+
+testResults = {};
+
+for i=1:length(metricTypes)
+    metricType = metricTypes(i);
+    
+    useCircStats = metricType.getUseCircStats();
+    
+    for j=1:length(useCircStats)
+        metricData = data{dataIndex};
+        metricNormalityResults = passedNormalityResults{dataIndex};
+        
+        metricTestResults = tTestsForMetric(metricData, metricNormalityResults);
+        
+        testResults{dataIndex} = metricTestResults;        
+        
+        dataIndex = dataIndex + 1;
+    end
+    
+end
+
+end
+
+% tTestsForMetric
+function metricTestResults = tTestsForMetric(metricData, metricNormalityResults)
+
+dims = size(metricData);
+
+metricTestResults = {};
+numTests = 4;
+
+for i=1:length(numTests)
+    metricTestResults{i} = [];
+end
+
+index = 1;
+
+for i=1:dims(2)
+    for j=i+1:dims(2)
+        dataCol1 = metricData(:,i);
+        dataCol2 = metricData(:,j);
+        
+        dataCol1IsNormal = metricNormalityResults(i);
+        dataCol2IsNormal = metricNormalityResults(j);
+        
+        bothNormal = dataCol1IsNormal && dataCol2IsNormal;
+        
+        
+        
+        % Paired T Test
+        output = metricTestResults{1};
+        
+        if bothNormal        
+            [h, p, ci, stats] = ttest(dataCol1, dataCol2);
+            
+            output(1,index) = h;
+            output(2,index) = p;
+            output(3,index) = ci(1);
+            output(4,index) = ci(2);
+            output(5,index) = stats.tstat;
+            output(6,index) = stats.df;
+            output(7,index) = stats.sd;
+        else
+            for k=1:7
+                output(k,index) = NaN;
+            end
+        end
+        
+        metricTestResults{1} = output;
+        
+        
+        
+        % Wilcoxon Signed-Rank Test
+        output = metricTestResults{2};
+        
+        [p,h,stats] = signrank(dataCol1, dataCol2);
+        
+        output(1,index) = h;
+        output(2,index) = p;
+        output(3,index) = stats.signrank;
+        output(4,index) = stats.zval;
+                
+        metricTestResults{2} = output;
+        
+        
+        
+        % Unpaired T Test
+        output = metricTestResults{3};
+        
+        if bothNormal        
+            [h, p, ci, stats] = ttest2(dataCol1, dataCol2);
+            
+            output(1,index) = h;
+            output(2,index) = p;
+            output(3,index) = ci(1);
+            output(4,index) = ci(2);
+            output(5,index) = stats.tstat;
+            output(6,index) = stats.df;
+            output(7,index) = stats.sd;
+        else
+            for k=1:7
+                output(k,index) = NaN;
+            end
+        end
+        
+        metricTestResults{3} = output;
+        
+        
+        
+        % Mann-Whitney Rank Sum Test
+        output = metricTestResults{4};
+        
+        stats = mwwtest(dataCol1, dataCol2);
+        
+        % ????
+                
+        metricTestResults{4} = output;
+        
+        
+        % increment
+        index = index + 1;
+    end
+end
+
+
+
+end
+
+
 
 
