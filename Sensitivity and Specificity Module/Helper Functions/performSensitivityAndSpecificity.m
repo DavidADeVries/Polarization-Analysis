@@ -43,8 +43,6 @@ end
 
 rowIndex = 2;
 
-labelColIndex = 'A';
-
 adPositiveIndex = 'B';
 fluoroSignalIndex = 'C';
 polarSignalIndex = 'D';
@@ -88,8 +86,10 @@ for i=1:length(subjectIndices)
         
         output{rowIndex,1} = '';
         
-        output{rowIndex,3} = location.hasFluorescenceSignal();
-        output{rowIndex,4} = location.hasCrossedPolarizerSginal();
+        microscopeSession = getMicroscopeSession(location);
+        
+        output{rowIndex,3} = microscopeSession.fluoroSignature();
+        output{rowIndex,4} = microscopeSession.crossedSignature();
         
         output{rowIndex,5} = ['AND(', fluoroSignalIndex, rowString, ',', polarSignalIndex, rowString, ')'];
         output{rowIndex,6} = ['AND(', 'NOT(', fluoroSignalIndex, rowString, '),', polarSignalIndex, rowString, ')'];
@@ -102,8 +102,7 @@ for i=1:length(subjectIndices)
     startRowString = num2str(2);
     endRowString = num2str(rowIndex - 1);
     
-    % sensitivity and specificity calculations
-    
+    % sensitivity and specificity calculations   
     
     
     
