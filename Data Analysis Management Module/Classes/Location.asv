@@ -643,25 +643,15 @@ classdef Location
             end
         end
         
-        function microscopeSession = getMicroscopeSession(location)
+        function bool = hasFluorescenceSignal(location)
             sessions = location.sessions;
             
             microscopeSessions = {};
-            counter = 1;
             
             for i=1:length(sessions)
                 session = sessions{i};
                 
-                if isa(session, class(MicroscopeSession))
-                    micrscopeSessions{counter} = session;
-                    counter = counter + 1;
-                end
-            end
-            
-            if length(microscopeSessions) == 1
-                microscopeSession = microscopeSessions{i};
-            else
-                error('Non singular microscope session found!');
+                if isa(session, class(Microscope
             end
         end
         

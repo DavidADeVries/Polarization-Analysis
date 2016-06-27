@@ -1,35 +1,35 @@
-function varargout = SubsectionStatisticsModule(varargin)
-% SUBSECTIONSTATISTICSMODULE MATLAB code for SubsectionStatisticsModule.fig
-%      SUBSECTIONSTATISTICSMODULE, by itself, creates a new SUBSECTIONSTATISTICSMODULE or raises the existing
+function varargout = SensitivityAndSpecificityModule(varargin)
+% SENSITIVITYANDSPECIFICITYMODULE MATLAB code for SensitivityAndSpecificityModule.fig
+%      SENSITIVITYANDSPECIFICITYMODULE, by itself, creates a new SENSITIVITYANDSPECIFICITYMODULE or raises the existing
 %      singleton*.
 %
-%      H = SUBSECTIONSTATISTICSMODULE returns the handle to a new SUBSECTIONSTATISTICSMODULE or the handle to
+%      H = SENSITIVITYANDSPECIFICITYMODULE returns the handle to a new SENSITIVITYANDSPECIFICITYMODULE or the handle to
 %      the existing singleton*.
 %
-%      SUBSECTIONSTATISTICSMODULE('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in SUBSECTIONSTATISTICSMODULE.M with the given input arguments.
+%      SENSITIVITYANDSPECIFICITYMODULE('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in SENSITIVITYANDSPECIFICITYMODULE.M with the given input arguments.
 %
-%      SUBSECTIONSTATISTICSMODULE('Property','Value',...) creates a new SUBSECTIONSTATISTICSMODULE or raises the
+%      SENSITIVITYANDSPECIFICITYMODULE('Property','Value',...) creates a new SENSITIVITYANDSPECIFICITYMODULE or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before SubsectionStatisticsModule_OpeningFcn gets called.  An
+%      applied to the GUI before SensitivityAndSpecificityModule_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to SubsectionStatisticsModule_OpeningFcn via varargin.
+%      stop.  All inputs are passed to SensitivityAndSpecificityModule_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help SubsectionStatisticsModule
+% Edit the above text to modify the response to help SensitivityAndSpecificityModule
 
-% Last Modified by GUIDE v2.5 14-Jun-2016 10:19:06
+% Last Modified by GUIDE v2.5 27-Jun-2016 11:08:36
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @SubsectionStatisticsModule_OpeningFcn, ...
-                   'gui_OutputFcn',  @SubsectionStatisticsModule_OutputFcn, ...
+                   'gui_OpeningFcn', @SensitivityAndSpecificityModule_OpeningFcn, ...
+                   'gui_OutputFcn',  @SensitivityAndSpecificityModule_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -43,9 +43,9 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-% --- Executes when user attempts to close SubsectionStatisticsModule.
-function SubsectionStatisticsModule_CloseRequestFcn(hObject, eventdata, handles)
-% hObject    handle to SubsectionStatisticsModule (see GCBO)
+% --- Executes when user attempts to close SensitivityAndSpecificityModule.
+function SensitivityAndSpecificityModule_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to SensitivityAndSpecificityModule (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -65,13 +65,13 @@ else
 end
 
 
-% --- Executes just before SubsectionStatisticsModule is made visible.
-function SubsectionStatisticsModule_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before SensitivityAndSpecificityModule is made visible.
+function SensitivityAndSpecificityModule_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to SubsectionStatisticsModule (see VARARGIN)
+% varargin   command line arguments to SensitivityAndSpecificityModule (see VARARGIN)
 
 % ***************************************
 % INPUT: (project, projectPath, username)
@@ -92,9 +92,9 @@ handles.cancel = false;
 
 % ** SET LISTBOXES **
 
-[choices, ~] = choicesFromEnum('SubsectionComparisonTypes');
+[choices, ~] = choicesFromEnum('SensitivityAndSpecificityAnalysisTypes');
 
-setListBox(handles.comparisonTypeListbox, choices);
+setListBox(handles.analysisTypeListbox, choices);
 
 
 % ** SET REJECTED INPUTS **
@@ -108,7 +108,7 @@ selectedTrial = handles.project.getSelectedTrial();
 
 handles.selectedTrial = selectedTrial;
 
-[hasValidLocation, selectStructure] = selectedTrial.createSelectStructure(class(SubsectionStatisticsAnalysisSession));
+[hasValidLocation, selectStructure] = selectedTrial.createSelectStructure(class(SensitivityAndSpecificityAnalysisSession));
 
 if hasValidLocation
     [selectStrings, selectValues] = getSelectStringsAndValues(selectStructure);
@@ -125,12 +125,12 @@ handles.selectStructure = selectStructure;
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes SubsectionStatisticsModule wait for user response (see UIRESUME)
-uiwait(handles.SubsectionStatisticsModule);
+% UIWAIT makes SensitivityAndSpecificityModule wait for user response (see UIRESUME)
+uiwait(handles.SensitivityAndSpecificityModule);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = SubsectionStatisticsModule_OutputFcn(hObject, eventdata, handles) 
+function varargout = SensitivityAndSpecificityModule_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -143,7 +143,7 @@ function varargout = SubsectionStatisticsModule_OutputFcn(hObject, eventdata, ha
 varargout{1} = handles.cancel;
 varargout{2} = handles.project;
 
-close(handles.SubsectionStatisticsModule);
+close(handles.SensitivityAndSpecificityModule);
 
 
 function rejectedReasonInput_Callback(hObject, eventdata, handles)
@@ -205,7 +205,7 @@ switch exit
         
         guidata(hObject, handles);
         
-        uiresume(handles.SubsectionStatisticsModule);
+        uiresume(handles.SensitivityAndSpecificityModule);
     case 'No'
 end
 
@@ -217,9 +217,9 @@ function runButton_Callback(hObject, eventdata, handles)
 
 project = handles.project;
 
-[choices, ~] = choicesFromEnum('SubsectionComparisonTypes');
+[choices, ~] = choicesFromEnum('SensitivityAndSpecificityAnalysisTypes');
     
-comparisonType = choices(get(handles.comparisonTypeListbox,'Value'));
+analysisType = choices(get(handles.analysisTypeListbox,'Value'));
 notes = get(handles.notesInput, 'String');
 rejected = get(handles.yesRejectedButton, 'Value');
 
@@ -231,26 +231,23 @@ else
     rejectedBy = '';
 end
 
-skippedRejectedSessions = get(handles.skipRejectedSessionsCheckbox, 'Value');
-
-trial = performSubsectionStatistics(...
+trial = performSensitivityAndSpecificity(...
     handles.selectedTrial,...
     handles.selectStructure,...
-    comparisonType,...
+    analysisType,...
     handles.projectPath,...
     handles.userName,...
     notes,...
     rejected,...
     rejectedReason,...
-    rejectedBy,...
-    skippedRejectedSessions);
+    rejectedBy);
 
 project = project.updateTrial(trial);
 
 handles.project = project;
 
 guidata(hObject, handles);
-uiresume(handles.SubsectionStatisticsModule);
+uiresume(handles.SensitivityAndSpecificityModule);
 
 
 function notesInput_Callback(hObject, eventdata, handles)
@@ -298,16 +295,10 @@ selectStructure = handles.selectStructure;
 clickedIndex = get(hObject, 'Value');
 
 if length(clickedIndex) == 1
-    
-    skipRejectedSession = get(handles.skipRejectedSessionsCheckbox, 'Value');
-    
-    [choices, ~] = choicesFromEnum('SubsectionComparisonTypes');
-    
-    comparisonType = choices(get(handles.comparisonTypeListbox,'Value'));
             
     % update select structure      
     
-    selectStructure = updateLocationSelectStructureForSubsectionStatisticsModule(selectStructure, clickedIndex, comparisonType, skipRejectedSession);
+    selectStructure = updateLocationSelectStructureForSensitivityAndSpecificityModule(selectStructure, clickedIndex);
     
     % update highlighting
     [~, selectValues] = getSelectStringsAndValues(selectStructure);
@@ -436,19 +427,19 @@ guidata(hObject, handles);
 
 
 
-% --- Executes on selection change in comparisonTypeListbox.
-function comparisonTypeListbox_Callback(hObject, eventdata, handles)
-% hObject    handle to comparisonTypeListbox (see GCBO)
+% --- Executes on selection change in analysisTypeListbox.
+function analysisTypeListbox_Callback(hObject, eventdata, handles)
+% hObject    handle to analysisTypeListbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns comparisonTypeListbox contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from comparisonTypeListbox
+% Hints: contents = cellstr(get(hObject,'String')) returns analysisTypeListbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from analysisTypeListbox
 
 
 % --- Executes during object creation, after setting all properties.
-function comparisonTypeListbox_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to comparisonTypeListbox (see GCBO)
+function analysisTypeListbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to analysisTypeListbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

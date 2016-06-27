@@ -540,6 +540,8 @@ classdef NaturalSubject < Subject
                         selectionEntry = PolarizationAnalysisModuleSelectionEntry(subject.naviListboxLabel, indices);
                     case class(SubsectionStatisticsAnalysisSession)
                         selectionEntry = SubsectionStatisticsModuleSelectionEntry(subject.naviListboxLabel, indices);
+                    case class(SensitivityAndSpecificityAnalysisSession)
+                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(subject.naviListboxLabel, indices);
                 end
                 
                 selectStructureForSubject = [{selectionEntry}, selectStructureForSubject];

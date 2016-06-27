@@ -612,6 +612,8 @@ classdef Eye < FixedSample
                         selectionEntry = PolarizationAnalysisModuleSelectionEntry(eye.naviListboxLabel, indices);
                     case class(SubsectionStatisticsAnalysisSession)
                         selectionEntry = SubsectionStatisticsModuleSelectionEntry(eye.naviListboxLabel, indices);
+                    case class(SensitivityAndSpecificityAnalysisSession)
+                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(eye.naviListboxLabel, indices);
                 end
                 
                 selectStructureForEye = [{selectionEntry}, selectStructureForEye];
