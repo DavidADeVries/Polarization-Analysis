@@ -522,6 +522,24 @@ classdef Quarter
             end
         end
         
+        function filenameSections = getFilenameSections(quarter, indices)
+            if isempty(indices)
+                filenameSections = quarter.generateFilenameSection();
+            else
+                index = indices(1);
+                
+                location = quarter.locations{index};
+                
+                if length(indices) == 1
+                    indices = [];
+                else
+                    indices = indices(2:length(indices));
+                end
+                
+                filenameSections = [quarter.generateFilenameSection(), location.getFilenameSections(indices)];
+            end
+        end
+        
         
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE

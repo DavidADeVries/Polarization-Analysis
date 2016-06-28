@@ -527,6 +527,24 @@ classdef NaturalSubject < Subject
             end
         end
         
+        function filenameSections = getFilenameSections(subject, indices)
+            if isempty(indices)
+                filenameSections = subject.generateFilenameSection();
+            else
+                index = indices(1);
+                
+                sample = subject.samples{index};
+                
+                if length(indices) == 1
+                    indices = [];
+                else
+                    indices = indices(2:length(indices));
+                end
+                
+                filenameSections = [subject.generateFilenameSection(), sample.getFilenameSections(indices)];
+            end
+        end
+        
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************

@@ -643,25 +643,43 @@ classdef Location
             end
         end
         
-        function microscopeSession = getMicroscopeSession(location)
-            sessions = location.sessions;
+        function [microscopeSession] = getMicroscopeSession(location)
+            allSessions = location.sessions;
             
             microscopeSessions = {};
             counter = 1;
             
-            for i=1:length(sessions)
-                session = sessions{i};
+            for i=1:length(allSessions)
+                session = allSessions{i};
                 
                 if isa(session, class(MicroscopeSession))
-                    micrscopeSessions{counter} = session;
+                    microscopeSessions{counter} = session;
                     counter = counter + 1;
                 end
             end
             
             if length(microscopeSessions) == 1
-                microscopeSession = microscopeSessions{i};
+                microscopeSession = microscopeSessions{1};
             else
                 error('Non singular microscope session found!');
+            end
+        end
+        
+        function filenameSections = getFilenameSections(location, indices)
+            if isempty(indices)
+                filenameSections = location.generateFilenameSection();
+            else
+                index = indices(1);
+                
+                session = location.sessions{index};
+                
+                if length(indices) == 1
+                    indices = [];
+                else
+                    indices = indices(2:length(indices));
+                end
+                
+                filenameSections = [location.generateFilenameSection(), session.getFilenameSections(indices)];
             end
         end
         
@@ -684,7 +702,7 @@ classdef Location
                 
                 hasValidSession = true;
                 
-                selectionEntry = SubsectionStatisticsModuleSelectionEntry(label, indices, isLocation, location);
+                selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(label, indices, isLocation, location);
                 
                 selectStructureForLocation = [{selectionEntry}, selectStructureForLocation];
             else % look for sessions

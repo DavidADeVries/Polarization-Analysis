@@ -89,14 +89,6 @@ handles.skipRejectedSessions = true;
 
 handles.cancel = false;
 
-
-% ** SET LISTBOXES **
-
-[choices, ~] = choicesFromEnum('SensitivityAndSpecificityAnalysisTypes');
-
-setListBox(handles.analysisTypeListbox, choices);
-
-
 % ** SET REJECTED INPUTS **
 
 handles = setRejectedInputFields(handles);
@@ -217,9 +209,6 @@ function runButton_Callback(hObject, eventdata, handles)
 
 project = handles.project;
 
-[choices, ~] = choicesFromEnum('SensitivityAndSpecificityAnalysisTypes');
-    
-analysisType = choices(get(handles.analysisTypeListbox,'Value'));
 notes = get(handles.notesInput, 'String');
 rejected = get(handles.yesRejectedButton, 'Value');
 
@@ -234,7 +223,6 @@ end
 trial = performSensitivityAndSpecificity(...
     handles.selectedTrial,...
     handles.selectStructure,...
-    analysisType,...
     handles.projectPath,...
     handles.userName,...
     notes,...

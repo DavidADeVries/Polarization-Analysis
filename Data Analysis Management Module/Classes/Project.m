@@ -184,6 +184,7 @@ classdef Project
                 
                 set(handles.trialSelect, 'String', trialOptions, 'Value', project.trialIndex, 'Enable', 'on');
                 
+                
                 handles = project.getSelectedTrial().updateNavigationListboxes(handles);
             end
         end
@@ -228,6 +229,14 @@ classdef Project
         
         function project = updateTrialIndex(project, index)
             project.trialIndex = index;
+        end
+        
+        function project = updateTrialSessionIndex(project, index)
+            trial = project.getSelectedTrial();
+            
+            trial = trial.updateTrialSessionIndex(index);
+            
+            project = project.updateTrial(trial);
         end
         
         function project = updateSubjectIndex(project, index)

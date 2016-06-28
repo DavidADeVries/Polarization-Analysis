@@ -206,20 +206,11 @@ classdef Trial
             
             numSessions = length(sessionDirs);
             
-            sessions = cell(numSessions, 1);
+            trial.sessions = createEmptyCellArray(Session.empty, numSessions);
             
             for i=1:numSessions
-                vars = load(makePath(trialPath, sessionDirs{i}, SessionNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
-                session = vars.metadata;
-                
-                session.dirName = sessionDirs{i};
-                
-                session = session.createFileSelectionEntries(trialPath);
-                
-                sessions{i} = session;
+                trial.sessions{i} = trial.sessions{i}.loadSession(trialPath, sessionDirs{i});
             end
-            
-            trial.sessions = sessions;
             
             if ~isempty(trial.sessions)
                 trial.sessionIndex = 1;
@@ -345,23 +336,6 @@ classdef Trial
                 
                 set(handles.subjectSelect, 'String', subjectOptions, 'Value', trial.subjectIndex, 'Enable', 'on');
                 
-                
-                % update trial sessions
-                trialSessions = trial.sessions;
-                
-                if isempty(trialSessions)
-                    disableNavigationListbox(handles.trialSessionSelect);
-                else
-                    sessionOptions = {};
-                    
-                    for i=1:length(trialSessions)
-                        sessionOptions{i} = trialSessions{i}.naviListboxLabel;
-                    end
-                    
-                    set(handles.trialSessionSelect, 'String', sessionOptions, 'Value', trial.sessionIndex, 'Enable', 'on');
-                end
-                
-                % move on to subject
                 handles = trial.getSelectedSubject().updateNavigationListboxes(handles);
             end
         end
@@ -403,12 +377,8 @@ classdef Trial
                 
                 trialSessionMetadataString = trialSession.getMetadataString();
                 
-                metadataString = [trialHeader, trialMetadataString, {''}, trialSessionHeader, trialSessionMetadataString];
+                metadataString = [trialHeader, trialMetadataString, {''}, trialSessionHeader, trialSessionMetadatString];
             end
-        end
-        
-        function trial = updateTrialSessionIndex(trial, index)            
-            trial.sessionIndex = index;
         end
         
         function trial = updateSubjectIndex(trial, index)            
@@ -749,12 +719,9 @@ classdef Trial
         function trial = addSession(trial, session)
             sessions = trial.sessions;
             
-            numSessions = length(sessions);
-            
-            sessions{numSessions+1} = session;
+            sessions{length(sessions)+1} = session;
             
             trial.sessions = sessions;
-            trial.sessionIndex = numSessions+1;
         end
         
         function filenameSections = getFilenameSections(trial, indices)

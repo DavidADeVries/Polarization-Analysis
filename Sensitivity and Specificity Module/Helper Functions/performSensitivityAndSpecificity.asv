@@ -1,4 +1,4 @@
-function trial = performSensitivityAndSpecificity(trial, selectStructure, analysisType, projectPath, userName, notes, rejected,  rejectedReason, rejectedBy)
+function trial = performSensitivityAndSpecificity(trial, selectStructure, projectPath, userName, notes, rejected,  rejectedReason, rejectedBy)
 % performSubsectionStatistics
 
 subjectIndices = [];
@@ -11,28 +11,33 @@ subjectIndex = 0;
 
 for i=1:length(selectStructure)
     entry = selectStructure{i};
-       
-    if length(entry.indices) == 1
+            
+    if entry.isLocation && entry.isSelected
+        
+        locationIndices(length(locationIndices)+1) = i;
+        
+    end
+           
+    if length(entry.indices) == 1 || i == length(selectStructure)% must be subject
         
         if ~isempty(locationIndices)
             subjectIndices(subjectCounter) = subjectIndex;
             locationIndicesForSubjects{subjectCounter} = locationIndices;
             
-            subjectCounter = subjectCounter + 1;            
+            locationIndices = [];
+            
+            subjectCounter = subjectCounter + 1;
         end
         
         subjectIndex = i;
-        
-    elseif entry.isLocation
-        
-        locationIndices(length(locationIndices)+1) = i;
-        
     end
 end
 
+
+
 % set output
 
-colHeaders = {'', 'AD Positive', 'Fluorescence Signal', 'Crossed Polarizers Signal', 'True Positive', 'True Negative', 'False Positive', 'False Negative'};
+colHeaders = {'UUID', 'Label', 'AD Positive', 'Fluorescence Signal', 'Crossed Polarizers Signal', 'True Positive', 'False Positive', 'False Negative', 'True Negative'};
 
 output = {};
 
@@ -43,38 +48,39 @@ end
 
 rowIndex = 2;
 
-adPositiveIndex = 'B';
-fluoroSignalIndex = 'C';
-polarSignalIndex = 'D';
+adPositiveIndex = 'C';
+fluoroSignalIndex = 'D';
+polarSignalIndex = 'E';
 
-truePosIndex = 'E';
-trueNegIndex = 'F';
-falsePosIndex = 'G';
-falseNegIndex = 'H';
+truePosIndex = 'F';
+trueNegIndex = 'G';
+falsePosIndex = 'H';
+falseNegIndex = 'I';
 
-subjectRowIndices = '';
+subjectRowIndices = [];
 
 for i=1:length(subjectIndices)
     subjectEntry = selectStructure{subjectIndices(i)};
     
-    locationIndices = locationIndicesForSubject{i};
+    locationIndices = locationIndicesForSubjects{i};
     
-    subject = trial.getSubject(subjectEntry.indices);
+    subject = trial.subjects{subjectEntry.indices(1)};
     
-    output{rowIndex,1} = subject.generateFilenameSection;
-    output{rowIndex,2} = subject.isADPositive();
+    output{rowIndex,1} = subject.uuid;
+    output{rowIndex,2} = trial.getFilenameSections(subjectEntry.indices);
+    output{rowIndex,3} = convertBoolToExcelBool(subject.isADPositive());
     
     numLocations = length(locationIndices);
     
-    output{rowIndex,3} = ['OR(', fluoroSignalIndex, num2str(rowIndex+1), ':', fluoroSignalIndex, num2str(rowIndex+numLocations), ')'];
-    output{rowIndex,4} = ['OR(', polarSignalIndex, num2str(rowIndex+1), ':', polarSignalIndex, num2str(rowIndex+numLocations), ')'];
+    output{rowIndex,4} = ['=OR(', fluoroSignalIndex, num2str(rowIndex+1), ':', fluoroSignalIndex, num2str(rowIndex+numLocations), ')'];
+    output{rowIndex,5} = ['=OR(', polarSignalIndex, num2str(rowIndex+1), ':', polarSignalIndex, num2str(rowIndex+numLocations), ')'];
     
     rowString = num2str(rowIndex);
     
-    output{rowIndex,5} = ['AND(', adPositiveIndex, rowString, ',', fluoroSignalIndex, rowString, ')'];
-    output{rowIndex,6} = ['AND(', 'NOT(', adPositiveIndex, rowString, '),', fluoroSignalIndex, rowString, ')'];
-    output{rowIndex,7} = ['AND(', adPositiveIndex, rowString, ',NOT(', fluoroSignalIndex, rowString, '))'];    
-    output{rowIndex,6} = ['AND(', 'NOT(', adPositiveIndex, rowString, ')NOT(,', fluoroSignalIndex, rowString, '))'];
+    output{rowIndex,6} = ['=AND(', adPositiveIndex, rowString, ',', fluoroSignalIndex, rowString, ')'];
+    output{rowIndex,7} = ['=AND(', 'NOT(', adPositiveIndex, rowString, '),', fluoroSignalIndex, rowString, ')'];
+    output{rowIndex,8} = ['=AND(', adPositiveIndex, rowString, ',NOT(', fluoroSignalIndex, rowString, '))'];    
+    output{rowIndex,9} = ['=AND(', 'NOT(', adPositiveIndex, rowString, '),NOT(', fluoroSignalIndex, rowString, '))'];
     
     subjectRowIndices(i) = rowIndex;
     
@@ -82,58 +88,83 @@ for i=1:length(subjectIndices)
     
     % location rows
     for j=1:numLocations
+        entry = selectStructure{locationIndices(j)};
+        
+        location = entry.location;
+        
         rowString = num2str(rowIndex);
         
-        output{rowIndex,1} = '';
+        microscopeSession = location.getMicroscopeSession();
         
-        microscopeSession = getMicroscopeSession(location);
+        output{rowIndex,1} = microscopeSession.uuid;
         
-        output{rowIndex,3} = microscopeSession.fluoroSignature();
-        output{rowIndex,4} = microscopeSession.crossedSignature();
+        filenameSections = trial.getFilenameSections(entry.indices);
+        filenameSections = [filenameSections, microscopeSession.generateFilenameSection()];
         
-        output{rowIndex,5} = ['AND(', fluoroSignalIndex, rowString, ',', polarSignalIndex, rowString, ')'];
-        output{rowIndex,6} = ['AND(', 'NOT(', fluoroSignalIndex, rowString, '),', polarSignalIndex, rowString, ')'];
-        output{rowIndex,7} = ['AND(', fluoroSignalIndex, rowString, ',NOT(', polarSignalIndex, rowString, '))'];
-        output{rowIndex,6} = ['AND(', 'NOT(', fluoroSignalIndex, rowString, ')NOT(,', polarSignalIndex, rowString, '))'];
+        output{rowIndex,2} = filenameSections;
+        output{rowIndex,3} = ' ';
+        
+        output{rowIndex,4} = convertBoolToExcelBool(microscopeSession.fluoroSignature());
+        output{rowIndex,5} = convertBoolToExcelBool(microscopeSession.crossedSignature());
+        
+        output{rowIndex,6} = ['=AND(', fluoroSignalIndex, rowString, ',', polarSignalIndex, rowString, ')'];
+        output{rowIndex,7} = ['=AND(', 'NOT(', fluoroSignalIndex, rowString, '),', polarSignalIndex, rowString, ')'];
+        output{rowIndex,8} = ['=AND(', fluoroSignalIndex, rowString, ',NOT(', polarSignalIndex, rowString, '))'];
+        output{rowIndex,9} = ['=AND(', 'NOT(', fluoroSignalIndex, rowString, '),NOT(', polarSignalIndex, rowString, '))'];
         
         rowIndex = rowIndex + 1;
     end
     
-    startRowString = num2str(2);
-    endRowString = num2str(rowIndex - 1);
-    
-    % sensitivity and specificity calculations   
-    
-    
-    
-    colIndex = length(colHeaders) + 2;
-    sumColAlphaIndex = 'K';
-    
-    rowIndex = 1;    
-    header = 'By Subject';
-            
-    output = setCalcLabels(output, header, rowIndex, colIndex, sumColAlphaIndex);
-    
-    rowIndex = 7;    
-    header = 'By Deposit';
-            
-    output = setCalcLabels(output, header, rowIndex, colIndex, sumColAlphaIndex);
-    
-    % set by subject sum formulae
-    
-    output{2, colIndex + 1} = createSubjectSumString(subjectRowIndices, truePosIndex);
-    output{3, colIndex + 1} = createSubjectSumString(subjectRowIndices, trueNegIndex);
-    output{4, colIndex + 1} = createSubjectSumString(subjectRowIndices, falsePosIndex);
-    output{5, colIndex + 1} = createSubjectSumString(subjectRowIndices, falseNegIndex);
-    
-    % set by
-    
-    output{8, colIndex + 1} = ['=SUM(', truePosIndex, startRowString, ':', truePosIndex, endRowString, ') - ', colIndex + 1, num2str(2)];
-    output{9, colIndex + 1} = ['=SUM(', trueNegIndex, startRowString, ':', trueNegIndex, endRowString, ') - ', colIndex + 1, num2str(3)];
-    output{10, colIndex + 1} = ['=SUM(', falsePosIndex, startRowString, ':', trueNegIndex, endRowString, ') - ', colIndex + 1, num2str(4)];
-    output{11, colIndex + 1} = ['=SUM(', falseNegIndex, startRowString, ':', trueNegIndex, endRowString, ') - ', colIndex + 1, num2str(5)];
 end
 
+
+startRowString = num2str(2);
+endRowString = num2str(rowIndex - 1);
+
+% sensitivity and specificity calculations
+
+colIndex = length(colHeaders) + 2;
+sumColAlphaIndex = 'L';
+
+rowIndex = 1;
+header = 'By Subject';
+
+output = setCalcLabels(output, header, rowIndex, colIndex, sumColAlphaIndex);
+
+rowIndex = 7;
+header = 'By Deposit';
+
+output = setCalcLabels(output, header, rowIndex, colIndex, sumColAlphaIndex);
+
+% set by subject sum formulae
+
+output{2, colIndex + 1} = createSubjectSumString(subjectRowIndices, truePosIndex);
+output{3, colIndex + 1} = createSubjectSumString(subjectRowIndices, trueNegIndex);
+output{4, colIndex + 1} = createSubjectSumString(subjectRowIndices, falsePosIndex);
+output{5, colIndex + 1} = createSubjectSumString(subjectRowIndices, falseNegIndex);
+
+% set by deposit formulae
+
+output{8, colIndex + 1} = ['=COUNTIF(', truePosIndex, startRowString, ':', truePosIndex, endRowString, ',TRUE) - ', sumColAlphaIndex, num2str(2)];
+output{9, colIndex + 1} = ['=COUNTIF(', trueNegIndex, startRowString, ':', trueNegIndex, endRowString, ',TRUE) - ', sumColAlphaIndex, num2str(3)];
+output{10, colIndex + 1} = ['=COUNTIF(', falsePosIndex, startRowString, ':', falsePosIndex, endRowString, ',TRUE) - ', sumColAlphaIndex, num2str(4)];
+output{11, colIndex + 1} = ['=COUNTIF(', falseNegIndex, startRowString, ':', falseNegIndex, endRowString, ',TRUE) - ', sumColAlphaIndex, num2str(5)];
+
+
+% create session
+
+sessionNumber = trial.nextSessionNumber();
+dataProcessingSessionNumber = trial.nextDataProcessingSessionNumber();
+
+toTrialPath = trial.dirName;
+
+analysisSession = SensitivityAndSpecificityAnalysisSession(sessionNumber, dataProcessingSessionNumber, toTrialPath, projectPath, userName, notes, rejected, rejectedReason, rejectedBy);
+
+toTrialFilename = trial.generateFilenameSection();
+
+analysisSession.writeSensitivityAndSpecificityFile(toTrialFilename, toTrialPath, projectPath, output);
+
+trial = trial.addSession(analysisSession);
 
 end
 
@@ -180,4 +211,12 @@ function string = createSubjectSumString(subjectRowIndices, colAlphaIndex)
     end
     
     string = [string, ')'];
+end
+
+function string = convertBoolToExcelBool(bool)
+    if bool
+        string = 'TRUE';
+    else
+        string = 'FALSE';
+    end
 end

@@ -463,6 +463,10 @@ classdef Session
             end
         end
         
+        function filenameSections = getFilenameSections(session, indices)
+        	filenameSections = session.generateFilenameSection();
+        end
+        
     end
     
 end

@@ -584,6 +584,24 @@ classdef Eye < FixedSample
             end
         end
         
+        function filenameSections = getFilenameSections(eye, indices)
+            if isempty(indices)
+                filenameSections = eye.generateFilenameSection();
+            else
+                index = indices(1);
+                
+                quarter = eye.quarters{index};
+                
+                if length(indices) == 1
+                    indices = [];
+                else
+                    indices = indices(2:length(indices));
+                end
+                
+                filenameSections = [eye.generateFilenameSection(), quarter.getFilenameSections(indices)];
+            end
+        end
+        
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
