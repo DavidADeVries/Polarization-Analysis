@@ -4,7 +4,9 @@ function [ ] = importFiles(sessionProjectPath, projectPath, dataFilename, filena
 % them to the newDir
 
 % create folder to hold data to be imported
-createObjectDirectories(projectPath, sessionProjectPath, newDir);
+createBackup = true;
+
+createObjectDirectories(projectPath, sessionProjectPath, newDir, createBackup);
 projectToPath = makePath(sessionProjectPath, newDir);
 
 for i=1:length(filenameTags)

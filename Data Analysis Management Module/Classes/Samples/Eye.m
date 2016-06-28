@@ -584,12 +584,30 @@ classdef Eye < FixedSample
             end
         end
         
+        function filenameSections = getFilenameSections(eye, indices)
+            if isempty(indices)
+                filenameSections = eye.generateFilenameSection();
+            else
+                index = indices(1);
+                
+                quarter = eye.quarters{index};
+                
+                if length(indices) == 1
+                    indices = [];
+                else
+                    indices = indices(2:length(indices));
+                end
+                
+                filenameSections = [eye.generateFilenameSection(), quarter.getFilenameSections(indices)];
+            end
+        end
+        
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
         
-        function [hasValidSession, selectStructureForEye] = createSelectStructure(subject, indices)
-            quarters = subject.quarters;
+        function [hasValidSession, selectStructureForEye] = createSelectStructure(eye, indices, sessionClass)
+            quarters = eye.quarters;
             
             selectStructureForEye = {};
             hasValidSession = false;
@@ -597,7 +615,7 @@ classdef Eye < FixedSample
             for i=1:length(quarters)
                 newIndices = [indices, i];
                 
-                [newHasValidLocation, selectStructureForQuarter] = quarters{i}.createSelectStructure(newIndices);
+                [newHasValidLocation, selectStructureForQuarter] = quarters{i}.createSelectStructure(newIndices, sessionClass);
                 
                 if newHasValidLocation
                     selectStructureForEye = [selectStructureForEye, selectStructureForQuarter];
@@ -607,7 +625,14 @@ classdef Eye < FixedSample
             end
             
             if hasValidSession
-                selectionEntry = SelectionEntry(subject.naviListboxLabel, indices);
+                switch sessionClass
+                    case class(PolarizationAnalysisSession)
+                        selectionEntry = PolarizationAnalysisModuleSelectionEntry(eye.naviListboxLabel, indices);
+                    case class(SubsectionStatisticsAnalysisSession)
+                        selectionEntry = SubsectionStatisticsModuleSelectionEntry(eye.naviListboxLabel, indices);
+                    case class(SensitivityAndSpecificityAnalysisSession)
+                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(eye.naviListboxLabel, indices);
+                end
                 
                 selectStructureForEye = [{selectionEntry}, selectStructureForEye];
             else
@@ -660,6 +685,32 @@ classdef Eye < FixedSample
             else
                 session = quarter.getSelectedSession();
             end
+        end
+        
+                        
+        
+        % ******************************************
+        % FUNCTIONS FOR SUBSECTION STATISTICS MODULE
+        % ******************************************
+        
+        function [data, locationString, sessionString] = getPolarizationAnalysisData(eye, subsectionSession, toIndices, toPath, fileName)
+            quarter = eye.quarters{toIndices(1)};
+            
+            newIndices = toIndices(2:length(toIndices));
+            toPath = makePath(toPath, eye.dirName);
+            fileName = [fileName, eye.generateFilenameSection];
+            
+            [data, locationString, sessionString] = quarter.getPolarizationAnalysisData(subsectionSession, newIndices, toPath, fileName);
+        end
+        
+        function mask = getFluoroMask(eye, subsectionSession, toIndices, toPath, fileName)
+            quarter = eye.quarters{toIndices(1)};
+            
+            newIndices = toIndices(2:length(toIndices));
+            toPath = makePath(toPath, eye.dirName);
+            fileName = [fileName, eye.generateFilenameSection];
+            
+            mask = quarter.getFluoroMask(subsectionSession, newIndices, toPath, fileName);
         end
         
     end

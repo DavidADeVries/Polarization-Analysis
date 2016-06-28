@@ -382,7 +382,9 @@ classdef Location
         function location = createDirectories(location, toQuarterPath, projectPath)
             locationDirectory = location.generateDirName();
             
-            createObjectDirectories(projectPath, toQuarterPath, locationDirectory);
+            createBackup = true;
+            
+            createObjectDirectories(projectPath, toQuarterPath, locationDirectory, createBackup);
                         
             location.dirName = locationDirectory;
         end
@@ -641,35 +643,95 @@ classdef Location
             end
         end
         
+        function [microscopeSession] = getMicroscopeSession(location)
+            allSessions = location.sessions;
+            
+            microscopeSessions = {};
+            counter = 1;
+            
+            for i=1:length(allSessions)
+                session = allSessions{i};
+                
+                if isa(session, class(MicroscopeSession))
+                    microscopeSessions{counter} = session;
+                    counter = counter + 1;
+                end
+            end
+            
+            if length(microscopeSessions) == 1
+                microscopeSession = microscopeSessions{1};
+            else
+                error('Non singular microscope session found!');
+            end
+        end
+        
+        function filenameSections = getFilenameSections(location, indices)
+            if isempty(indices)
+                filenameSections = location.generateFilenameSection();
+            else
+                index = indices(1);
+                
+                session = location.sessions{index};
+                
+                if length(indices) == 1
+                    indices = [];
+                else
+                    indices = indices(2:length(indices));
+                end
+                
+                filenameSections = [location.generateFilenameSection(), session.getFilenameSections(indices)];
+            end
+        end
+        
         
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
         
-        function [hasValidSession, selectStructureForLocation] = createSelectStructure(location, indices)
+        function [hasValidSession, selectStructureForLocation] = createSelectStructure(location, indices, sessionClass)
             sessions = location.sessions;
             
             selectStructureForLocation = {};
             hasValidSession = false;
             
-            for i=1:length(sessions)
-                newIndices = [indices, i];
-                
-                [isValidSession, selectStructureForSession] = sessions{i}.createSelectStructure(newIndices);
-                
-                if isValidSession
-                    selectStructureForLocation = [selectStructureForLocation, {selectStructureForSession}];
-                    
-                    hasValidSession = true;
-                end
-            end
+            label = location.naviListboxLabel;
             
-            if hasValidSession
-                selectionEntry = SelectionEntry(location.naviListboxLabel, indices);
+            if sessionClass == class(SensitivityAndSpecificityAnalysisSession) % look for locations
+                
+                isLocation = true;
+                
+                hasValidSession = true;
+                
+                selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(label, indices, isLocation, location);
                 
                 selectStructureForLocation = [{selectionEntry}, selectStructureForLocation];
-            else
-                selectStructureForLocation = {};
+            else % look for sessions
+                
+                for i=1:length(sessions)
+                    newIndices = [indices, i];
+                    
+                    [isValidSession, selectStructureForSession] = sessions{i}.createSelectStructure(newIndices, sessionClass);
+                    
+                    if isValidSession
+                        selectStructureForLocation = [selectStructureForLocation, {selectStructureForSession}];
+                        
+                        hasValidSession = true;
+                    end
+                end
+                
+                if hasValidSession
+                    switch sessionClass
+                        case class(PolarizationAnalysisSession)
+                            selectionEntry = PolarizationAnalysisModuleSelectionEntry(label, indices);
+                        case class(SubsectionStatisticsAnalysisSession)
+                            selectionEntry = SubsectionStatisticsModuleSelectionEntry(label, indices);
+                    end
+                    
+                    selectStructureForLocation = [{selectionEntry}, selectStructureForLocation];
+                else
+                    selectStructureForLocation = {};
+                end
+                
             end
             
         end
@@ -869,6 +931,32 @@ classdef Location
                 end
             end
             
+        end
+        
+        
+        
+        
+        
+        
+        
+        % ******************************************
+        % FUNCTIONS FOR SUBSECTION STATISTICS MODULE
+        % ******************************************
+        
+        function [data, locationString, sessionString] = getPolarizationAnalysisData(location, subsectionSession, toPath, fileName)
+            toPath = makePath(toPath, location.dirName);
+            fileName = [fileName, location.generateFilenameSection];
+            
+            locationString = fileName;
+            
+            [data, sessionString] = subsectionSession.getPolarizationAnalysisDataFromSubsectionSelectionSession(location.sessions, toPath, fileName);
+        end
+        
+        function mask = getFluoroMask(location, subsectionSession, toPath, fileName)
+            toPath = makePath(toPath, location.dirName);
+            fileName = [fileName, location.generateFilenameSection];
+            
+            mask = subsectionSession.getFluoroMask(toPath, fileName);
         end
         
     end

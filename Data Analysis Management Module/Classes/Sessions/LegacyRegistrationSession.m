@@ -162,6 +162,11 @@ classdef LegacyRegistrationSession < DataProcessingSession
         end
         
         
+        function bool = shouldCreateBackup(session)
+            bool = true;
+        end
+        
+        
         function metadataString = getMetadataString(session)
             
             [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);

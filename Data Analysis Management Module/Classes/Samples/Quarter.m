@@ -287,7 +287,9 @@ classdef Quarter
              
             quarterDirectory = quarter.generateDirName();
             
-            createObjectDirectories(projectPath, toEyePath, quarterDirectory);
+            createBackup = true;
+            
+            createObjectDirectories(projectPath, toEyePath, quarterDirectory, createBackup);
                         
             quarter.dirName = quarterDirectory;
         end
@@ -520,12 +522,30 @@ classdef Quarter
             end
         end
         
+        function filenameSections = getFilenameSections(quarter, indices)
+            if isempty(indices)
+                filenameSections = quarter.generateFilenameSection();
+            else
+                index = indices(1);
+                
+                location = quarter.locations{index};
+                
+                if length(indices) == 1
+                    indices = [];
+                else
+                    indices = indices(2:length(indices));
+                end
+                
+                filenameSections = [quarter.generateFilenameSection(), location.getFilenameSections(indices)];
+            end
+        end
+        
         
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
         
-        function [hasValidSession, selectStructureForQuarter] = createSelectStructure(quarter, indices)
+        function [hasValidSession, selectStructureForQuarter] = createSelectStructure(quarter, indices, sessionClass)
             locations = quarter.locations;
             
             selectStructureForQuarter = {};
@@ -534,7 +554,7 @@ classdef Quarter
             for i=1:length(locations)
                 newIndices = [indices, i];
                 
-                [newHasValidLocation, selectStructureForLocation] = locations{i}.createSelectStructure(newIndices);
+                [newHasValidLocation, selectStructureForLocation] = locations{i}.createSelectStructure(newIndices, sessionClass);
                 
                 if newHasValidLocation
                     selectStructureForQuarter = [selectStructureForQuarter, selectStructureForLocation];
@@ -544,7 +564,14 @@ classdef Quarter
             end
             
             if hasValidSession
-                selectionEntry = SelectionEntry(quarter.naviListboxLabel, indices);
+                switch sessionClass
+                    case class(PolarizationAnalysisSession)
+                        selectionEntry = PolarizationAnalysisModuleSelectionEntry(quarter.naviListboxLabel, indices);
+                    case class(SubsectionStatisticsAnalysisSession)
+                        selectionEntry = SubsectionStatisticsModuleSelectionEntry(quarter.naviListboxLabel, indices);
+                    case class(SensitivityAndSpecificityAnalysisSession)
+                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(quarter.naviListboxLabel, indices);
+                end
                 
                 selectStructureForQuarter = [{selectionEntry}, selectStructureForQuarter];
             else
@@ -585,6 +612,30 @@ classdef Quarter
             else
                 session = location.getSelectedSession();
             end
+        end
+        
+        
+        
+        % ******************************************
+        % FUNCTIONS FOR SUBSECTION STATISTICS MODULE
+        % ******************************************
+        
+        function [data, locationString, sessionString] = getPolarizationAnalysisData(quarter, subsectionSession, toIndices, toPath, fileName)
+            location = quarter.locations{toIndices(1)};
+            
+            toPath = makePath(toPath, quarter.dirName);
+            fileName = [fileName, quarter.generateFilenameSection];
+            
+            [data, locationString, sessionString] = location.getPolarizationAnalysisData(subsectionSession, toPath, fileName);
+        end
+        
+        function mask = getFluoroMask(quarter, subsectionSession, toIndices, toPath, fileName)
+            location = quarter.locations{toIndices(1)};
+            
+            toPath = makePath(toPath, quarter.dirName);
+            fileName = [fileName, quarter.generateFilenameSection];
+            
+            mask = location.getFluoroMask(subsectionSession, toPath, fileName);
         end
         
     end

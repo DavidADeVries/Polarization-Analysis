@@ -52,6 +52,9 @@ classdef Session
             elseif sessionType == SessionTypes.PolarizationAnalysis
                 session = PolarizationAnalysisSession();
                 
+            elseif sessionType == SessionTypes.SubsectionStatisticsAnalysis
+                session = SubsectionStatisticsAnalysisSession();
+                
             else
                 error('Invalid Session type!');
             end                
@@ -302,24 +305,46 @@ classdef Session
         end
                 
         
-        function [isValidSession, selectStructure] = createSelectStructure(session, indices)
-            if session.hasMMData() && ~isa(session, class(SessionTypes.PolarizationAnalysis.sessionClass));
-                isValidSession = true;
-                
-                isSession = true;
-                
-                label = [session.naviListboxLabel, ' [', displayDate(session.sessionDate), ']'];
-                
-                if session.rejected
-                    label = [label, '*'];
-                end
-                
-                selectStructure = SelectionEntry(label, indices, isSession);
-            else
-                isValidSession = false;                
-                selectStructure = {};
-            end
+        function [isValidSession, selectStructure] = createSelectStructure(session, indices, sessionClass)
+            switch sessionClass
+                case class(PolarizationAnalysisSession)                  
+                    if session.hasMMData() && ~isa(session, class(SessionTypes.PolarizationAnalysis.sessionClass));
+                        isValidSession = true;
                         
+                        isSession = true;
+                        
+                        label = [session.naviListboxLabel, ' [', displayDate(session.sessionDate), ']'];
+                        
+                        if session.rejected
+                            label = [label, '*'];
+                        end
+                        
+                        selectStructure = PolarizationAnalysisModuleSelectionEntry(label, indices, isSession);
+                    else
+                        isValidSession = false;
+                        selectStructure = {};
+                    end
+                case class(SubsectionStatisticsAnalysisSession)
+                    if session.isSubsectionSelectionSession() || session.isFluorescentSubsectionSelectionSession()
+                        isValidSession = true;
+                        
+                        isSession = true;
+                        
+                        label = [session.naviListboxLabel, ' [', displayDate(session.sessionDate), ']'];
+                        
+                        if session.rejected
+                            label = [label, '*'];
+                        end
+                        
+                        selectStructure = SubsectionStatisticsModuleSelectionEntry(label, indices, isSession, session);
+                    else
+                        isValidSession = false;
+                        selectStructure = {};
+                    end                    
+                otherwise
+                    error('Unrecognized class type');
+            end
+                                    
         end
         
         function [isValid, toPath] = validateSession(session, toPath)
@@ -351,6 +376,95 @@ classdef Session
             registrationClasses = {class(RegistrationSession), class(LegacyRegistrationSession)};
             
             bool = ~isempty(containsString(registrationClasses, sessionClass));
+        end
+        
+        function bool = isSubsectionSelectionSession(session)
+            sessionClass = class(session);
+            
+            subsectionSelectionClasses = {class(LegacySubsectionSelectionSession), class(SubsectionSelectionSession)};
+            
+            bool = ~isempty(containsString(subsectionSelectionClasses, sessionClass));
+        end
+        
+        function bool = isFluorescentSubsectionSelectionSession(session)
+            sessionClass = class(session);
+            
+            subsectionSelectionClasses = {class(FluorescentSubsectionSelectionSession)};
+            
+            bool = ~isempty(containsString(subsectionSelectionClasses, sessionClass));
+        end
+        
+        function bool = isAnySubsectionSelectionSession(session)
+            bool = session.isSubsectionSelectionSession() || session.isFluorescentSubsectionSelectionSession();
+        end
+        
+        function bool = isPolarizationAnalysisSession(session)
+            sessionClass = class(session);
+            
+            polarizationAnalysisClasses = {class(PolarizationAnalysisSession)};
+            
+            bool = ~isempty(containsString(polarizationAnalysisClasses, sessionClass));            
+        end
+        
+        function [data, sessionString] = getPolarizationAnalysisDataFromSubsectionSelectionSession(session, allSessions, toLocationPath, fileName)
+            toSessionPath = makePath(toLocationPath, session.dirName);
+            
+            if session.isAnySubsectionSelectionSession()
+                polarizationAnalysisSession = session.getPolarizationAnalysisSession(allSessions, toSessionPath);
+                
+                sessionString = polarizationAnalysisSession.generateFilenameSection();
+                
+                data = polarizationAnalysisSession.getPolarizationAnalysisData(toLocationPath, fileName);
+            else
+                data = {};
+                sessionString = '';
+            end
+        end
+        
+        function polarizationAnalysisSession = getPolarizationAnalysisSession(session, allSessions, toSessionPath)
+            allPolarizationAnalysisSessions = session.getAllPolarizationAnalysisSessions(allSessions);
+            
+            validSessions = {};
+            counter = 1;
+            
+            % remove rejected sessions
+            for i=1:length(allPolarizationAnalysisSessions)
+                if ~allPolarizationAnalysisSessions{i}.rejected
+                    validSessions{counter} = allPolarizationAnalysisSessions{i};
+                end
+            end
+            
+            if isempty(validSessions)
+                polarizationAnalysisSession = [];
+            elseif length(validSessions) == 1
+                polarizationAnalysisSession = validSessions{1};
+            else
+                [selectedSession, cancel] = choosePolarizationAnaylsisSession(matchedSessions, toSessionPath);
+                
+                if cancel
+                    polarizationAnalysisSession = [];                    
+                else
+                    polarizationAnalysisSession = selectedSession;
+                end
+            end
+        end
+        
+        function allPolarizationAnalysisSessions = getAllPolarizationAnalysisSessions(session, allSessions)
+            allPolarizationAnalysisSessions = {};
+            counter = 1;
+            
+            for i=1:length(allSessions)
+                possibleSession = allSessions{i};
+                
+                if possibleSession.isPolarizationAnalysisSession() && possibleSession.isLinkedToSession(session)
+                    allPolarizationAnalysisSessions{counter} = possibleSession;
+                    counter = counter + 1;
+                end
+            end
+        end
+        
+        function filenameSections = getFilenameSections(session, indices)
+        	filenameSections = session.generateFilenameSection();
         end
         
     end

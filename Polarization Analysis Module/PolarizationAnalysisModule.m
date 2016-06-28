@@ -148,7 +148,7 @@ selectedTrial = handles.project.getSelectedTrial();
 
 handles.selectedTrial = selectedTrial;
 
-[hasValidLocation, selectStructure] = selectedTrial.createSelectStructure();
+[hasValidLocation, selectStructure] = selectedTrial.createSelectStructure(class(PolarizationAnalysisSession));
 
 if hasValidLocation
     [selectStrings, selectValues] = getSelectStringsAndValues(selectStructure);

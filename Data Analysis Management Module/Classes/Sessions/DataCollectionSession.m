@@ -31,7 +31,9 @@ classdef DataCollectionSession < Session
         function session = createDirectories(session, toLocationPath, projectPath)
             sessionDirectory = session.generateDirName();
             
-            createObjectDirectories(projectPath, toLocationPath, sessionDirectory);
+            createBackup = true;
+            
+            createObjectDirectories(projectPath, toLocationPath, sessionDirectory, createBackup);
                         
             session.dirName = sessionDirectory;
         end

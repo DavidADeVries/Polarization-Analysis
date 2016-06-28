@@ -512,11 +512,44 @@ classdef NaturalSubject < Subject
             end
         end
         
+        function bool = isADPositive(subject)
+            bool = false;
+            
+            diagnoses = subject.diagnoses;
+            
+            for i=1:length(diagnoses)
+                diagnosis = diagnoses{i};
+                
+                if diagnosis.isADPositive();
+                    bool = true;
+                    break;
+                end
+            end
+        end
+        
+        function filenameSections = getFilenameSections(subject, indices)
+            if isempty(indices)
+                filenameSections = subject.generateFilenameSection();
+            else
+                index = indices(1);
+                
+                sample = subject.samples{index};
+                
+                if length(indices) == 1
+                    indices = [];
+                else
+                    indices = indices(2:length(indices));
+                end
+                
+                filenameSections = [subject.generateFilenameSection(), sample.getFilenameSections(indices)];
+            end
+        end
+        
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
         
-        function [hasValidSession, selectStructureForSubject] = createSelectStructure(subject, indices)
+        function [hasValidSession, selectStructureForSubject] = createSelectStructure(subject, indices, sessionClass)
             samples = subject.samples;
             
             selectStructureForSubject = {};
@@ -525,7 +558,7 @@ classdef NaturalSubject < Subject
             for i=1:length(samples)
                 newIndices = [indices, i];
                 
-                [newHasValidLocation, selectStructureForSample] = samples{i}.createSelectStructure(newIndices);
+                [newHasValidLocation, selectStructureForSample] = samples{i}.createSelectStructure(newIndices, sessionClass);
                 
                 if newHasValidLocation
                     selectStructureForSubject = [selectStructureForSubject, selectStructureForSample];
@@ -535,7 +568,14 @@ classdef NaturalSubject < Subject
             end
             
             if hasValidSession
-                selectionEntry = SelectionEntry(subject.naviListboxLabel, indices);
+                switch sessionClass
+                    case class(PolarizationAnalysisSession)
+                        selectionEntry = PolarizationAnalysisModuleSelectionEntry(subject.naviListboxLabel, indices);
+                    case class(SubsectionStatisticsAnalysisSession)
+                        selectionEntry = SubsectionStatisticsModuleSelectionEntry(subject.naviListboxLabel, indices);
+                    case class(SensitivityAndSpecificityAnalysisSession)
+                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(subject.naviListboxLabel, indices);
+                end
                 
                 selectStructureForSubject = [{selectionEntry}, selectStructureForSubject];
             else
@@ -563,6 +603,32 @@ classdef NaturalSubject < Subject
             [sample, selectStructure] = sample.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
             
             subject = subject.updateSample(sample);
+        end
+        
+            
+        
+        % ******************************************
+        % FUNCTIONS FOR SUBSECTION STATISTICS MODULE
+        % ******************************************
+        
+        function [data, locationString, sessionString] = getPolarizationAnalysisData(subject, subsectionSession, toIndices, toPath, fileName)
+            sample = subject.samples{toIndices(1)};
+            
+            newIndices = toIndices(2:length(toIndices));
+            toPath = makePath(toPath, subject.dirName);
+            fileName = [fileName, subject.generateFilenameSection];
+            
+            [data, locationString, sessionString] = sample.getPolarizationAnalysisData(subsectionSession, newIndices, toPath, fileName);
+        end
+        
+        function mask = getFluoroMask(subject, subsectionSession, toIndices, toPath, fileName)
+            sample = subject.samples{toIndices(1)};
+            
+            newIndices = toIndices(2:length(toIndices));
+            toPath = makePath(toPath, subject.dirName);
+            fileName = [fileName, subject.generateFilenameSection];
+            
+            mask = sample.getFluoroMask(subsectionSession, newIndices, toPath, fileName);
         end
         
     end

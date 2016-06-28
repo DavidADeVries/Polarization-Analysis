@@ -41,6 +41,11 @@ classdef PolarizationAnalysisSession < DataProcessingSession
             dirSubtitle = [PolarizationAnalysisNamingConventions.SESSION_DIR_SUBTITLE, num2str(session.versionNumber)];
         end
         
+        
+        function bool = shouldCreateBackup(session)
+            bool = false;
+        end
+        
         function metadataString = getMetadataString(session)
             
             [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
@@ -54,6 +59,31 @@ classdef PolarizationAnalysisSession < DataProcessingSession
                         
             metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, computationTypeString, normalizationTypeString, muellerMatrixOnlyString, versionNumberString, outOfRangePixelsRatioString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
             metadataString = [metadataString, metadataHistoryStrings];
+        end
+        
+        function data = getPolarizationAnalysisData(session, toLocationPath, toLocationFileName)
+            toSessionPath = makePath(toLocationPath, session.dirName);
+            
+            toSessionFileName = [toLocationFileName, session.generateFilenameSection()];
+            
+            metricTypes = enumeration('MetricTypes');
+            
+            fileNameEnd = [createFilenameSection(PolarizationAnalysisNamingConventions.MM_MATLAB_VAR_FILENAME_LABEL, []), Constants.MATLAB_EXT];
+            
+            for i=1:length(metricTypes)
+                metricType = metricTypes(i);
+                
+                metricGroupTag = createFilenameSection(metricType.metricGroupType.filenameTag,[]);
+                metricTag = createFilenameSection(metricType.filenameTag,[]);
+                
+                metricFilename = [toSessionFileName, metricGroupTag, metricTag, fileNameEnd];
+                
+                loadPath = makePath(toSessionPath, metricType.metricGroupType.dirName, metricFilename);
+                
+                vars = load(loadPath, PolarizationAnalysisNamingConventions.METRIC_MATLAB_VAR_NAME);
+                
+                data{i} = vars.data;
+            end
         end
     end
     

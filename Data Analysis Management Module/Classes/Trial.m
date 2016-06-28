@@ -19,6 +19,10 @@ classdef Trial
         % list of subjects and the index
         subjects
         subjectIndex = 0
+        
+        % list of sessions and the index
+        sessions
+        sessionIndex = 0;
     end
     
     methods
@@ -129,7 +133,9 @@ classdef Trial
         function trial = createDirectories(trial, toProjectPath, projectPath)
             trialDirectory = trial.generateDirName();
             
-            createObjectDirectories(projectPath, toProjectPath, trialDirectory);
+            createBackup = true;
+            
+            createObjectDirectories(projectPath, toProjectPath, trialDirectory, createBackup);
                         
             trial.dirName = trialDirectory;
         end
@@ -194,11 +200,36 @@ classdef Trial
             if ~isempty(trial.subjects)
                 trial.subjectIndex = 1;
             end
+            
+            % load sessions            
+            sessionDirs = getMetadataFolders(trialPath, SessionNamingConventions.METADATA_FILENAME);
+            
+            numSessions = length(sessionDirs);
+            
+            sessions = cell(numSessions, 1);
+            
+            for i=1:numSessions
+                vars = load(makePath(trialPath, sessionDirs{i}, SessionNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
+                session = vars.metadata;
+                
+                session.dirName = sessionDirs{i};
+                
+                session = session.createFileSelectionEntries(trialPath);
+                
+                sessions{i} = session;
+            end
+            
+            trial.sessions = sessions;
+            
+            if ~isempty(trial.sessions)
+                trial.sessionIndex = 1;
+            end
         end
         
         function trial = wipeoutMetadataFields(trial)
             trial.dirName = '';
             trial.subjects = [];
+            trial.sessions = [];
         end        
         
         function subject = createSubject(trial, nextSubjectNumber, existingSubjectNumbers, toTrialPath, localPath, importDir, userName)
@@ -314,6 +345,23 @@ classdef Trial
                 
                 set(handles.subjectSelect, 'String', subjectOptions, 'Value', trial.subjectIndex, 'Enable', 'on');
                 
+                
+                % update trial sessions
+                trialSessions = trial.sessions;
+                
+                if isempty(trialSessions)
+                    disableNavigationListbox(handles.trialSessionSelect);
+                else
+                    sessionOptions = {};
+                    
+                    for i=1:length(trialSessions)
+                        sessionOptions{i} = trialSessions{i}.naviListboxLabel;
+                    end
+                    
+                    set(handles.trialSessionSelect, 'String', sessionOptions, 'Value', trial.sessionIndex, 'Enable', 'on');
+                end
+                
+                % move on to subject
                 handles = trial.getSelectedSubject().updateNavigationListboxes(handles);
             end
         end
@@ -342,11 +390,39 @@ classdef Trial
             metadataHistoryStrings = generateMetadataHistoryStrings(trial.metadataHistory);
             
             metadataString = {trialTitleString, trialDescriptionString, trialNumberString, trialSubjectTypeString, trialNotesString};
-            metadataString = [metadataString, metadataHistoryStrings];
+            trialMetadataString = [metadataString, metadataHistoryStrings];
+            
+            if isempty(trial.sessions)
+                metadataString = trialMetadataString;
+            else
+                trialHeader = {'Trial:'};
+                
+                trialSessionHeader = {'Trial Session:'};
+                
+                trialSession = trial.getSelectedTrialSession();
+                
+                trialSessionMetadataString = trialSession.getMetadataString();
+                
+                metadataString = [trialHeader, trialMetadataString, {''}, trialSessionHeader, trialSessionMetadataString];
+            end
+        end
+        
+        function trial = updateTrialSessionIndex(trial, index)            
+            trial.sessionIndex = index;
         end
         
         function trial = updateSubjectIndex(trial, index)            
             trial.subjectIndex = index;
+        end
+        
+        function trialSession = getSelectedTrialSession(trial)
+            sessions = trial.sessions;
+            
+            if isempty(sessions)
+                trialSession = [];
+            else
+                trialSession = sessions{trial.sessionIndex};
+            end
         end
         
         function trial = updateSampleIndex(trial, index)
@@ -594,12 +670,117 @@ classdef Trial
             end
         end
         
+        function sessionNumbers = getSessionNumbers(trial)
+            sessionNumbers = zeros(length(trial.sessions), 1); % want this to be an matrix, not cell array
+            
+            for i=1:length(trial.sessions)
+                sessionNumbers(i) = trial.sessions{i}.sessionNumber;                
+            end
+        end
+        
+        
+        function dataCollectionSessionNumbers = getDataCollectionSessionNumbers(trial)
+            dataCollectionSessionNumbers = [];
+            
+            sessions = trial.sessions;
+            
+            counter = 1;
+            
+            for i=1:length(sessions)
+                if isa(sessions{i}, class(DataCollectionSession))
+                    dataCollectionSessionNumbers(counter) = sessions{i}.dataCollectionSessionNumber;
+                    
+                    counter = counter + 1;
+                end
+            end
+        end
+        
+        
+        function dataProcessingSessionNumbers = getDataProcessingSessionNumbers(trial)
+            dataProcessingSessionNumbers = [];
+            
+            sessions = trial.sessions;
+            
+            counter = 1;
+            
+            for i=1:length(sessions)
+                if isa(sessions{i}, class(DataProcessingSession))
+                    dataProcessingSessionNumbers(counter) = sessions{i}.dataProcessingSessionNumber;
+                    
+                    counter = counter + 1;
+                end
+            end
+        end
+        
+        function nextNumber = nextSessionNumber(trial)
+            sessionNumbers = trial.getSessionNumbers();
+            
+            if isempty(sessionNumbers)
+                nextNumber = 1;
+            else
+                lastNumber = max(sessionNumbers);
+                nextNumber = lastNumber + 1;
+            end
+        end
+        
+        function nextNumber = nextDataCollectionSessionNumber(trial)
+            dataCollectionSessionNumbers = trial.getDataCollectionSessionNumbers();
+            
+            if isempty(dataCollectionSessionNumbers)
+                nextNumber = 1;
+            else
+                lastNumber = max(dataCollectionSessionNumbers);
+                nextNumber = lastNumber + 1;
+            end
+        end
+        
+        
+        function nextNumber = nextDataProcessingSessionNumber(trial)
+            dataProcessingSessionNumbers = trial.getDataProcessingSessionNumbers();
+            
+            if isempty(dataProcessingSessionNumbers)
+                nextNumber = 1;
+            else
+                lastNumber = max(dataProcessingSessionNumbers);
+                nextNumber = lastNumber + 1;
+            end
+        end
+        
+        function trial = addSession(trial, session)
+            sessions = trial.sessions;
+            
+            numSessions = length(sessions);
+            
+            sessions{numSessions+1} = session;
+            
+            trial.sessions = sessions;
+            trial.sessionIndex = numSessions+1;
+        end
+        
+        function filenameSections = getFilenameSections(trial, indices)
+            if isempty(indices)
+                filenameSections = trial.generateFilenameSection();
+            else
+                index = indices(1);
+                
+                subject = trial.subjects{index};
+                
+                if length(indices) == 1
+                    indices = [];
+                else
+                    indices = indices(2:length(indices));
+                end
+                
+                filenameSections = [trial.generateFilenameSection(), subject.getFilenameSections(indices)];
+            end
+        end
+        
         
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
         
-        function [hasValidSession, locationSelectStructureForTrial] = createSelectStructure(trial)
+        function [hasValidSession, locationSelectStructureForTrial] = createSelectStructure(trial, sessionClass)
             subjects = trial.subjects;
             
             locationSelectStructureForTrial = {};
@@ -607,7 +788,7 @@ classdef Trial
             for i=1:length(subjects)
                 indices = i;
                 
-                [hasValidSession, locationSelectStructureForSubject] = subjects{i}.createSelectStructure(indices);
+                [hasValidSession, locationSelectStructureForSubject] = subjects{i}.createSelectStructure(indices, sessionClass);
                 
                 if hasValidSession
                     locationSelectStructureForTrial = [locationSelectStructureForTrial, locationSelectStructureForSubject];
@@ -645,6 +826,32 @@ classdef Trial
             [subject, selectStructure] = subject.runPolarizationAnalysis(newIndices, defaultSession, projectPath, progressDisplayHandle, selectStructure, selectStructureIndex, toPath, fileName);
             
             trial = trial.updateSubject(subject);
+        end
+        
+        
+        
+        % ******************************************
+        % FUNCTIONS FOR SUBSECTION STATISTICS MODULE
+        % ******************************************
+        
+        function [data, locationString, sessionString] = getPolarizationAnalysisData(trial, subsectionSession, toIndices, toPath)
+            subject = trial.subjects{toIndices(1)};
+            
+            newIndices = toIndices(2:length(toIndices));
+            toPath = makePath(toPath, trial.dirName);
+            fileName = trial.generateFilenameSection;
+            
+            [data, locationString, sessionString] = subject.getPolarizationAnalysisData(subsectionSession, newIndices, toPath, fileName);
+        end
+        
+        function mask = getFluoroMask(trial, subsectionSession, toIndices, toPath)
+            subject = trial.subjects{toIndices(1)};
+            
+            newIndices = toIndices(2:length(toIndices));
+            toPath = makePath(toPath, trial.dirName);
+            fileName = trial.generateFilenameSection;
+            
+            mask = subject.getFluoroMask(subsectionSession, newIndices, toPath, fileName);
         end
         
     end

@@ -44,7 +44,9 @@ classdef Subject
         function subject = createDirectories(subject, toTrialPath, projectPath)
             subjectDirectory = subject.generateDirName();
             
-            createObjectDirectories(projectPath, toTrialPath, subjectDirectory);
+            createBackup = true;
+            
+            createObjectDirectories(projectPath, toTrialPath, subjectDirectory, createBackup);
                         
             subject.dirName = subjectDirectory;
         end

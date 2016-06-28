@@ -25,6 +25,10 @@ classdef Diagnosis
             end
         end
         
+        function bool = isADPositive(diagnosis)
+            bool = (diagnosis.diagnosisType == DiagnosisTypes.AD_Pos);
+        end
+        
     end
     
 end

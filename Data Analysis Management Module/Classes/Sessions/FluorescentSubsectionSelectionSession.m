@@ -45,6 +45,11 @@ classdef FluorescentSubsectionSelectionSession < DataProcessingSession
         end
         
         
+        function bool = shouldCreateBackup(session)
+            bool = false;
+        end
+        
+        
         function metadataString = getMetadataString(session)
             
             [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
@@ -129,6 +134,23 @@ classdef FluorescentSubsectionSelectionSession < DataProcessingSession
             fullImageWritePath = makePath(writePath, filename);
             
             writeImage(fluoroMask, fullImageWritePath);
+        end
+        
+        function mask = getFluoroMask(session, toLocationPath, toLocationFileName)
+            readFileName = [...
+                toLocationFileName,...
+                session.generateFilenameSection(),...
+                createFilenameSection(FluorescentSubsectionSelectionNamingConventions.FLUORO_FILENAME_LABEL,[]),...
+                createFilenameSection(FluorescentSubsectionSelectionNamingConventions.FLUORO_MASK.getSingularProjectTag(),[]),...
+                Constants.BMP_EXT];
+            
+            readPath = makePath(...
+                toLocationPath,...
+                session.dirName,...
+                FluorescentSubsectionSelectionNamingConventions.FLUORO_DIR.getSingularProjectTag(),...
+                readFileName);
+            
+            mask = openImage(readPath);
         end
         
     end

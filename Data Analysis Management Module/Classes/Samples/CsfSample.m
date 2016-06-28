@@ -220,13 +220,19 @@ classdef CsfSample < FrozenSample
         
         function session = getSelectedSession(sample)
             session = [];
+        end   
+        
+        function [data, locationString, sessionString] = getPolarizationAnalysisData(sample, subsectionSession, toIndices, toPath, fileName)
+            data = [];
+            locationString = '';
+            sessionString = '';
         end
         
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
         
-        function [hasValidSession, selectStructureForSample] = createSelectStructure(sample, indices)
+        function [hasValidSession, selectStructureForSample] = createSelectStructure(sample, indices, sessionClass)
             hasValidSession = false;
             selectStructureForSample = {};
         end

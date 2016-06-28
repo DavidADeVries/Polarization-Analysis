@@ -172,6 +172,24 @@ classdef MetricTypes
             enum.dataRange = dataRange;
             enum.isCircularData = isCircularData;
         end
+        
+        function labels = getMetricLabels(metricType)
+            if metricType.isCircularData
+                labels{1} = [metricType.displayString, ' ', Constants.CIRC_STATS_LABEL];
+                labels{2} = [metricType.displayString, ' ', Constants.NON_CIRC_STATS_LABEL];
+            else
+                labels{1} = metricType.displayString;
+            end
+        end
+        
+        function useCircStats = getUseCircStats(metricType)
+            if metricType.isCircularData()
+                useCircStats = {true, false};
+            else
+                useCircStats = {false};
+            end
+        end
+    
     end
     
 end

@@ -1,5 +1,5 @@
-classdef SelectionEntry
-    %SelectionEntry
+classdef PolarizationAnalysisModuleSelectionEntry
+    % PolarizationAnalysisModuleSelectionEntry
     
     properties
         label = '';
@@ -18,7 +18,7 @@ classdef SelectionEntry
     end
     
     methods
-        function entry = SelectionEntry(label, indices, isSession)
+        function entry = PolarizationAnalysisModuleSelectionEntry(label, indices, isSession)
             entry.label = label;
             entry.indices = indices;
             
