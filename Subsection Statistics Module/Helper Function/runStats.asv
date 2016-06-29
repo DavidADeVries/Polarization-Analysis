@@ -20,7 +20,7 @@ testsTemplate = {};
 
 [testsTemplate, testRowSpacer] = setTestColumnHeaders(testsTemplate, metricTypes, testsColHeaders);
 [testsTemplate, testColSpacer, sectionSpacers] = setTestRowLabels(testsTemplate);
-[testsTemplate, cutoffRow] = placeHValueCutoffs(testsTemplate, testColSpacer, testRowSpacer, testsColHeaders, metricTypes);
+testsTemplate = placeHValueCutoffs(testsTemplate, testColSpacer, testRowSpacer, testsColHeaders, metricTypes);
 
 for i=1:length(statTypes)
     statType = statTypes(i);
@@ -50,7 +50,7 @@ for i=1:length(statTypes)
       
     testResults = tTestsForData(data, metricTypes, passedNormalityResults);
     
-    testOutput = placeTTestResults(testOutput, testResults, testColSpacer, testRowSpacer, sectionSpacers, cutoffRow);
+    testOutput = placeTTestResults(testOutput, testResults, testColSpacer, testRowSpacer, sectionSpacers);
     
     % put 
     
@@ -809,7 +809,7 @@ function testOutput = placeTTestResults(testOutput, testResults, colSpacer, rowS
     
         sectionRowIndex = startRowIndex;
         
-        excelColHeader = excelColHeaders{colIndex + (i-1)};
+        excelColHeader = excelColHeaders{i};
                 
         for j=1:length(metricTestResults) % num tests
             sectionRowIndex = sectionRowIndex + sectionSpacers(j);
@@ -818,11 +818,11 @@ function testOutput = placeTTestResults(testOutput, testResults, colSpacer, rowS
             
             for k=1:length(singleTestResults) % go through results from test
                 if k == 1
-                    pValRow = sectionRowIndex + (k-1) + 1;
+                    pValRow = 
                     
-                    output = ['=', excelColHeader, num2str(pValRow), '<=', excelColHeader, num2str(cutoffRow)];
-                else
-                    output = singleTestResults(k);
+                    output = ['=', excelColHeader, sectionRowIndex + (k-1) + 1];
+                else                    
+                     output = singleTestResults(k);
                 end
                 
                 testOutput{sectionRowIndex + (k-1), colIndex + (i-1)} = output;

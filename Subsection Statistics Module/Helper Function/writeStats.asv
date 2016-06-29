@@ -31,15 +31,14 @@ for i=1:length(statTypes)
     
     filenameStart = [trial.generateFilenameSection(), analysisSession.generateFilenameSection()];
     
-    writeStatFile(outputForStatsFile, sessionPath, statType, filenameStart, SubsectionStatisticsAnalysisNamingConventions.STAT_FILENAME);
-    writeStatFile(outputForTestsFile, sessionPath, statType, filenameStart, SubsectionStatisticsAnalysisNamingConventions.TEST_FILENAME);
-end
-
+    writeStatFile(outputForStatsFile, sessionPath, statType, filenameStart);
 end
 
 
-function writeStatFile(outputForFile, sessionPath, statType, filenameStart, fileTypeName)
-    filename = [filenameStart, createFilenameSection(statType.filenameString, []), createFilenameSection(fileTypeName, []), Constants.XLSX_EXT];
+
+
+function writeStatFile(outputForFile, sessionPath, statType, filenameStart)
+    filename = [filenameStart, createFilenameSection(statType.filenameString, []), Constants.XLSX_EXT];
     
     writePath = makePath(sessionPath, filename);
     

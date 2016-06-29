@@ -10,7 +10,7 @@ classdef StatisticTypes
         mean     ('Mean', 'Mean')
         median   ('Median', 'Median');
         stdev    ('Standard Deviation', 'St. Dev.');
-        skewness ('Skewness', 'Skewnewss');
+        skewness ('Skewness', 'Skewness');
     end
     
     methods
