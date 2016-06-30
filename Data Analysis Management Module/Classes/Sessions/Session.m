@@ -308,7 +308,11 @@ classdef Session
         function [isValidSession, selectStructure] = createSelectStructure(session, indices, sessionClass)
             switch sessionClass
                 case class(PolarizationAnalysisSession)                  
-                    if session.hasMMData() && ~isa(session, class(SessionTypes.PolarizationAnalysis.sessionClass));
+                    if ...
+                            session.hasMMData() &&...
+                            ~isa(session, class(SessionTypes.PolarizationAnalysis.sessionClass)) && ...
+                            ~isa(session, class(SessionTypes.Microscope.sessionClass))
+                        
                         isValidSession = true;
                         
                         isSession = true;

@@ -113,7 +113,7 @@ end
 [statsOutput, testsOutput] = runStats(dataForStats, dataLocationStrings, dataSessionStrings, comparisonType);
 
 % write outputs
-analysisSession = writeStats(statsOutput, projectPath, trial, userName, notes, rejected, rejectedReason, rejectedBy, comparisonType, skippedRejectedSessions);
+analysisSession = writeStats(statsOutput, testsOutput, projectPath, trial, userName, notes, rejected, rejectedReason, rejectedBy, comparisonType, skippedRejectedSessions);
 
 
 % add session

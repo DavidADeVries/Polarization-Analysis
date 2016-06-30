@@ -27,6 +27,8 @@ classdef Constants
         
         DEFAULT_EYE_TYPE = EyeTypes.Right;
         
+        P_VALUE_CUTOFF = 0.05;
+        
     end
     
     methods

@@ -1,4 +1,4 @@
-function analysisSession = writeStats(statsOutput, projectPath, trial, userName, notes, rejected, rejectedReason, rejectedBy, comparisonType, skippedRejectedSessions)
+function analysisSession = writeStats(statsOutput, testsOutput, projectPath, trial, userName, notes, rejected, rejectedReason, rejectedBy, comparisonType, skippedRejectedSessions)
 % writeStats
 
 toPath = trial.dirName;
@@ -24,21 +24,22 @@ sessionPath = makePath(projectPath, toPath, analysisSession.dirName);
 statTypes = enumeration('StatisticTypes');
 
 for i=1:length(statTypes)
-    outputForFile = statsOutput{i};
+    outputForStatsFile = statsOutput{i};
+    outputForTestsFile = testsOutput{i};
+    
     statType = statTypes(i);
     
     filenameStart = [trial.generateFilenameSection(), analysisSession.generateFilenameSection()];
     
-    writeStatFile(outputForFile, sessionPath, statType, filenameStart);
+    writeStatFile(outputForStatsFile, sessionPath, statType, filenameStart, SubsectionStatisticsAnalysisNamingConventions.STAT_FILENAME);
+    writeStatFile(outputForTestsFile, sessionPath, statType, filenameStart, SubsectionStatisticsAnalysisNamingConventions.TEST_FILENAME);
+end
+
 end
 
 
-end
-
-
-
-function writeStatFile(outputForFile, sessionPath, statType, filenameStart)
-    filename = [filenameStart, createFilenameSection(statType.filenameString, []), Constants.XLSX_EXT];
+function writeStatFile(outputForFile, sessionPath, statType, filenameStart, fileTypeName)
+    filename = [filenameStart, createFilenameSection(statType.filenameString, []), createFilenameSection(fileTypeName, []), Constants.XLSX_EXT];
     
     writePath = makePath(sessionPath, filename);
     

@@ -696,7 +696,7 @@ classdef Location
             
             label = location.naviListboxLabel;
             
-            if sessionClass == class(SensitivityAndSpecificityAnalysisSession) % look for locations
+            if strcmp(sessionClass, class(SensitivityAndSpecificityAnalysisSession)) % look for locations
                 
                 isLocation = true;
                 

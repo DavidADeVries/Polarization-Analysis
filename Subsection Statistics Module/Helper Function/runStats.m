@@ -18,8 +18,9 @@ template = {};
 
 testsTemplate = {};
 
-testsTemplate = setTestColumnHeaders(testsTemplate, metricTypes, testsColHeaders);
-testsTemplate = setRowTestLabels(testsTemplate);
+[testsTemplate, testRowSpacer] = setTestColumnHeaders(testsTemplate, metricTypes, testsColHeaders);
+[testsTemplate, testColSpacer, sectionSpacers] = setTestRowLabels(testsTemplate);
+[testsTemplate, cutoffRow] = placeHValueCutoffs(testsTemplate, testColSpacer, testRowSpacer, testsColHeaders, metricTypes);
 
 for i=1:length(statTypes)
     statType = statTypes(i);
@@ -47,8 +48,9 @@ for i=1:length(statTypes)
     
     % run tests for stats
       
-    [testLabels, testResults] = tTestsForData(data, metricTypes, passedNormalityResults);
+    testResults = tTestsForData(data, metricTypes, passedNormalityResults);
     
+    testOutput = placeTTestResults(testOutput, testResults, testColSpacer, testRowSpacer, sectionSpacers, cutoffRow);
     
     % put 
     
@@ -103,7 +105,7 @@ end
 end
 
 % setTestColumnHeaders
-function output = setTestColumnHeaders(output, metricTypes, colHeaders)
+function [output, rowSpacer] = setTestColumnHeaders(output, metricTypes, colHeaders)
 
 rowLabelHeaders = {'Test Metrics'};
 numRowLabelHeaders = length(rowLabelHeaders);
@@ -137,6 +139,8 @@ for j=1:length(metricTypes)
     
 end
 
+rowSpacer = 2;
+
 end
 
 % setRowLabels
@@ -154,9 +158,11 @@ end
 
 % setTestRowLabels
 
-function output = setRowTestLabels(output)
+function [output, colSpacer, sectionSpacers] = setTestRowLabels(output)
 
 headerOffset = 2; %two rows from header and sub headers
+
+hValueLabels = {'Number of Connections', 'Corrected h - Value Cutoff'};
 
 pairedTestsLabels = {'Paired Tests'};
 
@@ -174,8 +180,7 @@ wilcoxonSignedRankLabels = {...
     'Wilcoxon Signed-Rank Test',...
     'h - Value',...
     'p - Value',...
-    'Test Statistics',...
-    'z - Statistic'};
+    'Test Statistics'};
 
 unpairedTestsLabel = {'Unpaired Tests'};
 
@@ -190,15 +195,25 @@ unpairedTTestLabels = {...
     'Standard Deviation'};
 
 mannWhitneyRankSumLabels = {...
-    'Mann Whitney Rank Sum Test',...
+    'Mann-Whitney Rank Sum Test',...
     'h - Value',...
-    'p - Value'};
+    'p - Value (2 Tailed)',...
+    'p - Value (1 Tailed)',...
+    'Sum of Ranks - 1',...
+    'Sum of Ranks - 2',...
+    'Mean Rank - 1',...
+    'Mean Rank - 2',...
+    'Test Variable - 1',...
+    'Test Variable - 2',...
+    'Test Variable - W'};
 
 spacer = {''};
 
 hasHeader = true;
 
 rowLabels = [...
+    hValueLabels,...
+    spacer,...
     pairedTestsLabels,...
     indent(pairedTTestLabels, hasHeader),...
     spacer,...
@@ -209,10 +224,14 @@ rowLabels = [...
     spacer,...
     indent(mannWhitneyRankSumLabels, hasHeader)];
 
+sectionSpacers = [length(hValueLabels)+4, length(pairedTTestLabels) + 1, length(wilcoxonSignedRankLabels) + 2, length(unpairedTTestLabels) + 1];
+
 
 for i=1:length(rowLabels)
     output{i + headerOffset, 1} = rowLabels{i};
 end
+
+colSpacer = 1;
 
 end
 
@@ -641,7 +660,7 @@ end
 
 
 % tTestsForData
-function [testLabels, testResults] = tTestsForData(data, metricTypes, passedNormalityResults)
+function testResults = tTestsForData(data, metricTypes, passedNormalityResults)
 
 dataIndex = 1;
 
@@ -675,7 +694,7 @@ dims = size(metricData);
 metricTestResults = {};
 numTests = 4;
 
-for i=1:length(numTests)
+for i=1:numTests
     metricTestResults{i} = [];
 end
 
@@ -723,8 +742,7 @@ for i=1:dims(2)
         
         output(1,index) = h;
         output(2,index) = p;
-        output(3,index) = stats.signrank;
-        output(4,index) = stats.zval;
+        output(3,index) = stats.signedrank;
                 
         metricTestResults{2} = output;
         
@@ -758,7 +776,16 @@ for i=1:dims(2)
         
         stats = mwwtest(dataCol1, dataCol2);
         
-        % ????
+        output(1,index) = NaN; % h-value not given, but will use formula anyways
+        output(2,index) = stats.p(2);
+        output(3,index) = stats.p(1);
+        output(4,index) = stats.W(1);
+        output(5,index) = stats.W(2);
+        output(6,index) = stats.mr(1);
+        output(7,index) = stats.mr(2);
+        output(8,index) = stats.U(1);
+        output(9,index) = stats.U(2);
+        output(10,index) = stats.T;
                 
         metricTestResults{4} = output;
         
@@ -768,10 +795,81 @@ for i=1:dims(2)
     end
 end
 
+end
 
+% placeTTestResults
+function testOutput = placeTTestResults(testOutput, testResults, colSpacer, rowSpacer, sectionSpacers, cutoffRow)
+    startRowIndex = rowSpacer;
+    colIndex = colSpacer + 1;
+    
+    excelColHeaders = getExcelColHeaders();
+    
+    for i=1:length(testResults)
+        metricTestResults = testResults{i};
+    
+        sectionRowIndex = startRowIndex;
+        
+        excelColHeader = excelColHeaders{colIndex + (i-1)};
+                
+        for j=1:length(metricTestResults) % num tests
+            sectionRowIndex = sectionRowIndex + sectionSpacers(j);
+            
+            singleTestResults = metricTestResults{j};
+            
+            for k=1:length(singleTestResults) % go through results from test
+                if k == 1
+                    pValRow = sectionRowIndex + (k-1) + 1;
+                    
+                    output = ['=', excelColHeader, num2str(pValRow), '<=', excelColHeader, num2str(cutoffRow)];
+                else
+                    output = singleTestResults(k);
+                end
+                
+                testOutput{sectionRowIndex + (k-1), colIndex + (i-1)} = output;
+            end
+        end
+    end
 
 end
 
+% placeHValueCutoffs
+function [testOutput, cutoffRow] = placeHValueCutoffs(testOutput, colSpacer, rowSpacer, colHeaders, metricTypes)
+
+excelColNames = getExcelColHeaders();
+
+rowIndex = rowSpacer + 1;
+colIndex = colSpacer + 1;
+
+cutoffRow = rowIndex+1;
+
+numComparisons = length(colHeaders);
+
+for i=1:length(metricTypes)
+    metricType = metricTypes(i);
+    
+    numConnections = metricType.numConnections;
+    useCircStats = metricType.getUseCircStats();
+    
+    for j=1:length(useCircStats)
+        testOutput{rowIndex, colIndex} = numConnections;
+        
+        excelColName = excelColNames{colIndex};
+        
+        for k=1:numComparisons
+            testOutput{cutoffRow, colIndex} = [...
+                '=',...
+                num2str(Constants.P_VALUE_CUTOFF),...
+                '/',...
+                excelColName,...
+                num2str(rowIndex)];
+            
+            colIndex = colIndex + 1;
+        end        
+    end
+end
+    
+
+end
 
 
 
