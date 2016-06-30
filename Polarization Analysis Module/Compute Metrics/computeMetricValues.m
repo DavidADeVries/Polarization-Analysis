@@ -210,12 +210,12 @@ end
 % Source: Mueller matrix approach for determination of optical rotation in chiral turbid media in backscattering geometry (Manhas et al.)
 % Pg. 195, Eqn (16)
 % NOTE: Optical Rotation = Circular Retardance / 2   for a pure circular retarder (Wave Optics: Basic Concepts and Contemporary Trends, Gupta et al.)
-function value = computePsi(retardance, delta, retardance_vactor)
+function value = computePsi(retardance, delta, retardance_vector)
 
-    numerator =  2 * retardance_vactor(3) * sind(retardance);
+    numerator =  2 * retardance_vector(3) * sind(retardance);
     denominator = 1 + cosd(delta);
     
-    value = 0.5 * asind(numerator/ denominator);
+    value = real(0.5 * asind(numerator/ denominator));
     
     
     %if retardance > 90 & retardance_vactor(3) > 0 
@@ -250,7 +250,7 @@ function value = computeTheta(retardance_vector)
         value = value + 360;
     end
     
-    value = 0.5 * value;
+    value = real(0.5 * value);
 end
 
 % Source: Mueller matrix approach for determination of optical rotation in chiral turbid media in backscattering geometry (Manhas et al.)
@@ -260,7 +260,7 @@ function value = computeDelta(retardance_vector, R)
     a = (cosd(R/2))^2;
     r_3 = retardance_vector(3);
     
-    value = 2 * acosd( sqrt( (r_3)^2 * (1-a) + a ));
+    value = real(2 * acosd( sqrt( (r_3)^2 * (1-a) + a )));
 end
 
 % Source: Interpretation of Mueller matrices based on polar decomposition (Lu, Chipman)
