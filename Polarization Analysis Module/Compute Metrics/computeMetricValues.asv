@@ -256,11 +256,11 @@ end
 % Source: Mueller matrix approach for determination of optical rotation in chiral turbid media in backscattering geometry (Manhas et al.)
 % Pg. 195, Eqn (15)
 function value = computeDelta(retardance_vector, R)
-    %R is in degrees
     a = (cosd(R/2))^2;
+    
     r_3 = retardance_vector(3);
     
-    value = 2 * acosd( sqrt( (r_3)^2 * (1-a) + a ));
+    value = real(2*acosd(sqrt((r_3^2)*(1-a) + a)));
 end
 
 % Source: Interpretation of Mueller matrices based on polar decomposition (Lu, Chipman)
