@@ -8,6 +8,7 @@ classdef Location
         dirName
         naviListboxLabel
         metadataHistory
+        toPath
         
         % set by metadata entry
         locationNumber %usually a number         
@@ -230,6 +231,9 @@ classdef Location
             %load dir name
             location.dirName = locationDir;
             
+            % load toPath
+            location.toPath = toLocationPath;
+            
             % load sessions
             
             sessionDirs = getMetadataFolders(locationPath, SessionNamingConventions.METADATA_FILENAME);
@@ -398,6 +402,7 @@ classdef Location
         function location = wipeoutMetadataFields(location)
             location.dirName = '';
             location.sessions = [];
+            location.toPath = '';
         end
         
         

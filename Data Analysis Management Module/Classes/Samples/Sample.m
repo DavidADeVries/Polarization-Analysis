@@ -7,6 +7,7 @@ classdef Sample
         dirName
         naviListboxLabel
         metadataHistory
+        toPath
         
         
         sampleNumber
@@ -69,6 +70,9 @@ classdef Sample
 
             % load dir name
             sample.dirName = sampleDir;
+            
+            % load toPath
+            sample.toPath = toSamplePath;
             
             sample = sample.loadObject(samplePath);
         end

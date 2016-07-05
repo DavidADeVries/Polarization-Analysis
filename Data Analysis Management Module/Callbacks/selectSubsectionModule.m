@@ -1,5 +1,5 @@
 function [] = selectSubsectionModule(hObject, eventdata, handles)
-% selectSubsectionsModule
+% selectSubsectionModule
 
 project = handles.localProject;
 
@@ -7,7 +7,7 @@ if ~isempty(project) % can't create a new project if a new isn't loaded
     selectedTrial = project.getSelectedTrial();
     
     if ~isempty(selectedTrial)
-        [cancel, project] = SubsectionStatisticsModule(handles.localProject, handles.localPath, handles.userName);
+        [cancel, project] = SelectSubsectionModule(handles.localProject, handles.localPath, handles.userName);
         
         if ~cancel
             handles.localProject = project;
@@ -18,7 +18,7 @@ if ~isempty(project) % can't create a new project if a new isn't loaded
             guidata(hObject, handles);
         end
     else
-        warndlg('No trial selected for which to run statistics on.', 'No Trial Selected');
+        warndlg('No location selected for which to select subsections from.', 'No Location Selected');
     end
     
 else

@@ -333,7 +333,8 @@ classdef Eye < FixedSample
         
         function eye = wipeoutMetadataFields(eye)
             eye.dirName = '';
-            eye.quarters = [];
+            eye.quarters = [];            
+            eye.toPath = '';
         end
         
         function quarter = getSelectedQuarter(eye)

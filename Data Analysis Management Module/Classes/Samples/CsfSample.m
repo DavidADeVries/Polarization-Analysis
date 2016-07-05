@@ -145,6 +145,7 @@ classdef CsfSample < FrozenSample
         
         function sample = wipeoutMetadataFields(sample)
             sample.dirName = '';
+            sample.toPath = '';
         end
         
         function metadataString = getMetadataString(sample)

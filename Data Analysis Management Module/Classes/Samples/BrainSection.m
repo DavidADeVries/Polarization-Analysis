@@ -167,6 +167,7 @@ classdef BrainSection < FixedSample
         
         function section = wipeoutMetadataFields(section)
             section.dirName = '';
+            section.toPath = '';
         end
         
         function metadataString = getMetadataString(section)

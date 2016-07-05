@@ -1,4 +1,4 @@
-function [] = selectSubsectionModule(hObject, eventdata, handles)
+function [] = selectSubsectionsModule(hObject, eventdata, handles)
 % selectSubsectionsModule
 
 project = handles.localProject;

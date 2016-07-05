@@ -22,7 +22,7 @@ function varargout = polarizationAnalysisGui(varargin)
 
 % Edit the above text to modify the response to help polarizationAnalysisGui
 
-% Last Modified by GUIDE v2.5 28-Jun-2016 14:02:20
+% Last Modified by GUIDE v2.5 04-Jul-2016 11:57:23
 
 % Begin initialization code - DO NOT EDIT
 
@@ -778,3 +778,12 @@ function trialSessionSelect_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --------------------------------------------------------------------
+function selectSubsectionModule_Callback(hObject, eventdata, handles)
+% hObject    handle to selectSubsectionModule (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+selectSubsectionModule(hObject, eventdata, handles);

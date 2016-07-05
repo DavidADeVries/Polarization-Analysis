@@ -8,6 +8,7 @@ classdef Trial
         dirName
         naviListboxLabel
         metadataHistory
+        toPath
         
         % set by metadata entry
         title
@@ -186,6 +187,9 @@ classdef Trial
             % load dir name
             trial.dirName = trialDir;
             
+            % load toPath
+            trial.toPath = toTrialPath;
+            
             % load subjects            
             subjectDirs = getMetadataFolders(trialPath, SubjectNamingConventions.METADATA_FILENAME);
             
@@ -229,7 +233,8 @@ classdef Trial
         function trial = wipeoutMetadataFields(trial)
             trial.dirName = '';
             trial.subjects = [];
-            trial.sessions = [];
+            trial.sessions = [];            
+            trial.toPath = '';
         end        
         
         function subject = createSubject(trial, nextSubjectNumber, existingSubjectNumbers, toTrialPath, localPath, importDir, userName)
