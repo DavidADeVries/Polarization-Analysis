@@ -109,6 +109,20 @@ classdef FileSelectionEntry
             
             hasData = isempty(fileNameEndings);
         end
+        
+        function handles = updateNavigationListboxesForSubsectionSelection(entry, handles)
+            fileSelections = entry.getFileSelections();
+            
+            if isempty(fileSelections)
+                disableNavigationListboxesForSubsectionSelection(handles, handles.fileSelectListbox);
+            else
+                set(handles.fileSelectListbox, 'String', fileSelections, 'Value', entry.fileIndex, 'Enable', 'on');
+                
+                % TODO!!!!!!!!!!!
+                % handles = updateImageAxes(handles, entry.getFileSelection());
+            end
+        end
+        
     end
     
 end

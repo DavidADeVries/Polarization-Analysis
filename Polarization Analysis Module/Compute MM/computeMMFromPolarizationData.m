@@ -80,7 +80,7 @@ for i=1:length(namingConventions)
         
         fileName = file.dirName;
         
-        images{counter} = imread(makePath(toDataPath, fileName));
+        images{counter} = openImage(makePath(toDataPath, fileName));
         counter = counter + 1;
     else
         error('Multiple file matches!!');
@@ -93,38 +93,7 @@ dims = size(images{1}); %size of image found
 height = dims(1); %y size
 width = dims(2); %x size
 
-% rgb to grayscale values
-if length(dims) == 3 %must have been saved as rgb
-    for i=1:length(images)
-        images{i} = rgb2gray(images{i});
-    end
-end
 
-% make sure they're doubles
-for i=1:length(images)
-    images{i} = double(images{i});
-end
-
-
-% normalize images
-
-for i=1:length(images)
-    maxValues(i) = max(max(images{i}));
-end
-
-maxVal = max(maxValues);
-
-if maxVal <= 1 % no normalization needed
-    normalizationValue = 1;
-elseif maxVal <= 255
-    normalizationValue = 255;
-else
-    error(['Image cannot be normalized! Invalid values found (Max Value: ', num2str(maxVal), ')']);
-end
-
-for i=1:length(images)
-    images{i} = images{i} ./ normalizationValue; %apply normalization
-end
 
 
 

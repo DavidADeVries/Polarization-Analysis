@@ -8,6 +8,7 @@ classdef Quarter
         dirName
         naviListboxLabel
         metadataHistory
+        toPath
         
         % set by metadata entry        
         mountingDate
@@ -127,6 +128,9 @@ classdef Quarter
             
             % load dirName            
             quarter.dirName = quarterDir;
+            
+            % load toPath
+            quarter.toPath = toQuarterPath;
             
             % load locations            
             locationsDirs = getMetadataFolders(quarterPath, LocationNamingConventions.METADATA_FILENAME);
@@ -301,6 +305,7 @@ classdef Quarter
         function quarter = wipeoutMetadataFields(quarter)
             quarter.dirName = '';
             quarter.locations = [];
+            quarter.toPath = '';
         end
         
         function location = getSelectedLocation(quarter)

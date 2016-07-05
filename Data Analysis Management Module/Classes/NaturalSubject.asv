@@ -97,9 +97,6 @@ classdef NaturalSubject < Subject
             % load dir name
             subject.dirName = subjectDir;
             
-            % load toPath
-            subject.toPath = toSubjectPath;
-            
             % load eyes            
             sampleDirs = getMetadataFolders(subjectPath, SampleNamingConventions.METADATA_FILENAME);
             
