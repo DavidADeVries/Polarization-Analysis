@@ -669,7 +669,7 @@ classdef Location
             if length(microscopeSessions) == 1
                 microscopeSession = microscopeSessions{1};
             else
-                error(['Non singular microscope session found! DEBUG PATH: ', location.toPath]);
+                error(['Non singular microscope session found! DEBUG PATH: ', getObjectPath(location)]);
             end
         end
         
