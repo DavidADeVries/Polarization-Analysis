@@ -11,7 +11,7 @@ classdef Session
         dirName = '';
         naviListboxLabel = '';
         metadataHistory = {};
-        toPath
+        toPath = ''
         
         % set by metadata entry
         sessionDate = 0;

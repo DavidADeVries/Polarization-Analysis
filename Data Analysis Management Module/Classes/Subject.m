@@ -7,7 +7,7 @@ classdef Subject
         dirName
         naviListboxLabel
         metadataHistory
-        toPath
+        toPath = ''
         
         % set by metadata entry        
         subjectId % person ID, dog name        

@@ -8,7 +8,7 @@ classdef Quarter
         dirName
         naviListboxLabel
         metadataHistory
-        toPath
+        toPath = ''
         
         % set by metadata entry        
         mountingDate

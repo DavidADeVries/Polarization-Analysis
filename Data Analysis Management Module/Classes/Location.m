@@ -8,7 +8,7 @@ classdef Location
         dirName
         naviListboxLabel
         metadataHistory
-        toPath
+        toPath = ''
         
         % set by metadata entry
         locationNumber %usually a number         

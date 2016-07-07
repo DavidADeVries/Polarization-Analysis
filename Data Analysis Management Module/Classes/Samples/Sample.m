@@ -7,7 +7,7 @@ classdef Sample
         dirName
         naviListboxLabel
         metadataHistory
-        toPath
+        toPath = ''
         
         
         sampleNumber
