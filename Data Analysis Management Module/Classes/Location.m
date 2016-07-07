@@ -8,7 +8,7 @@ classdef Location
         dirName
         naviListboxLabel
         metadataHistory
-        toPath
+        toPath = ''
         
         % set by metadata entry
         locationNumber %usually a number         
@@ -38,6 +38,9 @@ classdef Location
                 
                 % make directory/metadata file
                 location = location.createDirectories(toQuarterPath, projectPath);
+                
+                % set toPath
+                location.toPath = toQuarterPath;
                 
                 % save metadata
                 saveToBackup = true;
@@ -666,7 +669,7 @@ classdef Location
             if length(microscopeSessions) == 1
                 microscopeSession = microscopeSessions{1};
             else
-                error('Non singular microscope session found!');
+                error(['Non singular microscope session found! DEBUG PATH: ', location.toPath]);
             end
         end
         

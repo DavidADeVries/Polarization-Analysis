@@ -27,6 +27,9 @@ classdef NaturalSubject < Subject
                     % make directory/metadata file
                     subject = subject.createDirectories(toTrialPath, projectPath);
                     
+                    % set toPath
+                    subject.toPath = toTrialPath;
+                    
                     % save metadata
                     saveToBackup = true;
                     subject.saveMetadata(makePath(toTrialPath, subject.dirName), projectPath, saveToBackup);

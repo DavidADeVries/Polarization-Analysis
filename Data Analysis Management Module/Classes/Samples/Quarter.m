@@ -8,7 +8,7 @@ classdef Quarter
         dirName
         naviListboxLabel
         metadataHistory
-        toPath
+        toPath = ''
         
         % set by metadata entry        
         mountingDate
@@ -41,6 +41,9 @@ classdef Quarter
                 
                 % make directory/metadata file
                 quarter = quarter.createDirectories(toEyePath, projectPath);
+                
+                % set toPath
+                quarter.toPath = toEyePath;
                 
                 % save metadata
                 saveToBackup = true;

@@ -34,6 +34,9 @@ classdef MicroscopeSession < DataCollectionSession
                     % make directory/metadata file
                     session = session.createDirectories(toLocationPath, projectPath);
                     
+                    % set toPath
+                    session.toPath = toLocationPath;
+                    
                     % save metadata
                     saveToBackup = true;
                     session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);

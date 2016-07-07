@@ -11,7 +11,7 @@ classdef Session
         dirName = '';
         naviListboxLabel = '';
         metadataHistory = {};
-        toPath
+        toPath = ''
         
         % set by metadata entry
         sessionDate = 0;
@@ -370,7 +370,10 @@ classdef Session
             % save metadata
             saveToBackup = false;
             
-            polarizationAnalysisSession.saveMetadata(savePath, projectPath, saveToBackup)
+            polarizationAnalysisSession.saveMetadata(savePath, projectPath, saveToBackup);
+                                
+            % set toPath
+            polarizationAnalysisSession.toPath = toPath;
             
             % create file selection structure
             polarizationAnalysisSession = polarizationAnalysisSession.createFileSelectionEntries(makePath(projectPath, toPath));

@@ -8,7 +8,7 @@ classdef Trial
         dirName
         naviListboxLabel
         metadataHistory
-        toPath
+        toPath = ''
         
         % set by metadata entry
         title
@@ -44,6 +44,9 @@ classdef Trial
                     % make directory/metadata file
                     toTrialPath = ''; %starts at project path
                     trial = trial.createDirectories(toTrialPath, projectPath);
+                    
+                    % set toPath
+                    trial.toPath = toTrialPath;
                     
                     % save metadata
                     saveToBackup = true;
