@@ -45,6 +45,9 @@ classdef Trial
                     toTrialPath = ''; %starts at project path
                     trial = trial.createDirectories(toTrialPath, projectPath);
                     
+                    % set toPath
+                    trial.toPath = toTrialPath;
+                    
                     % save metadata
                     saveToBackup = true;
                     trial.saveMetadata(trial.dirName, projectPath, saveToBackup);

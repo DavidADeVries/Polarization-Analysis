@@ -33,6 +33,9 @@ classdef Eye < FixedSample
                     % make directory/metadata file
                     eye = eye.createDirectories(toSubjectPath, projectPath);
                     
+                    % set toPath
+                    eye.toPath = toSubjectPath;
+                    
                     % save metadata
                     saveToBackup = true;
                     eye.saveMetadata(makePath(toSubjectPath, eye.dirName), projectPath, saveToBackup);

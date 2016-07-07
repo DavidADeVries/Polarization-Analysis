@@ -25,6 +25,9 @@ classdef BrainSection < FixedSample
                     % set metadata history
                     section.metadataHistory = MetadataHistoryEntry(userName, BrainSection.empty);
                     
+                    % set toPath
+                    section.toPath = toSubjectPath;
+                    
                     % save metadata
                     saveToBackup = true;
                     section.saveMetadata(makePath(toSubjectPath, section.dirName), projectPath, saveToBackup);

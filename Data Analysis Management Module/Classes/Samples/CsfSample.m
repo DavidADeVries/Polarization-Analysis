@@ -25,6 +25,9 @@ classdef CsfSample < FrozenSample
                     % set metadata history
                     sample.metadataHistory = MetadataHistoryEntry(userName, CsfSample.empty);
                     
+                    % set toPath
+                    sample.toPath = toSubjectPath;
+                    
                     % save metadata
                     saveToBackup = true;
                     sample.saveMetadata(makePath(toSubjectPath, sample.dirName), projectPath, saveToBackup);

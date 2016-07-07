@@ -37,6 +37,9 @@ classdef SubsectionStatisticsAnalysisSession < DataProcessingSession
                 % make directory/metadata file
                 session = session.createDirectories(toLocationPath, projectPath);
                 
+                % set toPath
+                session.toPath = toLocationPath;
+                
                 % save metadata
                 saveToBackup = false;
                 session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);

@@ -42,6 +42,9 @@ classdef Quarter
                 % make directory/metadata file
                 quarter = quarter.createDirectories(toEyePath, projectPath);
                 
+                % set toPath
+                quarter.toPath = toEyePath;
+                
                 % save metadata
                 saveToBackup = true;
                 quarter.saveMetadata(makePath(toEyePath, quarter.dirName), projectPath, saveToBackup);

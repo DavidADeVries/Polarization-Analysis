@@ -32,6 +32,14 @@ classdef Constants
     end
     
     methods
+        function colormap = getCircularColormap()
+            startMap = hsv; % get standard hsv colormap
+            
+            front = startMap(1:43);
+            back = startMap(44:64);
+            
+            colormap = [back; front]; 
+        end
     end
     
 end

@@ -32,6 +32,9 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
                 
                 % make directory/metadata file
                 session = session.createDirectories(toTrialPath, projectPath);
+                    
+                % set toPath
+                session.toPath = toTrialPath;
                 
                 % save metadata
                 saveToBackup = false;
