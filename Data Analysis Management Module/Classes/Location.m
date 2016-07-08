@@ -455,10 +455,10 @@ classdef Location
             locationNumberString = ['Location Number: ', num2str(location.locationNumber)];
             depositString = ['Deposit: ', booleanToString(location.deposit)];
             locationCoordsString = ['Location Coordinates: ', coordsToString(location.locationCoords)];
-            locationNotesString = ['Notes: ', location.notes];
+            locationNotesString = ['Notes: ', formatMultiLineTextForDisplay(location.notes)];
             metadataHistoryStrings = generateMetadataHistoryStrings(location.metadataHistory);
             
-            metadataString = {locationNumberString, depositString, locationCoordsString, locationNotesString};
+            metadataString = [locationNumberString, depositString, locationCoordsString, locationNotesString];
             metadataString = [metadataString, metadataHistoryStrings];
             
         end

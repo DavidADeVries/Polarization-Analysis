@@ -360,10 +360,10 @@ classdef Quarter
             quarterTypeString = ['Quarter Type: ', displayType(quarter.quarterType)];
             quarterNumberString = ['Quarter number: ', num2str(quarter.quarterNumber)];
             quarterArbitraryString = ['Quarter Arbitrary: ', booleanToString(quarter.quarterArbitrary)];
-            quarterNotesString = ['Notes: ', quarter.notes];
+            quarterNotesString = ['Notes: ', formatMultiLineTextForDisplay(quarter.notes)];
             metadataHistoryStrings = generateMetadataHistoryStrings(quarter.metadataHistory);
             
-            metadataString = {'Quarter:', mountingDateString, mountingDoneByString, stainString, slideMaterialString, quarterTypeString, quarterNumberString, quarterArbitraryString, quarterNotesString};
+            metadataString = ['Quarter:', mountingDateString, mountingDoneByString, stainString, slideMaterialString, quarterTypeString, quarterNumberString, quarterArbitraryString, quarterNotesString];
             metadataString = [metadataString, metadataHistoryStrings];
         end
         

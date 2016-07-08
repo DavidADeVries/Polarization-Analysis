@@ -93,7 +93,7 @@ classdef Sample
         
         function [sampleNumberString, notesString] = getSampleMetadataString(sample)
             sampleNumberString = ['Sample Number: ', num2str(sample.sampleNumber)];
-            notesString = ['Notes: ', sample.notes];
+            notesString = ['Notes: ', formatMultiLineTextForDisplay(sample.notes)];
         end
         
         function sampleType = getSampleType(sample)

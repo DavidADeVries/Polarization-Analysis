@@ -59,7 +59,7 @@ classdef CSLOSession < DataCollectionSession
             lightLevelMicroWattsString = ['Laser Power (microWatts): ', num2str(session.lightLevelMicroWatts)];
             fieldOfViewDegreesString = ['Field of View (degrees): ', num2str(session.fieldOfViewDegrees)];
             
-            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, magnificationString, pixelSizeMicronsString, instrumentString, entrancePinholeSizeMicronsString, confocalPinholeSizeMicronsString, lightLevelMicroWattsString, fieldOfViewDegreesString, fluoroSignatureString, crossedSignatureString, visualSignatureString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            metadataString = [sessionDateString, sessionDoneByString, sessionNumberString, magnificationString, pixelSizeMicronsString, instrumentString, entrancePinholeSizeMicronsString, confocalPinholeSizeMicronsString, lightLevelMicroWattsString, fieldOfViewDegreesString, fluoroSignatureString, crossedSignatureString, visualSignatureString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString];
             
         end
     end

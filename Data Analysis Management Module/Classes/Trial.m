@@ -391,13 +391,13 @@ classdef Trial
         function metadataString = getMetadataString(trial)
             
             trialTitleString = ['Title: ', trial.title];
-            trialDescriptionString = ['Description: ', trial.description];
+            trialDescriptionString = ['Description: ', formatMultiLineTextForDisplay(trial.description)];
             trialNumberString = ['Trial Number: ', num2str(trial.trialNumber)];
             trialSubjectTypeString = ['Subject Type: ', displayType(trial.subjectType)];
-            trialNotesString = ['Notes: ', trial.notes];
+            trialNotesString = ['Notes: ', formatMultiLineTextForDisplay(trial.notes)];
             metadataHistoryStrings = generateMetadataHistoryStrings(trial.metadataHistory);
             
-            metadataString = {trialTitleString, trialDescriptionString, trialNumberString, trialSubjectTypeString, trialNotesString};
+            metadataString = [trialTitleString, trialDescriptionString, trialNumberString, trialSubjectTypeString, trialNotesString];
             trialMetadataString = [metadataString, metadataHistoryStrings];
             
             if isempty(trial.sessions)
