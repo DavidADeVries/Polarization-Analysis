@@ -68,7 +68,7 @@ for i=1:length(subjectIndices)
     
     output{rowIndex,1} = subject.uuid;
     output{rowIndex,2} = trial.getFilenameSections(subjectEntry.indices);
-    output{rowIndex,3} = convertBoolToExcelBool(subject.isADPositive());
+    output{rowIndex,3} = convertBoolToExcelBool(subject.isADPositive(trial));
     
     numLocations = length(locationIndices);
     
