@@ -519,7 +519,7 @@ classdef NaturalSubject < Subject
             end
         end
         
-        function bool = isADPositive(subject)
+        function bool = isADPositive(subject, trial)
             bool = false;
             
             diagnoses = subject.diagnoses;
@@ -527,7 +527,7 @@ classdef NaturalSubject < Subject
             for i=1:length(diagnoses)
                 diagnosis = diagnoses{i};
                 
-                if diagnosis.isADPositive();
+                if diagnosis.isADPositive(trial);
                     bool = true;
                     break;
                 end

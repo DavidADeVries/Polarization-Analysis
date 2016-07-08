@@ -35,8 +35,6 @@ classdef Diagnosis
                     bool = (diagnosisType == DiagnosisTypes.AD_Pos);
                 case SubjectTypes.Dog
                     bool = (diagnosisType == DiagnosisTypes.CognitivelyNormal);
-                otherwise
-                    error('Invalid subject type for determining AD Positive status.');
             end
         end
         
