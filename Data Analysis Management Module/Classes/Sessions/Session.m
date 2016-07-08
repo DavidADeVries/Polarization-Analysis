@@ -161,9 +161,9 @@ classdef Session
             sessionDoneByString = ['Done By: ', session.sessionDoneBy];
             sessionNumberString = ['Session Number: ', num2str(session.sessionNumber)];
             rejectedString = ['Rejected: ' , booleanToString(session.rejected)];
-            rejectedReasonString = ['Rejected Reason: ', session.rejectedReason];
+            rejectedReasonString = ['Rejected Reason: ', formatMultiLineTextForDisplay(session.rejectedReason)];
             rejectedByString = ['Rejected By: ', session.rejectedBy];
-            sessionNotesString = ['Notes: ', session.notes];
+            sessionNotesString = ['Notes: ', formatMultiLineTextForDisplay(session.notes)];
             metadataHistoryStrings = generateMetadataHistoryStrings(session.metadataHistory);
         end
         

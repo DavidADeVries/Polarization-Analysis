@@ -57,7 +57,7 @@ classdef PolarizationAnalysisSession < DataProcessingSession
             versionNumberString = ['Analysis Module Version: ', num2str(session.versionNumber)];
             outOfRangePixelsRatioString = ['Out of Range Pixels Ratio: ', num2str(100*session.outOfRangePixelsRatio), '%'];
                         
-            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, computationTypeString, normalizationTypeString, muellerMatrixOnlyString, versionNumberString, outOfRangePixelsRatioString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            metadataString = [sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, computationTypeString, normalizationTypeString, muellerMatrixOnlyString, versionNumberString, outOfRangePixelsRatioString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString];
             metadataString = [metadataString, metadataHistoryStrings];
         end
         

@@ -179,7 +179,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
             registrationParamsString = ['Registration Parameters: ', session.registrationParams];
             
             
-            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, registrationTypeString, registrationParamsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            metadataString = [sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, registrationTypeString, registrationParamsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString];
             metadataString = [metadataString, metadataHistoryStrings];
         end
         

@@ -170,7 +170,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
             coordsString = ['Cropping Coords [x,y,w,h]: ' coordsToString(session.coords)];
             
             
-            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, croppingTypeString, coordsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            metadataString = [sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, croppingTypeString, coordsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString];
             metadataString = [metadataString, metadataHistoryStrings];
         end
         

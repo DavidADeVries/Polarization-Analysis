@@ -61,7 +61,7 @@ classdef FluorescentSubsectionSelectionSession < DataProcessingSession
             fluoroTransformParamString = ['Fluorescent Transform Parameters: ', coordsToString(session.fluorescentTransformParams)];
             cropCoordsString = ['Crop Coords Parameters: ', coordsToString(session.cropCoords)];
                         
-            metadataString = {sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, fluoroTransformParamString, cropCoordsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString};
+            metadataString = [sessionDateString, sessionDoneByString, sessionNumberString, dataProcessingSessionNumberString, linkedSessionsString, fluoroTransformParamString, cropCoordsString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString];
             metadataString = [metadataString, metadataHistoryStrings];
         end
         

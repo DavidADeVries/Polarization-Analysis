@@ -339,12 +339,12 @@ classdef NaturalSubject < Subject
             ageString = ['Age: ', num2str(subject.age)];
             genderString = ['Gender: ', displayType(subject.gender)];
             diagnosesStrings = ['Diagnoses: ', displayDiagnoses(subject.diagnoses)];
-            causeOfDeathString = ['Cause of Death: ', subject.causeOfDeath];
+            causeOfDeathString = ['Cause of Death: ', formatMultiLineTextForDisplay(subject.causeOfDeath)];
             timeOfDeathString = ['Time of Death: ', displayDateAndTime(subject.timeOfDeath)];
-            medicalHistoryString = ['Medical History: ', subject.medicalHistory];
+            medicalHistoryString = ['Medical History: ', formatMultiLineTextForDisplay(subject.medicalHistory)];
             metadataHistoryStrings = generateMetadataHistoryStrings(subject.metadataHistory);
             
-            metadataString = {subjectIdString, subjectNumberString, ageString, genderString, causeOfDeathString, timeOfDeathString, medicalHistoryString, subjectNotesString};
+            metadataString = [subjectIdString, subjectNumberString, ageString, genderString, causeOfDeathString, timeOfDeathString, medicalHistoryString, subjectNotesString];
             metadataString = [metadataString, diagnosesStrings];
             metadataString = [metadataString, metadataHistoryStrings];
             
