@@ -1,8 +1,13 @@
 function formattedText = formatMultiLineTextForDisplay(multiLineText)
 % formatMultiLineTextForDisplay
 
-formattedText = cellstr(multiLineText);
-
+if isempty(multiLineText)
+    formattedText = {''};
+else
+    formattedText = cellstr(multiLineText);
+    
+    formattedText = formattedText'; %transpose into expected orientation
+end
 
 end
 
