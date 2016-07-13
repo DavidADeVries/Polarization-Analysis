@@ -3,11 +3,16 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
     % stores metadata for a sensitity and specificity
     
     properties
+        analysisReason = ''
+        analysisTitle = ''
         
+        excludedSubjectUUIDs
+        excludedSubjectLabels
+        excludedSubjectReasons
     end
     
     methods
-        function session = SensitivityAndSpecificityAnalysisSession(sessionNumber, dataProcessingSessionNumber, toTrialPath, projectPath, userName, notes, rejected, rejectedReason, rejectedBy)
+        function session = SensitivityAndSpecificityAnalysisSession(sessionNumber, dataProcessingSessionNumber, toTrialPath, projectPath, userName, analysisReason, analysisTitle, notes, rejected, rejectedReason, rejectedBy, excludedSubjectUUIDs, excludedSubjectLabels, excludedSubjectReasons, toFilename)
             if nargin > 0
                 % set session numbers
                 session.sessionNumber = sessionNumber;
@@ -23,7 +28,14 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
                 session.uuid = generateUUID();
                 session.sessionDate = now;
                 session.sessionDoneBy = userName;
+                session.analysisReason = analysisReason;
+                session.analysisTitle = analysisTitle;
                 session.notes = notes;
+                
+                session.excludedSubjectUUIDs = excludedSubjectUUIDs;
+                session.excludedSubjectLabels = excludedSubjectLabels;
+                session.excludedSubjectReasons = excludedSubjectReasons;
+                
                 session.rejected = rejected;
                 session.rejectedReason = rejectedReason;
                 session.rejectedBy = rejectedBy;
@@ -35,6 +47,9 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
                     
                 % set toPath
                 session.toPath = toTrialPath;
+                
+                % set toFilename
+                session.toFilename = toFilename;
                 
                 % save metadata
                 saveToBackup = false;

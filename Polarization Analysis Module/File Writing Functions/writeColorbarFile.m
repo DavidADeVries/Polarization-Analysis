@@ -16,7 +16,10 @@ end
     
 axis image;
 axis off;
-colorbar;
+
+h = colorbar;
+set(h, 'FontSize', 15);
+
 caxis(dataRange);
 
 saveas(figHandle, writePath);

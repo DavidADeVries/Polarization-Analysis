@@ -559,7 +559,7 @@ classdef Eye < FixedSample
             toEyePath = makePath(toPath, eye.dirName);
             importDir = '';
             
-            quarter = Quarter(suggestedQuarterNumber, existingQuarterNumbers, toEyePath, projectPath, importDir, userName, eye.getFilename());
+            quarter = Quarter(suggestedQuarterNumber, existingQuarterNumbers, toEyePath, projectPath, importDir, userName);
             
             if ~isempty(quarter)
                 eye = eye.updateQuarter(quarter);

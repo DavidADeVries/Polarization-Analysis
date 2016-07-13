@@ -13,7 +13,7 @@ classdef NaturalSubject < Subject
     end
     
     methods
-        function subject = NaturalSubject(subjectNumber, existingSubjectNumbers, toTrialPath, projectPath, importDir, userName)
+        function subject = NaturalSubject(subjectNumber, existingSubjectNumbers, toTrialPath, projectPath, importDir, userName, toTrialFilename)
             if nargin > 0
                 [cancel, subject] = subject.enterMetadata(subjectNumber, existingSubjectNumbers, importDir, userName);
                 
@@ -29,6 +29,9 @@ classdef NaturalSubject < Subject
                     
                     % set toPath
                     subject.toPath = toTrialPath;
+                    
+                    % set toFilename
+                    subject.toFilename = toTrialFilename;
                     
                     % save metadata
                     saveToBackup = true;
@@ -89,8 +92,7 @@ classdef NaturalSubject < Subject
             end
         end
         
-        
-        function subject = loadSubject(subject, toSubjectPath, subjectDir)
+        function subject = loadSubject(subject, toSubjectPath, subjectDir, toSubjectFilename)
             subjectPath = makePath(toSubjectPath, subjectDir);
             
             % load metadata
@@ -103,6 +105,9 @@ classdef NaturalSubject < Subject
             % load toPath
             subject.toPath = toSubjectPath;
             
+            % load toFilename
+            subject.toFilename = toSubjectFilename;
+            
             % load eyes            
             sampleDirs = getMetadataFolders(subjectPath, SampleNamingConventions.METADATA_FILENAME);
             
@@ -111,7 +116,7 @@ classdef NaturalSubject < Subject
             subject.samples = createEmptyCellArray(Sample.empty, numSamples);
             
             for i=1:numSamples
-                subject.samples{i} = subject.samples{i}.loadGenericSample(subjectPath, sampleDirs{i});
+                subject.samples{i} = subject.samples{i}.loadGenericSample(subjectPath, sampleDirs{i}, subject.getFilename());
             end
             
             if ~isempty(subject.samples)

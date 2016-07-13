@@ -9,6 +9,7 @@ classdef Location
         naviListboxLabel
         metadataHistory
         toPath = ''
+        toFilename = ''
         
         % set by metadata entry
         locationNumber %usually a number         
@@ -23,7 +24,7 @@ classdef Location
     
     methods       
         
-        function location = Location(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, toQuarterPath, projectPath, importDir, userName, subjectType, eyeType, quarterType)
+        function location = Location(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, toQuarterPath, projectPath, importDir, userName, subjectType, eyeType, quarterType, toFilename)
             [cancel, location] = location.enterMetadata(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, subjectType, eyeType, quarterType, importDir);
             
             if ~cancel
@@ -41,6 +42,9 @@ classdef Location
                 
                 % set toPath
                 location.toPath = toQuarterPath;
+                
+                % set toFilename
+                location.toFilename = toFilename;
                 
                 % save metadata
                 saveToBackup = true;
@@ -100,6 +104,11 @@ classdef Location
         function section = generateFilenameSection(location)
             section = createFilenameSection(LocationNamingConventions.DATA_FILENAME_LABEL, num2str(location.locationNumber));
         end
+        
+        
+        function filename = getFilename(location)
+            filename = [location.toFilename, location.generateFilenameSection()];
+        end  
         
         
         function location = updateFileSelectionEntries(location, toPath)
@@ -224,7 +233,7 @@ classdef Location
         end
         
         
-        function location = loadLocation(location, toLocationPath, locationDir)
+        function location = loadLocation(location, toLocationPath, locationDir, toFilename)
             locationPath = makePath(toLocationPath, locationDir);
             
             % load metadata
@@ -236,6 +245,9 @@ classdef Location
             
             % load toPath
             location.toPath = toLocationPath;
+            
+            % load toFilename
+            location.toFilename = toFilename;
             
             % load sessions
             
@@ -250,6 +262,10 @@ classdef Location
                 session = vars.metadata;
                 
                 session.dirName = sessionDirs{i};
+                
+                session.toPath = makePath(location.toPath, location.dirName);
+                
+                session.toFilename = location.getFilename();
                 
                 session = session.createFileSelectionEntries(locationPath);
                 
@@ -406,6 +422,7 @@ classdef Location
             location.dirName = '';
             location.sessions = [];
             location.toPath = '';
+            location.toFilename = '';
         end
         
         

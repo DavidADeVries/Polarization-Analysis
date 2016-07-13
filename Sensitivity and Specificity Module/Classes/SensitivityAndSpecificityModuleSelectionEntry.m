@@ -8,19 +8,21 @@ classdef SensitivityAndSpecificityModuleSelectionEntry
         isSelected = false;
         isLocation = false;
         
-        location = Location.empty;
+        object = [];
         
         toPath = '';
+        
+        subjectExclusionReason = '';
     end
     
     methods
-        function entry = SensitivityAndSpecificityModuleSelectionEntry(label, indices, isLocation, location)
+        function entry = SensitivityAndSpecificityModuleSelectionEntry(label, indices, isLocation, object)
             entry.label = label;
             entry.indices = indices;
             
             if nargin > 2
                 entry.isLocation = isLocation;
-                entry.location = location;
+                entry.object = object;
             end
         end
     end

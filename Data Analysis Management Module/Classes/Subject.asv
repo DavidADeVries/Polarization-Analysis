@@ -43,11 +43,6 @@ classdef Subject
         end
         
         
-        function filename = getFilename(subject)
-            filename = [subject.toFilename, subject.generateFilenameSection()];
-        end        
-        
-        
         function subject = createDirectories(subject, toTrialPath, projectPath)
             subjectDirectory = subject.generateDirName();
             
@@ -224,8 +219,7 @@ classdef Subject
                 toPath,...
                 projectPath,...
                 importPath,...
-                userName,...
-                subject.getFilename);
+                userName);
             
             if ~isempty(sample)
                 subject = subject.updateSample(sample);

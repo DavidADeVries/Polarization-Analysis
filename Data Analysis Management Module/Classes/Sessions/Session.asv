@@ -75,14 +75,8 @@ classdef Session
             session.dirName = '';
             session.fileSelectionEntries = [];
             session.toPath = '';
-            session.toFilename = '';
+            
         end
-        
-        
-        function filename = getFilename(session)
-            filename = [session.toFilename, session.generateFilenameSection()];
-        end 
-        
         
         function handles = updateNavigationListboxes(session, handles)
             subfolderSelections = session.getSubfolderSelections();

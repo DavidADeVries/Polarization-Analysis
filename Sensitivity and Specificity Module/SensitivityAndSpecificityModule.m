@@ -22,7 +22,7 @@ function varargout = SensitivityAndSpecificityModule(varargin)
 
 % Edit the above text to modify the response to help SensitivityAndSpecificityModule
 
-% Last Modified by GUIDE v2.5 27-Jun-2016 11:08:36
+% Last Modified by GUIDE v2.5 11-Jul-2016 13:02:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -209,7 +209,10 @@ function runButton_Callback(hObject, eventdata, handles)
 
 project = handles.project;
 
+analysisReason = get(handles.analysisReasonInput);
+analysisTitle = get(handles.analysisTitleInput);
 notes = get(handles.notesInput, 'String');
+
 rejected = get(handles.yesRejectedButton, 'Value');
 
 if rejected
@@ -225,6 +228,8 @@ trial = performSensitivityAndSpecificity(...
     handles.selectStructure,...
     handles.projectPath,...
     handles.userName,...
+    analysisReason,...
+    analysisTitle,...
     notes,...
     rejected,...
     rejectedReason,...
@@ -436,3 +441,85 @@ function analysisTypeListbox_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+
+function analysisReasonInput_Callback(hObject, eventdata, handles)
+% hObject    handle to analysisReasonInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of analysisReasonInput as text
+%        str2double(get(hObject,'String')) returns contents of analysisReasonInput as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function analysisReasonInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to analysisReasonInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function analysisTitleInput_Callback(hObject, eventdata, handles)
+% hObject    handle to analysisTitleInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of analysisTitleInput as text
+%        str2double(get(hObject,'String')) returns contents of analysisTitleInput as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function analysisTitleInput_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to analysisTitleInput (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in subjectExclusionReasonListbox.
+function subjectExclusionReasonListbox_Callback(hObject, eventdata, handles)
+% hObject    handle to subjectExclusionReasonListbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns subjectExclusionReasonListbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from subjectExclusionReasonListbox
+
+
+% --- Executes during object creation, after setting all properties.
+function subjectExclusionReasonListbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to subjectExclusionReasonListbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in syncScrollbarsButton.
+function syncScrollbarsButton_Callback(hObject, eventdata, handles)
+% hObject    handle to syncScrollbarsButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+listboxTop = get(handles.sessionSelectListbox, 'ListboxTop');
+
+set(handles.subjectExclusionReasonListbox, 'ListboxTop', listboxTop);
+
+guidata(hObject, handles);

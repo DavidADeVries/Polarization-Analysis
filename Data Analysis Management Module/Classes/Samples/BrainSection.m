@@ -8,7 +8,7 @@ classdef BrainSection < FixedSample
     
     methods
         
-        function section = BrainSection(sampleNumber, existingSampleNumbers, brainSectionNumber, existingBrainSectionNumbers, toSubjectPath, projectPath, importPath, userName)
+        function section = BrainSection(sampleNumber, existingSampleNumbers, brainSectionNumber, existingBrainSectionNumbers, toSubjectPath, projectPath, importPath, userName, toFilename)
             if nargin > 0
                 [cancel, section] = section.enterMetadata(sampleNumber, existingSampleNumbers, brainSectionNumber, existingBrainSectionNumbers, importPath, userName);
                 
@@ -27,6 +27,9 @@ classdef BrainSection < FixedSample
                     
                     % set toPath
                     section.toPath = toSubjectPath;
+                    
+                    % set toFilename
+                    section.toFilename = toFilename;
                     
                     % save metadata
                     saveToBackup = true;
@@ -171,6 +174,7 @@ classdef BrainSection < FixedSample
         function section = wipeoutMetadataFields(section)
             section.dirName = '';
             section.toPath = '';
+            section.toFilename = '';
         end
         
         function metadataString = getMetadataString(section)

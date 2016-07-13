@@ -31,6 +31,8 @@ classdef PolarizationAnalysisSession < DataProcessingSession
             session.dataProcessingSessionNumber = parentLocation.nextDataProcessingSessionNumber();
             session.linkedSessionNumbers = [parentSession.sessionNumber];
             
+            session.toPath = makePath(parentLocation.toPath, parentLocation.dirName);
+            session.toFilename = parentLocation.getFilename();
             
             session.dirName = session.generateDirName();
             session.naviListboxLabel = session.generateListboxLabel();

@@ -9,10 +9,14 @@ isPossibleSubjectSelected = false;
 doesPossibleSubjectHaveAnyLocations = false;
 
 possibleSamplesForSubject = {};
+possibleSamplesCounter = 1;
 
 possibleSample = [];
 isPossibleSampleSelected = false;
 doesPossibleSampleHaveAnyLocations = false;
+
+possibleLocations = {};
+possibleLocationsCounter = 1;
 
 for i=1:length(selectStructure)
     entry = selectStructure{i};
@@ -23,23 +27,38 @@ for i=1:length(selectStructure)
         if isPossibleSubjectSelected || doesPossibleSubjectHaveAnyLocations %add subject
             possibleSubject.samples = possibleSamplesForSubject;
             
+            possibleSamplesForSubject = {};
+            possibleSamplesCounter = 1;
+            
             selectedSubjects{subjectCounter} = possibleSubject;
             subjectCounter = subjectCounter + 1;
-            
-            isPossibleSubjectSelected = entry.isSelected;
-            doesPossibleSubjectHaveAnyLocations = false;
         end
+            
+        isPossibleSubjectSelected = entry.isSelected;
+        doesPossibleSubjectHaveAnyLocations = false;
         
         possibleSubject = trial.getSelectedObject(entry.indices);
         possibleSubject.samples = {}; %clear these out, will replace with what is selected
         
     elseif depth == 2 %sample
         if isPossibleSampleSelected || doesPossibleSampleHaveAnyLocations % add sample
-            possibleSample. %todo
+            possibleSample.addLocationForSensitivityAndSpecificity(possibleLocations);
+            
+            possibleLocations = {};
+            possibleLocationsCounter = 1;
+            
+            possibleSamplesForSubject{possibleSamplesCounter} = possibleSample;
+            possibleSamplesCounter = possibleSamplesCounter + 1;
+            
         end
+            
+        isPossibleSampleSelected = false;
+        doesPossibleSampleHaveAnyLocations = true;
         
+        possibleSample = trial.getSelectedObject(entry.indices);
+        possibleSample = possibleSample.clearOutLocationsForSensitivityAndSpecificity();
         
-    elseif entry.isLocation
+    elseif entry.isLocation && entry.isSelected % add location
         
     end
 end

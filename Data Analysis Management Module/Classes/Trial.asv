@@ -49,9 +49,6 @@ classdef Trial
                     % set toPath
                     trial.toPath = toTrialPath;
                     
-                    % set toFilename
-                    trial.toFilename = ''; %start is at trial
-                    
                     % save metadata
                     saveToBackup = true;
                     trial.saveMetadata(trial.dirName, projectPath, saveToBackup);
@@ -77,11 +74,6 @@ classdef Trial
         
         function section = generateFilenameSection(trial)
             section = createFilenameSection(TrialNamingConventions.DATA_FILENAME_LABEL, num2str(trial.trialNumber));
-        end
-        
-        
-        function filename = getFilename(trial)
-            filename = trial.generateFilenameSection();
         end
         
         
@@ -202,9 +194,6 @@ classdef Trial
             % load toPath
             trial.toPath = toTrialPath;
             
-            % load toFilename
-            trial.toFilename = ''; %no project filename
-            
             % load subjects            
             subjectDirs = getMetadataFolders(trialPath, SubjectNamingConventions.METADATA_FILENAME);
             
@@ -213,7 +202,7 @@ classdef Trial
             trial.subjects = createEmptyCellArray(trial.subjectType.subjectClass.empty, numSubjects);
             
             for i=1:numSubjects
-                trial.subjects{i} = trial.subjects{i}.loadSubject(trialPath, subjectDirs{i}, trial.generateFilenameSection());
+                trial.subjects{i} = trial.subjects{i}.loadSubject(trialPath, subjectDirs{i});
             end
             
             if ~isempty(trial.subjects)
@@ -250,12 +239,11 @@ classdef Trial
             trial.subjects = [];
             trial.sessions = [];            
             trial.toPath = '';
-            trial.toFilename = '';
         end        
         
         function subject = createSubject(trial, nextSubjectNumber, existingSubjectNumbers, toTrialPath, localPath, importDir, userName)
             if trial.subjectType.subjectClassType == SubjectClassTypes.Natural
-                subject = NaturalSubject(nextSubjectNumber, existingSubjectNumbers, toTrialPath, localPath, importDir, userName, trial.getFilename());
+                subject = NaturalSubject(nextSubjectNumber, existingSubjectNumbers, toTrialPath, localPath, importDir, userName);
             elseif trial.subjectType.subjectClassType == SubjectClassTypes.Artifical
                 subject = ArtificalSubject();
             else

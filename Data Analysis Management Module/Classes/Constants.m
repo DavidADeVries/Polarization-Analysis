@@ -35,10 +35,12 @@ classdef Constants
         function colormap = getCircularColormap()
             startMap = hsv; % get standard hsv colormap
             
-            front = startMap(1:43);
-            back = startMap(44:64);
+            front = startMap(1:43,:);
+            back = startMap(44:64,:);
             
             colormap = [back; front]; 
+            
+            colormap = flipud(colormap);
         end
     end
     

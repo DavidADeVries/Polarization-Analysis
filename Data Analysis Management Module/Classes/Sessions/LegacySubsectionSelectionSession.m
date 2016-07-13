@@ -10,7 +10,7 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
     
     methods
         
-        function session = LegacySubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, lastSession)
+        function session = LegacySubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, lastSession, toFilename)
             if nargin > 0
                 [cancel, session] = session.enterMetadata(importDir, userName, sessionChoices, lastSession);
                 
@@ -30,6 +30,9 @@ classdef LegacySubsectionSelectionSession < DataProcessingSession
                     
                     % set toPath
                     session.toPath = toLocationPath;
+                    
+                    % set toFilename
+                    session.toFilename = toFilename;
                     
                     % save metadata
                     saveToBackup = true;

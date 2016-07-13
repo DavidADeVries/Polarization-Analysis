@@ -11,7 +11,10 @@ classdef SensitivityAndSpecificityAnalysisNamingConventions
         
         SENSE_AND_SPEC_FILENAME_SECTION = 'Sens. and Spec.';
         
-                
+        % Excel constants
+        
+        DATA_SHEET_NAME = 'Data';
+        RESULTS_SHEET_NAME = 'Results';
     end
     
     methods (Static)       

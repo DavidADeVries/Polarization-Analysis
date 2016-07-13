@@ -8,6 +8,7 @@ classdef Sample
         naviListboxLabel
         metadataHistory
         toPath = ''
+        toFilename = ''
         
         
         sampleNumber
@@ -17,7 +18,7 @@ classdef Sample
     
     methods(Static)
         
-        function sample = createSample(sampleType, sampleNumber, existingSampleNumbers, subSampleNumber, existingSubSampleNumbers, toSubjectPath, projectPath, importPath, userName)
+        function sample = createSample(sampleType, sampleNumber, existingSampleNumbers, subSampleNumber, existingSubSampleNumbers, toSubjectPath, projectPath, importPath, userName, toFilename)
             
             if sampleType == SampleTypes.Eye
                 sample = Eye(...
@@ -28,7 +29,8 @@ classdef Sample
                     toSubjectPath,...
                     projectPath,...
                     importPath,...
-                    userName);
+                    userName,...
+                    toFilename);
                 
             elseif sampleType == SampleTypes.CsfSample
                 sample = CsfSample(...
@@ -39,7 +41,8 @@ classdef Sample
                     toSubjectPath,...
                     projectPath,...
                     importPath,...
-                    userName);
+                    userName,...
+                    toFilename);
                 
             elseif sampleType == SampleTypes.BrainSection
                 sample = BrainSection(...
@@ -50,7 +53,8 @@ classdef Sample
                     toSubjectPath,...
                     projectPath,...
                     importPath,...
-                    userName);
+                    userName,...
+                    toFilename);
                 
             else
                 error('Invalid Sample type!');
@@ -95,6 +99,10 @@ classdef Sample
             sampleNumberString = ['Sample Number: ', num2str(sample.sampleNumber)];
             notesString = ['Notes: ', formatMultiLineTextForDisplay(sample.notes)];
         end
+            
+        function filename = getFilename(sample)
+            filename = [sample.toFilename, sample.generateFilenameSection()];
+        end    
         
         function sampleType = getSampleType(sample)
             classString = class(sample);

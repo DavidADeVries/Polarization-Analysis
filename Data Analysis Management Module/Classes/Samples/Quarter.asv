@@ -9,7 +9,6 @@ classdef Quarter
         naviListboxLabel
         metadataHistory
         toPath = ''
-        toFilename = ''
         
         % set by metadata entry        
         mountingDate
@@ -46,8 +45,7 @@ classdef Quarter
                 % set toPath
                 quarter.toPath = toEyePath;
                 
-                % set toFilename
-                quarter.toFilename = toFilename;
+                % set
                 
                 % save metadata
                 saveToBackup = true;
@@ -115,11 +113,6 @@ classdef Quarter
         end
         
         
-        function filename = getFilename(quarter)
-            filename = [quarter.toFilename, quarter.generateFilenameSection()];
-        end  
-        
-        
         function quarter = updateFileSelectionEntries(quarter, toPath)
             locations = quarter.locations;
             
@@ -131,7 +124,7 @@ classdef Quarter
         end
         
         
-        function quarter = loadQuarter(quarter, toQuarterPath, quarterDir, toFilename)
+        function quarter = loadQuarter(quarter, toQuarterPath, quarterDir)
             quarterPath = makePath(toQuarterPath, quarterDir);
             
             % load metadata            
@@ -144,9 +137,6 @@ classdef Quarter
             % load toPath
             quarter.toPath = toQuarterPath;
             
-            % load toFilename
-            quarter.toFilename = toFilename;
-            
             % load locations            
             locationsDirs = getMetadataFolders(quarterPath, LocationNamingConventions.METADATA_FILENAME);
             
@@ -155,7 +145,7 @@ classdef Quarter
             quarter.locations = createEmptyCellArray(Location.empty, numLocations);
                         
             for i=1:numLocations
-                quarter.locations{i} = quarter.locations{i}.loadLocation(quarterPath, locationsDirs{i}, quarter.getFilename());
+                quarter.locations{i} = quarter.locations{i}.loadLocation(quarterPath, locationsDirs{i});
             end
             
             if ~isempty(quarter.locations)
@@ -321,7 +311,6 @@ classdef Quarter
             quarter.dirName = '';
             quarter.locations = [];
             quarter.toPath = '';
-            quarter.toFilename = '';
         end
         
         function location = getSelectedLocation(quarter)
@@ -522,7 +511,7 @@ classdef Quarter
             
             importDir = '';
             
-            location = Location(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, toQuarterPath, projectPath, importDir, userName, subjectType, eyeType, quarterType, quarter.getFilename());
+            location = Location(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, toQuarterPath, projectPath, importDir, userName, subjectType, eyeType, quarterType);
             
             if ~isempty(location)
                 quarter = quarter.updateLocation(location);
