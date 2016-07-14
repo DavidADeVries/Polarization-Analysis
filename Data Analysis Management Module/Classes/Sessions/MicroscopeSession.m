@@ -273,8 +273,10 @@ classdef MicroscopeSession < DataCollectionSession
             else
                 if length(matchIndices) == 1
                     filename = fileList{matchIndices(1)};
+                    
+                    forceGrayscale = true;
                                         
-                    fluoroImage = openImage(makePath(toFluoroPath, filename));
+                    fluoroImage = openImage(makePath(toFluoroPath, filename), forceGrayscale);
                 else
                     filenameOptions = {};
                     

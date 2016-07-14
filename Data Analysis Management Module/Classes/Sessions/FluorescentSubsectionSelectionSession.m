@@ -35,7 +35,7 @@ classdef FluorescentSubsectionSelectionSession < DataProcessingSession
                 session.toPath = toLocationPath;
                 
                 % save metadata
-                saveToBackup = true;
+                saveToBackup = false;
                 session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
             else
                 session = FluorescentSubsectionSelectionSession.empty;
