@@ -14,6 +14,9 @@ classdef Sample
         sampleNumber
         notes = '';
         
+        
+        % for use with select structures
+        isSelected = [];
     end
     
     methods(Static)

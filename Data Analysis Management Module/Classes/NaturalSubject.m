@@ -586,7 +586,7 @@ classdef NaturalSubject < Subject
                     case class(SubsectionStatisticsAnalysisSession)
                         selectionEntry = SubsectionStatisticsModuleSelectionEntry(subject.naviListboxLabel, indices);
                     case class(SensitivityAndSpecificityAnalysisSession)
-                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(subject.naviListboxLabel, indices);
+                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(subject.naviListboxLabel, indices, subject);
                 end
                 
                 selectStructureForSubject = [{selectionEntry}, selectStructureForSubject];

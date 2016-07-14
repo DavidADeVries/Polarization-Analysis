@@ -233,6 +233,10 @@ classdef Trial
                 
                 session.dirName = sessionDirs{i};
                 
+                session.toPath = makePath(trial.toPath, trial.dirName);
+                
+                session.toFilename = trial.getFilename();
+                
                 session = session.createFileSelectionEntries(trialPath);
                 
                 sessions{i} = session;
@@ -793,6 +797,26 @@ classdef Trial
                 end
                 
                 filenameSections = [trial.generateFilenameSection(), subject.getFilenameSections(indices)];
+            end
+        end
+        
+        function trial = applySelections(trial, selectStructure)            
+            for i=1:length(selectStructure)
+                entry = selectStructure{i};
+                
+                trial = trial.applySelections(entry.indices, entry.isSelected);
+            end            
+        end
+        
+        function trial = applySelection(trial, indices, isSelected)
+            index = indices(1);
+            
+            selectedObject = trial.subjects{index};
+            
+            if len > 1
+                indices = indices(2:len);
+                
+                selectedObject = selectedObject.applySelection(indices, isSelected);
             end
         end
         

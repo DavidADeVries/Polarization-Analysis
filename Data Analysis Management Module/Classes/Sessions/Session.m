@@ -27,6 +27,9 @@ classdef Session
         % list of files for the session and the index   
         fileSelectionEntries = {};
         subfolderIndex = 0;
+                
+        % for use with select structures
+        isSelected = [];
     end
     
     methods(Static)

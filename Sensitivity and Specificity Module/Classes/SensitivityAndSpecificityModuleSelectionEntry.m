@@ -16,7 +16,7 @@ classdef SensitivityAndSpecificityModuleSelectionEntry
     end
     
     methods
-        function entry = SensitivityAndSpecificityModuleSelectionEntry(label, indices, isLocation, object)
+        function entry = SensitivityAndSpecificityModuleSelectionEntry(label, indices, object, isLocation)
             entry.label = label;
             entry.indices = indices;
             

@@ -24,6 +24,9 @@ classdef Quarter
         % locations list and index
         locations
         locationIndex = 0
+                
+        % for use with select structures
+        isSelected = [];
     end
     
     methods
@@ -591,7 +594,7 @@ classdef Quarter
                     case class(SubsectionStatisticsAnalysisSession)
                         selectionEntry = SubsectionStatisticsModuleSelectionEntry(quarter.naviListboxLabel, indices);
                     case class(SensitivityAndSpecificityAnalysisSession)
-                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(quarter.naviListboxLabel, indices);
+                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(quarter.naviListboxLabel, indices, quarter);
                 end
                 
                 selectStructureForQuarter = [{selectionEntry}, selectStructureForQuarter];

@@ -20,6 +20,9 @@ classdef Location
         % session list and index
         sessions
         sessionIndex = 0
+                        
+        % for use with select structures
+        isSelected = [];
     end
     
     methods       
@@ -727,7 +730,7 @@ classdef Location
                 
                 hasValidSession = true;
                 
-                selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(label, indices, isLocation, location);
+                selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(label, indices, location, isLocation);
                 
                 selectStructureForLocation = [{selectionEntry}, selectStructureForLocation];
             else % look for sessions

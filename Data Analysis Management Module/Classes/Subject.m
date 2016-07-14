@@ -18,6 +18,9 @@ classdef Subject
         % list of eyes and index
         samples
         sampleIndex = 0
+        
+        % for use with select structures
+        isSelected = [];
     end
     
     
@@ -295,7 +298,6 @@ classdef Subject
                 session = sample.getSelectedSession();
             end
         end
-        
         
     end
     

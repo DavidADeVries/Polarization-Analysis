@@ -639,7 +639,7 @@ classdef Eye < FixedSample
                     case class(SubsectionStatisticsAnalysisSession)
                         selectionEntry = SubsectionStatisticsModuleSelectionEntry(eye.naviListboxLabel, indices);
                     case class(SensitivityAndSpecificityAnalysisSession)
-                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(eye.naviListboxLabel, indices);
+                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(eye.naviListboxLabel, indices, eye);
                 end
                 
                 selectStructureForEye = [{selectionEntry}, selectStructureForEye];
