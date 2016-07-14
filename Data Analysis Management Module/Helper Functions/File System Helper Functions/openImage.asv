@@ -1,7 +1,6 @@
 function image = openImage(varargin)
 % openImage
-% PARAMS: (path, forceGrayscale*)
-%         * - OPTIONAL
+% PARAMS: (path, forceGrayscale*) * - OPTIONAL
 
 if nargin == 1
     path = varargin{1};

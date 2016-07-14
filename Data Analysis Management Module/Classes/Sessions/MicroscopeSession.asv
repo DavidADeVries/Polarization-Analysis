@@ -287,7 +287,7 @@ classdef MicroscopeSession < DataCollectionSession
                     if ok
                         filename = filenameOptions{index(1)};
                         
-                        forceGrayscale = true; % sometimes BW images are tinted green
+                        forceGrayscale = true;
                         
                         fluoroImage = openImage(makePath(toFluoroPath, filename), forceGrayscale);
                     else
