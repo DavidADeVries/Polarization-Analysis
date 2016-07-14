@@ -133,7 +133,9 @@ function polarimetryImageSelect_Callback(hObject, eventdata, handles)
 
 handles.polarimetryImageIndex = get(hObject,'Value');
 
-updateImageAxes(handles);
+useCache = false;
+
+updateImageAxes(handles, useCache);
 
 % Update handles structure
 guidata(hObject, handles);
