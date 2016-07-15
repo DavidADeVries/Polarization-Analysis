@@ -216,16 +216,8 @@ function value = computePsi(retardance, delta, retardance_vector)
     denominator = 1 + cosd(delta);
     
     value = real(0.5 * asind(numerator/ denominator));
-    
-    
-    %if retardance > 90 & retardance_vactor(3) > 0 
-     %   value = 90 - value;
-    %end
-    
-    %if retardance > 90 & retardance_vactor(3) < 0     
-    %    value = -90 - value;
-    %end
 end
+
 % Source: Mueller matrix approach for determination of optical rotation in chiral turbid media in backscattering geometry (Manhas et al.)
 % Pg. 195, Eqn (17)
 function value = computeTheta(retardance_vector)
