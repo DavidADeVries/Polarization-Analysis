@@ -7,8 +7,6 @@ classdef Sample
         dirName
         naviListboxLabel
         metadataHistory
-        
-        projectPath = ''
         toPath = ''
         toFilename = ''
         
@@ -74,7 +72,7 @@ classdef Sample
         function sample = loadGenericSample(sample, parentObject, sampleDir)
 
             % load metadata
-            vars = load(makePath(parentObject.getFullPath(), SampleNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
+            vars = load(makePath(samplePath, SampleNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
             sample = vars.metadata;
 
             % load dir name
@@ -117,10 +115,6 @@ classdef Sample
         
         function toPath = getToPath(sample)
             toPath = makePath(sample.toPath, sample.dirName);
-        end
-        
-        function toPath = getFullPath(sample)
-            toPath = makePath(sample.projectPath, sample.getToPath());
         end
         
         function sampleType = getSampleType(sample)

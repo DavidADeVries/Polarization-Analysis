@@ -93,8 +93,10 @@ classdef NaturalSubject < Subject
         end
         
         function subject = loadSubject(subject, parentObject, subjectDir)
+            subjectPath = makePath(toSubjectPath, subjectDir);
+            
             % load metadata
-            vars = load(makePath(parentObject.getFullPath(), SubjectNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
+            vars = load(makePath(subjectPath, SubjectNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
             subject = vars.metadata;
             
             % load dir name
@@ -117,7 +119,7 @@ classdef NaturalSubject < Subject
             subject.samples = createEmptyCellArray(Sample.empty, numSamples);
             
             for i=1:numSamples
-                subject.samples{i} = subject.samples{i}.loadGenericSample(parentObject, sampleDirs{i});
+                subject.samples{i} = subject.samples{i}.loadGenericSample(subjectPath, sampleDirs{i}, subject.getFilename());
             end
             
             if ~isempty(subject.samples)

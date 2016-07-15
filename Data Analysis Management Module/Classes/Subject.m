@@ -7,6 +7,8 @@ classdef Subject
         dirName
         naviListboxLabel
         metadataHistory
+        
+        projectPath = ''
         toPath = ''
         toFilename = ''
         
@@ -54,6 +56,11 @@ classdef Subject
         
         function toPath = getToPath(subject)
             toPath = makePath(subject.toPath, subject.dirName);
+        end
+        
+        
+        function toPath = getFullPath(subject)
+            toPath = makePath(subject.projectPath, subject.getToPath());
         end
         
         

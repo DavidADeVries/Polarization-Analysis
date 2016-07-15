@@ -11,6 +11,8 @@ classdef Session
         dirName = '';
         naviListboxLabel = '';
         metadataHistory = {};
+        
+        projectPath = ''
         toPath = ''
         toFilename = ''
         
@@ -90,7 +92,12 @@ classdef Session
         
         function toPath = getToPath(session)
             toPath = makePath(session.toPath, session.dirName);
-        end 
+        end
+        
+        
+        function toPath = getFullPath(session)
+            toPath = makePath(session.projectPath, session.getToPath());
+        end
         
         
         function handles = updateNavigationListboxes(session, handles)

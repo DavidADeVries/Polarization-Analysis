@@ -147,7 +147,7 @@ classdef Quarter
         end
         
         
-        function quarter = loadQuarter(quarter, toQuarterPath, quarterDir, toFilename)
+        function quarter = loadQuarter(quarter, parentObject, quarterDir)
             quarterPath = makePath(toQuarterPath, quarterDir);
             
             % load metadata            

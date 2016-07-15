@@ -204,7 +204,11 @@ classdef Trial
         end
         
         
-        function trial = loadObject(trial, parentObject, trialDir)            
+        function trial = loadObject(trial, parentObject, trialDir)
+            % load metadata
+            vars = load(makePath(parentObject.getFullPath(), TrialNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
+            trial = vars.metadata;
+            
             % load dir name
             trial.dirName = trialDir;
 
@@ -215,7 +219,7 @@ classdef Trial
             trial.toPath = parentObject.getToPath();
             
             % load toFilename
-            trial.toFilename = parentObject.getFilename();
+            trial.toFilename = parentObject.getFilename(); %no project filename
             
             
             % load subjects

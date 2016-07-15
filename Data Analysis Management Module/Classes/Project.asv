@@ -63,35 +63,27 @@ classdef Project
         end
         
         
-        function filename = getFilename(project)
-            filename = '';
-        end
-        
-        
-        function toPath = getToPath(project)
-            toPath = '';
-        end
-        
-        
-        function toPath = getFullPath(project)
-            toPath = project.projectPath;
-        end
-        
-        
-        function project = loadObject(project, projectPath)
+        function project = loadProject(project, projectDir)
             % load metadata
-            vars = load(makePath(projectPath, ProjectNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
+            vars = load(makePath(projectDir, ProjectNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
             project = vars.metadata;
             
-            % set projectPath
-            project.projectPath = projectPath;
-            
-            
             % load trials
-            [objects, objectIndex] = loadObjects(project, TrialNamingConventions.METADATA_FILENAME);
+            trialDirs = getMetadataFolders(projectDir, TrialNamingConventions.METADATA_FILENAME);
             
-            project.trials = objects;
-            project.trialIndex = objectIndex;
+            % set projectPath
+            project.projectPath = projectDir;
+            
+            numTrials = length(trialDirs);
+            project.trials = createEmptyCellArray(Trial.empty, numTrials);
+            
+            for i=1:numTrials
+                project.trials{i} = project.trials{i}.loadTrial(projectDir, trialDirs{i});
+            end
+            
+            if ~isempty(project.trials)
+                project.trialIndex = 1;
+            end
         end
         
         function project = editProjectMetadata(project, projectPath, userName)
