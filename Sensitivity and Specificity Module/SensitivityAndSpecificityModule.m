@@ -22,7 +22,7 @@ function varargout = SensitivityAndSpecificityModule(varargin)
 
 % Edit the above text to modify the response to help SensitivityAndSpecificityModule
 
-% Last Modified by GUIDE v2.5 11-Jul-2016 13:02:27
+% Last Modified by GUIDE v2.5 15-Jul-2016 10:23:02
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -94,7 +94,7 @@ handles.cancel = false;
 handles = setRejectedInputFields(handles);
 
 
-% SET LOCATION SELECT AND PROCESSING PROGRESS
+% SET LOCATION SELECT
 
 selectedTrial = handles.project.getSelectedTrial();
 
@@ -102,17 +102,27 @@ handles.selectedTrial = selectedTrial;
 
 [hasValidLocation, selectStructure] = selectedTrial.createSelectStructure(class(SensitivityAndSpecificityAnalysisSession));
 
+% start off when all selected
+selected = true;
+selectStructure = selectOrDeselectAll(selectStructure, selected);
+
 if hasValidLocation
     [selectStrings, selectValues] = getSelectStringsAndValues(selectStructure);
 else
     selectStrings = {'No Valid Locations for Selected Trial'};
-    selectValues = {};
+    selectValues = [];
 end
 
 set(handles.sessionSelectListbox, 'String', selectStrings, 'Value', selectValues);
 
 handles.selectStructure = selectStructure;
 
+
+% SET EXCLUSION REASON STRINGS
+
+exclusionReasons = getExclusionReasons(selectStructure);
+
+set(handles.exclusionReasonListbox, 'String', exclusionReasons, 'Value', []);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -298,6 +308,11 @@ if length(clickedIndex) == 1
     
     set(handles.sessionSelectListbox, 'Value', selectValues);
     
+    %update exclusionReasons
+    exclusionReasons = getExclusionReasons(selectStructure);
+    
+    set(handles.exclusionReasonListbox, 'String', exclusionReasons, 'Value', []);
+    
     % push to handles
     handles.selectStructure = selectStructure;
     
@@ -378,6 +393,11 @@ selectStructure = selectOrDeselectAll(selectStructure, selected);
 [~, selectValues] = getSelectStringsAndValues(selectStructure);
 
 set(handles.sessionSelectListbox, 'Value', selectValues);
+
+% update exclusion reasons
+exclusionReasons = getExclusionReasons(selectStructure);
+
+set(handles.exclusionReasonListbox, 'String', exclusionReasons, 'Value', []);
 
 
 % push to handles
@@ -489,19 +509,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in subjectExclusionReasonListbox.
-function subjectExclusionReasonListbox_Callback(hObject, eventdata, handles)
-% hObject    handle to subjectExclusionReasonListbox (see GCBO)
+% --- Executes on selection change in exclusionReasonListbox.
+function exclusionReasonListbox_Callback(hObject, eventdata, handles)
+% hObject    handle to exclusionReasonListbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns subjectExclusionReasonListbox contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from subjectExclusionReasonListbox
+% Hints: contents = cellstr(get(hObject,'String')) returns exclusionReasonListbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from exclusionReasonListbox
 
 
 % --- Executes during object creation, after setting all properties.
-function subjectExclusionReasonListbox_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to subjectExclusionReasonListbox (see GCBO)
+function exclusionReasonListbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to exclusionReasonListbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -520,6 +540,6 @@ function syncScrollbarsButton_Callback(hObject, eventdata, handles)
 
 listboxTop = get(handles.sessionSelectListbox, 'ListboxTop');
 
-set(handles.subjectExclusionReasonListbox, 'ListboxTop', listboxTop);
+set(handles.exclusionReasonListbox, 'ListboxTop', listboxTop);
 
 guidata(hObject, handles);

@@ -5,14 +5,10 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
     properties
         analysisReason = ''
         analysisTitle = ''
-        
-        excludedSubjectUUIDs
-        excludedSubjectLabels
-        excludedSubjectReasons
     end
     
     methods
-        function session = SensitivityAndSpecificityAnalysisSession(sessionNumber, dataProcessingSessionNumber, toTrialPath, projectPath, userName, analysisReason, analysisTitle, notes, rejected, rejectedReason, rejectedBy, excludedSubjectUUIDs, excludedSubjectLabels, excludedSubjectReasons, toFilename)
+        function session = SensitivityAndSpecificityAnalysisSession(sessionNumber, dataProcessingSessionNumber, toTrialPath, projectPath, userName, analysisReason, analysisTitle, notes, rejected, rejectedReason, rejectedBy, toFilename)
             if nargin > 0
                 % set session numbers
                 session.sessionNumber = sessionNumber;
@@ -31,10 +27,6 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
                 session.analysisReason = analysisReason;
                 session.analysisTitle = analysisTitle;
                 session.notes = notes;
-                
-                session.excludedSubjectUUIDs = excludedSubjectUUIDs;
-                session.excludedSubjectLabels = excludedSubjectLabels;
-                session.excludedSubjectReasons = excludedSubjectReasons;
                 
                 session.rejected = rejected;
                 session.rejectedReason = rejectedReason;
@@ -86,15 +78,14 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
             metadataString = [metadataString, metadataHistoryStrings];
         end
         
-        function [] = writeSensitivityAndSpecificityFile(session, toTrialFilename, toTrialPath, projectPath, output)
+        function [] = writeSensitivityAndSpecificityFile(session, output)
             filename = [...
-                toTrialFilename,...
-                session.generateFilenameSection,...
+                session.getFilename,...
                 createFilenameSection(SensitivityAndSpecificityAnalysisNamingConventions.OUTPUT_FILENAME_SECTION,[]),...
                 createFilenameSection(SensitivityAndSpecificityAnalysisNamingConventions.SENSE_AND_SPEC_FILENAME_SECTION,[]),...
                 Constants.XLSX_EXT];
             
-            toPath = makePath(projectPath, toTrialPath, session.dirName);
+            toPath = makePath(session.toPath, session.dirName);
             
             mkdir(toPath, SensitivityAndSpecificityAnalysisNamingConventions.OUTPUT_DIR);
             

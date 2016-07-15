@@ -12,18 +12,22 @@ classdef SensitivityAndSpecificityModuleSelectionEntry
         
         toPath = '';
         
-        subjectExclusionReason = '';
+        exclusionReason = '';
     end
     
     methods
         function entry = SensitivityAndSpecificityModuleSelectionEntry(label, indices, object, isLocation)
             entry.label = label;
             entry.indices = indices;
+            entry.object = object;
             
-            if nargin > 2
+            if nargin == 4
                 entry.isLocation = isLocation;
-                entry.object = object;
             end
+        end
+        
+        function fields = getAdditionalFields(entry)
+            fields = struct('exclusionReason', entry.exclusionReason);
         end
     end
     

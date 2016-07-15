@@ -1,173 +1,9 @@
 function trial = performSensitivityAndSpecificity(trial, selectStructure, projectPath, userName, analysisReason, analysisTitle, notes, rejected,  rejectedReason, rejectedBy)
 % performSubsectionStatistics
 
-selectedSubjects = {};
-subjectCounter = 1;
+trialSelectApplied = trial.applySelections(selectStructure);
 
-possibleSubject = [];
-isPossibleSubjectSelected = false;
-doesPossibleSubjectHaveAnyLocations = false;
-
-possibleSamplesForSubject = {};
-possibleSamplesCounter = 1;
-
-possibleSample = [];
-isPossibleSampleSelected = false;
-doesPossibleSampleHaveAnyLocations = false;
-
-possibleLocations = {};
-possibleLocationsCounter = 1;
-
-subjects = applySelections(trial, selectStructure);
-
-
-for i=1:length(selectStructure)
-    entry = selectStructure{i};
-    
-    depth = length(entry.indices);
-    
-    if depth == 1 %subject
-        if isPossibleSubjectSelected || doesPossibleSubjectHaveAnyLocations %add subject
-            possibleSubject.samples = possibleSamplesForSubject;
-            
-            possibleSamplesForSubject = {};
-            possibleSamplesCounter = 1;
-            
-            selectedSubjects{subjectCounter} = possibleSubject;
-            subjectCounter = subjectCounter + 1;
-        end
-            
-        isPossibleSubjectSelected = entry.isSelected;
-        doesPossibleSubjectHaveAnyLocations = false;
-        
-        possibleSubject = entry.object;
-        possibleSubject.isSelected = entry.isSelected;
-        possibleSubject.samples = {}; %clear these out, will replace with what is selected
-        
-    elseif depth == 2 %sample
-        if isPossibleSampleSelected || doesPossibleSampleHaveAnyLocations % add sample
-            possibleSample.addLocationForSensitivityAndSpecificity(possibleLocations);
-            
-            possibleLocations = {};
-            possibleLocationsCounter = 1;
-            
-            possibleSamplesForSubject{possibleSamplesCounter} = possibleSample;
-            possibleSamplesCounter = possibleSamplesCounter + 1;
-            
-        end
-            
-        isPossibleSampleSelected = false;
-        doesPossibleSampleHaveAnyLocations = true;
-        
-        possibleSample = entry.object;
-        possibleSample.isSelected = entry.isSelected;
-        possibleSample = possibleSample.clearOutLocationsForSensitivityAndSpecificity();
-        
-    elseif entry.isLocation && entry.isSelected % add location
-        possibleLocations{possibleLocationsCounter} = entry.object;
-        possibleLocationsCounter = possibleLocationsCounter + 1;
-        
-        doesPossibleSubjectHaveAnyLocations = true;
-        doesPossibleSampleHaveAnyLocations = true;
-    end
-end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% OLD
-
-subjectIndices = [];
-
-eyeIndicesForSubjects = {};
-
-locationIndicesForEyes = {};
-
-subjectCounter = 1;
-
-eyeIndices = [];
-locationIndices = [];
-subjectIndex = 0;
-
-excludedSubjectUUIDs = {};
-excludedSubjectLabels = {};
-excludedSubjectReasons = {};
-
-excludedCounter = 1;
-
-for i=1:length(selectStructure)
-    entry = selectStructure{i};
-            
-    if entry.isLocation && entry.isSelected
-        
-        locationIndices(length(locationIndices)+1) = i;
-        
-    elseif length(entry.indices) == 2 %must be eye
-        
-        if ~isempty(locationIndices)
-            eyeIndicesForSubject(eyeCounter) = eyeIndex;
-            
-            
-            subjectIndices(subjectCounter) = subjectIndex;
-            locationIndicesForSubjects{subjectCounter} = locationIndices;
-            
-            locationIndices = [];
-            
-            subjectCounter = subjectCounter + 1;
-        end
-        
-        eyeIndex = i;
-    end
-           
-    if length(entry.indices) == 1 || i == length(selectStructure)% must be subject
-        
-        if ~isSelected % record why excluded
-            index = entry.indices(1);
-            
-            subject = trial.subjects{index};
-            
-            excludedSubjectUUIDs{excludedCounter} = subject.UUID;
-            excludedSubjectLabels{excludedCounter} = subject.naviListboxLabel;
-            excludedSubjectReasons{excludedCounter} = entry.subjectExclusionReason;
-            
-            excludedCounter = excludedCounter + 1;
-        else
-            
-            if ~isempty(locationIndices)
-            subjectIndices(subjectCounter) = subjectIndex;
-            locationIndicesForSubjects{subjectCounter} = eyeIndices;
-            
-            locationIndices = [];
-            
-            subjectCounter = subjectCounter + 1;
-        end
-        
-        subjectIndex = i;
-    end
-end
-
-
+% OUTPUT FOR DATA SHEET
 
 % set data output
 
@@ -179,110 +15,10 @@ for i=1:length(colHeaders)
     dataSheetOutput{1,i} = colHeaders{i};
 end
 
+startRowIndex = 2;
 
-rowIndex = 2;
+dataSheetOutput = trialSelectApplied.placeSensitivityAndSpecificityData(dataSheetOutput, startRowIndex);
 
-adPositiveIndex = 'C';
-fluoroSignalIndex = 'D';
-polarSignalIndex = 'E';
-
-truePosIndex = 'F';
-trueNegIndex = 'G';
-falsePosIndex = 'H';
-falseNegIndex = 'I';
-
-subjectRowIndices = [];
-
-for i=1:length(subjectIndices)
-    subjectEntry = selectStructure{subjectIndices(i)};
-    
-    locationIndices = locationIndicesForSubjects{i};
-    
-    subject = trial.subjects{subjectEntry.indices(1)};
-    
-    dataSheetOutput{rowIndex,1} = subject.uuid;
-    dataSheetOutput{rowIndex,2} = trial.getFilenameSections(subjectEntry.indices);
-    dataSheetOutput{rowIndex,3} = convertBoolToExcelBool(subject.isADPositive(trial));
-    
-    numLocations = length(locationIndices);
-    
-    dataSheetOutput{rowIndex,4} = ['=OR(', fluoroSignalIndex, num2str(rowIndex+1), ':', fluoroSignalIndex, num2str(rowIndex+numLocations), ')'];
-    dataSheetOutput{rowIndex,5} = ['=OR(', polarSignalIndex, num2str(rowIndex+1), ':', polarSignalIndex, num2str(rowIndex+numLocations), ')'];
-    
-    rowString = num2str(rowIndex);
-    
-    dataSheetOutput{rowIndex,6} = ['=AND(', adPositiveIndex, rowString, ',', fluoroSignalIndex, rowString, ')'];
-    dataSheetOutput{rowIndex,7} = ['=AND(', 'NOT(', adPositiveIndex, rowString, '),', fluoroSignalIndex, rowString, ')'];
-    dataSheetOutput{rowIndex,8} = ['=AND(', adPositiveIndex, rowString, ',NOT(', fluoroSignalIndex, rowString, '))'];    
-    dataSheetOutput{rowIndex,9} = ['=AND(', 'NOT(', adPositiveIndex, rowString, '),NOT(', fluoroSignalIndex, rowString, '))'];
-    
-    subjectRowIndices(i) = rowIndex;
-    
-    rowIndex = rowIndex + 1;
-    
-    % location rows
-    for j=1:numLocations
-        entry = selectStructure{locationIndices(j)};
-        
-        location = entry.location;
-        
-        rowString = num2str(rowIndex);
-        
-        microscopeSession = location.getMicroscopeSession();
-        
-        dataSheetOutput{rowIndex,1} = microscopeSession.uuid;
-        
-        filenameSections = trial.getFilenameSections(entry.indices);
-        filenameSections = [filenameSections, microscopeSession.generateFilenameSection()];
-        
-        dataSheetOutput{rowIndex,2} = filenameSections;
-        dataSheetOutput{rowIndex,3} = ' ';
-        
-        dataSheetOutput{rowIndex,4} = convertBoolToExcelBool(microscopeSession.fluoroSignature());
-        dataSheetOutput{rowIndex,5} = convertBoolToExcelBool(microscopeSession.crossedSignature());
-        
-        dataSheetOutput{rowIndex,6} = ['=AND(', fluoroSignalIndex, rowString, ',', polarSignalIndex, rowString, ')'];
-        dataSheetOutput{rowIndex,7} = ['=AND(', 'NOT(', fluoroSignalIndex, rowString, '),', polarSignalIndex, rowString, ')'];
-        dataSheetOutput{rowIndex,8} = ['=AND(', fluoroSignalIndex, rowString, ',NOT(', polarSignalIndex, rowString, '))'];
-        dataSheetOutput{rowIndex,9} = ['=AND(', 'NOT(', fluoroSignalIndex, rowString, '),NOT(', polarSignalIndex, rowString, '))'];
-        
-        rowIndex = rowIndex + 1;
-    end
-    
-end
-
-
-startRowString = num2str(2);
-endRowString = num2str(rowIndex - 1);
-
-% sensitivity and specificity calculations
-
-colIndex = length(colHeaders) + 2;
-sumColAlphaIndex = 'L';
-
-rowIndex = 1;
-header = 'By Subject';
-
-dataSheetOutput = setCalcLabels(dataSheetOutput, header, rowIndex, colIndex, sumColAlphaIndex);
-
-rowIndex = 7;
-header = 'By Deposit';
-
-dataSheetOutput = setCalcLabels(dataSheetOutput, header, rowIndex, colIndex, sumColAlphaIndex);
-
-% set by subject sum formulae
-
-dataSheetOutput{2, colIndex + 1} = createSubjectSumString(subjectRowIndices, truePosIndex);
-dataSheetOutput{3, colIndex + 1} = createSubjectSumString(subjectRowIndices, trueNegIndex);
-dataSheetOutput{4, colIndex + 1} = createSubjectSumString(subjectRowIndices, falsePosIndex);
-dataSheetOutput{5, colIndex + 1} = createSubjectSumString(subjectRowIndices, falseNegIndex);
-
-% set by deposit formulae
-
-dataSheetOutput{8, colIndex + 1} = ['=COUNTIF(', truePosIndex, startRowString, ':', truePosIndex, endRowString, ',TRUE) - ', sumColAlphaIndex, num2str(2)];
-dataSheetOutput{9, colIndex + 1} = ['=COUNTIF(', trueNegIndex, startRowString, ':', trueNegIndex, endRowString, ',TRUE) - ', sumColAlphaIndex, num2str(3)];
-dataSheetOutput{10, colIndex + 1} = ['=COUNTIF(', falsePosIndex, startRowString, ':', falsePosIndex, endRowString, ',TRUE) - ', sumColAlphaIndex, num2str(4)];
-dataSheetOutput{11, colIndex + 1} = ['=COUNTIF(', falseNegIndex, startRowString, ':', falseNegIndex, endRowString, ',TRUE) - ', sumColAlphaIndex, num2str(5)];
 
 
 % create session
@@ -290,12 +26,14 @@ dataSheetOutput{11, colIndex + 1} = ['=COUNTIF(', falseNegIndex, startRowString,
 sessionNumber = trial.nextSessionNumber();
 dataProcessingSessionNumber = trial.nextDataProcessingSessionNumber();
 
-toTrialPath = trial.dirName;
+toPath = trial.getToPath();
+
+toFilename = trial.generateFilenameSection();
 
 analysisSession = SensitivityAndSpecificityAnalysisSession(...
     sessionNumber,...
     dataProcessingSessionNumber,...
-    toTrialPath,... 
+    toPath,... 
     projectPath,...
     userName,...
     analysisReason,...
@@ -304,17 +42,223 @@ analysisSession = SensitivityAndSpecificityAnalysisSession(...
     rejected,...
     rejectedReason,...
     rejectedBy,...
-    excludedSubjectUUIDs,...
-    excludedSubjectLabels,...
-    excludedSubjectReasons);
+    toFilename);
 
-toTrialFilename = trial.generateFilenameSection();
-
-analysisSession.writeSensitivityAndSpecificityFile(toTrialFilename, toTrialPath, projectPath, dataSheetOutput);
+analysisSession.writeSensitivityAndSpecificityFile(dataSheetOutput);
 
 trial = trial.addSession(analysisSession);
 
+
+
+
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% % OLD
+% 
+% subjectIndices = [];
+% 
+% eyeIndicesForSubjects = {};
+% 
+% locationIndicesForEyes = {};
+% 
+% subjectCounter = 1;
+% 
+% eyeIndices = [];
+% locationIndices = [];
+% subjectIndex = 0;
+% 
+% excludedSubjectUUIDs = {};
+% excludedSubjectLabels = {};
+% excludedSubjectReasons = {};
+% 
+% excludedCounter = 1;
+% 
+% for i=1:length(selectStructure)
+%     entry = selectStructure{i};
+%             
+%     if entry.isLocation && entry.isSelected
+%         
+%         locationIndices(length(locationIndices)+1) = i;
+%         
+%     elseif length(entry.indices) == 2 %must be eye
+%         
+%         if ~isempty(locationIndices)
+%             eyeIndicesForSubject(eyeCounter) = eyeIndex;
+%             
+%             
+%             subjectIndices(subjectCounter) = subjectIndex;
+%             locationIndicesForSubjects{subjectCounter} = locationIndices;
+%             
+%             locationIndices = [];
+%             
+%             subjectCounter = subjectCounter + 1;
+%         end
+%         
+%         eyeIndex = i;
+%     end
+%            
+%     if length(entry.indices) == 1 || i == length(selectStructure)% must be subject
+%         
+%         if ~isSelected % record why excluded
+%             index = entry.indices(1);
+%             
+%             subject = trial.subjects{index};
+%             
+%             excludedSubjectUUIDs{excludedCounter} = subject.UUID;
+%             excludedSubjectLabels{excludedCounter} = subject.naviListboxLabel;
+%             excludedSubjectReasons{excludedCounter} = entry.subjectExclusionReason;
+%             
+%             excludedCounter = excludedCounter + 1;
+%         else
+%             
+%             if ~isempty(locationIndices)
+%             subjectIndices(subjectCounter) = subjectIndex;
+%             locationIndicesForSubjects{subjectCounter} = eyeIndices;
+%             
+%             locationIndices = [];
+%             
+%             subjectCounter = subjectCounter + 1;
+%         end
+%         
+%         subjectIndex = i;
+%     end
+% end
+% 
+% 
+% 
+% % set data output
+% 
+% colHeaders = {'UUID', 'Label', 'AD Positive', 'Fluorescence Signal', 'Crossed Polarizers Signal', 'True Positive', 'False Positive', 'False Negative', 'True Negative', '0/1 Retinas +', '1/1 Retinas +', '0/2 Retinas +', '1/2 Retinas +', '0/2 Retinas +'};
+% 
+% dataSheetOutput = {};
+% 
+% for i=1:length(colHeaders)
+%     dataSheetOutput{1,i} = colHeaders{i};
+% end
+% 
+% 
+% rowIndex = 2;
+% 
+% adPositiveIndex = 'C';
+% fluoroSignalIndex = 'D';
+% polarSignalIndex = 'E';
+% 
+% truePosIndex = 'F';
+% trueNegIndex = 'G';
+% falsePosIndex = 'H';
+% falseNegIndex = 'I';
+% 
+% subjectRowIndices = [];
+% 
+% for i=1:length(subjectIndices)
+%     subjectEntry = selectStructure{subjectIndices(i)};
+%     
+%     locationIndices = locationIndicesForSubjects{i};
+%     
+%     subject = trial.subjects{subjectEntry.indices(1)};
+%     
+%     dataSheetOutput{rowIndex,1} = subject.uuid;
+%     dataSheetOutput{rowIndex,2} = trial.getFilenameSections(subjectEntry.indices);
+%     dataSheetOutput{rowIndex,3} = convertBoolToExcelBool(subject.isADPositive(trial));
+%     
+%     numLocations = length(locationIndices);
+%     
+%     dataSheetOutput{rowIndex,4} = ['=OR(', fluoroSignalIndex, num2str(rowIndex+1), ':', fluoroSignalIndex, num2str(rowIndex+numLocations), ')'];
+%     dataSheetOutput{rowIndex,5} = ['=OR(', polarSignalIndex, num2str(rowIndex+1), ':', polarSignalIndex, num2str(rowIndex+numLocations), ')'];
+%     
+%     rowString = num2str(rowIndex);
+%     
+%     dataSheetOutput{rowIndex,6} = ['=AND(', adPositiveIndex, rowString, ',', fluoroSignalIndex, rowString, ')'];
+%     dataSheetOutput{rowIndex,7} = ['=AND(', 'NOT(', adPositiveIndex, rowString, '),', fluoroSignalIndex, rowString, ')'];
+%     dataSheetOutput{rowIndex,8} = ['=AND(', adPositiveIndex, rowString, ',NOT(', fluoroSignalIndex, rowString, '))'];    
+%     dataSheetOutput{rowIndex,9} = ['=AND(', 'NOT(', adPositiveIndex, rowString, '),NOT(', fluoroSignalIndex, rowString, '))'];
+%     
+%     subjectRowIndices(i) = rowIndex;
+%     
+%     rowIndex = rowIndex + 1;
+%     
+%     % location rows
+%     for j=1:numLocations
+%         entry = selectStructure{locationIndices(j)};
+%         
+%         location = entry.location;
+%         
+%         rowString = num2str(rowIndex);
+%         
+%         microscopeSession = location.getMicroscopeSession();
+%         
+%         dataSheetOutput{rowIndex,1} = microscopeSession.uuid;
+%         
+%         filenameSections = trial.getFilenameSections(entry.indices);
+%         filenameSections = [filenameSections, microscopeSession.generateFilenameSection()];
+%         
+%         dataSheetOutput{rowIndex,2} = filenameSections;
+%         dataSheetOutput{rowIndex,3} = ' ';
+%         
+%         dataSheetOutput{rowIndex,4} = convertBoolToExcelBool(microscopeSession.fluoroSignature());
+%         dataSheetOutput{rowIndex,5} = convertBoolToExcelBool(microscopeSession.crossedSignature());
+%         
+%         dataSheetOutput{rowIndex,6} = ['=AND(', fluoroSignalIndex, rowString, ',', polarSignalIndex, rowString, ')'];
+%         dataSheetOutput{rowIndex,7} = ['=AND(', 'NOT(', fluoroSignalIndex, rowString, '),', polarSignalIndex, rowString, ')'];
+%         dataSheetOutput{rowIndex,8} = ['=AND(', fluoroSignalIndex, rowString, ',NOT(', polarSignalIndex, rowString, '))'];
+%         dataSheetOutput{rowIndex,9} = ['=AND(', 'NOT(', fluoroSignalIndex, rowString, '),NOT(', polarSignalIndex, rowString, '))'];
+%         
+%         rowIndex = rowIndex + 1;
+%     end
+%     
+% end
+% 
+% 
+% startRowString = num2str(2);
+% endRowString = num2str(rowIndex - 1);
+% 
+% % sensitivity and specificity calculations
+% 
+% colIndex = length(colHeaders) + 2;
+% sumColAlphaIndex = 'L';
+% 
+% rowIndex = 1;
+% header = 'By Subject';
+% 
+% dataSheetOutput = setCalcLabels(dataSheetOutput, header, rowIndex, colIndex, sumColAlphaIndex);
+% 
+% rowIndex = 7;
+% header = 'By Deposit';
+% 
+% dataSheetOutput = setCalcLabels(dataSheetOutput, header, rowIndex, colIndex, sumColAlphaIndex);
+% 
+% % set by subject sum formulae
+% 
+% dataSheetOutput{2, colIndex + 1} = createSubjectSumString(subjectRowIndices, truePosIndex);
+% dataSheetOutput{3, colIndex + 1} = createSubjectSumString(subjectRowIndices, trueNegIndex);
+% dataSheetOutput{4, colIndex + 1} = createSubjectSumString(subjectRowIndices, falsePosIndex);
+% dataSheetOutput{5, colIndex + 1} = createSubjectSumString(subjectRowIndices, falseNegIndex);
+% 
+% % set by deposit formulae
+% 
+% dataSheetOutput{8, colIndex + 1} = ['=COUNTIF(', truePosIndex, startRowString, ':', truePosIndex, endRowString, ',TRUE) - ', sumColAlphaIndex, num2str(2)];
+% dataSheetOutput{9, colIndex + 1} = ['=COUNTIF(', trueNegIndex, startRowString, ':', trueNegIndex, endRowString, ',TRUE) - ', sumColAlphaIndex, num2str(3)];
+% dataSheetOutput{10, colIndex + 1} = ['=COUNTIF(', falsePosIndex, startRowString, ':', falsePosIndex, endRowString, ',TRUE) - ', sumColAlphaIndex, num2str(4)];
+% dataSheetOutput{11, colIndex + 1} = ['=COUNTIF(', falseNegIndex, startRowString, ':', falseNegIndex, endRowString, ',TRUE) - ', sumColAlphaIndex, num2str(5)];
+% 
+% 
+% 
+% 
+% end
 
 
 function output = setCalcLabels(output, header, rowIndex, colIndex, sumColAlphaIndex)
@@ -361,10 +305,3 @@ function string = createSubjectSumString(subjectRowIndices, colAlphaIndex)
     string = [string, ')'];
 end
 
-function string = convertBoolToExcelBool(bool)
-    if bool
-        string = 'TRUE';
-    else
-        string = 'FALSE';
-    end
-end

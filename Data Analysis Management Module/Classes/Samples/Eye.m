@@ -609,6 +609,56 @@ classdef Eye < FixedSample
                 filenameSections = [eye.generateFilenameSection(), quarter.getFilenameSections(indices)];
             end
         end
+                
+        function eye = applySelection(eye, indices, isSelected, additionalFields)
+            index = indices(1);
+            
+            len = length(indices);
+            
+            selectedObject = eye.quarters{index};
+            
+            if len > 1
+                indices = indices(2:len);
+                
+                selectedObject = selectedObject.applySelection(indices, isSelected, additionalFields);
+            else
+                selectedObject.isSelected = isSelected;
+                selectedObject.selectStructureFields = additionalFields;
+            end           
+            
+            eye.quarters{index} = selectedObject;
+        end
+        
+        % ************************************************
+        % FUNCTIONS FOR SENSITIVITY AND SPECIFICITY MODULE
+        % ************************************************
+        
+        function [dataSheetOutput, rowIndex, allLocationRowIndices] = placeSensitivityAndSpecificityData(eye, dataSheetOutput, rowIndex)
+            quarters = eye.quarters;
+            
+            allLocationRowIndices = [];
+            
+            for i=1:length(quarters)
+                quarter = quarters{i};
+                
+                if ~isempty(quarter.isSelected)
+                    [dataSheetOutput, rowIndex, locationRowIndices] = quarter.placeSensitivityAndSpecificityData(dataSheetOutput, rowIndex);
+                    
+                    allLocationRowIndices = [allLocationRowIndices, locationRowIndices];
+                    
+                    dataSheetOutput{rowIndex,1} = quarter.uuid;
+                    dataSheetOutput{rowIndex,2} = quarter.getFilename();
+                    
+                    if quarter.isSelected
+                        % nothing to do
+                    else
+                        dataSheetOutput{rowIndex,3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, quarter.selectStructureFields.exclusionReason];
+                    end
+                    
+                    rowIndex = rowIndex + 1;
+                end
+            end
+        end
         
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE

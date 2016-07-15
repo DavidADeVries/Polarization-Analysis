@@ -11,7 +11,7 @@ startingEntry.isSelected = startingIsSelected;
 
 cancel = false;
 
-if length(startingEntry.indices) == 1 %is top level (aka a subject)
+if ~startingIsSelected
     prompt = ['Enter exclusion reason for ', startingEntry.label, ':'];
     title = 'Exclusion Reason';
     
@@ -20,7 +20,7 @@ if length(startingEntry.indices) == 1 %is top level (aka a subject)
     if isempty(answer)
         cancel = true;
     else
-        startingEntry.subjectExclusionReason = answer;
+        startingEntry.exclusionReason = answer{1};
     end
 end
 

@@ -27,6 +27,7 @@ classdef Quarter
                 
         % for use with select structures
         isSelected = [];
+        selectStructureFields = [];
     end
     
     methods
@@ -121,6 +122,11 @@ classdef Quarter
         function filename = getFilename(quarter)
             filename = [quarter.toFilename, quarter.generateFilenameSection()];
         end  
+        
+        
+        function toPath = getToPath(quarter)
+            toPath = makePath(quarter.toPath, quarter.dirName);
+        end
         
         
         function quarter = updateFileSelectionEntries(quarter, toPath)
@@ -561,6 +567,71 @@ classdef Quarter
                 end
                 
                 filenameSections = [quarter.generateFilenameSection(), location.getFilenameSections(indices)];
+            end
+        end        
+        
+        function quarter = applySelection(quarter, indices, isSelected, additionalFields)
+            index = indices(1);
+            
+            len = length(indices);
+            
+            selectedObject = quarter.locations{index};
+            
+            if len > 1
+                indices = indices(2:len);
+                
+                selectedObject = selectedObject.applySelection(indices, isSelected, additionalFields);
+            else
+                selectedObject.isSelected = isSelected;
+                selectedObject.selectStructureFields = additionalFields;
+            end           
+            
+            quarter.locations{index} = selectedObject;
+        end
+        
+        % ************************************************
+        % FUNCTIONS FOR SENSITIVITY AND SPECIFICITY MODULE
+        % ************************************************
+        
+        function [dataSheetOutput, rowIndex, locationRowIndices] = placeSensitivityAndSpecificityData(quarter, dataSheetOutput, rowIndex)
+            colHeaders = getExcelColHeaders();
+            
+            locations = quarter.locations;
+            
+            locationRowIndices = [];
+            rowCounter = 1;
+            
+            for i=1:length(locations)
+                location = locations{i};
+                
+                if ~isempty(location.isSelected)                        
+                    % write data
+                    dataSheetOutput{rowIndex, 1} = location.uuid;
+                    dataSheetOutput{rowIndex, 2} = location.getFilename();
+                        
+                    if location.isSelected
+                        microscopeSession = location.getMicroscopeSession();
+                        rowIndexString = num2str(rowIndex);
+                        
+                        % add row index
+                        locationRowIndices(rowCounter + 1) = rowIndex;
+                        rowCounter = rowCounter + 1;
+                        
+                        % write data
+                        dataSheetOutput{rowIndex, 3} = []; % no AD positive value to give
+                        dataSheetOutput{rowIndex, 4} = convertBoolToExcelBool(microscopeSession.fluoroSignature);
+                        dataSheetOutput{rowIndex, 5} = convertBoolToExcelBool(microscopeSession.crossedSignature);
+                        dataSheetOutput{rowIndex, 6} = ['=AND(',    colHeaders(4),rowIndexString,',',       colHeaders(5),rowIndexString,')'];
+                        dataSheetOutput{rowIndex, 7} = ['=AND(NOT(',colHeaders(4),rowIndexString,'),',      colHeaders(5),rowIndexString,')'];
+                        dataSheetOutput{rowIndex, 8} = ['=AND(',    colHeaders(4),rowIndexString,',NOT(',   colHeaders(5),rowIndexString,'))'];
+                        dataSheetOutput{rowIndex, 9} = ['=AND(NOT(',colHeaders(4),rowIndexString,'),NOT(',  colHeaders(5),rowIndexString,'))'];
+                    else
+                        dataSheetOutput{rowIndex, 3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, location.selectStructureFields.exclusionReason];
+                    end
+                        
+                    % increment row index
+                    rowIndex = rowIndex + 1;
+                end
             end
         end
         

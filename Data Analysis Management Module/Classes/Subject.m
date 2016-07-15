@@ -21,6 +21,7 @@ classdef Subject
         
         % for use with select structures
         isSelected = [];
+        selectStructureFields = [];
     end
     
     
@@ -48,7 +49,12 @@ classdef Subject
         
         function filename = getFilename(subject)
             filename = [subject.toFilename, subject.generateFilenameSection()];
-        end        
+        end
+        
+        
+        function toPath = getToPath(subject)
+            toPath = makePath(subject.toPath, subject.dirName);
+        end
         
         
         function subject = createDirectories(subject, toTrialPath, projectPath)

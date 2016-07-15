@@ -17,6 +17,7 @@ classdef Sample
         
         % for use with select structures
         isSelected = [];
+        selectStructureFields = [];
     end
     
     methods(Static)
@@ -68,7 +69,7 @@ classdef Sample
     
     methods
         
-        function sample = loadGenericSample(sample, toSamplePath, sampleDir)
+        function sample = loadGenericSample(sample, toSamplePath, sampleDir, toFilename)
             samplePath = makePath(toSamplePath, sampleDir);
 
             % load metadata
@@ -80,6 +81,9 @@ classdef Sample
             
             % load toPath
             sample.toPath = toSamplePath;
+            
+            % load toFilename
+            sample.toFilename = toFilename;
             
             sample = sample.loadObject(samplePath);
         end
@@ -105,7 +109,11 @@ classdef Sample
             
         function filename = getFilename(sample)
             filename = [sample.toFilename, sample.generateFilenameSection()];
-        end    
+        end
+        
+        function toPath = getToPath(sample)
+            toPath = makePath(sample.toPath, sample.dirName);
+        end
         
         function sampleType = getSampleType(sample)
             classString = class(sample);

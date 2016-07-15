@@ -235,6 +235,9 @@ classdef CsfSample < FrozenSample
             locationString = '';
             sessionString = '';
         end
+                
+        function sample = applySelection(sample, indices, isSelected, additionalFields)
+        end
         
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE

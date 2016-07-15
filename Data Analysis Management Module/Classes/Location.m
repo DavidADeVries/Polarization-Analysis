@@ -23,6 +23,7 @@ classdef Location
                         
         % for use with select structures
         isSelected = [];
+        selectStructureFields = [];
     end
     
     methods       
@@ -111,7 +112,12 @@ classdef Location
         
         function filename = getFilename(location)
             filename = [location.toFilename, location.generateFilenameSection()];
-        end  
+        end 
+        
+        
+        function toPath = getToPath(location)
+            toPath = makePath(location.toPath, location.dirName);
+        end
         
         
         function location = updateFileSelectionEntries(location, toPath)
@@ -709,6 +715,25 @@ classdef Location
                 
                 filenameSections = [location.generateFilenameSection(), session.getFilenameSections(indices)];
             end
+        end
+        
+        function location = applySelection(location, indices, isSelected, additionalFields)
+            index = indices(1);
+            
+            len = length(indices);
+            
+            selectedObject = location.sessions{index};
+            
+            if len > 1
+                indices = indices(2:len);
+                
+                selectedObject = selectedObject.applySelection(indices, isSelected, additionalFields);
+            else
+                selectedObject.isSelected = isSelected;
+                selectedObject.selectStructureFields = additionalFields;
+            end           
+            
+            location.sessions{index} = selectedObject;
         end
         
         

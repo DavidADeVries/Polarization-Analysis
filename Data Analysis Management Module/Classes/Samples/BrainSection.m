@@ -265,6 +265,9 @@ classdef BrainSection < FixedSample
             sessionString = '';
         end
         
+        function section = applySelection(section, indices, isSelected, additionalFields)
+        end
+        
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************

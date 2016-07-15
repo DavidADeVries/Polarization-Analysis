@@ -557,6 +557,77 @@ classdef NaturalSubject < Subject
             end
         end
         
+        function subject = applySelection(subject, indices, isSelected, additionalFields)
+            index = indices(1);
+            
+            len = length(indices);
+            
+            selectedObject = subject.samples{index};
+            
+            if len > 1
+                indices = indices(2:len);
+                
+                selectedObject = selectedObject.applySelection(indices, isSelected, additionalFields);
+            else
+                selectedObject.isSelected = isSelected;
+                selectedObject.selectStructureFields = additionalFields;
+            end           
+            
+            subject.samples{index} = selectedObject;
+        end
+        
+        % ************************************************
+        % FUNCTIONS FOR SENSITIVITY AND SPECIFICITY MODULE
+        % ************************************************
+        
+        function [dataSheetOutput, rowIndex, sampleRowIndices, allLocationRowIndices] = placeSensitivityAndSpecificityData(selectSubject, dataSheetOutput, rowIndex, adPositiveRowIndex)
+            colHeaders = getExcelColHeaders();
+            
+            samples = selectSubject.samples;
+            
+            allLocationRowIndices = [];
+            
+            sampleRowIndices = [];
+            rowCounter = 1;
+            
+            for i=1:length(samples)
+                sample = samples{i};
+                
+                if ~isempty(sample.isSelected) % if empty, that means it was never set (aka it was not included in the select structure)
+                    % add row index
+                    sampleRowIndices(rowCounter + 1) = rowIndex;
+                    rowCounter = rowCounter + 1;
+                    
+                    % write data
+                    sampleRowIndex = rowIndex; %cache this, we need to place the eye and location data first
+                    
+                    rowIndex = rowIndex + 1;
+                    
+                    [dataSheetOutput, rowIndex, locationRowIndices] = sample.placeSensitivityAndSpecificityData(dataSheetOutput, rowIndex); %locationRowIndices is a cell array
+                    
+                    allLocationRowIndices = [allLocationRowIndices, locationRowIndices];
+                    
+                    % write data
+                    rowStr = num2str(sampleRowIndex);
+                    
+                    dataSheetOutput{sampleRowIndex, 1} = sample.uuid;
+                    dataSheetOutput{sampleRowIndex, 2} = sample.getFilename();
+                    
+                    if sample.isSelected
+                        dataSheetOutput{sampleRowIndex, 3} = ['=',colHeaders(3),num2str(adPositiveRowIndex)];
+                        dataSheetOutput{sampleRowIndex, 4} = setIndicesOrEquation(colHeaders(4), locationRowIndices);
+                        dataSheetOutput{sampleRowIndex, 5} = setIndicesOrEquation(colHeaders(5), locationRowIndices);
+                        dataSheetOutput{sampleRowIndex, 6} = ['=AND(', colHeaders(3), rowStr, ',', colHeaders(4), rowStr, ')'];
+                        dataSheetOutput{sampleRowIndex, 7} = ['=AND(NOT(', colHeaders(3), rowStr, '),', colHeaders(4), rowStr, ')'];
+                        dataSheetOutput{sampleRowIndex, 8} = ['=AND(', colHeaders(3), rowStr, ',NOT(', colHeaders(4), rowStr, '))'];
+                        dataSheetOutput{sampleRowIndex, 9} = ['=AND(NOT(', colHeaders(3), rowStr, '),NOT(', colHeaders(4), rowStr, '))'];
+                    else
+                        dataSheetOutput{sampleRowIndex,3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, sample.selectStructureFields.exclusionReason];
+                    end
+                end
+            end
+        end
+        
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************

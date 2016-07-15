@@ -30,6 +30,7 @@ classdef Session
                 
         % for use with select structures
         isSelected = [];
+        selectStructureFields = [];
     end
     
     methods(Static)
@@ -84,6 +85,11 @@ classdef Session
         
         function filename = getFilename(session)
             filename = [session.toFilename, session.generateFilenameSection()];
+        end
+        
+        
+        function toPath = getToPath(session)
+            toPath = makePath(session.toPath, session.dirName);
         end 
         
         
@@ -485,6 +491,9 @@ classdef Session
         
         function filenameSections = getFilenameSections(session, indices)
         	filenameSections = session.generateFilenameSection();
+        end        
+        
+        function session = applySelection(session, indices, isSelected, additionalFields)
         end
         
         % *****************************************
