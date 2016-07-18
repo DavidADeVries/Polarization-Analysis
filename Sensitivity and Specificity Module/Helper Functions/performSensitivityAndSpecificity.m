@@ -1,13 +1,13 @@
-function trial = performSensitivityAndSpecificity(trial, selectStructure, projectPath, userName, analysisReason, analysisTitle, notes, rejected,  rejectedReason, rejectedBy)
+function trial = performSensitivityAndSpecificity(trial, selectStructure, userName, analysisReason, analysisTitle, notes, rejected,  rejectedReason, rejectedBy)
 % performSubsectionStatistics
 
-trialSelectApplied = trial.applySelections(selectStructure);
+trial = trial.applySelections(selectStructure);
 
 % OUTPUT FOR DATA SHEET
 
 % set data output
 
-colHeaders = {'UUID', 'Label', 'AD Positive', 'Fluorescence Signal', 'Crossed Polarizers Signal', 'True Positive', 'False Positive', 'False Negative', 'True Negative', '0/2 Retinas +', '1/2 Retinas +', '0/2 Retinas +', '0/1 Retinas +', '1/1 Retinas'};
+colHeaders = {'UUID', 'Label', 'AD Positive', 'Fluorescence Signal', 'Crossed Polarizers Signal', 'True Positive', 'False Positive', 'False Negative', 'True Negative', '0/1 Retinas +', '1/1 Retinas', '0/2 Retinas +', '1/2 Retinas +', '0/2 Retinas +'};
 
 dataSheetOutput = {};
 
@@ -17,7 +17,7 @@ end
 
 startRowIndex = 2;
 
-dataSheetOutput = trialSelectApplied.placeSensitivityAndSpecificityData(dataSheetOutput, startRowIndex);
+dataSheetOutput = trial.placeSensitivityAndSpecificityData(dataSheetOutput, startRowIndex);
 
 
 
@@ -26,23 +26,17 @@ dataSheetOutput = trialSelectApplied.placeSensitivityAndSpecificityData(dataShee
 sessionNumber = trial.nextSessionNumber();
 dataProcessingSessionNumber = trial.nextDataProcessingSessionNumber();
 
-toPath = trial.getToPath();
-
-toFilename = trial.generateFilenameSection();
-
 analysisSession = SensitivityAndSpecificityAnalysisSession(...
+    trial,...
     sessionNumber,...
     dataProcessingSessionNumber,...
-    toPath,... 
-    projectPath,...
     userName,...
     analysisReason,...
     analysisTitle,...
     notes,...
     rejected,...
     rejectedReason,...
-    rejectedBy,...
-    toFilename);
+    rejectedBy);
 
 analysisSession.writeSensitivityAndSpecificityFile(dataSheetOutput);
 

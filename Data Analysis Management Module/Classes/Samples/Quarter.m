@@ -598,19 +598,24 @@ classdef Quarter
                         rowIndexString = num2str(rowIndex);
                         
                         % add row index
-                        locationRowIndices(rowCounter + 1) = rowIndex;
+                        locationRowIndices(rowCounter) = rowIndex;
                         rowCounter = rowCounter + 1;
                         
                         % write data
-                        dataSheetOutput{rowIndex, 3} = []; % no AD positive value to give
+                        dataSheetOutput{rowIndex, 3} = ' '; % no AD positive value to give
                         dataSheetOutput{rowIndex, 4} = convertBoolToExcelBool(microscopeSession.fluoroSignature);
                         dataSheetOutput{rowIndex, 5} = convertBoolToExcelBool(microscopeSession.crossedSignature);
-                        dataSheetOutput{rowIndex, 6} = ['=AND(',    colHeaders(4),rowIndexString,',',       colHeaders(5),rowIndexString,')'];
-                        dataSheetOutput{rowIndex, 7} = ['=AND(NOT(',colHeaders(4),rowIndexString,'),',      colHeaders(5),rowIndexString,')'];
-                        dataSheetOutput{rowIndex, 8} = ['=AND(',    colHeaders(4),rowIndexString,',NOT(',   colHeaders(5),rowIndexString,'))'];
-                        dataSheetOutput{rowIndex, 9} = ['=AND(NOT(',colHeaders(4),rowIndexString,'),NOT(',  colHeaders(5),rowIndexString,'))'];
+                        dataSheetOutput{rowIndex, 6} = ['=AND(',    colHeaders{4},rowIndexString,',',       colHeaders{5},rowIndexString,')'];
+                        dataSheetOutput{rowIndex, 7} = ['=AND(NOT(',colHeaders{4},rowIndexString,'),',      colHeaders{5},rowIndexString,')'];
+                        dataSheetOutput{rowIndex, 8} = ['=AND(',    colHeaders{4},rowIndexString,',NOT(',   colHeaders{5},rowIndexString,'))'];
+                        dataSheetOutput{rowIndex, 9} = ['=AND(NOT(',colHeaders{4},rowIndexString,'),NOT(',  colHeaders{5},rowIndexString,'))'];
                     else
-                        dataSheetOutput{rowIndex, 3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, location.selectStructureFields.exclusionReason];
+                        reason = location.selectStructureFields.exclusionReason;
+                        
+                        if isempty(reason)
+                            reason = SensitivityAndSpecificityConstants.NO_REASON_TAG;
+                        end
+                        dataSheetOutput{rowIndex, 3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, reason];
                     end
                         
                     % increment row index

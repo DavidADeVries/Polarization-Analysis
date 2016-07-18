@@ -572,7 +572,7 @@ classdef NaturalSubject < Subject
                 
                 if ~isempty(sample.isSelected) % if empty, that means it was never set (aka it was not included in the select structure)
                     % add row index
-                    sampleRowIndices(rowCounter + 1) = rowIndex;
+                    sampleRowIndices(rowCounter) = rowIndex;
                     rowCounter = rowCounter + 1;
                     
                     % write data
@@ -591,15 +591,21 @@ classdef NaturalSubject < Subject
                     dataSheetOutput{sampleRowIndex, 2} = sample.getFilename();
                     
                     if sample.isSelected
-                        dataSheetOutput{sampleRowIndex, 3} = ['=',colHeaders(3),num2str(adPositiveRowIndex)];
-                        dataSheetOutput{sampleRowIndex, 4} = setIndicesOrEquation(colHeaders(4), locationRowIndices);
-                        dataSheetOutput{sampleRowIndex, 5} = setIndicesOrEquation(colHeaders(5), locationRowIndices);
-                        dataSheetOutput{sampleRowIndex, 6} = ['=AND(', colHeaders(3), rowStr, ',', colHeaders(4), rowStr, ')'];
-                        dataSheetOutput{sampleRowIndex, 7} = ['=AND(NOT(', colHeaders(3), rowStr, '),', colHeaders(4), rowStr, ')'];
-                        dataSheetOutput{sampleRowIndex, 8} = ['=AND(', colHeaders(3), rowStr, ',NOT(', colHeaders(4), rowStr, '))'];
-                        dataSheetOutput{sampleRowIndex, 9} = ['=AND(NOT(', colHeaders(3), rowStr, '),NOT(', colHeaders(4), rowStr, '))'];
+                        dataSheetOutput{sampleRowIndex, 3} = ['=',colHeaders{3},num2str(adPositiveRowIndex)];
+                        dataSheetOutput{sampleRowIndex, 4} = setIndicesOrEquation(colHeaders{4}, locationRowIndices);
+                        dataSheetOutput{sampleRowIndex, 5} = setIndicesOrEquation(colHeaders{5}, locationRowIndices);
+                        dataSheetOutput{sampleRowIndex, 6} = ['=AND(', colHeaders{3}, rowStr, ',', colHeaders{4}, rowStr, ')'];
+                        dataSheetOutput{sampleRowIndex, 7} = ['=AND(NOT(', colHeaders{3}, rowStr, '),', colHeaders{4}, rowStr, ')'];
+                        dataSheetOutput{sampleRowIndex, 8} = ['=AND(', colHeaders{3}, rowStr, ',NOT(', colHeaders{4}, rowStr, '))'];
+                        dataSheetOutput{sampleRowIndex, 9} = ['=AND(NOT(', colHeaders{3}, rowStr, '),NOT(', colHeaders{4}, rowStr, '))'];
                     else
-                        dataSheetOutput{sampleRowIndex,3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, sample.selectStructureFields.exclusionReason];
+                        reason = sample.selectStructureFields.exclusionReason;
+                        
+                        if isempty(reason)
+                            reason = SensitivityAndSpecificityConstants.NO_REASON_TAG;
+                        end
+                        
+                        dataSheetOutput{sampleRowIndex,3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, reason];
                     end
                 end
             end

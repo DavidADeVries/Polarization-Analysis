@@ -633,20 +633,34 @@ classdef Eye < FixedSample
                 quarter = quarters{i};
                 
                 if ~isempty(quarter.isSelected)
+                    % increase row index
+                    quarterRowIndex = rowIndex;
+                    
+                    rowIndex = rowIndex + 1;
+                    
+                    % place location
                     [dataSheetOutput, rowIndex, locationRowIndices] = quarter.placeSensitivityAndSpecificityData(dataSheetOutput, rowIndex);
                     
                     allLocationRowIndices = [allLocationRowIndices, locationRowIndices];
                     
-                    dataSheetOutput{rowIndex,1} = quarter.uuid;
-                    dataSheetOutput{rowIndex,2} = quarter.getFilename();
+                    % write quarter data
+                                        
+                    dataSheetOutput{quarterRowIndex,1} = quarter.uuid;
+                    dataSheetOutput{quarterRowIndex,2} = quarter.getFilename();
                     
                     if quarter.isSelected
                         % nothing to do
+                        dataSheetOutput{quarterRowIndex,3} = ' '; %blank 
                     else
-                        dataSheetOutput{rowIndex,3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, quarter.selectStructureFields.exclusionReason];
+                        reason = quarter.selectStructureFields.exclusionReason;
+                        
+                        if isempty(reason)
+                            reason = SensitivityAndSpecificityConstants.NO_REASON_TAG;
+                        end
+                        
+                        dataSheetOutput{quarterRowIndex, 3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, reason];
                     end
                     
-                    rowIndex = rowIndex + 1;
                 end
             end
         end

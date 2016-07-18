@@ -777,7 +777,7 @@ classdef Trial
                 entry = selectStructure{i};
                 
                 trial = trial.applySelection(entry.indices, entry.isSelected, entry.getAdditionalFields());
-            end            
+            end
         end
         
         function trial = applySelection(trial, indices, isSelected, additionalFields)
@@ -835,20 +835,20 @@ classdef Trial
                     
                     if subject.isSelected
                         dataSheetOutput{subjectRowIndex, 3} = convertBoolToExcelBool(subject.isADPositive(selectTrial));
-                        dataSheetOutput{subjectRowIndex, 4} = setIndicesOrEquation(colHeaders(4), locationRowIndices);
-                        dataSheetOutput{subjectRowIndex, 5} = setIndicesOrEquation(colHeaders(5), locationRowIndices);
-                        dataSheetOutput{subjectRowIndex, 6} = ['=AND(', colHeaders(3), rowStr, ',', colHeaders(4), rowStr, ')'];
-                        dataSheetOutput{subjectRowIndex, 7} = ['=AND(NOT(', colHeaders(3), rowStr, '),', colHeaders(4), rowStr, ')'];
-                        dataSheetOutput{subjectRowIndex, 8} = ['=AND(', colHeaders(3), rowStr, ',NOT(', colHeaders(4), rowStr, '))'];
-                        dataSheetOutput{subjectRowIndex, 9} = ['=AND(NOT(', colHeaders(3), rowStr, '),NOT(', colHeaders(4), rowStr, '))'];
+                        dataSheetOutput{subjectRowIndex, 4} = setIndicesOrEquation(colHeaders{4}, locationRowIndices);
+                        dataSheetOutput{subjectRowIndex, 5} = setIndicesOrEquation(colHeaders{5}, locationRowIndices);
+                        dataSheetOutput{subjectRowIndex, 6} = ['=AND(', colHeaders{3}, rowStr, ',', colHeaders{4}, rowStr, ')'];
+                        dataSheetOutput{subjectRowIndex, 7} = ['=AND(NOT(', colHeaders{3}, rowStr, '),', colHeaders{4}, rowStr, ')'];
+                        dataSheetOutput{subjectRowIndex, 8} = ['=AND(', colHeaders{3}, rowStr, ',NOT(', colHeaders{4}, rowStr, '))'];
+                        dataSheetOutput{subjectRowIndex, 9} = ['=AND(NOT(', colHeaders{3}, rowStr, '),NOT(', colHeaders{4}, rowStr, '))'];
                         
                         if length(eyeRowIndices) == 1
                             eyeRow = num2str(eyeRowIndices(1));
                             
-                            dataSheetOutput{subjectRowIndex, 10} = ['=NOT(', colHeaders(4), eyeRow, ')'];
-                            dataSheetOutput{subjectRowIndex, 11} = ['=', colHeaders(4), eyeRow];
+                            dataSheetOutput{subjectRowIndex, 10} = ['=NOT(', colHeaders{4}, eyeRow, ')'];
+                            dataSheetOutput{subjectRowIndex, 11} = ['=', colHeaders{4}, eyeRow];
                         elseif length(eyeRowIndices) == 2
-                            indicesString = [colHeaders(4), num2str(eyeRowIndices(1)), ',', colHeaders(4), num2str(eyeRowIndices(2))];
+                            indicesString = [colHeaders{4}, num2str(eyeRowIndices(1)), ',', colHeaders{4}, num2str(eyeRowIndices(2))];
                             
                             dataSheetOutput{subjectRowIndex, 12} = ['=NOT(OR(', indicesString, '))'];
                             dataSheetOutput{subjectRowIndex, 13} = ['=XOR(', indicesString, ')'];
@@ -856,8 +856,14 @@ classdef Trial
                         else
                             error(['Unusual number of eyes. Object: ', subject.getFilename()]);
                         end
-                    else                        
-                        dataSheetOutput{subjectRowIndex,3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, subject.selectStructureFields.exclusionReason];
+                    else
+                        reason = subject.selectStructureFields.exclusionReason;
+                        
+                        if isempty(reason)
+                            reason = SensitivityAndSpecificityConstants.NO_REASON_TAG;
+                        end
+                        
+                        dataSheetOutput{subjectRowIndex,3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, reason];
                     end
                 end
             end

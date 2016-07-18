@@ -8,7 +8,7 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
     end
     
     methods
-        function session = SensitivityAndSpecificityAnalysisSession(sessionNumber, dataProcessingSessionNumber, toTrialPath, projectPath, userName, analysisReason, analysisTitle, notes, rejected, rejectedReason, rejectedBy, toFilename)
+        function session = SensitivityAndSpecificityAnalysisSession(parentObject, sessionNumber, dataProcessingSessionNumber, userName, analysisReason, analysisTitle, notes, rejected, rejectedReason, rejectedBy)
             if nargin > 0
                 % set session numbers
                 session.sessionNumber = sessionNumber;
@@ -35,17 +35,20 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
                 session.linkedSessionNumbers = []; %distributed over multiple subjects, could uuids I suppose
                 
                 % make directory/metadata file
-                session = session.createDirectories(toTrialPath, projectPath);
-                    
+                session = session.createDirectories(parentObject.getToPath(), parentObject.projectPath);
+                
+                % set projectPath
+                session.projectPath = parentObject.projectPath;
+                
                 % set toPath
-                session.toPath = toTrialPath;
+                session.toPath = parentObject.getToPath();
                 
                 % set toFilename
-                session.toFilename = toFilename;
+                session.toFilename = parentObject.getFilename();
                 
                 % save metadata
                 saveToBackup = false;
-                session.saveMetadata(makePath(toTrialPath, session.dirName), projectPath, saveToBackup);
+                session.saveMetadata(makePath(parentObject.getToPath(), session.dirName), parentObject.projectPath, saveToBackup);
             end
         end
         
@@ -80,12 +83,12 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
         
         function [] = writeSensitivityAndSpecificityFile(session, output)
             filename = [...
-                session.getFilename,...
+                session.getFilename(),...
                 createFilenameSection(SensitivityAndSpecificityAnalysisNamingConventions.OUTPUT_FILENAME_SECTION,[]),...
                 createFilenameSection(SensitivityAndSpecificityAnalysisNamingConventions.SENSE_AND_SPEC_FILENAME_SECTION,[]),...
                 Constants.XLSX_EXT];
             
-            toPath = makePath(session.toPath, session.dirName);
+            toPath = session.getFullPath();
             
             mkdir(toPath, SensitivityAndSpecificityAnalysisNamingConventions.OUTPUT_DIR);
             
