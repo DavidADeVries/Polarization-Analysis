@@ -71,27 +71,6 @@ classdef Sample
     
     methods
         
-        function sample = loadGenericSample(sample, parentObject, sampleDir)
-
-            % load metadata
-            vars = load(makePath(parentObject.getFullPath(), SampleNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
-            sample = vars.metadata;
-
-            % load dir name
-            sample.dirName = sampleDir;
-            
-            %load projectPath
-            sample.projectPath = parentObject.projectPath;
-            
-            % load toPath
-            sample.toPath = parentObject.getToPath();
-            
-            % load toFilename
-            sample.toFilename = parentObject.getFilename();
-            
-            sample = sample.loadObject();
-        end
-        
         function sample = createDirectories(sample, toSubjectPath, projectPath)
             sampleDirectory = sample.generateDirName();
             

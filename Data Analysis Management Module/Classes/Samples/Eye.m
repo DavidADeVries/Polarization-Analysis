@@ -148,21 +148,10 @@ classdef Eye < FixedSample
         
         function eye = loadObject(eye)            
             % load quarters
-            eyePath = eye.getFullPath();
+            [objects, objectIndex] = loadObjects(eye, QuarterNamingConventions.METADATA_FILENAME);
             
-            quarterDirs = getMetadataFolders(eyePath, QuarterNamingConventions.METADATA_FILENAME);
-            
-            numQuarters = length(quarterDirs);
-            
-            eye.quarters = createEmptyCellArray(Quarter.empty, numQuarters);
-            
-            for i=1:numQuarters
-                eye.quarters{i} = eye.quarters{i}.loadQuarter(eye, quarterDirs{i});
-            end
-            
-            if ~isempty(eye.quarters)
-                eye.quarterIndex = 1;
-            end
+            eye.quarters = objects;
+            eye.quarterIndex = objectIndex;
         end
         
         function eye = importSample(eye, toEyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType)  

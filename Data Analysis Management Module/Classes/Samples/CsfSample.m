@@ -142,7 +142,8 @@ classdef CsfSample < FrozenSample
             sample = createFilenameSection(CsfSampleNamingConventions.DATA_FILENAME_LABEL, num2str(sample.csfSampleNumber));
         end
         
-        function sample = loadObject(sample, samplePath)
+        function sample = loadObject(sample)
+            % nothing to do
         end
         
         function subSampleNumber = getSubSampleNumber(sample)

@@ -92,37 +92,13 @@ classdef NaturalSubject < Subject
             end
         end
         
-        function subject = loadSubject(subject, parentObject, subjectDir)
-            % load metadata
-            vars = load(makePath(parentObject.getFullPath(), SubjectNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
-            subject = vars.metadata;
+        function subject = loadObject(subject)
             
-            % load dir name
-            subject.dirName = subjectDir;
+            % load samples
+            [objects, objectIndex] = loadObjects(subject, SampleNamingConventions.METADATA_FILENAME);
             
-            % load projectPath
-            subject.projectPath = parentObject.projectPath;
-            
-            % load toPath
-            subject.toPath = parentObject.getToPath();
-            
-            % load toFilename
-            subject.toFilename = parentObject.getFilename();
-            
-            % load eyes            
-            sampleDirs = getMetadataFolders(subjectPath, SampleNamingConventions.METADATA_FILENAME);
-            
-            numSamples = length(sampleDirs);
-            
-            subject.samples = createEmptyCellArray(Sample.empty, numSamples);
-            
-            for i=1:numSamples
-                subject.samples{i} = subject.samples{i}.loadGenericSample(parentObject, sampleDirs{i});
-            end
-            
-            if ~isempty(subject.samples)
-                subject.sampleIndex = 1;
-            end
+            subject.samples = objects;
+            subject.sampleIndex = objectIndex;
         end
         
         function subject = importSubject(subject, toSubjectProjectPath, subjectImportPath, projectPath, dataFilename, userName, subjectType)

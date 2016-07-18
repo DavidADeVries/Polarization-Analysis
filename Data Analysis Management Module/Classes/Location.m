@@ -249,50 +249,12 @@ classdef Location
         end
         
         
-        function location = loadLocation(location, toLocationPath, locationDir, toFilename)
-            locationPath = makePath(toLocationPath, locationDir);
-            
-            % load metadata
-            vars = load(makePath(locationPath, LocationNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR); 
-            location = vars.metadata;
-            
-            %load dir name
-            location.dirName = locationDir;
-            
-            % load toPath
-            location.toPath = toLocationPath;
-            
-            % load toFilename
-            location.toFilename = toFilename;
-            
+        function location = loadObject(location)            
             % load sessions
+            [objects, objectIndex] = loadObjects(location, SessionNamingConventions.METADATA_FILENAME);
             
-            sessionDirs = getMetadataFolders(locationPath, SessionNamingConventions.METADATA_FILENAME);
-            
-            numSessions = length(sessionDirs);
-            
-            sessions = cell(numSessions, 1);
-            
-            for i=1:numSessions %load sessions
-                vars = load(makePath(locationPath, sessionDirs{i}, SessionNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
-                session = vars.metadata;
-                
-                session.dirName = sessionDirs{i};
-                
-                session.toPath = makePath(location.toPath, location.dirName);
-                
-                session.toFilename = location.getFilename();
-                
-                session = session.createFileSelectionEntries(locationPath);
-                
-                sessions{i} = session;
-            end
-            
-            location.sessions = sessions;
-            
-            if ~isempty(sessions)
-                location.sessionIndex = 1;
-            end
+            location.sessions = objects;
+            location.sessionIndex = objectIndex;
         end
         
         

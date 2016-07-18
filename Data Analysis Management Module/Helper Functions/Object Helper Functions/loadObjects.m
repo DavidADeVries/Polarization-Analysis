@@ -8,11 +8,26 @@ numObjects = length(objectDirs);
 objects = cell(numObjects, 1);
 
 for i=1:numObjects
+    objectDir = objectDirs{i};
+    
     % load metadata
-    vars = load(makePath(parentObject.getFullPath(), objectDirs{i}, metadataFilename), Constants.METADATA_VAR);
+    vars = load(makePath(parentObject.getFullPath(), objectDir, metadataFilename), Constants.METADATA_VAR);
     object = vars.metadata;
     
-    object = object.loadObject(parentObject, objectDirs{i});
+    % load dir name
+    object.dirName = objectDir;
+    
+    % load projectPath
+    object.projectPath = parentObject.projectPath;
+    
+    % load toPath
+    object.toPath = parentObject.getToPath();
+    
+    % load toFilename
+    object.toFilename = parentObject.getFilename();
+        
+    % object specific function
+    object = object.loadObject();
     
     objects{i} = object;
 end

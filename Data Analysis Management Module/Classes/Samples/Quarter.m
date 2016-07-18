@@ -147,36 +147,13 @@ classdef Quarter
         end
         
         
-        function quarter = loadQuarter(quarter, toQuarterPath, quarterDir, toFilename)
-            quarterPath = makePath(toQuarterPath, quarterDir);
-            
-            % load metadata            
-            vars = load(makePath(quarterPath, QuarterNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
-            quarter = vars.metadata;
-            
-            % load dirName            
-            quarter.dirName = quarterDir;
-            
-            % load toPath
-            quarter.toPath = toQuarterPath;
-            
-            % load toFilename
-            quarter.toFilename = toFilename;
-            
+        function quarter = loadObject(quarter)            
             % load locations            
-            locationsDirs = getMetadataFolders(quarterPath, LocationNamingConventions.METADATA_FILENAME);
+            [objects, objectIndex] = loadObjects(quarter, LocationNamingConventions.METADATA_FILENAME);
             
-            numLocations = length(locationsDirs);
+            quarter.locations = objects;
+            quarter.locationIndex = objectIndex;
             
-            quarter.locations = createEmptyCellArray(Location.empty, numLocations);
-                        
-            for i=1:numLocations
-                quarter.locations{i} = quarter.locations{i}.loadLocation(quarterPath, locationsDirs{i}, quarter.getFilename());
-            end
-            
-            if ~isempty(quarter.locations)
-                quarter.locationIndex = 1;
-            end
         end
         
         function quarter = importQuarter(quarter, toQuarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType, eyeType)

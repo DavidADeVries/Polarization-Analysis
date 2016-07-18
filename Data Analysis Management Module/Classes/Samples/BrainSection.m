@@ -163,8 +163,9 @@ classdef BrainSection < FixedSample
         function section = generateFilenameSection(section)
             section = createFilenameSection(BrainSectionNamingConventions.DATA_FILENAME_LABEL, num2str(section.brainSectionNumber));
         end
-        
-        function section = loadObject(section, sectionPath)
+                
+        function section = loadObject(section)
+            % load object
         end
         
         function subSampleNumber = getSubSampleNumber(section)

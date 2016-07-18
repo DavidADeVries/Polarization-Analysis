@@ -123,8 +123,6 @@ classdef Session
         
         
         function session = createFileSelectionEntries(session)
-            toSessionPath = makePath(session.projectPath, session.toPath);
-            
             session.fileSelectionEntries = generateFileSelectionEntries({}, toSessionPath, session.dirName, 0);
             
             if ~isempty(session.fileSelectionEntries)
