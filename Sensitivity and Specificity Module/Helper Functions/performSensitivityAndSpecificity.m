@@ -25,7 +25,7 @@ analysisSession = SensitivityAndSpecificityAnalysisSession(...
 
 % set data output
 
-colHeaders = {'UUID', 'Label', 'AD Positive', 'Fluorescence Signal', 'Crossed Polarizers Signal', 'True Positive', 'False Positive', 'False Negative', 'True Negative', '0/1 Retinas +', '1/1 Retinas', '0/2 Retinas +', '1/2 Retinas +', '0/2 Retinas +'};
+colHeaders = {'UUID', 'Label', 'AD Positive', 'Fluorescence Signal', 'Crossed Polarizers Signal', 'True Positive', 'False Positive', 'False Negative', 'True Negative', '0/1 Retinas +', '1/1 Retinas', '0/2 Retinas +', '1/2 Retinas +', '2/2 Retinas +'};
 
 dataSheetOutput = {};
 
@@ -271,8 +271,8 @@ function [resultsSheetOutput] = placeResultSection(resultsSheetOutput, header, s
     
     % set number break downs
     
-    posCondCell = [dataSheetName, colHeaders{2}, num2str(startingRowIndex + 1)];
-    prePosCondCell = [dataSheetName, colHeaders{2}, num2str(startingRowIndex + 2)];
+    posCondCell = [colHeaders{2}, num2str(startingRowIndex + 1)];
+    prePosCondCell = [colHeaders{2}, num2str(startingRowIndex + 2)];
     
     resultsSheetOutput{startingRowIndex + 1, 12} = ['=', posCondCell];
     resultsSheetOutput{startingRowIndex + 1, 13} = ['=CONCATENATE("NOT ",', posCondCell,')'];

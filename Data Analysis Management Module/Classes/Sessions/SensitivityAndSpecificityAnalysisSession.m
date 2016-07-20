@@ -14,9 +14,6 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
                 session.sessionNumber = sessionNumber;
                 session.dataProcessingSessionNumber = dataProcessingSessionNumber;
                 
-                % set navigation listbox label
-                session.naviListboxLabel = session.generateListboxLabel();
-                
                 % set metadata history
                 session.metadataHistory = MetadataHistoryEntry(userName, SensitivityAndSpecificityAnalysisSession.empty);
                 
@@ -33,6 +30,9 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
                 session.rejectedBy = rejectedBy;
                                 
                 session.linkedSessionNumbers = []; %distributed over multiple subjects, could uuids I suppose
+                
+                % set navigation listbox label
+                session.naviListboxLabel = session.generateListboxLabel();
                 
                 % make directory/metadata file
                 session = session.createDirectories(parentObject.getToPath(), parentObject.projectPath);
@@ -54,7 +54,7 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
         
         
         function dirSubtitle = getDirSubtitle(session)
-            dirSubtitle = [SensitivityAndSpecificityAnalysisNamingConventions.SESSION_DIR_SUBTITLE];
+            dirSubtitle = [SensitivityAndSpecificityAnalysisNamingConventions.SESSION_DIR_SUBTITLE, ' - ', session.analysisTitle];
         end
         
         
@@ -66,8 +66,14 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
             
             [sessionDateString, sessionDoneByString, sessionNumberString, rejectedString, rejectedReasonString, rejectedByString, sessionNotesString, metadataHistoryStrings] = getSessionMetadataString(session);
             [dataProcessingSessionNumberString, linkedSessionsString] = session.getProcessingSessionMetadataString();
-                        
+            
+            analysisTitleString = ['Analysis Title: ', session.analysisTitle];
+            analysisReasonString = ['Analysis Reason: ', session.analysisReason];
+            
+            
             metadataString = [...
+                analysisTitleString,...
+                analysisReasonString,...
                 sessionDateString,...
                 sessionDoneByString,...
                 sessionNumberString,...
