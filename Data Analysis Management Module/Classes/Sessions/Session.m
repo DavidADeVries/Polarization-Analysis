@@ -11,7 +11,10 @@ classdef Session
         dirName = '';
         naviListboxLabel = '';
         metadataHistory = {};
+        
+        projectPath = ''
         toPath = ''
+        toFilename = ''
         
         % set by metadata entry
         sessionDate = 0;
@@ -26,23 +29,27 @@ classdef Session
         % list of files for the session and the index   
         fileSelectionEntries = {};
         subfolderIndex = 0;
+                
+        % for use with select structures
+        isSelected = [];
+        selectStructureFields = [];
     end
     
     methods(Static)
         
-        function session = createSession(sessionType, sessionNumber, dataCollectionSessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, lastSession)
+        function session = createSession(sessionType, sessionNumber, dataCollectionSessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, lastSession, toFilename)
             
             if sessionType == SessionTypes.Microscope
-                session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, lastSession);
+                session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, lastSession, toFilename);
                 
             elseif sessionType == SessionTypes.CSLO
-                session = CLSOSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, lastSession);
+                session = CLSOSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, lastSession, toFilename);
                 
             elseif sessionType == SessionTypes.LegacyRegistration
-                session = LegacyRegistrationSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, lastSession);
+                session = LegacyRegistrationSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, lastSession, toFilename);
                 
             elseif sessionType == SessionTypes.LegacySubsectionSelection
-                session = LegacySubsectionSelectionSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, lastSession);
+                session = LegacySubsectionSelectionSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, lastSession, toFilename);
                 
             elseif sessionType == SessionTypes.FrameAveraging
                 session = FrameAveragingSession();
@@ -74,7 +81,28 @@ classdef Session
             session.dirName = '';
             session.fileSelectionEntries = [];
             session.toPath = '';
+            session.toFilename = '';
         end
+        
+        
+        function filename = getFilename(session)
+            filename = [session.toFilename, session.generateFilenameSection()];
+        end
+        
+        
+        function toPath = getToPath(session)
+            toPath = makePath(session.toPath, session.dirName);
+        end
+        
+        
+        function toPath = getFullPath(session)
+            toPath = makePath(session.projectPath, session.getToPath());
+        end
+        
+        function session = loadObject(session)            
+            session = session.createFileSelectionEntries();
+        end
+        
         
         function handles = updateNavigationListboxes(session, handles)
             subfolderSelections = session.getSubfolderSelections();
@@ -94,7 +122,9 @@ classdef Session
         end
         
         
-        function session = createFileSelectionEntries(session, toSessionPath)
+        function session = createFileSelectionEntries(session)
+            toSessionPath = makePath(session.projectPath, session.toPath);
+            
             session.fileSelectionEntries = generateFileSelectionEntries({}, toSessionPath, session.dirName, 0);
             
             if ~isempty(session.fileSelectionEntries)
@@ -474,6 +504,9 @@ classdef Session
         
         function filenameSections = getFilenameSections(session, indices)
         	filenameSections = session.generateFilenameSection();
+        end        
+        
+        function session = applySelection(session, indices, isSelected, additionalFields)
         end
         
         % *****************************************

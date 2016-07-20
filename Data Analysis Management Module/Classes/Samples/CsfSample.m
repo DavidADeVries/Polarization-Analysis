@@ -8,7 +8,7 @@ classdef CsfSample < FrozenSample
     
     methods
         
-        function sample = CsfSample(sampleNumber, existingSampleNumbers, csfSampleNumber, existingCsfSampleNumbers, toSubjectPath, projectPath, importPath, userName)
+        function sample = CsfSample(sampleNumber, existingSampleNumbers, csfSampleNumber, existingCsfSampleNumbers, toSubjectPath, projectPath, importPath, userName, toFilename)
             if nargin > 0
                 [cancel, sample] = sample.enterMetadata(sampleNumber, existingSampleNumbers, csfSampleNumber, existingCsfSampleNumbers, importPath, userName);
                 
@@ -27,6 +27,9 @@ classdef CsfSample < FrozenSample
                     
                     % set toPath
                     sample.toPath = toSubjectPath;
+                    
+                    % set toFilename
+                    sample.toFilename = toFilename;
                     
                     % save metadata
                     saveToBackup = true;
@@ -139,7 +142,8 @@ classdef CsfSample < FrozenSample
             sample = createFilenameSection(CsfSampleNamingConventions.DATA_FILENAME_LABEL, num2str(sample.csfSampleNumber));
         end
         
-        function sample = loadObject(sample, samplePath)
+        function sample = loadObject(sample)
+            % nothing to do
         end
         
         function subSampleNumber = getSubSampleNumber(sample)
@@ -149,6 +153,7 @@ classdef CsfSample < FrozenSample
         function sample = wipeoutMetadataFields(sample)
             sample.dirName = '';
             sample.toPath = '';
+            sample.toFilename = '';
         end
         
         function metadataString = getMetadataString(sample)
@@ -230,6 +235,9 @@ classdef CsfSample < FrozenSample
             data = [];
             locationString = '';
             sessionString = '';
+        end
+                
+        function sample = applySelection(sample, indices, isSelected, additionalFields)
         end
         
         % ******************************************

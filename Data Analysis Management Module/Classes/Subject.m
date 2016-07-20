@@ -7,7 +7,10 @@ classdef Subject
         dirName
         naviListboxLabel
         metadataHistory
+        
+        projectPath = ''
         toPath = ''
+        toFilename = ''
         
         % set by metadata entry        
         subjectId % person ID, dog name        
@@ -17,6 +20,10 @@ classdef Subject
         % list of eyes and index
         samples
         sampleIndex = 0
+        
+        % for use with select structures
+        isSelected = [];
+        selectStructureFields = [];
     end
     
     
@@ -39,6 +46,21 @@ classdef Subject
         
         function section = generateFilenameSection(subject)
             section = createFilenameSection(SubjectNamingConventions.DATA_FILENAME_LABEL, num2str(subject.subjectNumber));
+        end
+        
+        
+        function filename = getFilename(subject)
+            filename = [subject.toFilename, subject.generateFilenameSection()];
+        end
+        
+        
+        function toPath = getToPath(subject)
+            toPath = makePath(subject.toPath, subject.dirName);
+        end
+        
+        
+        function toPath = getFullPath(subject)
+            toPath = makePath(subject.projectPath, subject.getToPath());
         end
         
         
@@ -218,7 +240,8 @@ classdef Subject
                 toPath,...
                 projectPath,...
                 importPath,...
-                userName);
+                userName,...
+                subject.getFilename);
             
             if ~isempty(sample)
                 subject = subject.updateSample(sample);
@@ -288,7 +311,6 @@ classdef Subject
                 session = sample.getSelectedSession();
             end
         end
-        
         
     end
     

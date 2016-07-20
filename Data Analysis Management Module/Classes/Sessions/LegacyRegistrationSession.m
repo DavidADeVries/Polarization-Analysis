@@ -9,7 +9,7 @@ classdef LegacyRegistrationSession < DataProcessingSession
     end
     
     methods
-        function session = LegacyRegistrationSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, lastSession)
+        function session = LegacyRegistrationSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, importDir, userName, sessionChoices, lastSession, toFilename)
             if nargin > 0
                 [cancel, session] = session.enterMetadata(importDir, userName, sessionChoices, lastSession);
                 
@@ -29,6 +29,9 @@ classdef LegacyRegistrationSession < DataProcessingSession
                     
                     % set toPath
                     session.toPath = toLocationPath;
+                    
+                    % set toFilename
+                    session.toFilename = toFilename;
                     
                     % save metadata
                     saveToBackup = true;

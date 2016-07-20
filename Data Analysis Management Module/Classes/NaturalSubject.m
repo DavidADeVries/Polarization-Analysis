@@ -13,7 +13,7 @@ classdef NaturalSubject < Subject
     end
     
     methods
-        function subject = NaturalSubject(subjectNumber, existingSubjectNumbers, toTrialPath, projectPath, importDir, userName)
+        function subject = NaturalSubject(subjectNumber, existingSubjectNumbers, toTrialPath, projectPath, importDir, userName, toTrialFilename)
             if nargin > 0
                 [cancel, subject] = subject.enterMetadata(subjectNumber, existingSubjectNumbers, importDir, userName);
                 
@@ -29,6 +29,9 @@ classdef NaturalSubject < Subject
                     
                     % set toPath
                     subject.toPath = toTrialPath;
+                    
+                    % set toFilename
+                    subject.toFilename = toTrialFilename;
                     
                     % save metadata
                     saveToBackup = true;
@@ -89,34 +92,13 @@ classdef NaturalSubject < Subject
             end
         end
         
-        
-        function subject = loadSubject(subject, toSubjectPath, subjectDir)
-            subjectPath = makePath(toSubjectPath, subjectDir);
+        function subject = loadObject(subject)
             
-            % load metadata
-            vars = load(makePath(subjectPath, SubjectNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
-            subject = vars.metadata;
+            % load samples
+            [objects, objectIndex] = loadObjects(subject, SampleNamingConventions.METADATA_FILENAME);
             
-            % load dir name
-            subject.dirName = subjectDir;
-            
-            % load toPath
-            subject.toPath = toSubjectPath;
-            
-            % load eyes            
-            sampleDirs = getMetadataFolders(subjectPath, SampleNamingConventions.METADATA_FILENAME);
-            
-            numSamples = length(sampleDirs);
-            
-            subject.samples = createEmptyCellArray(Sample.empty, numSamples);
-            
-            for i=1:numSamples
-                subject.samples{i} = subject.samples{i}.loadGenericSample(subjectPath, sampleDirs{i});
-            end
-            
-            if ~isempty(subject.samples)
-                subject.sampleIndex = 1;
-            end
+            subject.samples = objects;
+            subject.sampleIndex = objectIndex;
         end
         
         function subject = importSubject(subject, toSubjectProjectPath, subjectImportPath, projectPath, dataFilename, userName, subjectType)
@@ -552,6 +534,83 @@ classdef NaturalSubject < Subject
             end
         end
         
+        function subject = applySelection(subject, indices, isSelected, additionalFields)
+            index = indices(1);
+            
+            len = length(indices);
+            
+            selectedObject = subject.samples{index};
+            
+            if len > 1
+                indices = indices(2:len);
+                
+                selectedObject = selectedObject.applySelection(indices, isSelected, additionalFields);
+            else
+                selectedObject.isSelected = isSelected;
+                selectedObject.selectStructureFields = additionalFields;
+            end           
+            
+            subject.samples{index} = selectedObject;
+        end
+        
+        % ************************************************
+        % FUNCTIONS FOR SENSITIVITY AND SPECIFICITY MODULE
+        % ************************************************
+        
+        function [dataSheetOutput, rowIndex, sampleRowIndices, allLocationRowIndices] = placeSensitivityAndSpecificityData(selectSubject, dataSheetOutput, rowIndex, adPositiveRowIndex)
+            colHeaders = getExcelColHeaders();
+            
+            samples = selectSubject.samples;
+            
+            allLocationRowIndices = [];
+            
+            sampleRowIndices = [];
+            rowCounter = 1;
+            
+            for i=1:length(samples)
+                sample = samples{i};
+                
+                if ~isempty(sample.isSelected) % if empty, that means it was never set (aka it was not included in the select structure)
+                    % add row index
+                    sampleRowIndices(rowCounter) = rowIndex;
+                    rowCounter = rowCounter + 1;
+                    
+                    % write data
+                    sampleRowIndex = rowIndex; %cache this, we need to place the eye and location data first
+                    
+                    rowIndex = rowIndex + 1;
+                    
+                    [dataSheetOutput, rowIndex, locationRowIndices] = sample.placeSensitivityAndSpecificityData(dataSheetOutput, rowIndex); %locationRowIndices is a cell array
+                    
+                    allLocationRowIndices = [allLocationRowIndices, locationRowIndices];
+                    
+                    % write data
+                    rowStr = num2str(sampleRowIndex);
+                    
+                    dataSheetOutput{sampleRowIndex, 1} = sample.uuid;
+                    dataSheetOutput{sampleRowIndex, 2} = sample.getFilename();
+                    
+                    if sample.isSelected
+                        dataSheetOutput{sampleRowIndex, 3} = ['=',colHeaders{3},num2str(adPositiveRowIndex)];
+                        dataSheetOutput{sampleRowIndex, 4} = setIndicesOrEquation(colHeaders{4}, locationRowIndices);
+                        dataSheetOutput{sampleRowIndex, 5} = setIndicesOrEquation(colHeaders{5}, locationRowIndices);
+                        dataSheetOutput{sampleRowIndex, 6} = ['=INT(AND(', colHeaders{3}, rowStr, ',', colHeaders{4}, rowStr, '))'];
+                        dataSheetOutput{sampleRowIndex, 7} = ['=INT(AND(NOT(', colHeaders{3}, rowStr, '),', colHeaders{4}, rowStr, '))'];
+                        dataSheetOutput{sampleRowIndex, 8} = ['=INT(AND(', colHeaders{3}, rowStr, ',NOT(', colHeaders{4}, rowStr, ')))'];
+                        dataSheetOutput{sampleRowIndex, 9} = ['=INT(AND(NOT(', colHeaders{3}, rowStr, '),NOT(', colHeaders{4}, rowStr, ')))'];
+                    else
+                        reason = sample.selectStructureFields.exclusionReason;
+                        
+                        if isempty(reason)
+                            reason = SensitivityAndSpecificityConstants.NO_REASON_TAG;
+                        end
+                        
+                        dataSheetOutput{sampleRowIndex,3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, reason];
+                    end
+                end
+            end
+        end
+        
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
         % ******************************************
@@ -571,6 +630,8 @@ classdef NaturalSubject < Subject
                     selectStructureForSubject = [selectStructureForSubject, selectStructureForSample];
                     
                     hasValidSession = true;
+                elseif strcmp(sessionClass, class(SensitivityAndSpecificityAnalysisSession))
+                    selectStructureForSubject = [selectStructureForSubject, selectStructureForSample];
                 end
             end
             
@@ -581,12 +642,21 @@ classdef NaturalSubject < Subject
                     case class(SubsectionStatisticsAnalysisSession)
                         selectionEntry = SubsectionStatisticsModuleSelectionEntry(subject.naviListboxLabel, indices);
                     case class(SensitivityAndSpecificityAnalysisSession)
-                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(subject.naviListboxLabel, indices);
+                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(subject.naviListboxLabel, indices, subject);
                 end
                 
                 selectStructureForSubject = [{selectionEntry}, selectStructureForSubject];
             else
-                selectStructureForSubject = {};
+                if strcmp(sessionClass, class(SensitivityAndSpecificityAnalysisSession)) % for sensitivity and specificity, even if no location, have unselected subject
+                    selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(subject.naviListboxLabel, indices, subject);
+                    
+                    selectionEntry.isSelected = false;
+                    selectionEntry.exclusionReason = SensitivityAndSpecificityConstants.NO_DATA_REASON;
+                    
+                    selectStructureForSubject = [{selectionEntry}, selectStructureForSubject];
+                else
+                    selectStructureForSubject = {};
+                end
             end
             
         end

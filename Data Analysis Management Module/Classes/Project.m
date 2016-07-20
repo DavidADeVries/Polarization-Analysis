@@ -8,6 +8,8 @@ classdef Project
         title
         description
         
+        projectPath
+        
         trials
         trialIndex = 0
         
@@ -28,6 +30,9 @@ classdef Project
                     
                     % set metadata history
                     project.metadataHistory = MetadataHistoryEntry(userName, Project.empty);
+                    
+                    % set projectPath
+                    project.projectPath = projectPath;
                                                             
                     % save metadata
                     project.saveMetadata(projectPath);
@@ -58,24 +63,35 @@ classdef Project
         end
         
         
-        function project = loadProject(project, projectDir)
+        function filename = getFilename(project)
+            filename = '';
+        end
+        
+        
+        function toPath = getToPath(project)
+            toPath = '';
+        end
+        
+        
+        function toPath = getFullPath(project)
+            toPath = project.projectPath;
+        end
+        
+        
+        function project = loadObject(project, projectPath)
             % load metadata
-            vars = load(makePath(projectDir, ProjectNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
+            vars = load(makePath(projectPath, ProjectNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
             project = vars.metadata;
             
+            % set projectPath
+            project.projectPath = projectPath;
+            
+            
             % load trials
-            trialDirs = getMetadataFolders(projectDir, TrialNamingConventions.METADATA_FILENAME);
+            [objects, objectIndex] = loadObjects(project, TrialNamingConventions.METADATA_FILENAME);
             
-            numTrials = length(trialDirs);
-            project.trials = createEmptyCellArray(Trial.empty, numTrials);
-            
-            for i=1:numTrials
-                project.trials{i} = project.trials{i}.loadTrial(projectDir, trialDirs{i});
-            end
-            
-            if ~isempty(project.trials)
-                project.trialIndex = 1;
-            end
+            project.trials = objects;
+            project.trialIndex = objectIndex;
         end
         
         function project = editProjectMetadata(project, projectPath, userName)
@@ -396,6 +412,7 @@ classdef Project
         
         function project = wipeoutMetadataFields(project)
             project.trials = [];
+            project.projectPath = '';
         end
         
         function project = createNewTrial(project, projectPath, userName)

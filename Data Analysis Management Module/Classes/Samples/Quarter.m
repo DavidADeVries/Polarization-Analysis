@@ -8,7 +8,10 @@ classdef Quarter
         dirName
         naviListboxLabel
         metadataHistory
+        
+        projectPath = ''
         toPath = ''
+        toFilename = ''
         
         % set by metadata entry        
         mountingDate
@@ -23,10 +26,14 @@ classdef Quarter
         % locations list and index
         locations
         locationIndex = 0
+                
+        % for use with select structures
+        isSelected = [];
+        selectStructureFields = [];
     end
     
     methods
-        function quarter = Quarter(suggestedQuarterNumber, existingQuarterNumbers, toEyePath, projectPath, importDir, userName)
+        function quarter = Quarter(suggestedQuarterNumber, existingQuarterNumbers, toEyePath, projectPath, importDir, userName, toFilename)
             [cancel, quarter] = quarter.enterMetadata(suggestedQuarterNumber, existingQuarterNumbers, importDir, userName);
             
             if ~cancel
@@ -44,6 +51,9 @@ classdef Quarter
                 
                 % set toPath
                 quarter.toPath = toEyePath;
+                
+                % set toFilename
+                quarter.toFilename = toFilename;
                 
                 % save metadata
                 saveToBackup = true;
@@ -111,6 +121,21 @@ classdef Quarter
         end
         
         
+        function filename = getFilename(quarter)
+            filename = [quarter.toFilename, quarter.generateFilenameSection()];
+        end  
+        
+        
+        function toPath = getToPath(quarter)
+            toPath = makePath(quarter.toPath, quarter.dirName);
+        end
+        
+        
+        function toPath = getFullPath(quarter)
+            toPath = makePath(quarter.projectPath, quarter.getToPath());
+        end
+        
+        
         function quarter = updateFileSelectionEntries(quarter, toPath)
             locations = quarter.locations;
             
@@ -122,33 +147,13 @@ classdef Quarter
         end
         
         
-        function quarter = loadQuarter(quarter, toQuarterPath, quarterDir)
-            quarterPath = makePath(toQuarterPath, quarterDir);
-            
-            % load metadata            
-            vars = load(makePath(quarterPath, QuarterNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
-            quarter = vars.metadata;
-            
-            % load dirName            
-            quarter.dirName = quarterDir;
-            
-            % load toPath
-            quarter.toPath = toQuarterPath;
-            
+        function quarter = loadObject(quarter)            
             % load locations            
-            locationsDirs = getMetadataFolders(quarterPath, LocationNamingConventions.METADATA_FILENAME);
+            [objects, objectIndex] = loadObjects(quarter, LocationNamingConventions.METADATA_FILENAME);
             
-            numLocations = length(locationsDirs);
+            quarter.locations = objects;
+            quarter.locationIndex = objectIndex;
             
-            quarter.locations = createEmptyCellArray(Location.empty, numLocations);
-                        
-            for i=1:numLocations
-                quarter.locations{i} = quarter.locations{i}.loadLocation(quarterPath, locationsDirs{i});
-            end
-            
-            if ~isempty(quarter.locations)
-                quarter.locationIndex = 1;
-            end
         end
         
         function quarter = importQuarter(quarter, toQuarterProjectPath, quarterImportPath, projectPath, dataFilename, userName, subjectType, eyeType)
@@ -309,6 +314,7 @@ classdef Quarter
             quarter.dirName = '';
             quarter.locations = [];
             quarter.toPath = '';
+            quarter.toFilename = '';
         end
         
         function location = getSelectedLocation(quarter)
@@ -509,7 +515,7 @@ classdef Quarter
             
             importDir = '';
             
-            location = Location(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, toQuarterPath, projectPath, importDir, userName, subjectType, eyeType, quarterType);
+            location = Location(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, toQuarterPath, projectPath, importDir, userName, subjectType, eyeType, quarterType, quarter.getFilename());
             
             if ~isempty(location)
                 quarter = quarter.updateLocation(location);
@@ -546,6 +552,76 @@ classdef Quarter
                 
                 filenameSections = [quarter.generateFilenameSection(), location.getFilenameSections(indices)];
             end
+        end        
+        
+        function quarter = applySelection(quarter, indices, isSelected, additionalFields)
+            index = indices(1);
+            
+            len = length(indices);
+            
+            selectedObject = quarter.locations{index};
+            
+            if len > 1
+                indices = indices(2:len);
+                
+                selectedObject = selectedObject.applySelection(indices, isSelected, additionalFields);
+            else
+                selectedObject.isSelected = isSelected;
+                selectedObject.selectStructureFields = additionalFields;
+            end           
+            
+            quarter.locations{index} = selectedObject;
+        end
+        
+        % ************************************************
+        % FUNCTIONS FOR SENSITIVITY AND SPECIFICITY MODULE
+        % ************************************************
+        
+        function [dataSheetOutput, rowIndex, locationRowIndices] = placeSensitivityAndSpecificityData(quarter, dataSheetOutput, rowIndex)
+            colHeaders = getExcelColHeaders();
+            
+            locations = quarter.locations;
+            
+            locationRowIndices = [];
+            rowCounter = 1;
+            
+            for i=1:length(locations)
+                location = locations{i};
+                
+                if ~isempty(location.isSelected)                        
+                    % write data
+                    dataSheetOutput{rowIndex, 1} = location.uuid;
+                    dataSheetOutput{rowIndex, 2} = location.getFilename();
+                        
+                    if location.isSelected
+                        microscopeSession = location.getMicroscopeSession();
+                        rowIndexString = num2str(rowIndex);
+                        
+                        % add row index
+                        locationRowIndices(rowCounter) = rowIndex;
+                        rowCounter = rowCounter + 1;
+                        
+                        % write data
+                        dataSheetOutput{rowIndex, 3} = ' '; % no AD positive value to give
+                        dataSheetOutput{rowIndex, 4} = convertBoolToExcelBool(microscopeSession.fluoroSignature);
+                        dataSheetOutput{rowIndex, 5} = convertBoolToExcelBool(microscopeSession.crossedSignature);
+                        dataSheetOutput{rowIndex, 6} = ['=INT(AND(',    colHeaders{4},rowIndexString,',',       colHeaders{5},rowIndexString,'))'];
+                        dataSheetOutput{rowIndex, 7} = ['=INT(AND(NOT(',colHeaders{4},rowIndexString,'),',      colHeaders{5},rowIndexString,'))'];
+                        dataSheetOutput{rowIndex, 8} = ['=INT(AND(',    colHeaders{4},rowIndexString,',NOT(',   colHeaders{5},rowIndexString,')))'];
+                        dataSheetOutput{rowIndex, 9} = ['=INT(AND(NOT(',colHeaders{4},rowIndexString,'),NOT(',  colHeaders{5},rowIndexString,')))'];
+                    else
+                        reason = location.selectStructureFields.exclusionReason;
+                        
+                        if isempty(reason)
+                            reason = SensitivityAndSpecificityConstants.NO_REASON_TAG;
+                        end
+                        dataSheetOutput{rowIndex, 3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, reason];
+                    end
+                        
+                    % increment row index
+                    rowIndex = rowIndex + 1;
+                end
+            end
         end
         
         
@@ -578,7 +654,7 @@ classdef Quarter
                     case class(SubsectionStatisticsAnalysisSession)
                         selectionEntry = SubsectionStatisticsModuleSelectionEntry(quarter.naviListboxLabel, indices);
                     case class(SensitivityAndSpecificityAnalysisSession)
-                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(quarter.naviListboxLabel, indices);
+                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(quarter.naviListboxLabel, indices, quarter);
                 end
                 
                 selectStructureForQuarter = [{selectionEntry}, selectStructureForQuarter];

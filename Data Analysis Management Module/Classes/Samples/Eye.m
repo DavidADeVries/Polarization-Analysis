@@ -16,7 +16,7 @@ classdef Eye < FixedSample
     end
     
     methods
-        function eye = Eye(sampleNumber, existingSampleNumbers, eyeNumber, existingEyeNumbers, toSubjectPath, projectPath, importPath, userName)
+        function eye = Eye(sampleNumber, existingSampleNumbers, eyeNumber, existingEyeNumbers, toSubjectPath, projectPath, importPath, userName, toFilename)
             if nargin > 0
                 [cancel, eye] = eye.enterMetadata(sampleNumber, existingSampleNumbers, eyeNumber, existingEyeNumbers, importPath, userName);
                 
@@ -35,6 +35,9 @@ classdef Eye < FixedSample
                     
                     % set toPath
                     eye.toPath = toSubjectPath;
+                    
+                    % set toFilename
+                    eye.toFilename = toFilename;
                     
                     % save metadata
                     saveToBackup = true;
@@ -143,21 +146,12 @@ classdef Eye < FixedSample
         end
         
         
-        function eye = loadObject(eye, eyePath)            
+        function eye = loadObject(eye)            
             % load quarters
-            quarterDirs = getMetadataFolders(eyePath, QuarterNamingConventions.METADATA_FILENAME);
+            [objects, objectIndex] = loadObjects(eye, QuarterNamingConventions.METADATA_FILENAME);
             
-            numQuarters = length(quarterDirs);
-            
-            eye.quarters = createEmptyCellArray(Quarter.empty, numQuarters);
-            
-            for i=1:numQuarters
-                eye.quarters{i} = eye.quarters{i}.loadQuarter(eyePath, quarterDirs{i});
-            end
-            
-            if ~isempty(eye.quarters)
-                eye.quarterIndex = 1;
-            end
+            eye.quarters = objects;
+            eye.quarterIndex = objectIndex;
         end
         
         function eye = importSample(eye, toEyeProjectPath, eyeImportPath, projectPath, dataFilename, userName, subjectType)  
@@ -338,6 +332,7 @@ classdef Eye < FixedSample
             eye.dirName = '';
             eye.quarters = [];            
             eye.toPath = '';
+            eye.toFilename = '';
         end
         
         function quarter = getSelectedQuarter(eye)
@@ -555,7 +550,7 @@ classdef Eye < FixedSample
             toEyePath = makePath(toPath, eye.dirName);
             importDir = '';
             
-            quarter = Quarter(suggestedQuarterNumber, existingQuarterNumbers, toEyePath, projectPath, importDir, userName);
+            quarter = Quarter(suggestedQuarterNumber, existingQuarterNumbers, toEyePath, projectPath, importDir, userName, eye.getFilename());
             
             if ~isempty(quarter)
                 eye = eye.updateQuarter(quarter);
@@ -605,6 +600,70 @@ classdef Eye < FixedSample
                 filenameSections = [eye.generateFilenameSection(), quarter.getFilenameSections(indices)];
             end
         end
+                
+        function eye = applySelection(eye, indices, isSelected, additionalFields)
+            index = indices(1);
+            
+            len = length(indices);
+            
+            selectedObject = eye.quarters{index};
+            
+            if len > 1
+                indices = indices(2:len);
+                
+                selectedObject = selectedObject.applySelection(indices, isSelected, additionalFields);
+            else
+                selectedObject.isSelected = isSelected;
+                selectedObject.selectStructureFields = additionalFields;
+            end           
+            
+            eye.quarters{index} = selectedObject;
+        end
+        
+        % ************************************************
+        % FUNCTIONS FOR SENSITIVITY AND SPECIFICITY MODULE
+        % ************************************************
+        
+        function [dataSheetOutput, rowIndex, allLocationRowIndices] = placeSensitivityAndSpecificityData(eye, dataSheetOutput, rowIndex)
+            quarters = eye.quarters;
+            
+            allLocationRowIndices = [];
+            
+            for i=1:length(quarters)
+                quarter = quarters{i};
+                
+                if ~isempty(quarter.isSelected)
+                    % increase row index
+                    quarterRowIndex = rowIndex;
+                    
+                    rowIndex = rowIndex + 1;
+                    
+                    % place location
+                    [dataSheetOutput, rowIndex, locationRowIndices] = quarter.placeSensitivityAndSpecificityData(dataSheetOutput, rowIndex);
+                    
+                    allLocationRowIndices = [allLocationRowIndices, locationRowIndices];
+                    
+                    % write quarter data
+                                        
+                    dataSheetOutput{quarterRowIndex,1} = quarter.uuid;
+                    dataSheetOutput{quarterRowIndex,2} = quarter.getFilename();
+                    
+                    if quarter.isSelected
+                        % nothing to do
+                        dataSheetOutput{quarterRowIndex,3} = ' '; %blank 
+                    else
+                        reason = quarter.selectStructureFields.exclusionReason;
+                        
+                        if isempty(reason)
+                            reason = SensitivityAndSpecificityConstants.NO_REASON_TAG;
+                        end
+                        
+                        dataSheetOutput{quarterRowIndex, 3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, reason];
+                    end
+                    
+                end
+            end
+        end
         
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
@@ -635,12 +694,21 @@ classdef Eye < FixedSample
                     case class(SubsectionStatisticsAnalysisSession)
                         selectionEntry = SubsectionStatisticsModuleSelectionEntry(eye.naviListboxLabel, indices);
                     case class(SensitivityAndSpecificityAnalysisSession)
-                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(eye.naviListboxLabel, indices);
+                        selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(eye.naviListboxLabel, indices, eye);
                 end
                 
                 selectStructureForEye = [{selectionEntry}, selectStructureForEye];
             else
-                selectStructureForEye = {};
+                if strcmp(sessionClass, class(SensitivityAndSpecificityAnalysisSession)) % for sensitivity and specificity, even if no location, have unselected eye
+                    selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(eye.naviListboxLabel, indices, eye);
+                    
+                    selectionEntry.isSelected = false;
+                    selectionEntry.exclusionReason = SensitivityAndSpecificityConstants.NO_DATA_REASON;
+                    
+                    selectStructureForEye = {selectionEntry};
+                else
+                    selectStructureForEye = {};
+                end
             end
             
         end

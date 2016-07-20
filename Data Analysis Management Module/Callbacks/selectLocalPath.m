@@ -23,7 +23,7 @@ if localPath ~= 0 % folder has been successfully selected
         %load project metadata
         project = Project;
         
-        project = project.loadProject(localPath);
+        project = project.loadObject(localPath);
         
         handles.localProject = project;        
         

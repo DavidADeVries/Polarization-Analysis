@@ -8,7 +8,7 @@ classdef FluorescentSubsectionSelectionSession < DataProcessingSession
     end
     
     methods
-        function session = FluorescentSubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, userName, transformParams, cropCoords, linkedSessionNumber)
+        function session = FluorescentSubsectionSelectionSession(sessionNumber, dataProcessingSessionNumber, toLocationPath, projectPath, userName, transformParams, cropCoords, linkedSessionNumber, toFilename)
             if nargin > 0
                 session.sessionDoneBy = userName;
                 session.sessionDate = now;
@@ -33,6 +33,9 @@ classdef FluorescentSubsectionSelectionSession < DataProcessingSession
                 
                 % set toPath
                 session.toPath = toLocationPath;
+                
+                % set toFilename
+                session.toFilename = toFilename;
                 
                 % save metadata
                 saveToBackup = false;

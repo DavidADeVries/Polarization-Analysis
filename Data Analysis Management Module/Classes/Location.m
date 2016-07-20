@@ -8,7 +8,10 @@ classdef Location
         dirName
         naviListboxLabel
         metadataHistory
+        
+        projectPath = ''
         toPath = ''
+        toFilename = ''
         
         % set by metadata entry
         locationNumber %usually a number         
@@ -19,11 +22,15 @@ classdef Location
         % session list and index
         sessions
         sessionIndex = 0
+                        
+        % for use with select structures
+        isSelected = [];
+        selectStructureFields = [];
     end
     
     methods       
         
-        function location = Location(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, toQuarterPath, projectPath, importDir, userName, subjectType, eyeType, quarterType)
+        function location = Location(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, toQuarterPath, projectPath, importDir, userName, subjectType, eyeType, quarterType, toFilename)
             [cancel, location] = location.enterMetadata(suggestedLocationNumber, existingLocationNumbers, locationCoordsWithLabels, subjectType, eyeType, quarterType, importDir);
             
             if ~cancel
@@ -41,6 +48,9 @@ classdef Location
                 
                 % set toPath
                 location.toPath = toQuarterPath;
+                
+                % set toFilename
+                location.toFilename = toFilename;
                 
                 % save metadata
                 saveToBackup = true;
@@ -99,6 +109,21 @@ classdef Location
         
         function section = generateFilenameSection(location)
             section = createFilenameSection(LocationNamingConventions.DATA_FILENAME_LABEL, num2str(location.locationNumber));
+        end
+        
+        
+        function filename = getFilename(location)
+            filename = [location.toFilename, location.generateFilenameSection()];
+        end 
+        
+        
+        function toPath = getToPath(location)
+            toPath = makePath(location.toPath, location.dirName);
+        end
+        
+        
+        function toPath = getFullPath(location)
+            toPath = makePath(location.projectPath, location.getToPath());
         end
         
         
@@ -224,43 +249,12 @@ classdef Location
         end
         
         
-        function location = loadLocation(location, toLocationPath, locationDir)
-            locationPath = makePath(toLocationPath, locationDir);
-            
-            % load metadata
-            vars = load(makePath(locationPath, LocationNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR); 
-            location = vars.metadata;
-            
-            %load dir name
-            location.dirName = locationDir;
-            
-            % load toPath
-            location.toPath = toLocationPath;
-            
+        function location = loadObject(location)            
             % load sessions
+            [objects, objectIndex] = loadObjects(location, SessionNamingConventions.METADATA_FILENAME);
             
-            sessionDirs = getMetadataFolders(locationPath, SessionNamingConventions.METADATA_FILENAME);
-            
-            numSessions = length(sessionDirs);
-            
-            sessions = cell(numSessions, 1);
-            
-            for i=1:numSessions %load sessions
-                vars = load(makePath(locationPath, sessionDirs{i}, SessionNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
-                session = vars.metadata;
-                
-                session.dirName = sessionDirs{i};
-                
-                session = session.createFileSelectionEntries(locationPath);
-                
-                sessions{i} = session;
-            end
-            
-            location.sessions = sessions;
-            
-            if ~isempty(sessions)
-                location.sessionIndex = 1;
-            end
+            location.sessions = objects;
+            location.sessionIndex = objectIndex;
         end
         
         
@@ -406,6 +400,7 @@ classdef Location
             location.dirName = '';
             location.sessions = [];
             location.toPath = '';
+            location.toFilename = '';
         end
         
         
@@ -691,6 +686,25 @@ classdef Location
             end
         end
         
+        function location = applySelection(location, indices, isSelected, additionalFields)
+            index = indices(1);
+            
+            len = length(indices);
+            
+            selectedObject = location.sessions{index};
+            
+            if len > 1
+                indices = indices(2:len);
+                
+                selectedObject = selectedObject.applySelection(indices, isSelected, additionalFields);
+            else
+                selectedObject.isSelected = isSelected;
+                selectedObject.selectStructureFields = additionalFields;
+            end           
+            
+            location.sessions{index} = selectedObject;
+        end
+        
         
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
@@ -710,7 +724,7 @@ classdef Location
                 
                 hasValidSession = true;
                 
-                selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(label, indices, isLocation, location);
+                selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(label, indices, location, isLocation);
                 
                 selectStructureForLocation = [{selectionEntry}, selectStructureForLocation];
             else % look for sessions

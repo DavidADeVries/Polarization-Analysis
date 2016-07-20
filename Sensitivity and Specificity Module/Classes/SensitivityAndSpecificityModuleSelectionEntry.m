@@ -5,23 +5,29 @@ classdef SensitivityAndSpecificityModuleSelectionEntry
         label = '';
         indices = []; %list of indices to get the location
         
-        isSelected = false;
+        isSelected = true;
         isLocation = false;
         
-        location = Location.empty;
+        object = [];
         
         toPath = '';
+        
+        exclusionReason = '';
     end
     
     methods
-        function entry = SensitivityAndSpecificityModuleSelectionEntry(label, indices, isLocation, location)
+        function entry = SensitivityAndSpecificityModuleSelectionEntry(label, indices, object, isLocation)
             entry.label = label;
             entry.indices = indices;
+            entry.object = object;
             
-            if nargin > 2
+            if nargin == 4
                 entry.isLocation = isLocation;
-                entry.location = location;
             end
+        end
+        
+        function fields = getAdditionalFields(entry)
+            fields = struct('exclusionReason', entry.exclusionReason);
         end
     end
     

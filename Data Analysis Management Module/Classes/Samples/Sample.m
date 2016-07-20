@@ -7,17 +7,24 @@ classdef Sample
         dirName
         naviListboxLabel
         metadataHistory
+        
+        projectPath = ''
         toPath = ''
+        toFilename = ''
         
         
         sampleNumber
         notes = '';
         
+        
+        % for use with select structures
+        isSelected = [];
+        selectStructureFields = [];
     end
     
     methods(Static)
         
-        function sample = createSample(sampleType, sampleNumber, existingSampleNumbers, subSampleNumber, existingSubSampleNumbers, toSubjectPath, projectPath, importPath, userName)
+        function sample = createSample(sampleType, sampleNumber, existingSampleNumbers, subSampleNumber, existingSubSampleNumbers, toSubjectPath, projectPath, importPath, userName, toFilename)
             
             if sampleType == SampleTypes.Eye
                 sample = Eye(...
@@ -28,7 +35,8 @@ classdef Sample
                     toSubjectPath,...
                     projectPath,...
                     importPath,...
-                    userName);
+                    userName,...
+                    toFilename);
                 
             elseif sampleType == SampleTypes.CsfSample
                 sample = CsfSample(...
@@ -39,7 +47,8 @@ classdef Sample
                     toSubjectPath,...
                     projectPath,...
                     importPath,...
-                    userName);
+                    userName,...
+                    toFilename);
                 
             elseif sampleType == SampleTypes.BrainSection
                 sample = BrainSection(...
@@ -50,7 +59,8 @@ classdef Sample
                     toSubjectPath,...
                     projectPath,...
                     importPath,...
-                    userName);
+                    userName,...
+                    toFilename);
                 
             else
                 error('Invalid Sample type!');
@@ -60,22 +70,6 @@ classdef Sample
     end
     
     methods
-        
-        function sample = loadGenericSample(sample, toSamplePath, sampleDir)
-            samplePath = makePath(toSamplePath, sampleDir);
-
-            % load metadata
-            vars = load(makePath(samplePath, SampleNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
-            sample = vars.metadata;
-
-            % load dir name
-            sample.dirName = sampleDir;
-            
-            % load toPath
-            sample.toPath = toSamplePath;
-            
-            sample = sample.loadObject(samplePath);
-        end
         
         function sample = createDirectories(sample, toSubjectPath, projectPath)
             sampleDirectory = sample.generateDirName();
@@ -94,6 +88,18 @@ classdef Sample
         function [sampleNumberString, notesString] = getSampleMetadataString(sample)
             sampleNumberString = ['Sample Number: ', num2str(sample.sampleNumber)];
             notesString = ['Notes: ', formatMultiLineTextForDisplay(sample.notes)];
+        end
+            
+        function filename = getFilename(sample)
+            filename = [sample.toFilename, sample.generateFilenameSection()];
+        end
+        
+        function toPath = getToPath(sample)
+            toPath = makePath(sample.toPath, sample.dirName);
+        end
+        
+        function toPath = getFullPath(sample)
+            toPath = makePath(sample.projectPath, sample.getToPath());
         end
         
         function sampleType = getSampleType(sample)

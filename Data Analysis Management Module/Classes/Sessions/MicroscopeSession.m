@@ -16,7 +16,7 @@ classdef MicroscopeSession < DataCollectionSession
     end
     
     methods
-        function session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, toLocationPath, projectPath, importDir, userName, lastSession)
+        function session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, toLocationPath, projectPath, importDir, userName, lastSession, toFilename)
             if nargin > 0
                 [cancel, session] = session.enterMetadata(importDir, userName, lastSession);
                 
@@ -36,6 +36,9 @@ classdef MicroscopeSession < DataCollectionSession
                     
                     % set toPath
                     session.toPath = toLocationPath;
+                    
+                    % set toFilename
+                    session.toFilename = toFilename;
                     
                     % save metadata
                     saveToBackup = true;

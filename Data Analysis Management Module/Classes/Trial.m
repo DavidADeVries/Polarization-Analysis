@@ -8,7 +8,10 @@ classdef Trial
         dirName
         naviListboxLabel
         metadataHistory
+        
+        projectPath = ''
         toPath = ''
+        toFilename = ''
         
         % set by metadata entry
         title
@@ -48,6 +51,12 @@ classdef Trial
                     % set toPath
                     trial.toPath = toTrialPath;
                     
+                    % set projectPath
+                    trial.projectPath = projectPath;
+                    
+                    % set toFilename
+                    trial.toFilename = ''; %start is at trial
+                    
                     % save metadata
                     saveToBackup = true;
                     trial.saveMetadata(trial.dirName, projectPath, saveToBackup);
@@ -73,6 +82,21 @@ classdef Trial
         
         function section = generateFilenameSection(trial)
             section = createFilenameSection(TrialNamingConventions.DATA_FILENAME_LABEL, num2str(trial.trialNumber));
+        end
+        
+        
+        function filename = getFilename(trial)
+            filename = trial.generateFilenameSection();
+        end
+        
+        
+        function toPath = getToPath(trial)
+            toPath = makePath(trial.toPath, trial.dirName);
+        end
+        
+        
+        function toPath = getFullPath(trial)
+            toPath = makePath(trial.projectPath, trial.getToPath());
         end
         
         
@@ -180,69 +204,34 @@ classdef Trial
         end
         
         
-        function trial = loadTrial(trial, toTrialPath, trialDir)
-            trialPath = makePath(toTrialPath, trialDir);
-
-            % load metadata
-            vars = load(makePath(trialPath, TrialNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
-            trial = vars.metadata;
+        function trial = loadObject(trial)            
             
-            % load dir name
-            trial.dirName = trialDir;
+            % load subjects
+            [objects, objectIndex] = loadObjects(trial, SubjectNamingConventions.METADATA_FILENAME);
             
-            % load toPath
-            trial.toPath = toTrialPath;
+            trial.subjects = objects;
+            trial.subjectIndex = objectIndex;
             
-            % load subjects            
-            subjectDirs = getMetadataFolders(trialPath, SubjectNamingConventions.METADATA_FILENAME);
             
-            numSubjects = length(subjectDirs);
+            % load sessions
+            [objects, objectIndex] = loadObjects(trial, SessionNamingConventions.METADATA_FILENAME);
             
-            trial.subjects = createEmptyCellArray(trial.subjectType.subjectClass.empty, numSubjects);
-            
-            for i=1:numSubjects
-                trial.subjects{i} = trial.subjects{i}.loadSubject(trialPath, subjectDirs{i});
-            end
-            
-            if ~isempty(trial.subjects)
-                trial.subjectIndex = 1;
-            end
-            
-            % load sessions            
-            sessionDirs = getMetadataFolders(trialPath, SessionNamingConventions.METADATA_FILENAME);
-            
-            numSessions = length(sessionDirs);
-            
-            sessions = cell(numSessions, 1);
-            
-            for i=1:numSessions
-                vars = load(makePath(trialPath, sessionDirs{i}, SessionNamingConventions.METADATA_FILENAME), Constants.METADATA_VAR);
-                session = vars.metadata;
-                
-                session.dirName = sessionDirs{i};
-                
-                session = session.createFileSelectionEntries(trialPath);
-                
-                sessions{i} = session;
-            end
-            
-            trial.sessions = sessions;
-            
-            if ~isempty(trial.sessions)
-                trial.sessionIndex = 1;
-            end
+            trial.sessions = objects;
+            trial.sessionIndex = objectIndex;
         end
         
         function trial = wipeoutMetadataFields(trial)
             trial.dirName = '';
             trial.subjects = [];
-            trial.sessions = [];            
+            trial.sessions = [];
+            trial.projectPath = '';
             trial.toPath = '';
+            trial.toFilename = '';
         end        
         
         function subject = createSubject(trial, nextSubjectNumber, existingSubjectNumbers, toTrialPath, localPath, importDir, userName)
             if trial.subjectType.subjectClassType == SubjectClassTypes.Natural
-                subject = NaturalSubject(nextSubjectNumber, existingSubjectNumbers, toTrialPath, localPath, importDir, userName);
+                subject = NaturalSubject(nextSubjectNumber, existingSubjectNumbers, toTrialPath, localPath, importDir, userName, trial.getFilename());
             elseif trial.subjectType.subjectClassType == SubjectClassTypes.Artifical
                 subject = ArtificalSubject();
             else
@@ -783,6 +772,108 @@ classdef Trial
             end
         end
         
+        function trial = applySelections(trial, selectStructure)            
+            for i=1:length(selectStructure)
+                entry = selectStructure{i};
+                
+                trial = trial.applySelection(entry.indices, entry.isSelected, entry.getAdditionalFields());
+            end
+        end
+        
+        function trial = applySelection(trial, indices, isSelected, additionalFields)
+            index = indices(1);
+            
+            len = length(indices);
+            
+            selectedObject = trial.subjects{index};
+            
+            if len > 1
+                indices = indices(2:len);
+                
+                selectedObject = selectedObject.applySelection(indices, isSelected, additionalFields);
+            else
+                selectedObject.isSelected = isSelected;
+                selectedObject.selectStructureFields = additionalFields;
+            end           
+            
+            trial.subjects{index} = selectedObject;
+        end
+        
+        % ************************************************
+        % FUNCTIONS FOR SENSITIVITY AND SPECIFICITY MODULE
+        % ************************************************
+        
+        function [dataSheetOutput, subjectRowIndices, allEyeRowIndices, lastRowIndex] = placeSensitivityAndSpecificityData(selectTrial, dataSheetOutput, rowIndex)
+            colHeaders = getExcelColHeaders();
+            
+            subjects = selectTrial.subjects;
+            
+            subjectRowIndices = [];            
+            rowCounter = 1;
+            
+            allEyeRowIndices = [];
+            
+            for i=1:length(subjects)
+                subject = subjects{i};
+                
+                if ~isempty(subject.isSelected) % if empty, that means it was never set (aka it was not included in the select structure)
+                    
+                    % add row index
+                    subjectRowIndices(rowCounter) = rowIndex;
+                    rowCounter = rowCounter + 1;
+                    
+                    % write data
+                    subjectRowIndex = rowIndex; %cache this, we need to place the eye and location data first
+                    
+                    rowIndex = rowIndex + 1;
+                    
+                    [dataSheetOutput, rowIndex, eyeRowIndices, locationRowIndices] = subject.placeSensitivityAndSpecificityData(dataSheetOutput, rowIndex, subjectRowIndex); %locationRowIndices is a cell array
+                    
+                    allEyeRowIndices = [allEyeRowIndices, eyeRowIndices];
+                    
+                    % write data
+                    rowStr = num2str(subjectRowIndex);
+                    
+                    dataSheetOutput{subjectRowIndex, 1} = subject.uuid;
+                    dataSheetOutput{subjectRowIndex, 2} = subject.getFilename();
+                    
+                    if subject.isSelected
+                        dataSheetOutput{subjectRowIndex, 3} = convertBoolToExcelBool(subject.isADPositive(selectTrial));
+                        dataSheetOutput{subjectRowIndex, 4} = setIndicesOrEquation(colHeaders{4}, locationRowIndices);
+                        dataSheetOutput{subjectRowIndex, 5} = setIndicesOrEquation(colHeaders{5}, locationRowIndices);
+                        dataSheetOutput{subjectRowIndex, 6} = ['=INT(AND(', colHeaders{3}, rowStr, ',', colHeaders{4}, rowStr, '))'];
+                        dataSheetOutput{subjectRowIndex, 7} = ['=INT(AND(NOT(', colHeaders{3}, rowStr, '),', colHeaders{4}, rowStr, '))'];
+                        dataSheetOutput{subjectRowIndex, 8} = ['=INT(AND(', colHeaders{3}, rowStr, ',NOT(', colHeaders{4}, rowStr, ')))'];
+                        dataSheetOutput{subjectRowIndex, 9} = ['=INT(AND(NOT(', colHeaders{3}, rowStr, '),NOT(', colHeaders{4}, rowStr, ')))'];
+                        
+                        if length(eyeRowIndices) == 1
+                            eyeRow = num2str(eyeRowIndices(1));
+                            
+                            dataSheetOutput{subjectRowIndex, 10} = ['=INT(NOT(', colHeaders{4}, eyeRow, '))'];
+                            dataSheetOutput{subjectRowIndex, 11} = ['=', colHeaders{4}, eyeRow];
+                        elseif length(eyeRowIndices) == 2
+                            indicesString = [colHeaders{4}, num2str(eyeRowIndices(1)), ',', colHeaders{4}, num2str(eyeRowIndices(2))];
+                            
+                            dataSheetOutput{subjectRowIndex, 12} = ['=INT(NOT(OR(', indicesString, ')))'];
+                            dataSheetOutput{subjectRowIndex, 13} = ['=INT(XOR(', indicesString, '))'];
+                            dataSheetOutput{subjectRowIndex, 14} = ['=INT(AND(', indicesString, '))'];
+                        else
+                            error(['Unusual number of eyes. Object: ', subject.getFilename()]);
+                        end
+                    else
+                        reason = subject.selectStructureFields.exclusionReason;
+                        
+                        if isempty(reason)
+                            reason = SensitivityAndSpecificityConstants.NO_REASON_TAG;
+                        end
+                        
+                        dataSheetOutput{subjectRowIndex,3} = [SensitivityAndSpecificityConstants.NOT_RUN_TAG, reason];
+                    end
+                end
+            end
+            
+            lastRowIndex = rowIndex - 1;
+        end
         
         % ******************************************
         % FUNCTIONS FOR POLARIZATION ANALYSIS MODULE
@@ -799,6 +890,8 @@ classdef Trial
                 [hasValidSession, locationSelectStructureForSubject] = subjects{i}.createSelectStructure(indices, sessionClass);
                 
                 if hasValidSession
+                    locationSelectStructureForTrial = [locationSelectStructureForTrial, locationSelectStructureForSubject];
+                elseif strcmp(sessionClass, class(SensitivityAndSpecificityAnalysisSession)) % still accept subjects even if they don't have locations                
                     locationSelectStructureForTrial = [locationSelectStructureForTrial, locationSelectStructureForSubject];
                 end
             end
@@ -865,4 +958,5 @@ classdef Trial
     end
     
 end
+
 
