@@ -102,9 +102,6 @@ handles.selectedTrial = selectedTrial;
 
 [hasValidLocation, selectStructure] = selectedTrial.createSelectStructure(class(SensitivityAndSpecificityAnalysisSession));
 
-% start off when all selected
-selected = true;
-selectStructure = selectOrDeselectAll(selectStructure, selected);
 
 if hasValidLocation
     [selectStrings, selectValues] = getSelectStringsAndValues(selectStructure);
@@ -219,8 +216,8 @@ function runButton_Callback(hObject, eventdata, handles)
 
 project = handles.project;
 
-analysisReason = get(handles.analysisReasonInput);
-analysisTitle = get(handles.analysisTitleInput);
+analysisReason = get(handles.analysisReasonInput, 'String');
+analysisTitle = get(handles.analysisTitleInput, 'String');
 notes = get(handles.notesInput, 'String');
 
 rejected = get(handles.yesRejectedButton, 'Value');

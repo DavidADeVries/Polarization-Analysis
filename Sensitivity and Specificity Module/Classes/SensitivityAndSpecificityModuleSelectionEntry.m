@@ -5,7 +5,7 @@ classdef SensitivityAndSpecificityModuleSelectionEntry
         label = '';
         indices = []; %list of indices to get the location
         
-        isSelected = false;
+        isSelected = true;
         isLocation = false;
         
         object = [];

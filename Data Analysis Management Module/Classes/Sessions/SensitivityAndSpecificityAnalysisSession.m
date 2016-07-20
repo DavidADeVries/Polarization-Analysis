@@ -81,7 +81,7 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
             metadataString = [metadataString, metadataHistoryStrings];
         end
         
-        function [] = writeSensitivityAndSpecificityFile(session, output)
+        function [] = writeSensitivityAndSpecificityFile(session, dataOutput, resultsOutput)
             filename = [...
                 session.getFilename(),...
                 createFilenameSection(SensitivityAndSpecificityAnalysisNamingConventions.OUTPUT_FILENAME_SECTION,[]),...
@@ -94,7 +94,14 @@ classdef SensitivityAndSpecificityAnalysisSession < DataProcessingSession
             
             writePath = makePath(toPath, SensitivityAndSpecificityAnalysisNamingConventions.OUTPUT_DIR, filename);
             
-            xlswrite(writePath, output);
+            dataSheetName = SensitivityAndSpecificityAnalysisNamingConventions.DATA_SHEET_NAME;
+            resultsSheetName = SensitivityAndSpecificityAnalysisNamingConventions.RESULTS_SHEET_NAME;
+            
+            xlswrite(writePath, dataOutput, dataSheetName);            
+            xlswrite(writePath, resultsOutput, resultsSheetName);
+            
+            % delete extra sheets
+            xls_delete_sheets(writePath, {'Sheet1'});
         end
     end
     

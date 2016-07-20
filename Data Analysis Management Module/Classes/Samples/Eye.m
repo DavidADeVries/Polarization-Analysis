@@ -699,7 +699,16 @@ classdef Eye < FixedSample
                 
                 selectStructureForEye = [{selectionEntry}, selectStructureForEye];
             else
-                selectStructureForEye = {};
+                if strcmp(sessionClass, class(SensitivityAndSpecificityAnalysisSession)) % for sensitivity and specificity, even if no location, have unselected eye
+                    selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(eye.naviListboxLabel, indices, eye);
+                    
+                    selectionEntry.isSelected = false;
+                    selectionEntry.exclusionReason = SensitivityAndSpecificityConstants.NO_DATA_REASON;
+                    
+                    selectStructureForEye = {selectionEntry};
+                else
+                    selectStructureForEye = {};
+                end
             end
             
         end

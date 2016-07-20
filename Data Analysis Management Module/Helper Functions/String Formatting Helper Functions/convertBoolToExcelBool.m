@@ -2,9 +2,9 @@ function string = convertBoolToExcelBool(bool)
 %convertBoolToExcelBool
 
     if bool
-        string = 'TRUE';
+        string = 1;
     else
-        string = 'FALSE';
+        string = 0;
     end
 end
 

@@ -605,10 +605,10 @@ classdef Quarter
                         dataSheetOutput{rowIndex, 3} = ' '; % no AD positive value to give
                         dataSheetOutput{rowIndex, 4} = convertBoolToExcelBool(microscopeSession.fluoroSignature);
                         dataSheetOutput{rowIndex, 5} = convertBoolToExcelBool(microscopeSession.crossedSignature);
-                        dataSheetOutput{rowIndex, 6} = ['=AND(',    colHeaders{4},rowIndexString,',',       colHeaders{5},rowIndexString,')'];
-                        dataSheetOutput{rowIndex, 7} = ['=AND(NOT(',colHeaders{4},rowIndexString,'),',      colHeaders{5},rowIndexString,')'];
-                        dataSheetOutput{rowIndex, 8} = ['=AND(',    colHeaders{4},rowIndexString,',NOT(',   colHeaders{5},rowIndexString,'))'];
-                        dataSheetOutput{rowIndex, 9} = ['=AND(NOT(',colHeaders{4},rowIndexString,'),NOT(',  colHeaders{5},rowIndexString,'))'];
+                        dataSheetOutput{rowIndex, 6} = ['=INT(AND(',    colHeaders{4},rowIndexString,',',       colHeaders{5},rowIndexString,'))'];
+                        dataSheetOutput{rowIndex, 7} = ['=INT(AND(NOT(',colHeaders{4},rowIndexString,'),',      colHeaders{5},rowIndexString,'))'];
+                        dataSheetOutput{rowIndex, 8} = ['=INT(AND(',    colHeaders{4},rowIndexString,',NOT(',   colHeaders{5},rowIndexString,')))'];
+                        dataSheetOutput{rowIndex, 9} = ['=INT(AND(NOT(',colHeaders{4},rowIndexString,'),NOT(',  colHeaders{5},rowIndexString,')))'];
                     else
                         reason = location.selectStructureFields.exclusionReason;
                         

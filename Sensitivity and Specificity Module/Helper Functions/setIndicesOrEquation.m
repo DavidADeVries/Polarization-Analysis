@@ -1,7 +1,7 @@
 function equation = setIndicesOrEquation(colHeader, locationRowIndices)
 % setIndicesOrEquation
 
-    equation = '=OR(';
+    equation = '=INT(OR(';
     
     prevIndex = [];
     
@@ -50,7 +50,7 @@ function equation = setIndicesOrEquation(colHeader, locationRowIndices)
         prevIndex = index;
     end
     
-    equation = [equation, ')'];
+    equation = [equation, '))'];
     
 end
 

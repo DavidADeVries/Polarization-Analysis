@@ -594,10 +594,10 @@ classdef NaturalSubject < Subject
                         dataSheetOutput{sampleRowIndex, 3} = ['=',colHeaders{3},num2str(adPositiveRowIndex)];
                         dataSheetOutput{sampleRowIndex, 4} = setIndicesOrEquation(colHeaders{4}, locationRowIndices);
                         dataSheetOutput{sampleRowIndex, 5} = setIndicesOrEquation(colHeaders{5}, locationRowIndices);
-                        dataSheetOutput{sampleRowIndex, 6} = ['=AND(', colHeaders{3}, rowStr, ',', colHeaders{4}, rowStr, ')'];
-                        dataSheetOutput{sampleRowIndex, 7} = ['=AND(NOT(', colHeaders{3}, rowStr, '),', colHeaders{4}, rowStr, ')'];
-                        dataSheetOutput{sampleRowIndex, 8} = ['=AND(', colHeaders{3}, rowStr, ',NOT(', colHeaders{4}, rowStr, '))'];
-                        dataSheetOutput{sampleRowIndex, 9} = ['=AND(NOT(', colHeaders{3}, rowStr, '),NOT(', colHeaders{4}, rowStr, '))'];
+                        dataSheetOutput{sampleRowIndex, 6} = ['=INT(AND(', colHeaders{3}, rowStr, ',', colHeaders{4}, rowStr, '))'];
+                        dataSheetOutput{sampleRowIndex, 7} = ['=INT(AND(NOT(', colHeaders{3}, rowStr, '),', colHeaders{4}, rowStr, '))'];
+                        dataSheetOutput{sampleRowIndex, 8} = ['=INT(AND(', colHeaders{3}, rowStr, ',NOT(', colHeaders{4}, rowStr, ')))'];
+                        dataSheetOutput{sampleRowIndex, 9} = ['=INT(AND(NOT(', colHeaders{3}, rowStr, '),NOT(', colHeaders{4}, rowStr, ')))'];
                     else
                         reason = sample.selectStructureFields.exclusionReason;
                         
@@ -630,6 +630,8 @@ classdef NaturalSubject < Subject
                     selectStructureForSubject = [selectStructureForSubject, selectStructureForSample];
                     
                     hasValidSession = true;
+                elseif strcmp(sessionClass, class(SensitivityAndSpecificityAnalysisSession))
+                    selectStructureForSubject = [selectStructureForSubject, selectStructureForSample];
                 end
             end
             
@@ -645,7 +647,16 @@ classdef NaturalSubject < Subject
                 
                 selectStructureForSubject = [{selectionEntry}, selectStructureForSubject];
             else
-                selectStructureForSubject = {};
+                if strcmp(sessionClass, class(SensitivityAndSpecificityAnalysisSession)) % for sensitivity and specificity, even if no location, have unselected subject
+                    selectionEntry = SensitivityAndSpecificityModuleSelectionEntry(subject.naviListboxLabel, indices, subject);
+                    
+                    selectionEntry.isSelected = false;
+                    selectionEntry.exclusionReason = SensitivityAndSpecificityConstants.NO_DATA_REASON;
+                    
+                    selectStructureForSubject = [{selectionEntry}, selectStructureForSubject];
+                else
+                    selectStructureForSubject = {};
+                end
             end
             
         end

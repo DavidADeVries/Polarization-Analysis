@@ -803,13 +803,15 @@ classdef Trial
         % FUNCTIONS FOR SENSITIVITY AND SPECIFICITY MODULE
         % ************************************************
         
-        function [dataSheetOutput, subjectRowIndices] = placeSensitivityAndSpecificityData(selectTrial, dataSheetOutput, rowIndex)
+        function [dataSheetOutput, subjectRowIndices, allEyeRowIndices, lastRowIndex] = placeSensitivityAndSpecificityData(selectTrial, dataSheetOutput, rowIndex)
             colHeaders = getExcelColHeaders();
             
             subjects = selectTrial.subjects;
             
-            subjectRowIndices = [];
+            subjectRowIndices = [];            
             rowCounter = 1;
+            
+            allEyeRowIndices = [];
             
             for i=1:length(subjects)
                 subject = subjects{i};
@@ -817,7 +819,7 @@ classdef Trial
                 if ~isempty(subject.isSelected) % if empty, that means it was never set (aka it was not included in the select structure)
                     
                     % add row index
-                    subjectRowIndices(rowCounter + 1) = rowIndex;
+                    subjectRowIndices(rowCounter) = rowIndex;
                     rowCounter = rowCounter + 1;
                     
                     % write data
@@ -826,6 +828,8 @@ classdef Trial
                     rowIndex = rowIndex + 1;
                     
                     [dataSheetOutput, rowIndex, eyeRowIndices, locationRowIndices] = subject.placeSensitivityAndSpecificityData(dataSheetOutput, rowIndex, subjectRowIndex); %locationRowIndices is a cell array
+                    
+                    allEyeRowIndices = [allEyeRowIndices, eyeRowIndices];
                     
                     % write data
                     rowStr = num2str(subjectRowIndex);
@@ -837,22 +841,22 @@ classdef Trial
                         dataSheetOutput{subjectRowIndex, 3} = convertBoolToExcelBool(subject.isADPositive(selectTrial));
                         dataSheetOutput{subjectRowIndex, 4} = setIndicesOrEquation(colHeaders{4}, locationRowIndices);
                         dataSheetOutput{subjectRowIndex, 5} = setIndicesOrEquation(colHeaders{5}, locationRowIndices);
-                        dataSheetOutput{subjectRowIndex, 6} = ['=AND(', colHeaders{3}, rowStr, ',', colHeaders{4}, rowStr, ')'];
-                        dataSheetOutput{subjectRowIndex, 7} = ['=AND(NOT(', colHeaders{3}, rowStr, '),', colHeaders{4}, rowStr, ')'];
-                        dataSheetOutput{subjectRowIndex, 8} = ['=AND(', colHeaders{3}, rowStr, ',NOT(', colHeaders{4}, rowStr, '))'];
-                        dataSheetOutput{subjectRowIndex, 9} = ['=AND(NOT(', colHeaders{3}, rowStr, '),NOT(', colHeaders{4}, rowStr, '))'];
+                        dataSheetOutput{subjectRowIndex, 6} = ['=INT(AND(', colHeaders{3}, rowStr, ',', colHeaders{4}, rowStr, '))'];
+                        dataSheetOutput{subjectRowIndex, 7} = ['=INT(AND(NOT(', colHeaders{3}, rowStr, '),', colHeaders{4}, rowStr, '))'];
+                        dataSheetOutput{subjectRowIndex, 8} = ['=INT(AND(', colHeaders{3}, rowStr, ',NOT(', colHeaders{4}, rowStr, ')))'];
+                        dataSheetOutput{subjectRowIndex, 9} = ['=INT(AND(NOT(', colHeaders{3}, rowStr, '),NOT(', colHeaders{4}, rowStr, ')))'];
                         
                         if length(eyeRowIndices) == 1
                             eyeRow = num2str(eyeRowIndices(1));
                             
-                            dataSheetOutput{subjectRowIndex, 10} = ['=NOT(', colHeaders{4}, eyeRow, ')'];
+                            dataSheetOutput{subjectRowIndex, 10} = ['=INT(NOT(', colHeaders{4}, eyeRow, '))'];
                             dataSheetOutput{subjectRowIndex, 11} = ['=', colHeaders{4}, eyeRow];
                         elseif length(eyeRowIndices) == 2
                             indicesString = [colHeaders{4}, num2str(eyeRowIndices(1)), ',', colHeaders{4}, num2str(eyeRowIndices(2))];
                             
-                            dataSheetOutput{subjectRowIndex, 12} = ['=NOT(OR(', indicesString, '))'];
-                            dataSheetOutput{subjectRowIndex, 13} = ['=XOR(', indicesString, ')'];
-                            dataSheetOutput{subjectRowIndex, 14} = ['=AND(', indicesString, ')'];
+                            dataSheetOutput{subjectRowIndex, 12} = ['=INT(NOT(OR(', indicesString, ')))'];
+                            dataSheetOutput{subjectRowIndex, 13} = ['=INT(XOR(', indicesString, '))'];
+                            dataSheetOutput{subjectRowIndex, 14} = ['=INT(AND(', indicesString, '))'];
                         else
                             error(['Unusual number of eyes. Object: ', subject.getFilename()]);
                         end
@@ -867,6 +871,8 @@ classdef Trial
                     end
                 end
             end
+            
+            lastRowIndex = rowIndex - 1;
         end
         
         % ******************************************
@@ -884,6 +890,8 @@ classdef Trial
                 [hasValidSession, locationSelectStructureForSubject] = subjects{i}.createSelectStructure(indices, sessionClass);
                 
                 if hasValidSession
+                    locationSelectStructureForTrial = [locationSelectStructureForTrial, locationSelectStructureForSubject];
+                elseif strcmp(sessionClass, class(SensitivityAndSpecificityAnalysisSession)) % still accept subjects even if they don't have locations                
                     locationSelectStructureForTrial = [locationSelectStructureForTrial, locationSelectStructureForSubject];
                 end
             end
