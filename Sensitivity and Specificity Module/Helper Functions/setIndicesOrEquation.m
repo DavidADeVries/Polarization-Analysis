@@ -17,6 +17,10 @@ function equation = setIndicesOrEquation(colHeader, locationRowIndices)
         if isempty(prevIndex)
             
             beginIndex = index;
+            
+            if numIndices == 1 % only one index
+                equation = [equation, colHeader, num2str(index)];
+            end
         elseif prevIndex ~= index - 1 || i == numIndices %no longer consectutive or end
             if i == numIndices
                 endIndex = prevIndex;
