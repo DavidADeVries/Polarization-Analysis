@@ -615,6 +615,7 @@ classdef Location
                         
         function location = createNewSession(location, projectPath, toPath, userName, sessionType, locations)
             toPath = makePath(toPath, location.dirName);
+            toFilename = location.getFilename();
             
             sessionNumber = location.nextSessionNumber();
             dataCollectionSessionNumber = location.nextDataCollectionSessionNumber();
@@ -637,10 +638,11 @@ classdef Location
                 importPath,...
                 userName,...
                 sessionChoices,...
-                lastSession);
+                lastSession,...
+                toFilename);
             
             if ~isempty(session)
-                session = session.createFileSelectionEntries(makePath(projectPath, toPath));
+                session = session.createFileSelectionEntries();
                 
                 location = location.updateSession(session);
             end
