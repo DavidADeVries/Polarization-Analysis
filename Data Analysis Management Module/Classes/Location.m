@@ -566,7 +566,7 @@ classdef Location
                         sessionChoices = location.getSessionChoices(noSessionType); % used for linking processing sessions with other sessions
                         
                         lastSession = getLastSessionByType(locations, sessionType);
-                        
+                        toFilename = location.getFilename();
                         session = Session.createSession(sessionType,...
                                                         sessionNumber,...
                                                         dataCollectionSessionNumber,...
@@ -576,7 +576,8 @@ classdef Location
                                                         importPath,...
                                                         userName,...
                                                         sessionChoices,...
-                                                        lastSession);
+                                                        lastSession,...
+                                                        toFilename);
                     else
                         session = location.getSessionFromChoice(sessionType, choice);
                     end
@@ -586,7 +587,7 @@ classdef Location
                         
                         session = session.importSession(toSessionProjectPath, importPath, localProjectPath, dataFilename);
                         
-                        session = session.createFileSelectionEntries(makePath(localProjectPath, toLocationProjectPath));
+                        session = session.createFileSelectionEntries();
                         
                         location = location.updateSession(session);
                     end

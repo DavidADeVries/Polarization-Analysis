@@ -406,7 +406,7 @@ classdef Session
             polarizationAnalysisSession.toPath = toPath;
             
             % create file selection structure
-            polarizationAnalysisSession = polarizationAnalysisSession.createFileSelectionEntries(makePath(projectPath, toPath));
+            polarizationAnalysisSession = polarizationAnalysisSession.createFileSelectionEntries();
         end
         
         function bool = isRegistrationSession(session)
