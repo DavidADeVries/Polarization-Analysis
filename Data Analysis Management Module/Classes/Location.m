@@ -168,6 +168,8 @@ classdef Location
                         
                         lastSession = getLastSessionByType(locations, sessionType);
                         
+                        toFilename = location.getFilename();
+                        
                         session = Session.createSession(sessionType,...
                                                         sessionNumber,...
                                                         dataCollectionSessionNumber,...
@@ -177,7 +179,8 @@ classdef Location
                                                         locationImportPath,...
                                                         userName,...
                                                         sessionChoices,...
-                                                        lastSession);
+                                                        lastSession,...
+                                                        toFilename);
                     else
                         session = Session.empty;
                     end
@@ -190,7 +193,7 @@ classdef Location
                     
                     session = session.importSession(toSessionProjectPath, locationImportPath, projectPath, dataFilename);
                         
-                    session = session.createFileSelectionEntries(makePath(projectPath, toLocationProjectPath));
+                    session = session.createFileSelectionEntries();
                     
                     location = location.updateSession(session);
                 end
