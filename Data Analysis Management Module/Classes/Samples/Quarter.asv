@@ -184,9 +184,8 @@ classdef Quarter
                         locationNumbers = quarter.getLocationNumbers();
                         rejectSelectedLocation = false;
                         locationCoordsWithLabels = quarter.generateLocationCoordsWithLabels(rejectSelectedLocation);
-                        toFilename = quarter.getFilename();
                         
-                        location = Location(suggestedLocationNumber, locationNumbers, locationCoordsWithLabels, toQuarterProjectPath, projectPath, locationImportPath, userName, subjectType, eyeType, quarter.quarterType, toFilename); 
+                        location = Location(suggestedLocationNumber, locationNumbers, locationCoordsWithLabels, toQuarterProjectPath, projectPath, locationImportPath, userName, subjectType, eyeType, quarter.quarterType); 
                     else
                         location = quarter.getLocationFromChoice(choice);
                     end
