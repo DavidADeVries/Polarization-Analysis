@@ -82,6 +82,7 @@ classdef Session
             session.fileSelectionEntries = [];
             session.toPath = '';
             session.toFilename = '';
+            session.projectPath = '';
         end
         
         
