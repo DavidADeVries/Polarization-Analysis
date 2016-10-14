@@ -33,7 +33,7 @@ classdef PolarizationAnalysisSession < DataProcessingSession
             
             session.toPath = makePath(parentLocation.toPath, parentLocation.dirName);
             session.toFilename = parentLocation.getFilename();
-            
+            session.projectPath = parentLocation.projectPath;
             session.dirName = session.generateDirName();
             session.naviListboxLabel = session.generateListboxLabel();
             
