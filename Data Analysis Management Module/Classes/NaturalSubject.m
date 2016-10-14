@@ -274,6 +274,7 @@ classdef NaturalSubject < Subject
             subject.dirName = '';
             subject.samples = [];
             subject.toPath = '';
+            subject.projectPath = '';
         end
         
         function sample = getSelectedSample(subject)

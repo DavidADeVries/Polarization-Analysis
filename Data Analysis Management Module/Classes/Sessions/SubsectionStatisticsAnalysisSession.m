@@ -39,6 +39,9 @@ classdef SubsectionStatisticsAnalysisSession < DataProcessingSession
                 
                 % set toPath
                 session.toPath = toLocationPath;
+                    
+                % set projectPath
+                session.projectPath = projectPath;
                 
                 % save metadata
                 saveToBackup = false;

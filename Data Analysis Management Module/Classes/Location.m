@@ -404,6 +404,7 @@ classdef Location
             location.sessions = [];
             location.toPath = '';
             location.toFilename = '';
+            location.projectPath = '';
         end
         
         

@@ -33,6 +33,9 @@ classdef LegacyRegistrationSession < DataProcessingSession
                     % set toFilename
                     session.toFilename = toFilename;
                     
+                    % set projectPath
+                    session.projectPath = projectPath;
+                    
                     % save metadata
                     saveToBackup = true;
                     session.saveMetadata(makePath(toLocationPath, session.dirName), projectPath, saveToBackup);
