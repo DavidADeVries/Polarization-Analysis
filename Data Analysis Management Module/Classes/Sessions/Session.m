@@ -43,7 +43,7 @@ classdef Session
                 session = MicroscopeSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, lastSession, toFilename);
                 
             elseif sessionType == SessionTypes.CSLO
-                session = CLSOSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, lastSession, toFilename);
+                session = CSLOSession(sessionNumber, dataCollectionSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, lastSession, toFilename);
                 
             elseif sessionType == SessionTypes.LegacyRegistration
                 session = LegacyRegistrationSession(sessionNumber, processingSessionNumber, locationProjectPath, projectPath, locationImportPath, userName, sessionChoices, lastSession, toFilename);
