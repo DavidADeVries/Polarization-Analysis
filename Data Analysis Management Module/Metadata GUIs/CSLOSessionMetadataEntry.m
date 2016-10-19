@@ -110,13 +110,13 @@ else
         handles.imagingDoneBy = session.sessionDoneBy;
     end
 
-    handles.magnification = session.magnification;
-    handles.pixelSizeMicrons = session.pixelSizeMicrons;
-    handles.instrument = session.instrument;
-    handles.entrancePinholeSizeMicrons = session.entrancePinholeSizeMicrons;
-    handles.confocalPinholeSizeMicrons = session.confocalPinholeSizeMicrons;
-    handles.lightLevelMicroWatts = session.lightLevelMicroWatts;
-    handles.fieldOfViewDegrees = session.fieldOfViewDegrees;
+    handles.magnification = defaultSession.magnification;
+    handles.pixelSizeMicrons = defaultSession.pixelSizeMicrons;
+    handles.instrument = defaultSession.instrument;
+    handles.entrancePinholeSizeMicrons = defaultSession.entrancePinholeSizeMicrons;
+    handles.confocalPinholeSizeMicrons = defaultSession.confocalPinholeSizeMicrons;
+    handles.lightLevelMicroWatts = defaultSession.lightLevelMicroWatts;
+    handles.fieldOfViewDegrees = defaultSession.fieldOfViewDegrees;
     handles.fluoroSignature = defaultSession.fluoroSignature;
     handles.crossedSignature = defaultSession.crossedSignature;
     handles.visualSignature = defaultSession.visualSignature;
