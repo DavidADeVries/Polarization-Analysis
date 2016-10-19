@@ -550,6 +550,11 @@ classdef Location
             sessionType = SessionTypes.LegacySubsectionSelection;
             location = location.importLegacyDataSession(toLocationProjectPath, importPath, localProjectPath, dataFilename, userName, sessionType, locations); 
             
+            %import CSLO data
+            importPath = legacyImportPaths.CSLODataPath;
+            sessionType = SessionTypes.CSLO;
+            location = location.importLegacyDataSession(toLocationProjectPath, importPath, localProjectPath, dataFilename, userName, sessionType, locations);
+            
         end
         
         function location = importLegacyDataSession(location, toLocationProjectPath, importPath, localProjectPath, dataFilename, userName, sessionType, locations)

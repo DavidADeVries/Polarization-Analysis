@@ -107,12 +107,12 @@ classdef Subject
                     end
                 end
                 
-                [cancel, rawDataPath, registeredDataPath, positiveAreaPath, negativeAreaPath] = selectLegacyDataPaths(legacySubjectImportPath);
+                [cancel, rawDataPath, registeredDataPath, positiveAreaPath, negativeAreaPath, CSLODataPath] = selectLegacyDataPaths(legacySubjectImportPath);
                 
                 % TODO: could add a path validation here
                 
-                if ~cancel && (~isempty(rawDataPath) || ~isempty(registeredDataPath) || ~isempty(positiveAreaPath) || ~isempty(negativeAreaPath))
-                    paths = {rawDataPath, registeredDataPath, positiveAreaPath, negativeAreaPath};
+                if ~cancel && (~isempty(rawDataPath) || ~isempty(registeredDataPath) || ~isempty(positiveAreaPath) || ~isempty(negativeAreaPath) || ~isempty(CSLODataPath))
+                    paths = {rawDataPath, registeredDataPath, positiveAreaPath, negativeAreaPath, CSLODataPath};
                     
                     displayImportPath = ''; % we need a path to display to the user on the metadata entry GUIs just to remind them what's going on
                     
@@ -123,7 +123,7 @@ classdef Subject
                         end
                     end
                     
-                    legacyImportPaths = struct('rawDataPath', rawDataPath, 'registeredDataPath', registeredDataPath, 'positiveAreaPath', positiveAreaPath, 'negativeAreaPath', negativeAreaPath);
+                    legacyImportPaths = struct('rawDataPath', rawDataPath, 'registeredDataPath', registeredDataPath, 'positiveAreaPath', positiveAreaPath, 'negativeAreaPath', negativeAreaPath, 'CSLODataPath', CSLODataPath);
                     
                     subject = subject.importLegacyDataTypeSpecific(toSubjectPath, legacyImportPaths, displayImportPath, handles.localPath, dataFilename, handles.userName, trial.subjectType);
                                     
