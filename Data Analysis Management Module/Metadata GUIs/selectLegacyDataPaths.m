@@ -22,7 +22,7 @@ function varargout = selectLegacyDataPaths(varargin)
 
 % Edit the above text to modify the response to help selectLegacyDataPaths
 
-% Last Modified by GUIDE v2.5 09-Feb-2016 13:57:01
+% Last Modified by GUIDE v2.5 19-Oct-2016 09:56:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -85,6 +85,7 @@ varargout{2} = handles.rawDataPathOutput;
 varargout{3} = handles.alignedDataPathOutput;
 varargout{4} = handles.positiveAreaPathOutput;
 varargout{5} = handles.negativeAreaPathOutput;
+varargout{6} = handles.CSLODataPathOutput;
 
 % The figure can be deleted now
 delete(handles.selectLegacyDataPaths);
@@ -294,6 +295,7 @@ handles.rawDataPathOutput = '';
 handles.alignedDataPathOutput = '';
 handles.positiveAreaPathOutput = '';
 handles.negativeAreaPathOutput = '';
+handles.CSLODataPathOutput = '';
 
 % Update handles structure
 guidata(hObject, handles);
@@ -314,4 +316,49 @@ if isequal(get(hObject, 'waitstatus'), 'waiting')
 else
     % The GUI is no longer waiting, just close it
     delete(hObject);
+end
+
+
+
+function CSLODataPath_Callback(hObject, eventdata, handles)
+% hObject    handle to CSLODataPath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of CSLODataPath as text
+%        str2double(get(hObject,'String')) returns contents of CSLODataPath as a double
+set(handles.negativeAreaPath, 'String', handles.negativeAreaPathOutput); %prevent deleting
+
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function CSLODataPath_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to CSLODataPath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in selectCSLODataPath.
+function selectCSLODataPath_Callback(hObject, eventdata, handles)
+% hObject    handle to selectCSLODataPath (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+start = handles.defaultPath;
+title = 'Select CSLO Data Directory';
+
+importDir = uigetdir(start, title);
+
+if importDir ~= 0 %dir successfully selected
+    handles.CSLODataPathOutput = importDir;
+    set(handles.CSLODataPath, 'String', importDir);
+    
+    guidata(hObject, handles);
 end

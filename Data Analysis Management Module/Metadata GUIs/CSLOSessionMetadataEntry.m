@@ -22,7 +22,7 @@ function varargout = CSLOSessionMetadataEntry(varargin)
 
 % Edit the above text to modify the response to help CSLOSessionMetadataEntry
 
-% Last Modified by GUIDE v2.5 19-Feb-2016 10:10:08
+% Last Modified by GUIDE v2.5 17-Oct-2016 15:51:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -56,45 +56,109 @@ function CSLOSessionMetadataEntry_OpeningFcn(hObject, eventdata, handles, vararg
 handles.output = hObject;
 
 % *****************************
-% INPUT: (userName, importPath)
+% INPUT: (userName, importPath, isEdit, session*)
+%         *may be empty)
 % *****************************
 
 handles.userName = varargin{1}; %Param is userName
 handles.importPath = varargin{2}; %Param is importPath
+isEdit = varargin{3};
 
-%Defining the different input variables, awaiting user input
-handles.magnification = [];
-handles.pixelSizeMicrons = [];
-handles.instrument = '';
-handles.entrancePinholeSizeMicrons = [];
-handles.confocalPinholeSizeMicrons = [];
-handles.lightLevelMicroWatts = [];
-handles.fieldOfViewDegrees = [];
-handles.imagingDate = [];
-handles.imagingDoneBy = handles.userName;
-handles.fluoroSignature = 0;
-handles.crossedSignature = 0;
-handles.visualSignature = 0;
-handles.rejected = 0;
-handles.rejectedReason = '';
-handles.rejectedBy = '';
-handles.sessionNotes = '';
+session = [];
+
+if length(varargin) > 3
+    session = varargin{4};
+end
+
+if isempty(session)
+    session = CSLOSession;
+end
 
 handles.cancel = false;
 
-set(handles.importPathDisplay, 'String', handles.importPath);
-set(handles.imagingDoneByInput, 'String', handles.userName);
-set(handles.yesRejected, 'Value', 0);
-set(handles.noRejected, 'Value', 1);
-set(handles.OK, 'enable', 'off');
-set(handles.rejectedReasonInput, 'enable', 'off');
-set(handles.rejectedByInput, 'enable', 'off');
+if isEdit
+    set(handles.importPathTitle, 'Visible', 'off');
+    set(handles.importPathDisplay, 'Visible', 'off');
+    
+    handles.magnification = session.magnification;
+    handles.pixelSizeMicrons = session.pixelSizeMicrons;
+    handles.instrument = session.instrument;
+    handles.entrancePinholeSizeMicrons = session.entrancePinholeSizeMicrons;
+    handles.confocalPinholeSizeMicrons = session.confocalPinholeSizeMicrons;
+    handles.lightLevelMicroWatts = session.lightLevelMicroWatts;
+    handles.fieldOfViewDegrees = session.fieldOfViewDegrees;
+    handles.imagingDate = session.imagingDate;
+    handles.imagingDoneBy = session.imagingDoneBy;
+    handles.fluoroSignature = session.fluoroSignature;
+    handles.crossedSignature = session.crossedSignature;
+    handles.visualSignature = session.visualSignature;
+    handles.rejected = session.rejected;
+    handles.rejectedReason = session.rejectedReason;
+    handles.rejectedBy = session.rejectedBy;
+    handles.sessionNotes = session.sessionNotes;
+    
+else
+    defaultSession = CSLOSession;
+    
+    set(handles.importPathDisplay, 'String', handles.importPath);
+    
+    handles.imagingDate = session.sessionDate;
+    
+    if isempty(session.sessionDoneBy)
+        handles.imagingDoneBy = handles.userName;
+    else
+        handles.imagingDoneBy = session.sessionDoneBy;
+    end
+
+    handles.magnification = defaultSession.magnification;
+    handles.pixelSizeMicrons = defaultSession.pixelSizeMicrons;
+    handles.instrument = defaultSession.instrument;
+    handles.entrancePinholeSizeMicrons = defaultSession.entrancePinholeSizeMicrons;
+    handles.confocalPinholeSizeMicrons = defaultSession.confocalPinholeSizeMicrons;
+    handles.lightLevelMicroWatts = defaultSession.lightLevelMicroWatts;
+    handles.fieldOfViewDegrees = defaultSession.fieldOfViewDegrees;
+    handles.fluoroSignature = defaultSession.fluoroSignature;
+    handles.crossedSignature = defaultSession.crossedSignature;
+    handles.visualSignature = defaultSession.visualSignature;
+    handles.rejected = defaultSession.rejected;
+    handles.rejectedReason = defaultSession.rejectedReason;
+    handles.rejectedBy = defaultSession.rejectedBy;
+    handles.sessionNotes = defaultSession.notes;
+end
+
+% ** SET TEXT FIELDS **
+
+if isempty(handles.imagingDate) || handles.imagingDate == 0
+    set(handles.imagingDateDisplay, 'String', '');
+else    
+    set(handles.imagingDateDisplay, 'String', displayDate(handles.imagingDate));
+end
+
+set(handles.imagingDoneByInput, 'String', handles.imagingDoneBy);
+set(handles.sessionNotesInput, 'String', handles.sessionNotes);
+set(handles.instrumentInput, 'String', handles.instrument);
+set(handles.confocalPinholeSize, 'String', handles.confocalPinholeSizeMicrons);
+
+% ** SET CHECKBOXES **
+
+set(handles.fluorescenceBox, 'Value', handles.fluoroSignature);
+set(handles.crossedBox, 'Value', handles.crossedSignature);
+set(handles.visualBox, 'Value', handles.visualSignature);
+
+% ** SET REJECTED INPUTS **
+
+handles = setRejectedInputFields(handles);
+
+% ** SET DONE BUTTON **
+
+checkToEnableOkButton(handles);
 
 % Update handles structure
 guidata(hObject, handles);
 
 % UIWAIT makes CSLOSessionMetadataEntry wait for user response (see UIRESUME)
 uiwait(handles.CSLOSessionMetadataEntry);
+
 end
 
 % --- Outputs from this function are returned to the command line.
@@ -634,19 +698,19 @@ uiresume(handles.CSLOSessionMetadataEntry);
 
 end
 
-% --- Executes on button press in yesRejected.
-function yesRejected_Callback(hObject, eventdata, handles)
-% hObject    handle to yesRejected (see GCBO)
+% --- Executes on button press in yesRejectedButton.
+function yesRejectedButton_Callback(hObject, eventdata, handles)
+% hObject    handle to yesRejectedButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of yesRejected
+% Hint: get(hObject,'Value') returns toggle state of yesRejectedButton
 
-set(handles.noRejected, 'Value', 0);
+set(handles.noRejectedButton, 'Value', 0);
 
 handles.rejected = true;
 
-set(handles.yesRejected, 'Value', 1);
+set(handles.yesRejectedButton, 'Value', 1);
 
 set(handles.rejectedReasonInput, 'enable', 'on');
 set(handles.rejectedByInput, 'enable', 'on');
@@ -661,19 +725,19 @@ guidata(hObject, handles);
 
 end
 
-% --- Executes on button press in noRejected.
-function noRejected_Callback(hObject, eventdata, handles)
-% hObject    handle to noRejected (see GCBO)
+% --- Executes on button press in noRejectedButton.
+function noRejectedButton_Callback(hObject, eventdata, handles)
+% hObject    handle to noRejectedButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of noRejected
+% Hint: get(hObject,'Value') returns toggle state of noRejectedButton
 
-set(handles.noRejected, 'Value', 1);
+set(handles.noRejectedButton, 'Value', 1);
 
 handles.rejected = false;
 
-set(handles.yesRejected, 'Value', 0);
+set(handles.yesRejectedButton, 'Value', 0);
 
 set(handles.rejectedReasonInput, 'enable', 'off');
 set(handles.rejectedReasonInput, 'String', '');
