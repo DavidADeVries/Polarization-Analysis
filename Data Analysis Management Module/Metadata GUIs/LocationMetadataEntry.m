@@ -90,6 +90,7 @@ handles.importPath = varargin{7}; %Input parameter is 'importPath'
 
 handles.cancel = false;
 
+
 %Chooses right eye to map if selected eye is unknown
 if handles.eyeType == EyeTypes.Unknown
     handles.eyeType = Constants.DEFAULT_EYE_TYPE;
