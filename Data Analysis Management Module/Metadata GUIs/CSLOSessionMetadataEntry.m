@@ -153,6 +153,12 @@ handles = setRejectedInputFields(handles);
 
 checkToEnableOkButton(handles);
 
+% ** SET TARGET IMAGE **
+datacursormode on;
+scaleImage = imread('Target_100416-100-07.bmp');
+imshow(scaleImage, 'Parent', handles.scaleTarget);
+
+
 % Update handles structure
 guidata(hObject, handles);
 
