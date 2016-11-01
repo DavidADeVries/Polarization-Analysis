@@ -57,6 +57,7 @@ handles.rawDataPathOutput = '';
 handles.alignedDataPathOutput = '';
 handles.positiveAreaPathOutput = '';
 handles.negativeAreaPathOutput = '';
+handles.CSLODataPathOutput = '';
 
 % read in varargin
 handles.defaultPath = varargin{1};
