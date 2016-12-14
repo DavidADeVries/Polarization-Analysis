@@ -140,7 +140,18 @@ parfor i=1:colHeight
     
     M_out = M_A \ I; % following eqn (2) in Bueno/Campbell
     
-    MM(i,:,:) = M_out / M_G; %following eqn (3) in Bueno/Campbell
+   % MM(i,:,:) = M_out / M_G;
+    
+   %This section added by Harry, to convert the experimental Mueller matrix
+   %to a physically realizable Mueller matrix. The function is stored in
+   %convertphyeigen.m
+   
+    M_0 = M_out / M_G; %following eqn (3) in Bueno/Campbell
+    
+    M_1 = convertphyeigen(M_0); %convert to physically realizable matrix
+    
+    MM(i,:,:) = real(M_1);
+   
 end
 
 
@@ -148,7 +159,7 @@ end
 MM_norm = normalizeMM(MM, normalizationType);
 
 % reshape back
- MM_norm = reshape(MM_norm, height, width, 4, 4);
+MM_norm = reshape(MM_norm, height, width, 4, 4);
  
 % check that there aren't too many pixels outside of the acceptable range
 isOutOfRangePixel = zeros(height, width);

@@ -32,7 +32,7 @@ for i=1:length(metricTypes)
     data = metricResults(:,:,i);
     
     % write colorbar image
-    writeColorbarFile(data, writePath, writeFilename, metricType.dataRange, metricType.colormapTickSpacing, metricType);
+    writeColorbarFile(data, writePath, writeFilename, metricType.dataRange, metricType);
     
     % write MATLAB file
     writeMatlabFile(data, writePath, writeFilename);
