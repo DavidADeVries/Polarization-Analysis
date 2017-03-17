@@ -6,6 +6,8 @@ classdef RegistrationTypes
     end
     
     enumeration
+        erikProgram     ('Erik''s Program')
+        harryProgram    ('Harry''s Program')
         chrisProgram    ('Chris''s Program')
         ianProgram      ('Ian''s Program')
         manual          ('Manual Registration')
